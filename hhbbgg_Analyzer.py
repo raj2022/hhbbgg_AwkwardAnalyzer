@@ -6,12 +6,6 @@ import awkward as ak
 from config.utils import lVector, VarToHist
 from normalisation import  getXsec, getLumi
 
-integrated_luminosities = {
-   "Data_EraE": 5.8070,
-   "Data_EraF": 17.7819,
-   "Data_EraG": 3.0828
-}
-
 def runOneFile(inputfile, outputrootfile):
    isdata=False
    if "Data"  in inputfile.split("/")[-1]:
@@ -20,7 +14,7 @@ def runOneFile(inputfile, outputrootfile):
       lumi_ = 1
    else:
       xsec_ = getXsec(inputfile)
-      lumi_ = getLumi()
+      lumi_ = getLumi()*1000
    print ("Status of the isdata flag:", isdata)
    mycache = uproot.LRUArrayCache("500 MB")
 
@@ -31,7 +25,7 @@ def runOneFile(inputfile, outputrootfile):
 
    fulltree_=ak.ArrayBuilder()
    niterations=0
-   for tree_ in uproot.iterate(file_["DiphotonTree/data_125_13TeV_NOTAG"], ["run", "lumi", "event", "lead_pt", "lead_eta", "lead_phi","sublead_pt", "sublead_eta", "sublead_phi","weight","weight_central",], step_size=50000):
+   for tree_ in uproot.iterate(file_["DiphotonTree/data_125_13TeV_NOTAG"], ["run", "lumi", "event", "lead_pt", "lead_eta", "lead_phi","sublead_pt", "sublead_eta", "sublead_phi","weight","weight_central",], step_size=10000):
       print ("Tree length for iteratiion ", len(tree_), (niterations))
       niterations=niterations+1
       cms_events = ak.zip({"run":tree_["run"],"lumi":tree_["lumi"],"event": tree_["event"],"lead_pt":tree_["lead_pt"], "lead_eta":tree_["lead_eta"], "lead_phi":tree_["lead_phi"], "sublead_pt":tree_["sublead_pt"], "sublead_eta":tree_["sublead_eta"], "sublead_phi":tree_["sublead_phi"],"weight_central":tree_["weight_central"],"weight":tree_["weight"]},depth_limit=1)

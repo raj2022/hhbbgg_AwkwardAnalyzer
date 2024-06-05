@@ -23,5 +23,5 @@ def getLumi():
         "Data_EraG": 3.0828
     }
     # Total integrated luminosity
-    total_integrated_luminosity = sum(integrated_luminosities.values())*1000
+    total_integrated_luminosity = sum(integrated_luminosities.values())
     return total_integrated_luminosity

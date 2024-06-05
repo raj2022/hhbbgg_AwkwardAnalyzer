@@ -1,6 +1,6 @@
 import copy
 binning={}
-binning["preselection"]={"dijet_mass":[100,70,150],
+binning["preselection"]={"dijet_mass":[100,80,180],
                   # "metphi":[40,-3.14,3.14],
                   # "jetpt0":[50,0,1000.],
                   # "jetpt1":[50,0,1000.],
