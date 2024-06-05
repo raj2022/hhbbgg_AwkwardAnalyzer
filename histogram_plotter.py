@@ -25,7 +25,7 @@ def sum_histograms(file_name, directories, hist_name):
             hist_sum += hist
     return hist_sum
 
-def stack1d_histograms(uproot_loaded_filename, data_histograms, mc_samples, signal_samples, histogram_names, output_directory):
+def stack1d_histograms(uproot_loaded_filename, data_histograms, mc_samples, signal_samples, histogram_names, legend_dict, output_directory):
     """
     Function to plot stacked histograms.
 
@@ -60,12 +60,12 @@ def stack1d_histograms(uproot_loaded_filename, data_histograms, mc_samples, sign
         # Plot MC histograms
         for i, mc_hist_name in enumerate(sorted_mc_histograms):
             mc_hist = get_histogram(uproot_loaded_filename, mc_hist_name)
-            mc_hist.plot1d(ax=ax, stack=True, histtype='fill', label=mc_hist_name.split('/')[0], color=histogram_color[i])
+            mc_hist.plot1d(ax=ax, stack=True, histtype='fill', label=legend_dict[mc_hist_name.split('/')[0]], color=histogram_color[i])
 
         # Plot signal histograms
         for i, signal_hist_name in enumerate(signal_histograms):
             signal_hist = get_histogram(uproot_loaded_filename, signal_hist_name)
-            signal_hist.plot1d(ax=ax, histtype='step', label=signal_hist_name.split('/')[0], color="red")
+            signal_hist.plot1d(ax=ax, histtype='step', label=legend_dict[signal_hist_name.split('/')[0]], color="red")
 
 
         # Style
@@ -95,6 +95,8 @@ def main():
     # List of signal processes
     signal_samples = ["GluGluToHH",]
 
+    legend_dict = {"GGJets":r"$\gamma\gamma$+jets", "GJetPt20To40":r"$\gamma$+jets ($20< p_T < 40$)", "GJetPt40":r"$\gamma$+jets ($p_T > 40$)", "GluGluHToGG":r"$gg\rightarrow\,H\rightarrow\gamma\gamma$", "VBFHToGG":r"$VBF\:H\rightarrow\gamma\gamma$", "VHToGG":r"$V\:H\rightarrow\gamma\gamma$", "ttHToGG":r"$t\bar{t}H\rightarrow\gamma\gamma$", "GluGluToHH":r"$gg\rightarrow\,HH$"}
+
     # List of histogram names to stack
     histogram_names = ["h_reg_preselection_dijet_mass"]
 
@@ -103,7 +105,7 @@ def main():
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
-    stack1d_histograms(uproot_loaded_filename, data_histograms, mc_samples, signal_samples, histogram_names, output_directory)
+    stack1d_histograms(uproot_loaded_filename, data_histograms, mc_samples, signal_samples, histogram_names, legend_dict, output_directory)
 
 if __name__ == "__main__":
     main()
