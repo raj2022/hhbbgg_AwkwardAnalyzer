@@ -1,0 +1,29 @@
+import awkward as ak
+
+
+# def get_mask_wmunu1b(cms_events):
+#     mask_wmunu1b = ( (cms_events.mettrig ) &
+#                     (cms_events.filters) &
+#                     (cms_events.nEleLoose==0 ) &
+#                     #(cms_events.npho==0) &
+#                     (cms_events.metpt>100.) &
+#                     (cms_events.ncleanpho==0) &
+#                     (cms_events.ntau==0) &
+#                     (cms_events.nMuLoose==1) &
+#                     (cms_events.nMuTight==1) &
+#                     (cms_events.delta_met_topmu < 0.5 ) &
+#                     (cms_events.recoil_Wmunu0>250.) &
+#                     (cms_events.min_dphi_jet_met > 0.5) &
+#                     (cms_events.nJetLoose==1 ) &
+#                     (cms_events.nJetTight==1 ) &
+#                     (cms_events.nJetb ==1 ) &
+#                     (cms_events.mt_Wmunu0 >=0 ) & (cms_events.mt_Wmunu0 < 160 )
+#                  )
+
+#     return mask_wmunu1b
+
+
+def get_mask_preselection(cms_events):
+    num_events = len(cms_events)
+    mask_preselection = ak.ones_like(cms_events["dijet_mass"], dtype=bool)
+    return mask_preselection
