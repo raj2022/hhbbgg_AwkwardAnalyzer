@@ -23,7 +23,14 @@ import awkward as ak
 #     return mask_wmunu1b
 
 
+# def get_mask_preselection(cms_events):
+#     num_events = len(cms_events)
+#     mask_preselection = ak.ones_like(cms_events["dibjet_mass"], dtype=bool)
+#     return mask_preselection
+
+
 def get_mask_preselection(cms_events):
-    num_events = len(cms_events)
-    mask_preselection = ak.ones_like(cms_events["dijet_mass"], dtype=bool)
+    mask_preselection = ( (cms_events.dibjet_mass > 0) &
+                    (cms_events.diphoton_mass > 0)
+                )
     return mask_preselection

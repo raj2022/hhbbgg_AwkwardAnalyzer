@@ -2,7 +2,9 @@ import copy
 #regions=["SR_1b", "SR_2b", "ZeeCR_2b", "ZeeCR_1b", "ZmumuCR_2b", "ZmumuCR_1b", "TopenuCR_2b", "TopenuCR_1b", "TopmunuCR_2b", "TopmunuCR_1b", "WenuCR_2b", "WenuCR_1b", "WmunuCR_2b", "WmunuCR_1b"]
 regions=["preselection"]
 
-vardict={"dijet_mass":"dijet_mass",
+vardict={"dibjet_mass":"dibjet_mass",
+        "diphoton_mass":"diphoton_mass",
+        "bbgg_mass":"bbgg_mass",
         #  "metphi":"METPhi",
         #  "jetpt0":"Jet1Pt",
         #  "jetpt1":"Jet2Pt",
@@ -62,7 +64,7 @@ vardict={"dijet_mass":"dijet_mass",
 }
 
 
-variables_common={"preselection":["dijet_mass"]}
+variables_common={"preselection":["dibjet_mass","diphoton_mass","bbgg_mass"]}
 
 # for ireg in regions:
 #         print(ireg)

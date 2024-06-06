@@ -23,8 +23,6 @@ def SetHist(HISTNAME, binning):
         h = TH1F(HISTNAME, HISTNAME, binning[0], binning[1], binning[2])
     else:
         nBins = len(binning) - 1
-        #h = TH1F(HISTNAME, HISTNAME, binning[0], binning[1], binning[2])  ## make it variable binning histogram                                                                 \
-
         h = TH1F(HISTNAME, HISTNAME, nBins, array('d', binning))
     return h
 
@@ -47,11 +45,13 @@ def VarToHist(df_var, df_weight, HISTNAME, binning):
     n_last = n[-1]
     n.remove(n_last)
     n[-1]  = n[-1]  + n_last
-    for ibin in range(len((n))):
+    for ibin in range(len(n)):
         h_var.SetBinContent(ibin+1, n[ibin])
-
     return h_var
 
+    for ibin in range(len(n)):
+        h_var.SetBinContent(ibin+1, n[ibin])
+    return h_var
 
 def getpt_eta_phi(mupx, mupy,mupz):
     mupt = numpy.sqrt(mupx**2 + mupy**2)
@@ -65,18 +65,13 @@ def geteta(mupx, mupy,mupz):
     mueta = numpy.log((mup + mupz)/(mup - mupz))/2
     return (mueta)
 
-
-
 def getphi(mupx, mupy):
     muphi = numpy.arctan2(mupy, mupx)
     return (muphi)
 
-
-
 def getpt(mupx, mupy):
     mupt = numpy.sqrt(mupx**2 + mupy**2)
     return (mupt)
-
 
 def Phi_mpi_pi(x):
     y = numpy.add(x, numpy.pi)
@@ -85,7 +80,6 @@ def Phi_mpi_pi(x):
     return y
 
 def DeltaPhi(phi1,phi2):
-    #print (phi1-phi2)
     phi = Phi_mpi_pi(phi1-phi2)
     return abs(phi)
 
@@ -95,13 +89,11 @@ def getrecoil(nEle,elept,elephi,elepx_,elepy_,met_,metphi_):
     WenuRecoilPt = (numpy.sqrt(WenuRecoilPx**2  +  WenuRecoilPy**2))
     return WenuRecoilPt
 
-
 def getrecoil1(elepx_,elepy_,met_,metphi_):
     WenuRecoilPx = -( met_*numpy.cos(metphi_) + elepx_)
     WenuRecoilPy = -( met_*numpy.sin(metphi_) + elepy_)
     WenuRecoilPt = (numpy.sqrt(WenuRecoilPx**2  +  WenuRecoilPy**2))
     return WenuRecoilPt
-
 
 def getMT(nEle,elept,elephi,elepx_,elepy_,met_,metphi_):
     dphi = DeltaPhi(elephi,metphi_)
@@ -125,13 +117,11 @@ def jetcleaning(ak4eta, lepeta, ak4phi, lepphi, DRCut):
     dr_ = Delta_R(ak4eta, lepeta, ak4phi, lepphi)
     return (dr_ > DRCut)
 
-
 def getFirstElement(x):
     if len(x)>0: return x[0]
 
 def getSecondElement(x):
     if len(x)>1: return x[1]
-
 
 def getTwoElement(x):
     if len(x)==1: return (x[0], x[0])
@@ -155,10 +145,8 @@ def deltaR(phoeta, jeteta, phophi, jetphi, cut_=0.4):
     dr_pho_jet_status = ak.any(dr_unzip<=cut_,axis=-1)  ## use axis in new version of awkward
     return dr_pho_jet_status
 
-
 def getN(var_, i):
     return ak.mask(var_, ak.num(var_, axis=1)>i, highlevel=False)[:,i]
-
 
 def lVector(pt1, eta1, phi1, pt2, eta2, phi2, mass1=0, mass2=0):
     # Create Lorentz vector 1
@@ -182,4 +170,4 @@ def lVector(pt1, eta1, phi1, pt2, eta2, phi2, mass1=0, mass2=0):
     # Sum the Lorentz vectors
     lvec_ = lvec_1 + lvec_2
 
-    return lvec_.mass
+    return lvec_

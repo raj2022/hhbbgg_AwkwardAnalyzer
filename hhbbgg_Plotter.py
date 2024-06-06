@@ -25,16 +25,7 @@ def sum_histograms(file_name, directories, hist_name):
             hist_sum += hist
     return hist_sum
 
-def stack1d_histograms(uproot_loaded_filename, data_histograms, mc_samples, signal_samples, histogram_names, legend_dict, output_directory):
-    """
-    Function to plot stacked histograms.
-
-    Parameters:
-        data_histograms (list): List of data histograms.
-        mc_samples (list): List of MC histograms.
-        histogram_names (list): List of histogram names to stack.
-    """
-
+def stack1d_histograms(uproot_loaded_filename, data_histograms, mc_samples, signal_samples, histogram_names, legend_dict, xtitle_dict, output_directory):
     # List of recommended colors
     histogram_color = ["#3f90da", "#ffa90e", "#bd1f01", "#94a4a2", "#832db6", "#a96b59", "#e76300", "#b9ac70", "#717581", "#92dadd"]
 
@@ -47,11 +38,10 @@ def stack1d_histograms(uproot_loaded_filename, data_histograms, mc_samples, sign
 
         # List of signal histogram names
         signal_histograms = [f"{signal_sample}/{hist_name}" for signal_sample in signal_samples]
-        # # Sort MC histograms based on integral values
-        # sorted_mc_histograms = sorted(signal_histograms, key=lambda x: get_histogram(uproot_loaded_filename, x).sum(), reverse=True)
 
-        # Setup matplotlib figure
-        fig, ax = plt.subplots()
+        # Setup matplotlib figure with ratio plot
+        fig, (ax, ax_ratio) = plt.subplots(2, 1, gridspec_kw={'height_ratios': [3, 1]}, sharex=True)
+        fig.subplots_adjust(hspace=0.05)  # Adjust space between main plot and ratio plot
 
         # Plot data histogram
         data_hist = sum_histograms(uproot_loaded_filename,data_histograms, hist_name)
@@ -67,19 +57,39 @@ def stack1d_histograms(uproot_loaded_filename, data_histograms, mc_samples, sign
             signal_hist = get_histogram(uproot_loaded_filename, signal_hist_name)
             signal_hist.plot1d(ax=ax, histtype='step', label=legend_dict[signal_hist_name.split('/')[0]], color="red")
 
+        # Plot ratio plot
+        mc_stack = sum_histograms(uproot_loaded_filename,mc_samples, hist_name)
+        data_values = data_hist.values()
+        mc_values = mc_stack.values()
+        # Avoid division by zero by replacing zeros in mc_values with a small number
+        epsilon = 1e-10  # Small value to prevent division by zero
+        safe_mc_values = np.where(mc_values == 0, epsilon, mc_values)
+        ratio = data_values / safe_mc_values
+
+        # Handle cases where variances might be None
+        data_variances = data_hist.variances()
+        if data_variances is None:
+            ratio_err = np.zeros_like(ratio)
+        else:
+            ratio_err = np.sqrt(data_variances) / mc_values
+        bin_centers = (data_hist.axes[0].edges[:-1] + data_hist.axes[0].edges[1:]) / 2
+        ax_ratio.errorbar(bin_centers, ratio, yerr=ratio_err, fmt='o', color='black')
+        ax_ratio.axhline(1, linestyle='--', color='gray')
+        ax_ratio.set_ylim(0, 3)
+        ax_ratio.set_ylabel('Data / MC')
 
         # Style
-        ax.set_xlabel("Dijet Mass [GeV]")
+        ax.set_yscale('log')
+        ax.set_ylim(0.1,1E8)
+        ax.set_xlabel("")
         ax.set_ylabel("Events")
-        ax.legend()
-        # hep.cms.label()
-        '{0:.1f}'.format(getLumi())
-        hep.cms.label("",lumi='{0:.2f}'.format(getLumi()),loc=0,llabel="Work in progress")
+        hep.cms.label("",ax=ax, lumi='{0:.2f}'.format(getLumi()),loc=0,llabel="Work in progress")
+        ax.legend(ncol=2,loc='upper right', fontsize=18)
 
+        ax_ratio.set_xlabel(xtitle_dict[hist_name])
+        ax_ratio.set_ylabel("Data/MC")
 
         plt.savefig(f"{output_directory}/{hist_name}.pdf", bbox_inches='tight')
-        # Show the plot
-        # plt.show()
 
 def main():
     # Open the ROOT file
@@ -95,17 +105,21 @@ def main():
     # List of signal processes
     signal_samples = ["GluGluToHH",]
 
+    # Dictionary for legends
     legend_dict = {"GGJets":r"$\gamma\gamma$+jets", "GJetPt20To40":r"$\gamma$+jets ($20< p_T < 40$)", "GJetPt40":r"$\gamma$+jets ($p_T > 40$)", "GluGluHToGG":r"$gg\rightarrow\,H\rightarrow\gamma\gamma$", "VBFHToGG":r"$VBF\:H\rightarrow\gamma\gamma$", "VHToGG":r"$V\:H\rightarrow\gamma\gamma$", "ttHToGG":r"$t\bar{t}H\rightarrow\gamma\gamma$", "GluGluToHH":r"$gg\rightarrow\,HH$"}
 
     # List of histogram names to stack
-    histogram_names = ["h_reg_preselection_dijet_mass"]
+    histogram_names = ["h_reg_preselection_dibjet_mass","h_reg_preselection_diphoton_mass","h_reg_preselection_bbgg_mass"]
+
+    # Dictionary for x-axis title
+    xtitle_dict = {"h_reg_preselection_dibjet_mass":r"$m_{b\bar{b}}$ [GeV]","h_reg_preselection_diphoton_mass":r"$m_{\gamma\gamma}$ [GeV]","h_reg_preselection_bbgg_mass":r"$m_{b\bar{b}\gamma\gamma}$ [GeV]"}
 
     # create the directory to save plots
     output_directory = "stack_plots"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
-    stack1d_histograms(uproot_loaded_filename, data_histograms, mc_samples, signal_samples, histogram_names, legend_dict, output_directory)
+    stack1d_histograms(uproot_loaded_filename, data_histograms, mc_samples, signal_samples, histogram_names, legend_dict, xtitle_dict, output_directory)
 
 if __name__ == "__main__":
     main()
