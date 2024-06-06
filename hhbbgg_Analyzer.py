@@ -42,8 +42,7 @@ def runOneFile(inputfile, outputrootfile):
                            "sublead_bjet_pt":tree_["sublead_bjet_pt"], "sublead_bjet_eta":tree_["sublead_bjet_eta"], "sublead_bjet_phi":tree_["sublead_bjet_phi"],"sublead_bjet_mass":tree_["sublead_bjet_mass"],
                            "lead_pho_pt":tree_["lead_pt"], "lead_pho_eta":tree_["lead_eta"], "lead_pho_phi":tree_["lead_phi"], "lead_pho_mvaID_WP90":tree_["lead_mvaID_WP90"],
                            "sublead_pho_pt":tree_["sublead_pt"], "sublead_pho_eta":tree_["sublead_eta"], "sublead_pho_phi":tree_["sublead_phi"],"sublead_pho_mvaID_WP90":tree_["sublead_mvaID_WP90"],
-                           "weight_central":tree_["weight_central"],"weight":tree_
-                           ["weight"]},
+                           "weight_central":tree_["weight_central"],"weight":tree_["weight"]},
                            depth_limit=1
                         )
       out_events = ak.zip({"run":tree_["run"],"lumi":tree_["lumi"],"event": tree_["event"]},depth_limit=1)
@@ -59,6 +58,8 @@ def runOneFile(inputfile, outputrootfile):
       from regions import get_mask_preselection
       cms_events["mask_preselection"]   = get_mask_preselection(cms_events)
       out_events["preselection"] = cms_events["mask_preselection"]
+      out_events["lead_pho_pt"] = cms_events["lead_pho_pt"]
+      out_events["sublead_pho_pt"] = cms_events["sublead_pho_pt"]
       out_events["dibjet_mass"] = cms_events["dibjet_mass"]
       out_events["diphoton_mass"] = cms_events["diphoton_mass"]
       out_events["bbgg_mass"] = cms_events["bbgg_mass"]

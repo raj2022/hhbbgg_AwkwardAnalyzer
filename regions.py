@@ -31,6 +31,8 @@ import awkward as ak
 
 def get_mask_preselection(cms_events):
     mask_preselection = ( (cms_events.dibjet_mass > 0) &
-                    (cms_events.diphoton_mass > 0)
+                    (cms_events.diphoton_mass > 0) &
+                    (cms_events.sublead_pho_mvaID_WP90 ==1 ) &
+                    (cms_events.lead_pho_mvaID_WP90 ==1 )
                 )
     return mask_preselection
