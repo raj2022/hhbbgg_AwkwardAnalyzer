@@ -7,8 +7,6 @@ import awkward as ak
 from config.utils import lVector, VarToHist
 from normalisation import  getXsec, getLumi
 
-analysis_is_blinded = True
-
 def runOneFile(inputfile, outputrootfile):
    isdata=False
    if "Data"  in inputfile.split("/")[-1]:
@@ -51,19 +49,8 @@ def runOneFile(inputfile, outputrootfile):
       dibjet_ = lVector(cms_events["lead_bjet_pt"], cms_events["lead_bjet_eta"], cms_events["lead_bjet_phi"],cms_events["sublead_bjet_pt"],cms_events["sublead_bjet_eta"],cms_events["sublead_bjet_phi"])
       diphoton_ = lVector(cms_events["lead_pho_pt"], cms_events["lead_pho_eta"], cms_events["lead_pho_phi"],cms_events["sublead_pho_pt"],cms_events["sublead_pho_eta"],cms_events["sublead_pho_phi"])
 
-      dibjet_mass = dibjet_.mass
-      diphoton_mass = diphoton_.mass
-      if analysis_is_blinded and isdata:
-         dibjet_mask = (dibjet_mass >= 100.0) & (dibjet_mass <= 150.0)
-         diphoton_mask = (diphoton_mass >= 100.0) & (diphoton_mass <= 150.0)
-         dibjet_mass = ak.where(dibjet_mask, 0.0, dibjet_mass)
-         diphoton_mass = ak.where(diphoton_mask, 0.0, diphoton_mass)
-         cms_events["dibjet_mass"] = dibjet_mass
-         cms_events["diphoton_mass"] = diphoton_mass
-      else:
-         cms_events["dibjet_mass"] = dibjet_mass
-         cms_events["diphoton_mass"] = diphoton_.mass
-
+      cms_events["dibjet_mass"] = dibjet_.mass
+      cms_events["diphoton_mass"] = diphoton_.mass
       cms_events["bbgg_mass"] = (dibjet_+diphoton_).mass
 
 
