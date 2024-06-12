@@ -17,7 +17,9 @@ pandas
 A virtual environment can be created for this using the following command
 ```
 conda env create -f requirement.yml
+```
 # if available, do it with mamba, it's much faster
+```
 mamba env create -f requirement.yml
 ```
 
