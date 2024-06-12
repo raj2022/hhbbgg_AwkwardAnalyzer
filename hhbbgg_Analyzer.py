@@ -53,7 +53,6 @@ def runOneFile(inputfile, outputrootfile):
       cms_events["diphoton_mass"] = diphoton_.mass
       cms_events["bbgg_mass"] = (dibjet_+diphoton_).mass
 
-
       from regions import get_mask_preselection
       cms_events["mask_preselection"]   = get_mask_preselection(cms_events)
       out_events["preselection"] = cms_events["mask_preselection"]

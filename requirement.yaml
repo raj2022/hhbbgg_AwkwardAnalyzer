@@ -1,0 +1,13 @@
+name: hhbbgg-awk
+channels:
+   - conda-forge
+dependencies:
+   - matplotlib==3.8.4
+   - uproot==5.3.3
+   - hist==2.7.3
+   - numpy==1.26.4
+   - mplhep==0.3.48
+   - vector==1.4.0
+   - ROOT==6.30/04
+   - awkward==2.6.3
+   - pandas==2.2.2

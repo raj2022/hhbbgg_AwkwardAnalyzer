@@ -107,11 +107,10 @@ def main():
     legend_dict = {"GGJets":r"$\gamma\gamma$+jets", "GJetPt20To40":r"$\gamma$+jets ($20< p_T < 40$)", "GJetPt40":r"$\gamma$+jets ($p_T > 40$)", "GluGluHToGG":r"$gg\rightarrow\,H\rightarrow\gamma\gamma$", "VBFHToGG":r"$VBF\:H\rightarrow\gamma\gamma$", "VHToGG":r"$V\:H\rightarrow\gamma\gamma$", "ttHToGG":r"$t\bar{t}H\rightarrow\gamma\gamma$", "GluGluToHH":r"$gg\rightarrow\,HH$"}
 
     # List of histogram names to stack
-    histogram_names = ["h_reg_preselection_dibjet_mass","h_reg_preselection_diphoton_mass","h_reg_preselection_bbgg_mass","h_reg_preselection_lead_pho_pt","h_reg_preselection_sublead_pho_pt"]
+    histogram_names = ["h_reg_preselection_dibjet_mass","h_reg_preselection_diphoton_mass","h_reg_preselection_bbgg_mass","h_reg_preselection_lead_pho_pt","h_reg_preselection_sublead_pho_pt","h_reg_preselection_dibjet_pt"]
 
     # Dictionary for x-axis title
-    xtitle_dict = {"h_reg_preselection_dibjet_mass":r"$m_{b\bar{b}}$ [GeV]","h_reg_preselection_diphoton_mass":r"$m_{\gamma\gamma}$ [GeV]","h_reg_preselection_bbgg_mass":r"$m_{b\bar{b}\gamma\gamma}$ [GeV]",
-                    "h_reg_preselection_lead_pho_pt":r"lead $\gamma\:p_T$ [GeV]","h_reg_preselection_sublead_pho_pt":r"sublead $\gamma\:p_T$ [GeV]"}
+    xtitle_dict = {"h_reg_preselection_dibjet_mass":r"$m_{b\bar{b}}$ [GeV]","h_reg_preselection_diphoton_mass":r"$m_{\gamma\gamma}$ [GeV]","h_reg_preselection_bbgg_mass":r"$m_{b\bar{b}\gamma\gamma}$ [GeV]","h_reg_preselection_lead_pho_pt":r"lead $\gamma\:p_T$ [GeV]","h_reg_preselection_sublead_pho_pt":r"sublead $\gamma\:p_T$ [GeV]","h_reg_preselection_dibjet_pt":r"$b\bar{b} p_T$ [GeV]"}
 
     # create the tdirectory to save plots
     output_directory = "stack_plots"
