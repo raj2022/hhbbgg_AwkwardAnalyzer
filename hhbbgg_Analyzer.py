@@ -7,6 +7,7 @@ import awkward as ak
 from config.utils import lVector, VarToHist
 from normalisation import  getXsec, getLumi
 
+analysis_is_blinded = True
 
 def runOneFile(inputfile, outputrootfile):
    isdata=False
@@ -47,13 +48,24 @@ def runOneFile(inputfile, outputrootfile):
                         )
       out_events = ak.zip({"run":tree_["run"],"lumi":tree_["lumi"],"event": tree_["event"]},depth_limit=1)
 
-      # dibjet_ = lVector(cms_events["lead_bjet_pt"], cms_events["lead_bjet_eta"], cms_events["lead_bjet_phi"],cms_events["sublead_bjet_pt"],cms_events["sublead_bjet_eta"],cms_events["sublead_bjet_phi"],cms_events["lead_bjet_mass"],cms_events["sublead_bjet_mass"])
       dibjet_ = lVector(cms_events["lead_bjet_pt"], cms_events["lead_bjet_eta"], cms_events["lead_bjet_phi"],cms_events["sublead_bjet_pt"],cms_events["sublead_bjet_eta"],cms_events["sublead_bjet_phi"])
       diphoton_ = lVector(cms_events["lead_pho_pt"], cms_events["lead_pho_eta"], cms_events["lead_pho_phi"],cms_events["sublead_pho_pt"],cms_events["sublead_pho_eta"],cms_events["sublead_pho_phi"])
 
-      cms_events["dibjet_mass"] = dibjet_.mass
-      cms_events["diphoton_mass"] = diphoton_.mass
+      dibjet_mass = dibjet_.mass
+      diphoton_mass = diphoton_.mass
+      if analysis_is_blinded and isdata:
+         dibjet_mask = (dibjet_mass >= 100.0) & (dibjet_mass <= 150.0)
+         diphoton_mask = (diphoton_mass >= 100.0) & (diphoton_mass <= 150.0)
+         dibjet_mass = ak.where(dibjet_mask, 0.0, dibjet_mass)
+         diphoton_mass = ak.where(diphoton_mask, 0.0, diphoton_mass)
+         cms_events["dibjet_mass"] = dibjet_mass
+         cms_events["diphoton_mass"] = diphoton_mass
+      else:
+         cms_events["dibjet_mass"] = dibjet_mass
+         cms_events["diphoton_mass"] = diphoton_.mass
+
       cms_events["bbgg_mass"] = (dibjet_+diphoton_).mass
+
 
       from regions import get_mask_preselection
       cms_events["mask_preselection"]   = get_mask_preselection(cms_events)
@@ -71,18 +83,14 @@ def runOneFile(inputfile, outputrootfile):
    from variables import vardict, regions, variables_common
    from binning import binning
    print ("Making histograms")
-   outputrootfile.cd()
    outputrootfileDir =  inputfile.split("/")[-1].replace(".root","")
-   gDirectory.mkdir(outputrootfileDir)
    for ireg in regions:
       thisregion  = fulltree_[fulltree_[ireg]==True]
       thisregion_ = thisregion[~(ak.is_none(thisregion))]
       weight_ = "weight_"+ireg
       for ivar in variables_common[ireg]:
          hist_name_ = "h_reg_"+ireg+"_"+vardict[ivar]
-         h = VarToHist(thisregion_[ivar], thisregion_[weight_], hist_name_, binning[ireg][ivar])
-         outputrootfile.cd(outputrootfileDir)
-         h.Write()
+         outputrootfile[f"{outputrootfileDir}/{hist_name_}"] = VarToHist(thisregion_[ivar], thisregion_[weight_], hist_name_, binning[ireg][ivar])
    print ("Done")
 
 inputfilesDir = '/Users/ptiwari/cmscern/eos/DoNotSync/hhtobbgg/HiggsDNA_root/v1/Run3_2022postEE_merged'
@@ -91,12 +99,12 @@ if not os.path.exists(output_dir):
    os.makedirs(output_dir)
 
 inputfiles = [f"{inputfilesDir}/{infile_}" for infile_ in os.listdir(inputfilesDir) if infile_.endswith('.root')]
-output_rootfile = TFile(f"{output_dir}/hhbbgg_Analyzer.root","RECREATE")
+outputrootfile = uproot.recreate(f"{output_dir}/hhbbgg_Analyzer.root")
 
 def main():
    for infile_ in inputfiles:
-      runOneFile(infile_, output_rootfile)
-   # runOneFile(inputfiles[0], output_rootfile)
+      runOneFile(infile_, outputrootfile)
+   # runOneFile(inputfiles[0], outputrootfile)
 if __name__ == "__main__":
    main()
 

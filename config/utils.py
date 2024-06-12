@@ -28,29 +28,13 @@ def SetHist(HISTNAME, binning):
 
 def VarToHist(df_var, df_weight, HISTNAME, binning):
     binning_ = copy.deepcopy(binning)
-    df_var = pd.Series(df_var)
-
+    df = pd.DataFrame({
+        'var': df_var,
+        'weight': df_weight
+    })
     h_var = SetHist(HISTNAME, binning_)
-    weight = df_weight
-
-    if len(binning_) >3:
-        binning_.append(10000) ## to take care of overflow
-        n, bins, patches = plt.hist(df_var, binning_, histtype='step', weights=weight)
-
-    if len(binning_)==3:
-        binning_.append(binning_[-1]*3) ## to take care of overflow
-        n, bins, patches = plt.hist(df_var, binning_[0], range=(binning_[1], binning_[2]), histtype='step', weights=weight)
-
-    n=list(n)
-    n_last = n[-1]
-    n.remove(n_last)
-    n[-1]  = n[-1]  + n_last
-    for ibin in range(len(n)):
-        h_var.SetBinContent(ibin+1, n[ibin])
-    return h_var
-
-    for ibin in range(len(n)):
-        h_var.SetBinContent(ibin+1, n[ibin])
+    for index, row in df.iterrows():
+        h_var.Fill(row['var'], row['weight'])
     return h_var
 
 def getpt_eta_phi(mupx, mupy,mupz):
