@@ -3,6 +3,9 @@ binning={}
 binning["preselection"]={"dibjet_mass":[25,80,180],
                 "diphoton_mass":[25,80,180],
                 "bbgg_mass":[25,150,500],
+                "dibjet_pt":[25,30,180],
+                "diphoton_pt":[25,30,180],
+                "bbgg_pt":[25,30,500],
                 "lead_pho_pt":[25,35,200],
                 "sublead_pho_pt":[25,25,200],
                 # "metphi":[40,-3.14,3.14],
@@ -56,29 +59,4 @@ binning["preselection"]={"dibjet_mass":[25,80,180],
 
 }
 
-# binning["SR_2b"] =copy.deepcopy(binning["SR_1b"])
-# binning["SR_2b"]["jetpt0"] = [25,0,1000.]
-
-# binning["ZeeCR_3j"]=copy.deepcopy(binning["SR_1b"])
-
-# binning["ZeeCR_2j"]=copy.deepcopy(binning["SR_1b"])
-
-# binning["ZmumuCR_3j"]=copy.deepcopy(binning["SR_1b"])
-
-# binning["ZmumuCR_2j"]=copy.deepcopy(binning["SR_1b"])
-
-# binning["TopenuCR_2b"]=copy.deepcopy(binning["SR_1b"])
-
-# binning["TopenuCR_1b"]=copy.deepcopy(binning["SR_1b"])
-
-# binning["TopmunuCR_2b"]=copy.deepcopy(binning["SR_1b"])
-
-# binning["TopmunuCR_1b"]=copy.deepcopy(binning["SR_1b"])
-
-# binning["WenuCR_2b"]=copy.deepcopy(binning["SR_1b"])
-
-# binning["WenuCR_1b"]=copy.deepcopy(binning["SR_1b"])
-
-# binning["WmunuCR_2b"]=copy.deepcopy(binning["SR_1b"])
-
-# binning["WmunuCR_1b"]=copy.deepcopy(binning["SR_1b"])
+binning["selection"] =copy.deepcopy(binning["preselection"])

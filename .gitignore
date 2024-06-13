@@ -1,2 +1,6 @@
 **/__pycache__/
-*.pyc
+**.pyc
+**.DS_Store
+stack_plots/**/*.pdf
+stack_plots/**/*.png
+outputfiles/*.root

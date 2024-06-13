@@ -1,6 +1,5 @@
 import awkward as ak
 
-
 # def get_mask_wmunu1b(cms_events):
 #     mask_wmunu1b = ( (cms_events.mettrig ) &
 #                     (cms_events.filters) &
@@ -23,22 +22,15 @@ import awkward as ak
 #     return mask_wmunu1b
 
 
-# def get_mask_preselection(cms_events):
-#     num_events = len(cms_events)
-#     mask_preselection = ak.ones_like(cms_events["dibjet_mass"], dtype=bool)
-#     return mask_preselection
-
-
-# def get_mask_preselection(cms_events):
-#     mask_preselection = ( (cms_events.dibjet_mass > 0) &
-#                     (cms_events.diphoton_mass > 0) &
-#                     (cms_events.sublead_pho_mvaID_WP90 ==1 ) &
-#                     (cms_events.lead_pho_mvaID_WP90 ==1 )
-#                 )
-#     return mask_preselection
-
 def get_mask_preselection(cms_events):
     mask_preselection = ( (cms_events.dibjet_mass > 0) &
                     (cms_events.diphoton_mass > 0)
-                )
+    )
     return mask_preselection
+
+def get_mask_selection(cms_events):
+    mask_selection = (
+        (cms_events.lead_pho_mvaID_WP90==1) &
+        (cms_events.sublead_pho_mvaID_WP90==1)
+    )
+    return mask_selection

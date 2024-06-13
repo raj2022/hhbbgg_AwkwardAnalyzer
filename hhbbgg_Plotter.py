@@ -83,11 +83,17 @@ def stack1d_histograms(uproot_loaded_filename, data_samples, mc_samples, signal_
         ax.set_ylabel("Events")
         hep.cms.label("",ax=ax, lumi='{0:.2f}'.format(getLumi()),loc=0,llabel="Work in progress")
         ax.legend(ncol=2,loc='upper right', fontsize=18)
-        ax_ratio.set_xlabel(xtitle_dict[hist_name])
+        ax_ratio.set_xlabel(xtitle_dict[hist_name.split("-")[-1]])
         ax_ratio.set_ylabel("Data/MC")
 
         # Save plots
-        plt.savefig(f"{output_directory}/{hist_name}.pdf", bbox_inches='tight')
+        plot_reg_name = hist_name.split("-")[0]
+        # check and create plot directory
+        if not os.path.exists(f"{output_directory}/{plot_reg_name}"): os.makedirs(f"{output_directory}/{plot_reg_name}")
+        plot_var_name = hist_name.split("-")[-1]
+        plt.savefig(f"{output_directory}/{plot_reg_name}/{plot_var_name}.pdf", bbox_inches='tight')
+        plt.savefig(f"{output_directory}/{plot_reg_name}/{plot_var_name}.png", bbox_inches='tight')
+
 
 def main():
     # Open the ROOT file
@@ -106,18 +112,29 @@ def main():
     # Dictionary for legends
     legend_dict = {"GGJets":r"$\gamma\gamma$+jets", "GJetPt20To40":r"$\gamma$+jets ($20< p_T < 40$)", "GJetPt40":r"$\gamma$+jets ($p_T > 40$)", "GluGluHToGG":r"$gg\rightarrow\,H\rightarrow\gamma\gamma$", "VBFHToGG":r"$VBF\:H\rightarrow\gamma\gamma$", "VHToGG":r"$V\:H\rightarrow\gamma\gamma$", "ttHToGG":r"$t\bar{t}H\rightarrow\gamma\gamma$", "GluGluToHH":r"$gg\rightarrow\,HH$"}
 
-    # List of histogram names to stack
-    histogram_names = ["h_reg_preselection_dibjet_mass","h_reg_preselection_diphoton_mass","h_reg_preselection_bbgg_mass","h_reg_preselection_lead_pho_pt","h_reg_preselection_sublead_pho_pt","h_reg_preselection_dibjet_pt"]
+    # List of regions naames
+    regions = [
+        "preselection", "selection"
+    ]
+    #List of variable names
+    variable_names = [
+        "dibjet_mass","diphoton_mass","bbgg_mass","dibjet_pt","diphoton_pt","bbgg_pt","lead_pho_pt","sublead_pho_pt","dibjet_pt"
+    ]
+    histogram_names = [f"{region}-{variable_name}" for region in regions for variable_name in variable_names]
 
-    # Dictionary for x-axis title
-    xtitle_dict = {"h_reg_preselection_dibjet_mass":r"$m_{b\bar{b}}$ [GeV]","h_reg_preselection_diphoton_mass":r"$m_{\gamma\gamma}$ [GeV]","h_reg_preselection_bbgg_mass":r"$m_{b\bar{b}\gamma\gamma}$ [GeV]","h_reg_preselection_lead_pho_pt":r"lead $\gamma\:p_T$ [GeV]","h_reg_preselection_sublead_pho_pt":r"sublead $\gamma\:p_T$ [GeV]","h_reg_preselection_dibjet_pt":r"$b\bar{b} p_T$ [GeV]"}
+    # Dictionary for x-axis titles
+    xaxis_titles = {
+        "dibjet_mass":r"$m_{b\bar{b}}$ [GeV]","diphoton_mass":r"$m_{\gamma\gamma}$ [GeV]","bbgg_mass":r"$m_{b\bar{b}\gamma\gamma}$ [GeV]",
+        "lead_pho_pt":r"lead $\gamma\:p_T$ [GeV]","sublead_pho_pt":r"sublead $\gamma\:p_T$ [GeV]","dibjet_pt":r"$b\bar{b} p_T$ [GeV]",
+        "dibjet_pt":r"$b\bar{b}\:p_T$ [GeV]","diphoton_pt":r"$\gamma\gamma\:p_T$ [GeV]","bbgg_pt":r"$b\bar{b}\gamma\gamma\:p_T$ [GeV]",
+    }
 
     # create the tdirectory to save plots
     output_directory = "stack_plots"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
-    stack1d_histograms(uproot_loaded_filename, data_samples, mc_samples, signal_samples, histogram_names, legend_dict, xtitle_dict, output_directory)
+    stack1d_histograms(uproot_loaded_filename, data_samples, mc_samples, signal_samples, histogram_names, legend_dict, xaxis_titles, output_directory)
 
 if __name__ == "__main__":
     main()

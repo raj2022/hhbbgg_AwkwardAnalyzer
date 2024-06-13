@@ -10,17 +10,17 @@ hist
 numpy
 mplhep
 vector
-ROOT
+root
 awkward
 pandas
 ```
 A virtual environment can be created for this using the following command
 ```
-conda env create -f requirement.yml
+conda env create -f requirement.yaml
 ```
 if available, do it with mamba, it's much faster
 ```
-mamba env create -f requirement.yml
+mamba env create -f requirement.yaml
 ```
 
 For now the analyser can be run normally using python
