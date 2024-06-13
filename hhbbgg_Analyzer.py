@@ -15,7 +15,7 @@ parser.add_option("-I", "--inDir", type="string", dest="inputfilesDir", help="Di
 (options, args) = parser.parse_args()
 
 if options.inputfilesDir == None:
-    raise ValueError(f"Please provide input root file directory")
+    raise ValueError("Please provide input root file directory")
 else:
     inputfilesDir = options.inputfilesDir
 
