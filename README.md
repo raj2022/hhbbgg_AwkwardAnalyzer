@@ -22,7 +22,10 @@ if available, do it with mamba, it's much faster
 ```
 mamba env create -f requirement.yaml
 ```
-
+To use the framework, the environment created by conda has to be activated every time. It can be done as follows:
+```
+conda activate hhbbgg-awk
+```
 For now the analyser can be run normally using python
 ```
 python hhbbgg_Analyzer.py
