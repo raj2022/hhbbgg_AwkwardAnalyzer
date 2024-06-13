@@ -1,11 +1,23 @@
 # %%
 import os
+import optparse
 import uproot
 import vector
 from ROOT import TFile, gDirectory
 import awkward as ak
 from config.utils import lVector, VarToHist
 from normalisation import  getXsec, getLumi
+
+#usage  python hhbbgg_Analyzer.py -I <Input Root File Directory>
+usage = "usage: %prog [options] arg1 arg2"
+parser = optparse.OptionParser(usage)
+parser.add_option("-I", "--inDir", type="string", dest="inputfilesDir", help="Directory containing input root files")
+(options, args) = parser.parse_args()
+
+if options.inputfilesDir == None:
+    raise ValueError(f"Please provide input root file directory")
+else:
+    inputfilesDir = options.inputfilesDir
 
 def runOneFile(inputfile, outputrootfile):
     isdata=False
@@ -87,21 +99,23 @@ def runOneFile(inputfile, outputrootfile):
         weight_ = "weight_"+ireg
         for ivar in variables_common[ireg]:
             hist_name_ = ireg+"-"+vardict[ivar]
-            outputrootfile[f"{outputrootfileDir}/{hist_name_}"] = VarToHist(thisregion_[ivar], thisregion_[weight_], hist_name_, binning[ireg][ivar])
+            outputrootfile[0][f"{outputrootfileDir}/{hist_name_}"] = VarToHist(thisregion_[ivar], thisregion_[weight_], hist_name_, binning[ireg][ivar])
+        tree_data_ = thisregion_[[key for key in thisregion_.fields if key not in regions]]
+        outputrootfile[1][f"{outputrootfileDir}/{ireg}"] = tree_data_
     print ("Done")
 
-inputfilesDir = '/Users/ptiwari/cmscern/eos/DoNotSync/hhtobbgg/HiggsDNA_root/v1/Run3_2022postEE_merged'
+# inputfilesDir = '/Users/ptiwari/cmscern/eos/DoNotSync/hhtobbgg/HiggsDNA_root/v1/Run3_2022postEE_merged'
 output_dir = "outputfiles"
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
 inputfiles = [f"{inputfilesDir}/{infile_}" for infile_ in os.listdir(inputfilesDir) if infile_.endswith('.root')]
-outputrootfile = uproot.recreate(f"{output_dir}/hhbbgg_Analyzer.root")
+outputrootfile = [uproot.recreate(f"{output_dir}/hhbbgg_analyzer-histograms.root"),uproot.recreate(f"{output_dir}/hhbbgg_analyzer-trees.root")]
 
 def main():
-    for infile_ in inputfiles:
-        runOneFile(infile_, outputrootfile)
-    # runOneFile(inputfiles[0], outputrootfile)
+     for infile_ in inputfiles:
+         runOneFile(infile_, outputrootfile)
+     # runOneFile(inputfiles[0], outputrootfile)
 if __name__ == "__main__":
     main()
 

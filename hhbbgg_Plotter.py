@@ -97,7 +97,7 @@ def stack1d_histograms(uproot_loaded_filename, data_samples, mc_samples, signal_
 
 def main():
     # Open the ROOT file
-    file_path = "outputfiles/hhbbgg_Analyzer.root"
+    file_path = "outputfiles/hhbbgg_analyzer-histograms.root"
     uproot_loaded_filename = uproot.open(file_path)
 
     # List of data histograms
