@@ -26,9 +26,9 @@ To use the framework, the environment created by conda has to be activated every
 ```
 conda activate hhbbgg-awk
 ```
-For now the analyser can be run normally using python
+For now the analyzer can be run normally using python
 ```
-python hhbbgg_Analyzer.py
+python hhbbgg_Analyzer.py -I <Input File Directory>
 ```
 provided that the input directory having one root file for each background is defined with the variable name `inputfilesDir` in `hhbbgg_Analyzer.py`.
 This saves a root file in `outputfiles` which contains sample names as directory and all the histograms are saved inside those directories.
