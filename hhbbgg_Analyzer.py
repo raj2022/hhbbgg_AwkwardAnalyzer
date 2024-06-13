@@ -8,16 +8,16 @@ import awkward as ak
 from config.utils import lVector, VarToHist
 from normalisation import  getXsec, getLumi
 
-#usage  python hhbbgg_Analyzer.py -I <Input Root File Directory>
+#usage  python hhbbgg_Analyzer.py -I <Input Root File Directory or single root file>
 usage = "usage: %prog [options] arg1 arg2"
 parser = optparse.OptionParser(usage)
-parser.add_option("-I", "--inDir", type="string", dest="inputfilesDir", help="Directory containing input root files")
+parser.add_option("-i", "--inFile", type="string", dest="inputfiles_", help="Either single input root file or in root file directory")
 (options, args) = parser.parse_args()
 
-if options.inputfilesDir == None:
-    raise ValueError("Please provide input root file directory")
+if options.inputfiles_ == None:
+    raise ValueError("Please provide either input a root file directory or single input root file")
 else:
-    inputfilesDir = options.inputfilesDir
+    inputfiles_ = options.inputfiles_
 
 def runOneFile(inputfile, outputrootfile):
     isdata=False
@@ -104,18 +104,19 @@ def runOneFile(inputfile, outputrootfile):
         outputrootfile[1][f"{outputrootfileDir}/{ireg}"] = tree_data_
     print ("Done")
 
-# inputfilesDir = '/Users/ptiwari/cmscern/eos/DoNotSync/hhtobbgg/HiggsDNA_root/v1/Run3_2022postEE_merged'
 output_dir = "outputfiles"
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
-inputfiles = [f"{inputfilesDir}/{infile_}" for infile_ in os.listdir(inputfilesDir) if infile_.endswith('.root')]
-outputrootfile = [uproot.recreate(f"{output_dir}/hhbbgg_analyzer-histograms.root"),uproot.recreate(f"{output_dir}/hhbbgg_analyzer-trees.root")]
+if os.path.isfile(inputfiles_):
+    inputfiles = [inputfiles_]
+else:
+    inputfiles = [f"{inputfiles_}/{infile_}" for infile_ in os.listdir(inputfiles_) if infile_.endswith('.root')]
+outputrootfile = [uproot.recreate(f"{output_dir}/hhblebgg_analyzer-histograms.root"),uproot.recreate(f"{output_dir}/hhbbgg_analyzer-trees.root")]
 
 def main():
      for infile_ in inputfiles:
          runOneFile(infile_, outputrootfile)
-     # runOneFile(inputfiles[0], outputrootfile)
 if __name__ == "__main__":
     main()
 

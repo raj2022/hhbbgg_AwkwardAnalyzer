@@ -28,7 +28,7 @@ conda activate hhbbgg-awk
 ```
 For now the analyzer can be run normally using python
 ```
-python hhbbgg_Analyzer.py -I <Input File Directory>
+python hhbbgg_Analyzer.py -i <Input root file directory OR single root file>
 ```
 provided that the input directory having one root file for each background is defined with the variable name `inputfilesDir` in `hhbbgg_Analyzer.py`.
 This saves a root file in `outputfiles` which contains sample names as directory and all the histograms are saved inside those directories.
