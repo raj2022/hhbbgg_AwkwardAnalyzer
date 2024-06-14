@@ -93,6 +93,7 @@ def stack1d_histograms(uproot_loaded_filename, data_samples, mc_samples, signal_
         plot_var_name = hist_name.split("-")[-1]
         plt.savefig(f"{output_directory}/{plot_reg_name}/{plot_var_name}.pdf", bbox_inches='tight')
         plt.savefig(f"{output_directory}/{plot_reg_name}/{plot_var_name}.png", bbox_inches='tight')
+        plt.close()
 
 
 def main():
@@ -118,15 +119,18 @@ def main():
     ]
     #List of variable names
     variable_names = [
-        "dibjet_mass","diphoton_mass","bbgg_mass","dibjet_pt","diphoton_pt","bbgg_pt","lead_pho_pt","sublead_pho_pt","dibjet_pt"
+        "dibjet_mass","diphoton_mass","bbgg_mass","dibjet_pt","diphoton_pt","bbgg_pt","bbgg_eta", "bbgg_phi", "lead_pho_pt","sublead_pho_pt","dibjet_pt"
     ]
     histogram_names = [f"{region}-{variable_name}" for region in regions for variable_name in variable_names]
 
     # Dictionary for x-axis titles
     xaxis_titles = {
-        "dibjet_mass":r"$m_{b\bar{b}}$ [GeV]","diphoton_mass":r"$m_{\gamma\gamma}$ [GeV]","bbgg_mass":r"$m_{b\bar{b}\gamma\gamma}$ [GeV]",
-        "lead_pho_pt":r"lead $\gamma\:p_T$ [GeV]","sublead_pho_pt":r"sublead $\gamma\:p_T$ [GeV]","dibjet_pt":r"$b\bar{b} p_T$ [GeV]",
-        "dibjet_pt":r"$b\bar{b}\:p_T$ [GeV]","diphoton_pt":r"$\gamma\gamma\:p_T$ [GeV]","bbgg_pt":r"$b\bar{b}\gamma\gamma\:p_T$ [GeV]",
+        "dibjet_mass":r"$m_{b\bar{b}}$ [GeV]","diphoton_mass":r"$m_{\gamma\gamma}$ [GeV]",
+        "bbgg_mass":r"$m_{b\bar{b}\gamma\gamma}$ [GeV]","lead_pho_pt":r"lead $p_T^{\gamma}$ [GeV]",
+        "sublead_pho_pt":r"sublead $p_T^{\gamma}$ [GeV]","dibjet_pt":r"$p_T^{b\bar{b}}$ [GeV]",
+        "dibjet_pt":r"$p_{T}^{b\bar{b}}$ [GeV]","diphoton_pt":r"$p_{T}^{\gamma\gamma}$ [GeV]",
+        "bbgg_pt":r"$p_T^{b\bar{b}\gamma\gamma}$ [GeV]","bbgg_eta":r"$\eta^{b\bar{b}\gamma\gamma}$ [GeV]",
+        "bbgg_phi":r"$\phi^{b\bar{b}\gamma\gamma}$ [GeV]"
     }
 
     # create the tdirectory to save plots

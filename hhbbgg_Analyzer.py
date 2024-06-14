@@ -66,7 +66,9 @@ def runOneFile(inputfile, outputrootfile):
         cms_events["diphoton_mass"] = diphoton_.mass
         cms_events["diphoton_pt"] = diphoton_.pt
         cms_events["bbgg_mass"] = (dibjet_+diphoton_).mass
-        cms_events["bbgg_pt"] = (dibjet_+diphoton_).pt
+        cms_events["bbgg_pt"]  = (dibjet_+diphoton_).pt
+        cms_events["bbgg_eta"] = (dibjet_+diphoton_).eta
+        cms_events["bbgg_phi"] = (dibjet_+diphoton_).phi
 
         from regions import get_mask_preselection, get_mask_selection
         cms_events["mask_preselection"]    = get_mask_preselection(cms_events)
@@ -80,6 +82,8 @@ def runOneFile(inputfile, outputrootfile):
         out_events["dibjet_pt"] = cms_events["dibjet_pt"]
         out_events["diphoton_pt"] = cms_events["diphoton_pt"]
         out_events["bbgg_pt"] = cms_events["bbgg_pt"]
+        out_events["bbgg_eta"] = cms_events["bbgg_eta"]
+        out_events["bbgg_phi"] = cms_events["bbgg_phi"]
         out_events["weight_central"] = cms_events["weight_central"]
         out_events["weight_preselection"] = cms_events["weight"]*xsec_*lumi_/out_events.weight_central
         out_events["weight_selection"]  = cms_events["weight"]*xsec_*lumi_/out_events.weight_central
@@ -112,7 +116,7 @@ if os.path.isfile(inputfiles_):
     inputfiles = [inputfiles_]
 else:
     inputfiles = [f"{inputfiles_}/{infile_}" for infile_ in os.listdir(inputfiles_) if infile_.endswith('.root')]
-outputrootfile = [uproot.recreate(f"{output_dir}/hhblebgg_analyzer-histograms.root"),uproot.recreate(f"{output_dir}/hhbbgg_analyzer-trees.root")]
+outputrootfile = [uproot.recreate(f"{output_dir}/hhbbgg_analyzer-histograms.root"),uproot.recreate(f"{output_dir}/hhbbgg_analyzer-trees.root")]
 
 def main():
      for infile_ in inputfiles:
