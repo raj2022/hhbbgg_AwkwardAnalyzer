@@ -11,12 +11,16 @@ vardict={
     "bbgg_eta":"bbgg_eta",
     "bbgg_phi":"bbgg_phi",
     "lead_pho_pt":"lead_pho_pt",
-    "sublead_pho_pt":"sublead_pho_pt"
+    "sublead_pho_pt":"sublead_pho_pt",
+    "lead_pho_eta":"lead_pho_eta",
+    "lead_pho_phi":"lead_pho_phi",
+    "sublead_pho_eta":"sublead_pho_eta",
+    "sublead_pho_phi":"sublead_pho_phi",
 }
 
 variables_common = {
     "preselection": [
-        "dibjet_mass","diphoton_mass","bbgg_mass","dibjet_pt","diphoton_pt","bbgg_pt","lead_pho_pt","sublead_pho_pt","bbgg_eta","bbgg_phi"
+        "dibjet_mass","diphoton_mass","bbgg_mass","dibjet_pt","diphoton_pt","bbgg_pt","lead_pho_pt","sublead_pho_pt","bbgg_eta","bbgg_phi","lead_pho_eta", "lead_pho_phi","sublead_pho_eta", "sublead_pho_phi"
     ]
 }
 

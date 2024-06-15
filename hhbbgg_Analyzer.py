@@ -75,7 +75,13 @@ def runOneFile(inputfile, outputrootfile):
         cms_events["mask_selection"] = get_mask_selection(cms_events)
 
         out_events["lead_pho_pt"] = cms_events["lead_pho_pt"]
+        # Adding new variable
+        out_events["lead_pho_eta"] = cms_events["lead_pho_eta"]
+        out_events["lead_pho_phi"] = cms_events["lead_pho_phi"]
         out_events["sublead_pho_pt"] = cms_events["sublead_pho_pt"]
+        # Adding new variable
+        out_events["sublead_pho_eta"] = cms_events["sublead_pho_eta"]
+        out_events["sublead_pho_phi"] = cms_events["sublead_pho_phi"]
         out_events["dibjet_mass"] = cms_events["dibjet_mass"]
         out_events["diphoton_mass"] = cms_events["diphoton_mass"]
         out_events["bbgg_mass"] = cms_events["bbgg_mass"]

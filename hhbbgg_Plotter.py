@@ -130,7 +130,9 @@ def main():
         "sublead_pho_pt":r"sublead $p_T^{\gamma}$ [GeV]","dibjet_pt":r"$p_T^{b\bar{b}}$ [GeV]",
         "dibjet_pt":r"$p_{T}^{b\bar{b}}$ [GeV]","diphoton_pt":r"$p_{T}^{\gamma\gamma}$ [GeV]",
         "bbgg_pt":r"$p_T^{b\bar{b}\gamma\gamma}$ [GeV]","bbgg_eta":r"$\eta^{b\bar{b}\gamma\gamma}$ [GeV]",
-        "bbgg_phi":r"$\phi^{b\bar{b}\gamma\gamma}$ [GeV]"
+        "bbgg_phi":r"$\phi^{b\bar{b}\gamma\gamma}$ [GeV]", "lead_pho_eta":r"lead $\eta^{\gamma}$ [GeV]", 
+        "lead_pho_phi":r"lead $\phi^{\gamma}$ [GeV]", "sublead_pho_eta":r"sublead $\eta^{\gamma}$ [GeV]", 
+        "sublead_pho_phi":r"sublead $\phi^{\gamma}$ [GeV]"
     }
 
     # create the tdirectory to save plots
