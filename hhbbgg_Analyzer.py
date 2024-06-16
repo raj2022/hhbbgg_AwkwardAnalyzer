@@ -69,6 +69,11 @@ def runOneFile(inputfile, outputrootfile):
         cms_events["bbgg_pt"]  = (dibjet_+diphoton_).pt
         cms_events["bbgg_eta"] = (dibjet_+diphoton_).eta
         cms_events["bbgg_phi"] = (dibjet_+diphoton_).phi
+        # Adding new variables
+        cms_events["dibjet_eta"] = dibjet_.eta
+        cms_events["dibjet_phi"] = dibjet_.phi
+        cms_events["diphoton_eta"] = diphoton_.eta
+        cms_events["diphoton_phi"] = diphoton_.phi
 
         from regions import get_mask_preselection, get_mask_selection
         cms_events["mask_preselection"]    = get_mask_preselection(cms_events)
@@ -82,6 +87,7 @@ def runOneFile(inputfile, outputrootfile):
         # Adding new variable
         out_events["sublead_pho_eta"] = cms_events["sublead_pho_eta"]
         out_events["sublead_pho_phi"] = cms_events["sublead_pho_phi"]
+
         out_events["dibjet_mass"] = cms_events["dibjet_mass"]
         out_events["diphoton_mass"] = cms_events["diphoton_mass"]
         out_events["bbgg_mass"] = cms_events["bbgg_mass"]
@@ -93,7 +99,13 @@ def runOneFile(inputfile, outputrootfile):
         out_events["weight_central"] = cms_events["weight_central"]
         out_events["weight_preselection"] = cms_events["weight"]*xsec_*lumi_/out_events.weight_central
         out_events["weight_selection"]  = cms_events["weight"]*xsec_*lumi_/out_events.weight_central
+        # Adding new variable
+        out_events["dibjet_eta"] =   cms_events["dibjet_eta"] 
+        out_events["dibjet_phi"] =   cms_events["dibjet_phi"] 
+        out_events["diphoton_eta"] =   cms_events["diphoton_eta"] 
+        out_events["diphoton_phi"] =  cms_events["diphoton_phi"] 
 
+           
         out_events["preselection"] = cms_events["mask_preselection"]
         out_events["selection"] = cms_events["mask_selection"]
 

@@ -119,7 +119,7 @@ def main():
     ]
     #List of variable names
     variable_names = [
-        "dibjet_mass","diphoton_mass","bbgg_mass","dibjet_pt","diphoton_pt","bbgg_pt","bbgg_eta", "bbgg_phi", "lead_pho_pt","sublead_pho_pt","dibjet_pt"
+        "dibjet_mass","diphoton_mass","bbgg_mass","dibjet_pt","diphoton_pt","bbgg_pt","bbgg_eta", "bbgg_phi", "lead_pho_pt","sublead_pho_pt","dibjet_pt","lead_pho_eta", "lead_pho_phi",        "sublead_pho_eta", "sublead_pho_phi", "dibjet_eta", "dibjet_phi","diphoton_eta", "diphoton_phi"
     ]
     histogram_names = [f"{region}-{variable_name}" for region in regions for variable_name in variable_names]
 
@@ -132,7 +132,9 @@ def main():
         "bbgg_pt":r"$p_T^{b\bar{b}\gamma\gamma}$ [GeV]","bbgg_eta":r"$\eta^{b\bar{b}\gamma\gamma}$ [GeV]",
         "bbgg_phi":r"$\phi^{b\bar{b}\gamma\gamma}$ [GeV]", "lead_pho_eta":r"lead $\eta^{\gamma}$ [GeV]", 
         "lead_pho_phi":r"lead $\phi^{\gamma}$ [GeV]", "sublead_pho_eta":r"sublead $\eta^{\gamma}$ [GeV]", 
-        "sublead_pho_phi":r"sublead $\phi^{\gamma}$ [GeV]"
+        "sublead_pho_phi":r"sublead $\phi^{\gamma}$ [GeV]", "dibjet_eta":r"$\eta^{b\bar{b}}$ [GeV]", 
+        "dibjet_phi":r"$\phi^{b\bar{b}}$ [GeV]", "diphoton_eta":r"$\eta^{\gamma\gamma}$ [GeV]", 
+        "diphoton_phi":r"$\phi^{\gamma\gamma}$ [GeV]"
     }
 
     # create the tdirectory to save plots

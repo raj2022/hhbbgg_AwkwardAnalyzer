@@ -15,6 +15,10 @@ binning["preselection"]={
     "sublead_pho_pt":[25,25,200],
     "sublead_pho_eta":[10,-3,3],
     "sublead_pho_phi":[10,-3.14,3.14],
+    "dibjet_eta":[10,-3,3],
+    "dibjet_phi":[10,-3.14,3.14],
+    "diphoton_eta":[10,-3,3],
+    "diphoton_phi":[10,-3.14,3.14],
 }
 
 binning["selection"] =copy.deepcopy(binning["preselection"])
