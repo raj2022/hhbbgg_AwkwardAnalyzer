@@ -3,21 +3,21 @@ import os
 import optparse
 import uproot
 import vector
-from ROOT import TFile, gDirectory
 import awkward as ak
 from config.utils import lVector, VarToHist
 from normalisation import  getXsec, getLumi
 
-#usage  python hhbbgg_Analyzer.py -I <Input Root File Directory or single root file>
 usage = "usage: %prog [options] arg1 arg2"
 parser = optparse.OptionParser(usage)
-parser.add_option("-i", "--inFile", type="string", dest="inputfiles_", help="Either single input root file or in root file directory")
+parser.add_option(
+    "-i", "--inFile", type="string", dest="inputfiles_", 
+    help="Either single input ROOT file or a directory of ROOT files"
+)
 (options, args) = parser.parse_args()
 
-if options.inputfiles_ == None:
-    raise ValueError("Please provide either input a root file directory or single input root file")
-else:
-    inputfiles_ = options.inputfiles_
+if not options.inputfiles_:
+    raise ValueError("Please provide either an input ROOT file or a directory of ROOT files using the -i or --inFile option")
+inputfiles_ = options.inputfiles_
 
 def runOneFile(inputfile, outputrootfile):
     isdata=False
@@ -58,7 +58,7 @@ def runOneFile(inputfile, outputrootfile):
                                 )
         out_events = ak.zip({"run":tree_["run"],"lumi":tree_["lumi"],"event": tree_["event"]},depth_limit=1)
 
-        dibjet_ = lVector(cms_events["lead_bjet_pt"], cms_events["lead_bjet_eta"], cms_events["lead_bjet_phi"],cms_events["sublead_bjet_pt"],cms_events["sublead_bjet_eta"],cms_events["sublead_bjet_phi"])
+        dibjet_ = lVector(cms_events["lead_bjet_pt"], cms_events["lead_bjet_eta"], cms_events["lead_bjet_phi"],cms_events["sublead_bjet_pt"],cms_events["sublead_bjet_eta"],cms_events["sublead_bjet_phi"],cms_events["lead_bjet_mass"], cms_events["sublead_bjet_mass"])
         diphoton_ = lVector(cms_events["lead_pho_pt"], cms_events["lead_pho_eta"], cms_events["lead_pho_phi"],cms_events["sublead_pho_pt"],cms_events["sublead_pho_eta"],cms_events["sublead_pho_phi"])
 
         cms_events["dibjet_mass"] = dibjet_.mass
@@ -113,17 +113,17 @@ def runOneFile(inputfile, outputrootfile):
 
     from variables import vardict, regions, variables_common
     from binning import binning
-    print ("Making histograms")
+    print ("Making histograms and trees")
     outputrootfileDir =  inputfile.split("/")[-1].replace(".root","")
     for ireg in regions:
-        thisregion  = fulltree_[fulltree_[ireg]==True]
+        thisregion = fulltree_[fulltree_[ireg] == True]
         thisregion_ = thisregion[~(ak.is_none(thisregion))]
-        weight_ = "weight_"+ireg
+        weight_ = "weight_" + ireg
         for ivar in variables_common[ireg]:
-            hist_name_ = ireg+"-"+vardict[ivar]
-            outputrootfile[0][f"{outputrootfileDir}/{hist_name_}"] = VarToHist(thisregion_[ivar], thisregion_[weight_], hist_name_, binning[ireg][ivar])
+            hist_name_ = ireg + "-" + vardict[ivar]
+            outputrootfile['hist'][f"{outputrootfileDir}/{hist_name_}"] = VarToHist(thisregion_[ivar], thisregion_[weight_], hist_name_, binning[ireg][ivar])
         tree_data_ = thisregion_[[key for key in thisregion_.fields if key not in regions]]
-        outputrootfile[1][f"{outputrootfileDir}/{ireg}"] = tree_data_
+        outputrootfile['tree'][f"{outputrootfileDir}/{ireg}"] = tree_data_
     print ("Done")
 
 output_dir = "outputfiles"
@@ -134,7 +134,8 @@ if os.path.isfile(inputfiles_):
     inputfiles = [inputfiles_]
 else:
     inputfiles = [f"{inputfiles_}/{infile_}" for infile_ in os.listdir(inputfiles_) if infile_.endswith('.root')]
-outputrootfile = [uproot.recreate(f"{output_dir}/hhbbgg_analyzer-histograms.root"),uproot.recreate(f"{output_dir}/hhbbgg_analyzer-trees.root")]
+
+outputrootfile = {'hist':uproot.recreate(f"{output_dir}/hhbbgg_analyzer-histograms.root"),'tree':uproot.recreate(f"{output_dir}/hhbbgg_analyzer-trees.root")}
 
 def main():
      for infile_ in inputfiles:

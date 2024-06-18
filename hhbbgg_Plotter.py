@@ -21,6 +21,18 @@ def get_histogram(file_name, hist_name):
 def sum_histograms(histograms):
     return sum(histograms)
 
+# Function to blind data
+def blind_data(hist, blind, start_blind=122, stop_blind=128):
+    if blind:
+        blinded_hist = hist.copy()
+        for bin in range(blinded_hist.axes[0].size):
+            bin_center = blinded_hist.axes[0].centers[bin]
+            if bin_center >= start_blind and bin_center <= stop_blind:
+                blinded_hist[bin] = 0.0
+        return blinded_hist
+    else:
+        return hist
+
 # Function to return histogram ratio
 def get_ratio(hist_a, hist_b):
     # Extract the bin edges and contents
@@ -49,14 +61,19 @@ def get_ratio(hist_a, hist_b):
 
     return ratio_hist, ratio_errors
 
-def stack1d_histograms(uproot_loaded_filename, data_samples, mc_samples, signal_samples, histogram_names, legend_dict, xtitle_dict, output_directory):
+def stack1d_histograms(uproot_loaded_filename, data_samples, mc_samples, signal_samples, histogram_names, legend_dict, xtitle_dict, output_directory, blind=True):
     for hist_name in histogram_names:
         fig, (ax, ax_ratio) = plt.subplots(2, 1, gridspec_kw={'height_ratios': [3, 1]}, sharex=True)
         fig.subplots_adjust(hspace=0.05)  # Adjust space between main plot and ratio plot
 
         # Plot data histogram
         data_histogram = sum_histograms([get_histogram(uproot_loaded_filename,f"{data_sample}/{hist_name}") for data_sample in data_samples])
-        data_histogram.plot(ax=ax, stack=False, histtype='errorbar', yerr=True, xerr=True, color='black', label=f"Data", flow="sum")
+        if 'dibjet_mass' in hist_name or 'diphoton_mass' in hist_name:
+            blinded_data_histogram = blind_data(data_histogram, blind, start_blind=110, stop_blind=130)
+            yerrors = np.sqrt(blinded_data_histogram.to_numpy()[0])
+            blinded_data_histogram.plot(ax=ax, stack=False, histtype='errorbar',yerr=yerrors, xerr=True, color='black', label=f"Data", flow="sum")
+        else:
+            data_histogram.plot(ax=ax, stack=False, histtype='errorbar', yerr=True, xerr=True, color='black', label=f"Data", flow="sum")
 
         # Plot MC histograms as stack
         mc_stack = Stack(*[get_histogram(uproot_loaded_filename,f"{mc_sample}/{hist_name}") for mc_sample in mc_samples])
@@ -69,7 +86,11 @@ def stack1d_histograms(uproot_loaded_filename, data_samples, mc_samples, signal_
 
         # Plot ratio plot
         ratio, error = get_ratio(data_histogram,sum_histograms(mc_stack))
-        ratio.plot(ax=ax_ratio, histtype='errorbar', yerr=error, xerr=True, color='black', flow="sum")
+        if 'dibjet_mass' in hist_name or 'diphoton_mass' in hist_name:
+            blinded_ratio = blind_data(ratio, blind, start_blind=110, stop_blind=130)
+            blinded_ratio.plot(ax=ax_ratio, histtype='errorbar', yerr=error, xerr=True, color='black', flow="sum")
+        else:
+            ratio.plot(ax=ax_ratio, histtype='errorbar', yerr=error, xerr=True, color='black', flow="sum")
         ax_ratio.axhline(1, linestyle='--', color='gray')
         ax_ratio.set_ylim(0, 3)
         ax_ratio.set_ylabel('Data / MC')
@@ -81,7 +102,7 @@ def stack1d_histograms(uproot_loaded_filename, data_samples, mc_samples, signal_
         ax.set_ylim(0.1,1E8)
         ax.set_xlabel("")
         ax.set_ylabel("Events")
-        hep.cms.label("",ax=ax, lumi='{0:.2f}'.format(getLumi()),loc=0,llabel="Work in progress")
+        hep.cms.label("",ax=ax, lumi='{0:.2f}'.format(getLumi()),loc=0,llabel="Work in progress",com=13.6)
         ax.legend(ncol=2,loc='upper right', fontsize=18)
         ax_ratio.set_xlabel(xtitle_dict[hist_name.split("-")[-1]])
         ax_ratio.set_ylabel("Data/MC")
@@ -142,7 +163,7 @@ def main():
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
-    stack1d_histograms(uproot_loaded_filename, data_samples, mc_samples, signal_samples, histogram_names, legend_dict, xaxis_titles, output_directory)
+    stack1d_histograms(uproot_loaded_filename, data_samples, mc_samples, signal_samples, histogram_names, legend_dict, xaxis_titles, output_directory, blind=True)
 
 if __name__ == "__main__":
     main()
