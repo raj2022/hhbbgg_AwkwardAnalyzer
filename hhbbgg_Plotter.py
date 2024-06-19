@@ -8,14 +8,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 import mplhep as hep
 from normalisation import getLumi
+from cycler import cycler
 
 # Load CMS style including color-scheme
 hep.style.use("CMS")
+plt.rcParams["axes.prop_cycle"] = cycler(color=["#3f90da","#ffa90e","#bd1f01","#94a4a2","#832db6","#a96b59","#e76300","#b9ac70","#717581","#92dadd"])
 
 # Function to read histograms
-def get_histogram(file_name, hist_name):
-    return Hist(file_name[hist_name])
-
+def get_histogram(file_name, hist_name, hist_label=None):
+    histogram = Hist(file_name[hist_name])
+    if hist_label != None: histogram.name = hist_label
+    return histogram
 
 # Function to read and sum histograms
 def sum_histograms(histograms):
@@ -76,8 +79,8 @@ def stack1d_histograms(uproot_loaded_filename, data_samples, mc_samples, signal_
             data_histogram.plot(ax=ax, stack=False, histtype='errorbar', yerr=True, xerr=True, color='black', label=f"Data", flow="sum")
 
         # Plot MC histograms as stack
-        mc_stack = Stack(*[get_histogram(uproot_loaded_filename,f"{mc_sample}/{hist_name}") for mc_sample in mc_samples])
-        mc_stack[::-1].plot(ax=ax, stack=True, histtype='fill', label=legend_dict.values(),flow="sum")
+        mc_stack = Stack(*[get_histogram(uproot_loaded_filename,f"{mc_sample}/{hist_name}",legend_dict[mc_sample]) for mc_sample in mc_samples])
+        mc_stack.plot(ax=ax, stack=True, histtype='fill',flow="sum", sort='yield')
 
         # Plot signal histograms
         for signal_sample in signal_samples:
@@ -116,7 +119,6 @@ def stack1d_histograms(uproot_loaded_filename, data_samples, mc_samples, signal_
         plt.savefig(f"{output_directory}/{plot_reg_name}/{plot_var_name}.png", bbox_inches='tight')
         plt.close()
 
-
 def main():
     # Open the ROOT file
     file_path = "outputfiles/hhbbgg_analyzer-histograms.root"
@@ -134,7 +136,7 @@ def main():
     # Dictionary for legends
     legend_dict = {"GGJets":r"$\gamma\gamma$+jets", "GJetPt20To40":r"$\gamma$+jets ($20< p_T < 40$)", "GJetPt40":r"$\gamma$+jets ($p_T > 40$)", "GluGluHToGG":r"$gg\rightarrow\,H\rightarrow\gamma\gamma$", "VBFHToGG":r"$VBF\:H\rightarrow\gamma\gamma$", "VHToGG":r"$V\:H\rightarrow\gamma\gamma$", "ttHToGG":r"$t\bar{t}H\rightarrow\gamma\gamma$", "GluGluToHH":r"$gg\rightarrow\,HH$"}
 
-    # List of regions naames
+    # List of regions names
     regions = [
         "preselection", "selection"
     ]
@@ -168,4 +170,4 @@ def main():
 if __name__ == "__main__":
     main()
 
-    # %%
+# %%
