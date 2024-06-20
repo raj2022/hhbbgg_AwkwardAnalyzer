@@ -43,7 +43,9 @@ def runOneFile(inputfile, outputrootfile):
                                                 "sublead_bjet_pt", "sublead_bjet_eta", "sublead_bjet_phi", "sublead_bjet_mass",
                                                 "lead_pt", "lead_eta", "lead_phi", "lead_mvaID_WP90",
                                                 "sublead_pt", "sublead_eta", "sublead_phi", "sublead_mvaID_WP90",
-                                                "weight","weight_central",],
+                                                "weight","weight_central",
+                                                "lead_bjet_btagPNetB",
+                                                "sublead_bjet_btagPNetB",],
                                                 step_size=10000
                                         ):
         print ("Tree length for iteratiion ", len(tree_), (niterations))
@@ -53,7 +55,7 @@ def runOneFile(inputfile, outputrootfile):
                                     "sublead_bjet_pt":tree_["sublead_bjet_pt"], "sublead_bjet_eta":tree_["sublead_bjet_eta"], "sublead_bjet_phi":tree_["sublead_bjet_phi"],"sublead_bjet_mass":tree_["sublead_bjet_mass"],
                                     "lead_pho_pt":tree_["lead_pt"], "lead_pho_eta":tree_["lead_eta"], "lead_pho_phi":tree_["lead_phi"], "lead_pho_mvaID_WP90":tree_["lead_mvaID_WP90"],
                                     "sublead_pho_pt":tree_["sublead_pt"], "sublead_pho_eta":tree_["sublead_eta"], "sublead_pho_phi":tree_["sublead_phi"],"sublead_pho_mvaID_WP90":tree_["sublead_mvaID_WP90"],
-                                    "weight_central":tree_["weight_central"],"weight":tree_["weight"]},
+                                    "weight_central":tree_["weight_central"],"weight":tree_["weight"], "lead_bjet_PNetB":tree_["lead_bjet_btagPNetB"], "sublead_bjet_PNetB":tree_["sublead_bjet_btagPNetB"]},
                                     depth_limit=1
                                 )
         out_events = ak.zip({"run":tree_["run"],"lumi":tree_["lumi"],"event": tree_["event"]},depth_limit=1)
@@ -79,6 +81,8 @@ def runOneFile(inputfile, outputrootfile):
         cms_events["mask_preselection"]    = get_mask_preselection(cms_events)
         cms_events["mask_selection"] = get_mask_selection(cms_events)
 
+
+
         out_events["lead_pho_pt"] = cms_events["lead_pho_pt"]
         # Adding new variable
         out_events["lead_pho_eta"] = cms_events["lead_pho_eta"]
@@ -87,7 +91,14 @@ def runOneFile(inputfile, outputrootfile):
         # Adding new variable
         out_events["sublead_pho_eta"] = cms_events["sublead_pho_eta"]
         out_events["sublead_pho_phi"] = cms_events["sublead_pho_phi"]
-
+        # Adding bjet variables
+        out_events["lead_bjet_pt"] = cms_events["lead_bjet_pt"]
+        out_events["lead_bjet_eta"] = cms_events["lead_bjet_eta"]
+        out_events["lead_bjet_phi"] = cms_events["lead_bjet_phi"]
+        out_events["sublead_bjet_pt"] = cms_events["sublead_bjet_pt"]
+        out_events["sublead_bjet_eta"] = cms_events["sublead_bjet_eta"]
+        out_events["sublead_bjet_phi"] = cms_events["sublead_bjet_phi"]
+        # --------------
         out_events["dibjet_mass"] = cms_events["dibjet_mass"]
         out_events["diphoton_mass"] = cms_events["diphoton_mass"]
         out_events["bbgg_mass"] = cms_events["bbgg_mass"]
@@ -108,6 +119,7 @@ def runOneFile(inputfile, outputrootfile):
            
         out_events["preselection"] = cms_events["mask_preselection"]
         out_events["selection"] = cms_events["mask_selection"]
+
 
         fulltree_=ak.concatenate([out_events,fulltree_],axis=0)
 
