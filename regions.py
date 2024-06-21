@@ -23,24 +23,20 @@ import awkward as ak
 
 
 def get_mask_preselection(cms_events):
-    mask_preselection = ( (cms_events.dibjet_mass > 0) &
-                    (cms_events.diphoton_mass > 0)
-    )
+    mask_preselection = (cms_events.dibjet_mass > 0) & (cms_events.diphoton_mass > 0)
     return mask_preselection
 
-# Check https://btv-wiki.docs.cern.ch/ScaleFactors/Run3Summer22/ for the tagger point score 
+
+# Check https://btv-wiki.docs.cern.ch/ScaleFactors/Run3Summer22/ for the tagger point score
+
 
 def get_mask_selection(cms_events):
     mask_selection = (
-        (cms_events.lead_pho_mvaID_WP90==1) &
-        (cms_events.sublead_pho_mvaID_WP90==1) &
-        (cms_events.lead_bjet_PNetB > 0.0499) &
-        (cms_events.sublead_bjet_PNetB > 0.0499) &
-        (cms_events.lead_isScEtaEB == True) &
-        (cms_events.sublead_isScEtaEB == True)
+        (cms_events.lead_pho_mvaID_WP90 == 1)
+        & (cms_events.sublead_pho_mvaid_wp90 == 1)
+        & (cms_events.lead_bjet_PNetB > 0.0499)
+        & (cms_events.sublead_bjet_PNetB > 0.0499)
+        & (cms_events.lead_isScEtaEB == 1)
+        & (cms_events.sublead_isScEtaEB == 1)
     )
     return mask_selection
-
-
-
-
