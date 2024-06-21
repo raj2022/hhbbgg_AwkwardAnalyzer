@@ -9,7 +9,8 @@ from copy import deepcopy
 
 def FileToList(filename):
     return ([i.rstrip() for i in open(filename)])
-
+##-------------------------
+# try with Task.Take care of variable binning!!
 def SetHist(HISTNAME, binning):
     if len(binning) == 3:
         h = TH1F(HISTNAME, HISTNAME, binning[0], binning[1], binning[2])
@@ -28,6 +29,7 @@ def VarToHist(df_var, df_weight, HISTNAME, binning):
     for index, row in df.iterrows():
         h_var.Fill(row['var'], row['weight'])
     return h_var
+## ------------------------------------
 
 def getpt_eta_phi(mupx, mupy,mupz):
     mupt = np.sqrt(mupx**2 + mupy**2)

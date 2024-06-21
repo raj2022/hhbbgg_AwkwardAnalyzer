@@ -26,8 +26,8 @@ binning["preselection"]={
     "sublead_bjet_pt":[25,25,200],
     "sublead_bjet_eta":[10,-3,3],
     "sublead_bjet_phi":[10,-3.14,3.14],
-    "lead_bjet_mass":[10, 0, 150],
-    "sublead_bjet_mass":[10,0,80],
+    "lead_bjet_PNetB": [10, 0, 1],
+    "sublead_bjet_PNetB":[10,0, 1],
 }
 
 binning["selection"] =copy.deepcopy(binning["preselection"])

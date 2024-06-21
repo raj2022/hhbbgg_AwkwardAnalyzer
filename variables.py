@@ -27,11 +27,14 @@ vardict={
     "lead_bjet_phi":"lead_bjet_phi",
     "sublead_bjet_eta":"sublead_bjet_eta",
     "sublead_bjet_phi":"sublead_bjet_phi",
+    "sublead_bjet_PNetB":"sublead_bjet_PNetB",
+    "lead_bjet_PNetB":"lead_bjet_PNetB",
+
 }
 
 variables_common = {
     "preselection": [
-        "dibjet_mass","diphoton_mass","bbgg_mass","dibjet_pt","diphoton_pt","bbgg_pt","lead_pho_pt","sublead_pho_pt","bbgg_eta","bbgg_phi","lead_pho_eta", "lead_pho_phi","sublead_pho_eta", "sublead_pho_phi", "diphoton_eta", "diphoton_phi", "dibjet_eta", "dibjet_phi", "lead_bjet_pt", "sublead_bjet_pt", "lead_bjet_eta", "lead_bjet_phi", "sublead_bjet_eta", "sublead_bjet_phi"       
+        "dibjet_mass","diphoton_mass","bbgg_mass","dibjet_pt","diphoton_pt","bbgg_pt","lead_pho_pt","sublead_pho_pt","bbgg_eta","bbgg_phi","lead_pho_eta", "lead_pho_phi","sublead_pho_eta", "sublead_pho_phi", "diphoton_eta", "diphoton_phi", "dibjet_eta", "dibjet_phi", "lead_bjet_pt", "sublead_bjet_pt", "lead_bjet_eta", "lead_bjet_phi", "sublead_bjet_eta", "sublead_bjet_phi", "sublead_bjet_PNetB", "lead_bjet_PNetB"       
         ]
     }
 

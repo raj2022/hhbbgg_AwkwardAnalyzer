@@ -142,7 +142,7 @@ def main():
     ]
     #List of variable names
     variable_names = [
-        "dibjet_mass","diphoton_mass","bbgg_mass","dibjet_pt","diphoton_pt","bbgg_pt","bbgg_eta", "bbgg_phi", "lead_pho_pt","sublead_pho_pt","dibjet_pt","lead_pho_eta", "lead_pho_phi",        "sublead_pho_eta", "sublead_pho_phi", "dibjet_eta", "dibjet_phi","diphoton_eta", "diphoton_phi", "lead_bjet_pt","sublead_bjet_pt", "lead_bjet_eta","sublead_bjet_eta","lead_bjet_phi","sublead_bjet_phi"
+        "dibjet_mass","diphoton_mass","bbgg_mass","dibjet_pt","diphoton_pt","bbgg_pt","bbgg_eta", "bbgg_phi", "lead_pho_pt","sublead_pho_pt","dibjet_pt","lead_pho_eta", "lead_pho_phi",        "sublead_pho_eta", "sublead_pho_phi", "dibjet_eta", "dibjet_phi","diphoton_eta", "diphoton_phi", "lead_bjet_pt","sublead_bjet_pt", "lead_bjet_eta","sublead_bjet_eta","lead_bjet_phi","sublead_bjet_phi", "sublead_bjet_PNetB", "lead_bjet_PNetB"
     ]
     histogram_names = [f"{region}-{variable_name}" for region in regions for variable_name in variable_names]
 
@@ -157,10 +157,10 @@ def main():
         "lead_pho_phi":r"lead $\phi^{\gamma}$", "sublead_pho_eta":r"sublead $\eta^{\gamma}$", 
         "sublead_pho_phi":r"sublead $\phi^{\gamma}$", "dibjet_eta":r"$\eta^{b\bar{b}}$", 
         "dibjet_phi":r"$\phi^{b\bar{b}}$", "diphoton_eta":r"$\eta^{\gamma\gamma}$", 
-        "diphoton_phi":r"$\phi^{\gamma\gamma}$", "lead_bjet_pt":r"lead $p_T^{b\bar{b}}$ [GeV]",
-        "sublead_bjet_pt":r"sublead $p_T^{b\bar{b}}$ [GeV]","lead_bjet_eta":r"lead $\eta^{b\bar{b}}$",
-         "lead_bjet_phi":r"lead $\phi^{b\bar{b}}$", "sublead_bjet_eta":r"sublead $\eta^{b\bar{b}}$",
-         "sublead_bjet_phi":r"sublead $\phi^{b\bar{b}}$"
+        "diphoton_phi":r"$\phi^{\gamma\gamma}$", "lead_bjet_pt":r"lead $p_T^{b}$ [GeV]",
+        "sublead_bjet_pt":r"sublead $p_T^{b}$ [GeV]","lead_bjet_eta":r"lead $\eta^{b}$",
+         "lead_bjet_phi":r"lead $\phi^{b}$", "sublead_bjet_eta":r"sublead $\eta^{b}$",
+         "sublead_bjet_phi":r"sublead $\phi^{b}$", "sublead_bjet_PNetB":r"sublead b PNetScore","lead_bjet_PNetB":r"lead b PNetScore"
     }
 
     # create the tdirectory to save plots
