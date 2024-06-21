@@ -28,9 +28,19 @@ def get_mask_preselection(cms_events):
     )
     return mask_preselection
 
+# Check https://btv-wiki.docs.cern.ch/ScaleFactors/Run3Summer22/ for the tagger point score 
+
 def get_mask_selection(cms_events):
     mask_selection = (
         (cms_events.lead_pho_mvaID_WP90==1) &
-        (cms_events.sublead_pho_mvaID_WP90==1)
+        (cms_events.sublead_pho_mvaID_WP90==1) &
+        (cms_events.lead_bjet_PNetB > 0.0499) &
+        (cms_events.sublead_bjet_PNetB > 0.0499) &
+        (cms_events.lead_isScEtaEB == True) &
+        (cms_events.sublead_isScEtaEB == True)
     )
     return mask_selection
+
+
+
+
