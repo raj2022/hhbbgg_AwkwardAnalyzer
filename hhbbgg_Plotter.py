@@ -2,7 +2,7 @@
 import os
 import matplotlib
 
-matplotlib.use("Ag")
+matplotlib.use("Agg")
 import uproot
 from hist import Hist, Stack
 import numpy as np
@@ -62,9 +62,11 @@ def get_ratio(hist_a, hist_b):
     edges_b = hist_b.axes.edges[0]
     if not np.array_equal(edges_a, edges_b):
         raise ValueError("Histograms have different binning")
+
     # Extract the counts
-    counts_a = hist_a.values()
-    counts_b = hist_b.values()
+    counts_a = np.where(hist_a.values() < 0.0, 0.0, hist_a.values())
+    counts_b = np.where(hist_b.values() < 0.0, 0.0, hist_b.values())
+
     # Compute the errors for each histogram
     errors_a = np.sqrt(counts_a)  # Assuming Poisson statistics
     errors_b = np.sqrt(counts_b)  # Assuming Poisson statistics

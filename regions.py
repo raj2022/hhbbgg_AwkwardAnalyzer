@@ -33,9 +33,9 @@ def get_mask_preselection(cms_events):
 def get_mask_selection(cms_events):
     mask_selection = (
         (cms_events.lead_pho_mvaID_WP90 == 1)
-        & (cms_events.sublead_pho_mvaid_wp90 == 1)
-        & (cms_events.lead_bjet_PNetB > 0.0499)
-        & (cms_events.sublead_bjet_PNetB > 0.0499)
+        & (cms_events.sublead_pho_mvaID_WP90 == 1)
+        & (cms_events.lead_bjet_PNetB > 0.6915)
+        & (cms_events.sublead_bjet_PNetB > 0.6915)
         & (cms_events.lead_isScEtaEB == 1)
         & (cms_events.sublead_isScEtaEB == 1)
     )
