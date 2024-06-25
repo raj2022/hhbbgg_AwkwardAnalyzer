@@ -309,6 +309,19 @@ def main():
         "sublead_bjet_phi",
         "sublead_bjet_PNetB",
         "lead_bjet_PNetB",
+        "CosThetaStar_gg",
+        "CosThetaStar_CS",
+        "CosThetaStar_jj",
+        "DeltaR_jg_min",
+        "pholead_PtOverM",
+        "phosublead_PtOverM",
+        "lead_pt_over_diphoton_mass",
+        "sublead_pt_over_diphoton_mass",
+        "lead_pt_over_dibjet_mass",
+        "sublead_pt_over_dibjet_mass",
+        "diphoton_bbgg_mass",
+        "dibjet_bbgg_mass",
+
     ]
     histogram_names = [
         f"{region}-{variable_name}"
@@ -344,6 +357,19 @@ def main():
         "sublead_bjet_phi": r"sublead $\phi^{b}$",
         "sublead_bjet_PNetB": r"sublead b PNetScore",
         "lead_bjet_PNetB": r"lead b PNetScore",
+        "CosThetaStar_gg":r"$|Cos(\theta^{CS}_{gg})|$",
+        "CosThetaStar_jj":r"$|Cos(\theta^{CS}_{jj})|$",
+        "CosThetaStar_CS":r"$|Cos(\theta^{CS}_{CS})|$",
+        "DeltaR_jg_min":r"min($\Delta$R($\gamma$,jets))",
+        "pholead_PtOverM":r"lead$P_T(\gamma1)/M(\gamma\gamma)$",
+        "phosublead_PtOverM":r"sublead$P_T(\gamma1)/M(\gamma\gamma)$",
+        "lead_pt_over_diphoton_mass":r"lead$P_T(\gamma)/M_{\gamma\gamma}$",
+        "sublead_pt_over_diphoton_mass":r"sublead$P_T(\gamma)/M_{\gamma\gamma}$",
+        "lead_pt_over_dibjet_mass":r"lead$P_T(j)/M_{jj}$",
+        "sublead_pt_over_dibjet_mass":r"sublead$P_T(j)/M_{jj}$",
+        "diphoton_bbgg_mass":r"$P_T(\gamma\gamma)/M_{jj\gamma\gamma}$",
+        "dibjet_bbgg_mass":r"$P_T(jj)/M_{jj\gamma\gamma}$",
+
     }
 
     # create the tdirectory to save plots

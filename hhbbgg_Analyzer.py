@@ -71,6 +71,12 @@ def runOneFile(inputfile, outputrootfile):
             "sublead_bjet_btagPNetB",
             "lead_isScEtaEB",
             "sublead_isScEtaEB",
+            "CosThetaStar_CS",
+            "CosThetaStar_gg",
+            "CosThetaStar_jj",
+            "DeltaR_jg_min",
+            "pholead_PtOverM",
+            "phosublead_PtOverM",
         ],
         step_size=10000,
     ):
@@ -103,6 +109,13 @@ def runOneFile(inputfile, outputrootfile):
                 "sublead_bjet_PNetB": tree_["sublead_bjet_btagPNetB"],
                 "lead_isScEtaEB": tree_["lead_isScEtaEB"],
                 "sublead_isScEtaEB": tree_["sublead_isScEtaEB"],
+                "CosThetaStar_CS":tree_["CosThetaStar_CS"],
+                "CosThetaStar_gg":tree_["CosThetaStar_gg"],
+                "CosThetaStar_jj":tree_["CosThetaStar_jj"],
+                "DeltaR_jg_min":tree_["DeltaR_jg_min"],
+                "pholead_PtOverM":tree_["pholead_PtOverM"],
+                "phosublead_PtOverM":tree_["phosublead_PtOverM"],
+
             },
             depth_limit=1,
         )
@@ -143,7 +156,17 @@ def runOneFile(inputfile, outputrootfile):
         cms_events["dibjet_phi"] = dibjet_.phi
         cms_events["diphoton_eta"] = diphoton_.eta
         cms_events["diphoton_phi"] = diphoton_.phi
+#----------------------------
+        cms_events["lead_pt_over_diphoton_mass"] = cms_events["lead_pho_pt"] / cms_events["diphoton_mass"]
+        cms_events["sublead_pt_over_diphoton_mass"] = cms_events["sublead_pho_pt"] / cms_events["diphoton_mass"]
+        cms_events["lead_pt_over_dibjet_mass"] = cms_events["lead_bjet_pt"] / cms_events["dibjet_mass"]
+        cms_events["sublead_pt_over_dibjet_mass"] = cms_events["sublead_bjet_pt"] / cms_events["dibjet_mass"]
 
+        cms_events["diphoton_bbgg_mass"] = cms_events["diphoton_pt"] / cms_events["bbgg_mass"]
+        cms_events["dibjet_bbgg_mass"] = cms_events["dibjet_pt"] / cms_events["bbgg_mass"]
+
+
+        
         from regions import get_mask_preselection, get_mask_selection
 
         cms_events["mask_preselection"] = get_mask_preselection(cms_events)
@@ -188,9 +211,25 @@ def runOneFile(inputfile, outputrootfile):
 
         out_events["lead_bjet_PNetB"] = cms_events["lead_bjet_PNetB"]
         out_events["sublead_bjet_PNetB"] = cms_events["sublead_bjet_PNetB"]
+#------------------------------------------------        
+        out_events["pholead_PtOverM"] = cms_events["pholead_PtOverM"]
+        out_events["phosublead_PtOverM"] = cms_events["phosublead_PtOverM"]
+#------------------------------------------------
+        out_events["CosThetaStar_CS"] = cms_events["CosThetaStar_CS"]
+        out_events["CosThetaStar_jj"] = cms_events["CosThetaStar_jj"]
+        out_events["CosThetaStar_gg"] = cms_events["CosThetaStar_gg"]
+        out_events["DeltaR_jg_min"] = cms_events["DeltaR_jg_min"]
+#------------------------------------------------
+        out_events["lead_pt_over_diphoton_mass"] = cms_events["lead_pt_over_diphoton_mass"]
+        out_events["sublead_pt_over_diphoton_mass"] = cms_events["sublead_pt_over_diphoton_mass"]
+        out_events["lead_pt_over_dibjet_mass"] = cms_events["lead_pt_over_dibjet_mass"]
+        out_events["sublead_pt_over_dibjet_mass"] = cms_events["sublead_pt_over_dibjet_mass"]
+        out_events["diphoton_bbgg_mass"] = cms_events["diphoton_bbgg_mass"]
+        out_events["dibjet_bbgg_mass"] = cms_events["dibjet_bbgg_mass"]
 
         out_events["preselection"] = cms_events["mask_preselection"]
         out_events["selection"] = cms_events["mask_selection"]
+        
 
         fulltree_ = ak.concatenate([out_events, fulltree_], axis=0)
 
