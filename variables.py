@@ -29,6 +29,18 @@ vardict = {
     "sublead_bjet_phi": "sublead_bjet_phi",
     "sublead_bjet_PNetB": "sublead_bjet_PNetB",
     "lead_bjet_PNetB": "lead_bjet_PNetB",
+    "CosThetaStar_gg":"CosThetaStar_gg",
+    "CosThetaStar_jj":"CosThetaStar_jj",
+    "CosThetaStar_CS":"CosThetaStar_CS",
+    "DeltaR_jg_min":"DeltaR_jg_min",
+    "pholead_PtOverM":"pholead_PtOverM",
+    "phosublead_PtOverM":"phosublead_PtOverM",
+    "lead_pt_over_diphoton_mass":"lead_pt_over_diphoton_mass",
+    "sublead_pt_over_diphoton_mass":"sublead_pt_over_diphoton_mass",
+    "lead_pt_over_dibjet_mass":"lead_pt_over_dibjet_mass",
+    "sublead_pt_over_dibjet_mass":"sublead_pt_over_dibjet_mass",
+    "diphoton_bbgg_mass":"diphoton_bbgg_mass",
+    "dibjet_bbgg_mass":"dibjet_bbgg_mass",
 }
 
 variables_common = {
@@ -59,6 +71,18 @@ variables_common = {
         "sublead_bjet_phi",
         "sublead_bjet_PNetB",
         "lead_bjet_PNetB",
+        "CosThetaStar_gg",
+        "CosThetaStar_jj",
+        "CosThetaStar_CS",
+        "DeltaR_jg_min",
+        "pholead_PtOverM",
+        "phosublead_PtOverM",
+        "lead_pt_over_diphoton_mass",
+        "sublead_pt_over_diphoton_mass",
+        "lead_pt_over_dibjet_mass",
+        "sublead_pt_over_dibjet_mass",
+        "diphoton_bbgg_mass",
+        "dibjet_bbgg_mass",
     ]
 }
 
