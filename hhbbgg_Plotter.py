@@ -100,6 +100,20 @@ def get_ratio(hist_a, hist_b):
 
     return ratio_hist, ratio_errors
 
+# List of new variables to blind
+blind_vars = [
+    "dibjet_mass",
+    "diphoton_mass",
+   # "bbgg_mass",
+    "bbgg_pt",
+    "dibjet_pt",
+    "diphoton_pt",
+    "lead_bjet_pt",
+    "lead_pho_pt",
+    "sublead_bjet_pt",
+    "sublead_pho_pt",
+]
+
 
 def stack1d_histograms(
     uproot_loaded_filename,
@@ -127,7 +141,7 @@ def stack1d_histograms(
                 for data_sample in data_samples
             ]
         )
-        if "dibjet_mass" in hist_name or "diphoton_mass" in hist_name:
+        if any(keyword in hist_name for keyword in blind_vars):
             blinded_data_histogram = blind_data(
                 data_histogram, blind, start_blind=110, stop_blind=130
             )
@@ -315,6 +329,8 @@ def main():
         "DeltaR_jg_min",
         "pholead_PtOverM",
         "phosublead_PtOverM",
+        "FirstJet_PtOverM",
+        "SecondJet_PtOverM",
         "lead_pt_over_diphoton_mass",
         "sublead_pt_over_diphoton_mass",
         "lead_pt_over_dibjet_mass",
@@ -361,12 +377,14 @@ def main():
         "CosThetaStar_jj":r"$|Cos(\theta^{CS}_{jj})|$",
         "CosThetaStar_CS":r"$|Cos(\theta^{CS}_{CS})|$",
         "DeltaR_jg_min":r"min($\Delta$R($\gamma$,jets))",
-        "pholead_PtOverM":r"lead$P_T(\gamma1)/M(\gamma\gamma)$",
-        "phosublead_PtOverM":r"sublead$P_T(\gamma1)/M(\gamma\gamma)$",
-        "lead_pt_over_diphoton_mass":r"lead$P_T(\gamma)/M_{\gamma\gamma}$",
-        "sublead_pt_over_diphoton_mass":r"sublead$P_T(\gamma)/M_{\gamma\gamma}$",
-        "lead_pt_over_dibjet_mass":r"lead$P_T(j)/M_{jj}$",
-        "sublead_pt_over_dibjet_mass":r"sublead$P_T(j)/M_{jj}$",
+        "pholead_PtOverM":r"lead $P_T(\gamma1)/M(\gamma\gamma)$",
+        "FirstJet_PtOverM":r"$P_T(j1)/M(jj)$",
+        "SecondJet_PtOverM":r"$P_T(j2)/M(jj)$",
+        "phosublead_PtOverM":r"sublead $P_T(\gamma1)/M(\gamma\gamma)$",
+        "lead_pt_over_diphoton_mass":r"lead $P_T(\gamma)/M_{\gamma\gamma}$",
+        "sublead_pt_over_diphoton_mass":r"sublead $P_T(\gamma)/M_{\gamma\gamma}$",
+        "lead_pt_over_dibjet_mass":r"lead $P_T(j)/M_{jj}$",
+        "sublead_pt_over_dibjet_mass":r"sublead $P_T(j)/M_{jj}$",
         "diphoton_bbgg_mass":r"$P_T(\gamma\gamma)/M_{jj\gamma\gamma}$",
         "dibjet_bbgg_mass":r"$P_T(jj)/M_{jj\gamma\gamma}$",
 
@@ -386,7 +404,7 @@ def main():
         legend_dict,
         xaxis_titles,
         output_directory,
-        blind=True,
+        blind=False,
     )
 
 

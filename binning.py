@@ -35,12 +35,14 @@ binning["preselection"] = {
     "DeltaR_jg_min": [20, 0, 4],
     "pholead_PtOverM": [20, 0, 4],
     "phosublead_PtOverM": [20, 0, 4],
+    "FirstJet_PtOverM": [10, 0, 2.5],
+    "SecondJet_PtOverM": [20, 0, 2.5],
     "lead_pt_over_diphoton_mass": [20, 0, 4],
-    "sublead_pt_over_diphoton_mass": [20, 0, 4],
+    "sublead_pt_over_diphoton_mass": [20, 0, 3.5],
     "lead_pt_over_dibjet_mass": [20, 0, 4],
-    "sublead_pt_over_dibjet_mass": [20, 0, 4],
-    "diphoton_bbgg_mass": [20, 0, 4],
-    "dibjet_bbgg_mass": [20, 0, 4],
+    "sublead_pt_over_dibjet_mass": [20, 0, 2],
+    "diphoton_bbgg_mass": [20, 0, 1],
+    "dibjet_bbgg_mass": [20, 0, 2],
 }
 
 binning["selection"] = copy.deepcopy(binning["preselection"])

@@ -77,6 +77,8 @@ def runOneFile(inputfile, outputrootfile):
             "DeltaR_jg_min",
             "pholead_PtOverM",
             "phosublead_PtOverM",
+            "FirstJet_PtOverM",
+            "SecondJet_PtOverM",
         ],
         step_size=10000,
     ):
@@ -115,6 +117,8 @@ def runOneFile(inputfile, outputrootfile):
                 "DeltaR_jg_min":tree_["DeltaR_jg_min"],
                 "pholead_PtOverM":tree_["pholead_PtOverM"],
                 "phosublead_PtOverM":tree_["phosublead_PtOverM"],
+                "FirstJet_PtOverM":tree_["FirstJet_PtOverM"],
+                "SecondJet_PtOverM":tree_["SecondJet_PtOverM"],
 
             },
             depth_limit=1,
@@ -214,6 +218,8 @@ def runOneFile(inputfile, outputrootfile):
 #------------------------------------------------        
         out_events["pholead_PtOverM"] = cms_events["pholead_PtOverM"]
         out_events["phosublead_PtOverM"] = cms_events["phosublead_PtOverM"]
+        out_events["FirstJet_PtOverM"] = cms_events["FirstJet_PtOverM"]
+        out_events["SecondJet_PtOverM"] = cms_events["SecondJet_PtOverM"]
 #------------------------------------------------
         out_events["CosThetaStar_CS"] = cms_events["CosThetaStar_CS"]
         out_events["CosThetaStar_jj"] = cms_events["CosThetaStar_jj"]
