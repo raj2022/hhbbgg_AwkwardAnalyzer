@@ -53,6 +53,7 @@ def runOneFile(inputfile, outputrootfile):
             "run",
             "lumi",
             "event",
+            "puppiMET_pt",
             "lead_bjet_pt",
             "lead_bjet_eta",
             "lead_bjet_phi",
@@ -93,6 +94,7 @@ def runOneFile(inputfile, outputrootfile):
                 "run": tree_["run"],
                 "lumi": tree_["lumi"],
                 "event": tree_["event"],
+                "puppiMET": tree_["puppiMET_pt"],
                 "lead_bjet_pt": tree_["lead_bjet_pt"],
                 "lead_bjet_eta": tree_["lead_bjet_eta"],
                 "lead_bjet_phi": tree_["lead_bjet_phi"],
@@ -184,11 +186,22 @@ def runOneFile(inputfile, outputrootfile):
             cms_events["dibjet_pt"] / cms_events["bbgg_mass"]
         )
 
-        from regions import get_mask_preselection, get_mask_selection
+        from regions import (
+            get_mask_preselection,
+            get_mask_srbbgg,
+            get_mask_srbbggMET,
+            get_mask_crantibbgg,
+            get_mask_crbbantigg,
+        )
 
         cms_events["mask_preselection"] = get_mask_preselection(cms_events)
-        cms_events["mask_selection"] = get_mask_selection(cms_events)
+        cms_events["mask_srbbgg"] = get_mask_srbbgg(cms_events)
+        cms_events["mask_srbbggMET"] = get_mask_srbbggMET(cms_events)
+        cms_events["mask_crbbantigg"] = get_mask_crbbantigg(cms_events)
+        cms_events["mask_crantibbgg"] = get_mask_crantibbgg(cms_events)
 
+        # Adding puppi MET and associated variables
+        out_events["puppiMET"] = cms_events["puppiMET"]
         out_events["lead_pho_pt"] = cms_events["lead_pho_pt"]
         # Adding new variable
         out_events["lead_pho_eta"] = cms_events["lead_pho_eta"]
@@ -217,7 +230,16 @@ def runOneFile(inputfile, outputrootfile):
         out_events["weight_preselection"] = (
             cms_events["weight"] * xsec_ * lumi_ / out_events.weight_central
         )
-        out_events["weight_selection"] = (
+        out_events["weight_srbbgg"] = (
+            cms_events["weight"] * xsec_ * lumi_ / out_events.weight_central
+        )
+        out_events["weight_srbbggMET"] = (
+            cms_events["weight"] * xsec_ * lumi_ / out_events.weight_central
+        )
+        out_events["weight_crbbantigg"] = (
+            cms_events["weight"] * xsec_ * lumi_ / out_events.weight_central
+        )
+        out_events["weight_crantibbgg"] = (
             cms_events["weight"] * xsec_ * lumi_ / out_events.weight_central
         )
         # Adding new variable
@@ -253,7 +275,10 @@ def runOneFile(inputfile, outputrootfile):
         out_events["dibjet_bbgg_mass"] = cms_events["dibjet_bbgg_mass"]
 
         out_events["preselection"] = cms_events["mask_preselection"]
-        out_events["selection"] = cms_events["mask_selection"]
+        out_events["srbbgg"] = cms_events["mask_srbbgg"]
+        out_events["srbbggMET"] = cms_events["mask_srbbggMET"]
+        out_events["crantibbgg"] = cms_events["mask_crantibbgg"]
+        out_events["crbbantigg"] = cms_events["mask_crbbantigg"]
 
         fulltree_ = ak.concatenate([out_events, fulltree_], axis=0)
 

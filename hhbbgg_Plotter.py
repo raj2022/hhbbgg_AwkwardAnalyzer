@@ -332,11 +332,21 @@ def main():
         "diphoton_bbgg_mass",
         "dibjet_bbgg_mass",
     ]
+    specific_variable_names = ["puppiMET"]
+
     histogram_names = [
         f"{region}-{variable_name}"
         for region in regions
         for variable_name in variable_names
     ]
+
+    specific_histogram_names = [
+        f"{region}-{specific_variable_name}"
+        for region in regions
+        for specific_variable_name in specific_variable_names
+    ]
+
+    histogram_names = histogram_names + specific_histogram_names
 
     # Dictionary for x-axis titles
     xaxis_titles = {
