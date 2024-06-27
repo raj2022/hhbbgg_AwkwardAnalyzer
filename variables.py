@@ -1,6 +1,6 @@
 import copy
 
-regions = ["preselection", "selection"]
+regions = ["preselection", "srbbgg", "srbbggMET", "crantibbgg", "crbbantigg"]
 vardict = {
     "dibjet_mass": "dibjet_mass",
     "diphoton_mass": "diphoton_mass",
@@ -29,20 +29,21 @@ vardict = {
     "sublead_bjet_phi": "sublead_bjet_phi",
     "sublead_bjet_PNetB": "sublead_bjet_PNetB",
     "lead_bjet_PNetB": "lead_bjet_PNetB",
-    "CosThetaStar_gg":"CosThetaStar_gg",
-    "CosThetaStar_jj":"CosThetaStar_jj",
-    "CosThetaStar_CS":"CosThetaStar_CS",
-    "DeltaR_jg_min":"DeltaR_jg_min",
-    "pholead_PtOverM":"pholead_PtOverM",
-    "phosublead_PtOverM":"phosublead_PtOverM",
-    "FirstJet_PtOverM":"FirstJet_PtOverM",
-    "SecondJet_PtOverM":"SecondJet_PtOverM",
-    "lead_pt_over_diphoton_mass":"lead_pt_over_diphoton_mass",
-    "sublead_pt_over_diphoton_mass":"sublead_pt_over_diphoton_mass",
-    "lead_pt_over_dibjet_mass":"lead_pt_over_dibjet_mass",
-    "sublead_pt_over_dibjet_mass":"sublead_pt_over_dibjet_mass",
-    "diphoton_bbgg_mass":"diphoton_bbgg_mass",
-    "dibjet_bbgg_mass":"dibjet_bbgg_mass",
+    "CosThetaStar_gg": "CosThetaStar_gg",
+    "CosThetaStar_jj": "CosThetaStar_jj",
+    "CosThetaStar_CS": "CosThetaStar_CS",
+    "DeltaR_jg_min": "DeltaR_jg_min",
+    "pholead_PtOverM": "pholead_PtOverM",
+    "phosublead_PtOverM": "phosublead_PtOverM",
+    "FirstJet_PtOverM": "FirstJet_PtOverM",
+    "SecondJet_PtOverM": "SecondJet_PtOverM",
+    "lead_pt_over_diphoton_mass": "lead_pt_over_diphoton_mass",
+    "sublead_pt_over_diphoton_mass": "sublead_pt_over_diphoton_mass",
+    "lead_pt_over_dibjet_mass": "lead_pt_over_dibjet_mass",
+    "sublead_pt_over_dibjet_mass": "sublead_pt_over_dibjet_mass",
+    "diphoton_bbgg_mass": "diphoton_bbgg_mass",
+    "dibjet_bbgg_mass": "dibjet_bbgg_mass",
+    "puppiMET": "puppiMET",
 }
 
 variables_common = {
@@ -94,5 +95,5 @@ for ireg in regions:
     print(ireg)
     variables_common[ireg] = copy.deepcopy(variables_common["preselection"])
 
-# sr_2b=["csv1","jetpt1","jeteta1","jetphi1","cts"]
-# variables_common["SR_2b"] = variables_common["SR_2b"] + sr_2b
+srbbggMET = ["puppiMET"]
+variables_common["srbbggMET"] = variables_common["srbbggMET"] + srbbggMET

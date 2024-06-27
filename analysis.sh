@@ -2,7 +2,7 @@
 
 # Run the analyzer script
 # python hhbbgg_Analyzer.py -i ../../output_root/
-# python hhbbgg_Analyzer.py -i /Users/ptiwari/cmscern/eos/DoNotSync/hhtobbgg/HiggsDNA_root/v1/Run3_2022postEE_merged/
+python hhbbgg_Analyzer.py -i /Users/ptiwari/cmscern/eos/DoNotSync/hhtobbgg/HiggsDNA_root/v1/Run3_2022postEE_merged/
 if [ $? -ne 0 ]; then
 	echo "Error: hhbbgg_Analyzer.py failed to execute."
 	exit 1

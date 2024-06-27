@@ -30,12 +30,12 @@ def get_mask_preselection(cms_events):
 # Check https://btv-wiki.docs.cern.ch/ScaleFactors/Run3Summer22/ for the tagger point score
 
 
-def get_mask_selection(cms_events):
-    mask_selection = (
+def get_mask_srbbgg(cms_events):
+    mask_srbbgg = (
         (cms_events.lead_pho_mvaID_WP90 == 1)
         & (cms_events.sublead_pho_mvaID_WP90 == 1)
-        & (cms_events.lead_bjet_PNetB > 0.0499)
-        & (cms_events.sublead_bjet_PNetB > 0.0499)
+        & (cms_events.lead_bjet_PNetB > 0.2605)
+        & (cms_events.sublead_bjet_PNetB > 0.2605)
         & (cms_events.lead_isScEtaEB == 1)
         & (cms_events.sublead_isScEtaEB == 1)
         & (
@@ -53,4 +53,54 @@ def get_mask_selection(cms_events):
             )
         )
     )
-    return mask_selection
+    return mask_srbbgg
+
+
+def get_mask_srbbggMET(cms_events):
+    mask_srbbggMET = (
+        (cms_events.lead_pho_mvaID_WP90 == 1)
+        & (cms_events.sublead_pho_mvaID_WP90 == 1)
+        & (cms_events.lead_bjet_PNetB > 0.2605)
+        & (cms_events.sublead_bjet_PNetB > 0.2605)
+        & (cms_events.lead_isScEtaEB == 1)
+        & (cms_events.sublead_isScEtaEB == 1)
+        & (
+            (
+                (cms_events.signal == 0)
+                & (
+                    ((cms_events.diphoton_mass > 130) | (cms_events.diphoton_mass < 90))
+                    & ((cms_events.dibjet_mass > 130) | (cms_events.dibjet_mass < 90))
+                )
+            )
+            | (
+                (cms_events.signal == 1)
+                & (cms_events.diphoton_mass > 0)
+                & (cms_events.dibjet_mass > 0)
+            )
+        )
+    )
+    return mask_srbbggMET
+
+
+def get_mask_crantibbgg(cms_events):
+    mask_crantibbgg = (
+        (cms_events.lead_pho_mvaID_WP90 == 1)
+        & (cms_events.sublead_pho_mvaID_WP90 == 1)
+        & (cms_events.lead_bjet_PNetB < 0.2605)
+        & (cms_events.sublead_bjet_PNetB < 0.2605)
+        & (cms_events.lead_isScEtaEB == 1)
+        & (cms_events.sublead_isScEtaEB == 1)
+    )
+    return mask_crantibbgg
+
+
+def get_mask_crbbantigg(cms_events):
+    mask_crbbantigg = (
+        (cms_events.lead_pho_mvaID_WP90 == 0)
+        & (cms_events.sublead_pho_mvaID_WP90 == 0)
+        & (cms_events.lead_bjet_PNetB > 0.2605)
+        & (cms_events.sublead_bjet_PNetB > 0.2605)
+        & (cms_events.lead_isScEtaEB == 1)
+        & (cms_events.sublead_isScEtaEB == 1)
+    )
+    return mask_crbbantigg
