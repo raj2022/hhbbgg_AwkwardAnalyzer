@@ -1,4 +1,4 @@
-import awkward as ak
+# import awkward as ak
 
 # def get_mask_wmunu1b(cms_events):
 #     mask_wmunu1b = ( (cms_events.mettrig ) &
@@ -38,5 +38,19 @@ def get_mask_selection(cms_events):
         & (cms_events.sublead_bjet_PNetB > 0.0499)
         & (cms_events.lead_isScEtaEB == 1)
         & (cms_events.sublead_isScEtaEB == 1)
+        & (
+            (
+                (cms_events.signal == 0)
+                & (
+                    ((cms_events.diphoton_mass > 130) | (cms_events.diphoton_mass < 90))
+                    & ((cms_events.dibjet_mass > 130) | (cms_events.dibjet_mass < 90))
+                )
+            )
+            | (
+                (cms_events.signal == 1)
+                & (cms_events.diphoton_mass > 0)
+                & (cms_events.dibjet_mass > 0)
+            )
+        )
     )
     return mask_selection

@@ -100,18 +100,11 @@ def get_ratio(hist_a, hist_b):
 
     return ratio_hist, ratio_errors
 
+
 # List of new variables to blind
 blind_vars = [
     "dibjet_mass",
     "diphoton_mass",
-   # "bbgg_mass",
-    "bbgg_pt",
-    "dibjet_pt",
-    "diphoton_pt",
-    "lead_bjet_pt",
-    "lead_pho_pt",
-    "sublead_bjet_pt",
-    "sublead_pho_pt",
 ]
 
 
@@ -254,6 +247,7 @@ def stack1d_histograms(
             bbox_inches="tight",
         )
         plt.close()
+        print(f"{hist_name} has been plotted")
 
 
 def main():
@@ -337,7 +331,6 @@ def main():
         "sublead_pt_over_dibjet_mass",
         "diphoton_bbgg_mass",
         "dibjet_bbgg_mass",
-
     ]
     histogram_names = [
         f"{region}-{variable_name}"
@@ -373,21 +366,20 @@ def main():
         "sublead_bjet_phi": r"sublead $\phi^{b}$",
         "sublead_bjet_PNetB": r"sublead b PNetScore",
         "lead_bjet_PNetB": r"lead b PNetScore",
-        "CosThetaStar_gg":r"$|Cos(\theta^{CS}_{gg})|$",
-        "CosThetaStar_jj":r"$|Cos(\theta^{CS}_{jj})|$",
-        "CosThetaStar_CS":r"$|Cos(\theta^{CS}_{CS})|$",
-        "DeltaR_jg_min":r"min($\Delta$R($\gamma$,jets))",
-        "pholead_PtOverM":r"lead $P_T(\gamma1)/M(\gamma\gamma)$",
-        "FirstJet_PtOverM":r"$P_T(j1)/M(jj)$",
-        "SecondJet_PtOverM":r"$P_T(j2)/M(jj)$",
-        "phosublead_PtOverM":r"sublead $P_T(\gamma1)/M(\gamma\gamma)$",
-        "lead_pt_over_diphoton_mass":r"lead $P_T(\gamma)/M_{\gamma\gamma}$",
-        "sublead_pt_over_diphoton_mass":r"sublead $P_T(\gamma)/M_{\gamma\gamma}$",
-        "lead_pt_over_dibjet_mass":r"lead $P_T(j)/M_{jj}$",
-        "sublead_pt_over_dibjet_mass":r"sublead $P_T(j)/M_{jj}$",
-        "diphoton_bbgg_mass":r"$P_T(\gamma\gamma)/M_{jj\gamma\gamma}$",
-        "dibjet_bbgg_mass":r"$P_T(jj)/M_{jj\gamma\gamma}$",
-
+        "CosThetaStar_gg": r"$|Cos(\theta^{CS}_{gg})|$",
+        "CosThetaStar_jj": r"$|Cos(\theta^{CS}_{jj})|$",
+        "CosThetaStar_CS": r"$|Cos(\theta^{CS}_{HH})|$",
+        "DeltaR_jg_min": r"min($\Delta$R($\gamma$,jets))",
+        "pholead_PtOverM": r"lead $p_T^{\gamma1}/M_{\gamma\gamma}$",
+        "FirstJet_PtOverM": r"$p_T^{j1}/M_{jj}$",
+        "SecondJet_PtOverM": r"$p_T^{j2}/M_{jj})$",
+        "phosublead_PtOverM": r"sublead $p_T^{\gamma1}/M_{\gamma\gamma}$",
+        "lead_pt_over_diphoton_mass": r"lead $p_T(\gamma)/M_{\gamma\gamma}$",
+        "sublead_pt_over_diphoton_mass": r"sublead $p_T(\gamma)/M_{\gamma\gamma}$",
+        "lead_pt_over_dibjet_mass": r"lead $p_T(j)/M_{b\bar{b}}$",
+        "sublead_pt_over_dibjet_mass": r"sublead $p_T(j)/M_{b\bar{b}}$",
+        "diphoton_bbgg_mass": r"$p_T(\gamma\gamma)/M_{b\bar{b}\gamma\gamma}$",
+        "dibjet_bbgg_mass": r"$p_T(b\bar{b})/M_{b\bar{b}\gamma\gamma}$",
     }
 
     # create the tdirectory to save plots
