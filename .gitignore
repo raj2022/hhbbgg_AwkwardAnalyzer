@@ -1,7 +1,7 @@
 **/__pycache__/
 **.pyc
 **.DS_Store
-*.sh
+analyis.sh
 stack_plots/**/*.pdf
 stack_plots/**/*.png
 outputfiles/*.root
