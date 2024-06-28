@@ -175,18 +175,19 @@ def stack1d_histograms(
         mc_stack.plot(ax=ax, stack=True, histtype="fill", flow="sum", sort="yield")
 
         # Plot signal histograms
-        for signal_sample in signal_samples:
-            signal_histogram = get_histogram(
-                uproot_loaded_filename, f"{signal_sample}/{hist_name}"
-            )
-            signal_histogram.plot(
-                ax=ax,
-                histtype="step",
-                yerr=True,
-                xerr=True,
-                label=legend_dict[signal_sample],
-                color="red",
-            )
+        if "srbbgg" in hist_name or "srbbggMET" in hist_name:
+            for signal_sample in signal_samples:
+                signal_histogram = get_histogram(
+                    uproot_loaded_filename, f"{signal_sample}/{hist_name}"
+                )
+                signal_histogram.plot(
+                    ax=ax,
+                    histtype="step",
+                    yerr=True,
+                    xerr=True,
+                    label=legend_dict[signal_sample],
+                    color="red",
+                )
 
         # Plot ratio plot
         ratio, error = get_ratio(data_histogram, sum_histograms(mc_stack))
@@ -287,7 +288,7 @@ def main():
     }
 
     # List of regions names
-    regions = ["preselection", "selection"]
+    regions = ["preselection", "srbbgg", "srbbggMET", "crantibbgg", "crbbantigg"]
     # List of variable names
     variable_names = [
         "dibjet_mass",
@@ -333,6 +334,7 @@ def main():
         "dibjet_bbgg_mass",
     ]
     specific_variable_names = ["puppiMET"]
+    specific_regions = ["srbbggMET"]
 
     histogram_names = [
         f"{region}-{variable_name}"
@@ -341,8 +343,8 @@ def main():
     ]
 
     specific_histogram_names = [
-        f"{region}-{specific_variable_name}"
-        for region in regions
+        f"{specific_region}-{specific_variable_name}"
+        for specific_region in specific_regions
         for specific_variable_name in specific_variable_names
     ]
 
@@ -384,12 +386,13 @@ def main():
         "FirstJet_PtOverM": r"$p_T^{j1}/M_{jj}$",
         "SecondJet_PtOverM": r"$p_T^{j2}/M_{jj})$",
         "phosublead_PtOverM": r"sublead $p_T^{\gamma1}/M_{\gamma\gamma}$",
-        "lead_pt_over_diphoton_mass": r"lead $p_T(\gamma)/M_{\gamma\gamma}$",
-        "sublead_pt_over_diphoton_mass": r"sublead $p_T(\gamma)/M_{\gamma\gamma}$",
-        "lead_pt_over_dibjet_mass": r"lead $p_T(j)/M_{b\bar{b}}$",
+        "lead_pt_over_diphoton_mass": r"lead $p_T^{\gamma}/M_{\gamma\gamma}$",
+        "sublead_pt_over_diphoton_mass": r"sublead $p_T^{\gamma}/M_{\gamma\gamma}$",
+        "lead_pt_over_dibjet_mass": r"lead $p_T^{j}/M_{b\bar{b}}$",
         "sublead_pt_over_dibjet_mass": r"sublead $p_T(j)/M_{b\bar{b}}$",
-        "diphoton_bbgg_mass": r"$p_T(\gamma\gamma)/M_{b\bar{b}\gamma\gamma}$",
-        "dibjet_bbgg_mass": r"$p_T(b\bar{b})/M_{b\bar{b}\gamma\gamma}$",
+        "diphoton_bbgg_mass": r"$p_T^{\gamma\gamma}/M_{b\bar{b}\gamma\gamma}$",
+        "dibjet_bbgg_mass": r"$p_T^{b\bar{b}}/m_{b\bar{b}\gamma\gamma}$",
+        "puppiMET": r"puppi $p_T^{miss}$ [GeV]",
     }
 
     # create the tdirectory to save plots
