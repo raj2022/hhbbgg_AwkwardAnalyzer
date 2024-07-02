@@ -54,6 +54,20 @@ def runOneFile(inputfile, outputrootfile):
             "lumi",
             "event",
             "puppiMET_pt",
+            "puppiMET_phi",
+            "puppiMET_phiJERDown",
+            "puppiMET_phiJERUp",
+            "puppiMET_phiJESDown",
+            "puppiMET_phiJESUp",
+            "puppiMET_phiUnclusteredDown",
+            "puppiMET_phiUnclusteredUp",
+            "puppiMET_ptJERDown",
+            "puppiMET_ptJERUp",
+            "puppiMET_ptJESDown",
+            "puppiMET_ptJESUp",
+            "puppiMET_ptUnclusteredDown",
+            "puppiMET_ptUnclusteredUp",
+            "puppiMET_sumEt",
             "lead_bjet_pt",
             "lead_bjet_eta",
             "lead_bjet_phi",
@@ -94,7 +108,21 @@ def runOneFile(inputfile, outputrootfile):
                 "run": tree_["run"],
                 "lumi": tree_["lumi"],
                 "event": tree_["event"],
-                "puppiMET": tree_["puppiMET_pt"],
+                "puppiMET_pt": tree_["puppiMET_pt"],
+                "puppiMET_phi": tree_["puppiMET_phi"],
+                "puppiMET_phiJERDown": tree_["puppiMET_phiJERDown"],
+                "puppiMET_phiJERUp": tree_["puppiMET_phiJERUp"],
+                "puppiMET_phiJESDown": tree_["puppiMET_phiJESDown"],
+                "puppiMET_phiJESUp": tree_["puppiMET_phiJESUp"],
+                "puppiMET_phiUnclusteredDown": tree_["puppiMET_phiUnclusteredDown"],
+                "puppiMET_phiUnclusteredUp": tree_["puppiMET_phiUnclusteredUp"],
+                "puppiMET_ptJERDown": tree_["puppiMET_ptJERDown"],
+                "puppiMET_ptJERUp": tree_["puppiMET_ptJERUp"],
+                "puppiMET_ptJESDown": tree_["puppiMET_ptJESDown"],
+                "puppiMET_ptJESUp": tree_["puppiMET_ptJESUp"],
+                "puppiMET_ptUnclusteredDown": tree_["puppiMET_ptUnclusteredDown"],
+                "puppiMET_ptUnclusteredUp": tree_["puppiMET_ptUnclusteredUp"],
+                "puppiMET_sumEt": tree_["puppiMET_sumEt"],
                 "lead_bjet_pt": tree_["lead_bjet_pt"],
                 "lead_bjet_eta": tree_["lead_bjet_eta"],
                 "lead_bjet_phi": tree_["lead_bjet_phi"],
@@ -201,7 +229,22 @@ def runOneFile(inputfile, outputrootfile):
         cms_events["mask_crantibbgg"] = get_mask_crantibbgg(cms_events)
 
         # Adding puppi MET and associated variables
-        out_events["puppiMET"] = cms_events["puppiMET"]
+        out_events["puppiMET_pt"] = cms_events["puppiMET_pt"]
+        out_events["puppiMET_phi"] = cms_events["puppiMET_phi"]
+        out_events["puppiMET_phiJERDown"] = cms_events["puppiMET_phiJERDown"]
+        out_events["puppiMET_phiJERUp"] = cms_events["puppiMET_phiJERUp"]
+        out_events["puppiMET_phiJESDown"] = cms_events["puppiMET_phiJESDown"]
+        out_events["puppiMET_phiJESUp"] = cms_events["puppiMET_phiJESUp"]
+        out_events["puppiMET_phiUnclusteredDown"] = cms_events["puppiMET_phiUnclusteredDown"]
+        out_events["puppiMET_phiUnclusteredUp"] = cms_events["puppiMET_phiUnclusteredUp"]
+        out_events["puppiMET_ptJERDown"] = cms_events["puppiMET_ptJERDown"]
+        out_events["puppiMET_ptJERUp"] = cms_events["puppiMET_ptJERUp"]
+        out_events["puppiMET_ptJESDown"] = cms_events["puppiMET_ptJESDown"]
+        out_events["puppiMET_ptJESUp"] = cms_events["puppiMET_ptJESUp"]
+        out_events["puppiMET_ptUnclusteredDown"] = cms_events["puppiMET_ptUnclusteredDown"]
+        out_events["puppiMET_ptUnclusteredUp"] = cms_events["puppiMET_ptUnclusteredUp"]
+        out_events["puppiMET_sumEt"] = cms_events["puppiMET_sumEt"]
+        #--------------
         out_events["lead_pho_pt"] = cms_events["lead_pho_pt"]
         # Adding new variable
         out_events["lead_pho_eta"] = cms_events["lead_pho_eta"]

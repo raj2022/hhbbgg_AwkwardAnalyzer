@@ -43,7 +43,7 @@ vardict = {
     "sublead_pt_over_dibjet_mass": "sublead_pt_over_dibjet_mass",
     "diphoton_bbgg_mass": "diphoton_bbgg_mass",
     "dibjet_bbgg_mass": "dibjet_bbgg_mass",
-    "puppiMET": "puppiMET",
+    "puppiMET_pt": "puppiMET_pt",
 }
 
 variables_common = {
@@ -95,5 +95,5 @@ for ireg in regions:
     print(ireg)
     variables_common[ireg] = copy.deepcopy(variables_common["preselection"])
 
-srbbggMET = ["puppiMET"]
+srbbggMET = ["puppiMET_pt"]
 variables_common["srbbggMET"] = variables_common["srbbggMET"] + srbbggMET
