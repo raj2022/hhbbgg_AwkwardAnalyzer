@@ -44,6 +44,7 @@ vardict = {
     "diphoton_bbgg_mass": "diphoton_bbgg_mass",
     "dibjet_bbgg_mass": "dibjet_bbgg_mass",
     "puppiMET_pt": "puppiMET_pt",
+    "puppiMET_phi": "puppiMET_phi",
 }
 
 variables_common = {
@@ -95,5 +96,5 @@ for ireg in regions:
     print(ireg)
     variables_common[ireg] = copy.deepcopy(variables_common["preselection"])
 
-srbbggMET = ["puppiMET_pt"]
+srbbggMET = ["puppiMET_pt", "puppiMET_phi"]
 variables_common["srbbggMET"] = variables_common["srbbggMET"] + srbbggMET
