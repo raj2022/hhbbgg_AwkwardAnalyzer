@@ -333,7 +333,14 @@ def main():
         "diphoton_bbgg_mass",
         "dibjet_bbgg_mass",
     ]
-    specific_variable_names = ["puppiMET"]
+    specific_variable_names = ["puppiMET_pt", "puppiMET_phi", 
+            #"puppiMET_phiJERDown", "puppiMET_phiJERUp", "puppiMET_phiJESDown",
+            #"puppiMET_phiJESUp", "puppiMET_phiUnclusteredDown",
+            #"puppiMET_phiUnclusteredUp", "puppiMET_ptJERDown",
+            #"puppiMET_ptJERUp", "puppiMET_ptJESDown",
+            #"puppiMET_ptJESUp", "puppiMET_ptUnclusteredDown",
+            #"puppiMET_ptUnclusteredUp", "puppiMET_sumEt"
+            ]
     specific_regions = ["srbbggMET"]
 
     histogram_names = [
@@ -392,7 +399,8 @@ def main():
         "sublead_pt_over_dibjet_mass": r"sublead $p_T(j)/M_{b\bar{b}}$",
         "diphoton_bbgg_mass": r"$p_T^{\gamma\gamma}/M_{b\bar{b}\gamma\gamma}$",
         "dibjet_bbgg_mass": r"$p_T^{b\bar{b}}/m_{b\bar{b}\gamma\gamma}$",
-        "puppiMET": r"puppi $p_T^{miss}$ [GeV]",
+        "puppiMET_pt": r"puppi $p_T^{miss}$ [GeV]",
+        "puppiMET_phi": r"puppi $\phi^{miss}$ [GeV]",
     }
 
     # create the tdirectory to save plots
