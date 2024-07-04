@@ -188,6 +188,34 @@ def stack1d_histograms(
                     label=legend_dict[signal_sample],
                     color="red",
                 )
+            
+            region_name = r'sr: $b\bar{b}\gamma\gamma$' if "srbbgg" in hist_name else r'sr: $b\bar{b}\gamma\gamma$(MET)' 
+            
+            ax.text(
+            x=ax.get_xlim()[0] + 0.05 * (ax.get_xlim()[1] - ax.get_xlim()[0]),  
+            # y=ax.get_ylim()[1] - 0.05 * (ax.get_ylim()[1] - ax.get_ylim()[0]),  
+            y = 1e8*0.20,
+            s=region_name,
+            fontsize=25,
+            ha='left',  
+            va='top',   
+            bbox=dict(facecolor='white', alpha=1)
+             )
+
+        # for control regions
+        if "crantibbgg" in hist_name or "crbbantigg" in hist_name:
+            region_name = r'cr: anti$b\bar{b}\gamma\gamma$' if "crantibbgg" in hist_name else r'cr: $b\bar{b}anti\gamma\gamma$' 
+
+            ax.text(
+            x=ax.get_xlim()[0] + 0.05 * (ax.get_xlim()[1] - ax.get_xlim()[0]),
+            # y=ax.get_ylim()[1] - 0.05 * (ax.get_ylim()[1] - ax.get_ylim()[0]),  
+            y = 1e8*0.20,
+            s=region_name,
+            fontsize=20,
+            ha='left',
+            va='top',
+            bbox=dict(facecolor='white', alpha=1)
+             )
 
         # Plot ratio plot
         ratio, error = get_ratio(data_histogram, sum_histograms(mc_stack))
