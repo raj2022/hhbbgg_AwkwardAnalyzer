@@ -98,6 +98,8 @@ def get_mask_crbbantigg(cms_events):
     mask_crbbantigg = (
         (cms_events.lead_pho_mvaID_WP80 == 1)
         & (cms_events.sublead_pho_mvaID_WP80 == 1)
+        & (cms_events.lead_pho_mvaID_WP90 == 0)
+        & (cms_events.sublead_pho_mvaID_WP90 == 0)
         & (cms_events.lead_bjet_PNetB < 0.2605)  # medium btagging score
         & (cms_events.sublead_bjet_PNetB < 0.2605)  # medium btagging score
         & (cms_events.lead_bjet_PNetB > 0.0499)  # Loose btagging score

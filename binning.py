@@ -47,8 +47,20 @@ binning["preselection"] = {
 
 binning["srbbgg"] = copy.deepcopy(binning["preselection"])
 binning["srbbggMET"] = copy.deepcopy(binning["preselection"])
-met_variables = {"puppiMET_pt": [10, 100, 200],
-                 "puppiMET_phi":[10, -3.14, 3.14]}
+met_variables = {"puppiMET_pt": [20, 100, 200],
+                 "puppiMET_phi":[10, -3.14, 3.14],
+                 "puppiMET_phiJERDown":[10, -3.14, 100],
+                 "puppiMET_phiJERUp":[100, -3.14, 3.14],
+                 "puppiMET_phiJESDown":[100, -3.14, 3.14],
+                 "puppiMET_phiJESUp":[100, -3.14, 3.14],
+                 "puppiMET_phiUnclusteredDown":[100, -3.14, 3.14],
+                 "puppiMET_phiUnclusteredUp":[100, -3.14, 3.14],
+                 "puppiMET_phiJERDown":[100, -3.14, 3.14],
+                 "puppiMET_ptJERDown":[100, 0, 100],
+                 "puppiMET_ptJERUp":[100, 0, 100],
+                 "puppiMET_ptJESDown":[100, 0, 100],
+                 "puppiMET_ptJESUp":[100, 0, 100],
+                     }
 binning["srbbggMET"].update(met_variables)
 binning["crantibbgg"] = copy.deepcopy(binning["preselection"])
 binning["crbbantigg"] = copy.deepcopy(binning["preselection"])
