@@ -418,15 +418,18 @@ def main():
         "diphoton_bbgg_mass",
         "dibjet_bbgg_mass",
     ]
-    specific_variable_names = ["puppiMET_pt", "puppiMET_phi", 
-           # "puppiMET_phiJERDown", "puppiMET_phiJERUp", "puppiMET_phiJESDown",
-           # "puppiMET_phiJESUp", "puppiMET_phiUnclusteredDown",
-           # "puppiMET_phiUnclusteredUp", "puppiMET_ptJERDown",
-           # "puppiMET_ptJERUp", "puppiMET_ptJESDown",
-           # "puppiMET_ptJESUp", 
-           # "puppiMET_ptUnclusteredDown",
-           # "puppiMET_ptUnclusteredUp", "puppiMET_sumEt"
-            ]
+
+    specific_variable_names = [
+        "puppiMET_pt",
+        "puppiMET_phi",
+        # "puppiMET_phiJERDown", "puppiMET_phiJERUp", "puppiMET_phiJESDown",
+        # "puppiMET_phiJESUp", "puppiMET_phiUnclusteredDown",
+        # "puppiMET_phiUnclusteredUp", "puppiMET_ptJERDown",
+        # "puppiMET_ptJERUp", "puppiMET_ptJESDown",
+        # "puppiMET_ptJESUp", "puppiMET_ptUnclusteredDown",
+        # "puppiMET_ptUnclusteredUp", "puppiMET_sumEt"
+    ]
+
     specific_regions = ["srbbggMET"]
 
     histogram_names = [
