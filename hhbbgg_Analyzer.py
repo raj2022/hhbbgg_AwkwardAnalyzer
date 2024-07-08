@@ -80,10 +80,12 @@ def runOneFile(inputfile, outputrootfile):
             "lead_eta",
             "lead_phi",
             "lead_mvaID_WP90",
+            "lead_mvaID_WP80", # loose PhotonID
             "sublead_pt",
             "sublead_eta",
             "sublead_phi",
             "sublead_mvaID_WP90",
+            "sublead_mvaID_WP80",
             "weight",
             "weight_central",
             "lead_bjet_btagPNetB",
@@ -135,10 +137,12 @@ def runOneFile(inputfile, outputrootfile):
                 "lead_pho_eta": tree_["lead_eta"],
                 "lead_pho_phi": tree_["lead_phi"],
                 "lead_pho_mvaID_WP90": tree_["lead_mvaID_WP90"],
+                "lead_pho_mvaID_WP80": tree_["lead_mvaID_WP80"],
                 "sublead_pho_pt": tree_["sublead_pt"],
                 "sublead_pho_eta": tree_["sublead_eta"],
                 "sublead_pho_phi": tree_["sublead_phi"],
                 "sublead_pho_mvaID_WP90": tree_["sublead_mvaID_WP90"],
+                "sublead_pho_mvaID_WP80": tree_["sublead_mvaID_WP80"],
                 "weight_central": tree_["weight_central"],
                 "weight": tree_["weight"],
                 "lead_bjet_PNetB": tree_["lead_bjet_btagPNetB"],
@@ -231,20 +235,21 @@ def runOneFile(inputfile, outputrootfile):
         # Adding puppi MET and associated variables
         out_events["puppiMET_pt"] = cms_events["puppiMET_pt"]
         out_events["puppiMET_phi"] = cms_events["puppiMET_phi"]
-        # out_events["puppiMET_phiJERDown"] = cms_events["puppiMET_phiJERDown"]
-        # out_events["puppiMET_phiJERUp"] = cms_events["puppiMET_phiJERUp"]
-        # out_events["puppiMET_phiJESDown"] = cms_events["puppiMET_phiJESDown"]
-        # out_events["puppiMET_phiJESUp"] = cms_events["puppiMET_phiJESUp"]
-        # out_events["puppiMET_phiUnclusteredDown"] = cms_events["puppiMET_phiUnclusteredDown"]
-        # out_events["puppiMET_phiUnclusteredUp"] = cms_events["puppiMET_phiUnclusteredUp"]
-        # out_events["puppiMET_ptJERDown"] = cms_events["puppiMET_ptJERDown"]
-        # out_events["puppiMET_ptJERUp"] = cms_events["puppiMET_ptJERUp"]
-        # out_events["puppiMET_ptJESDown"] = cms_events["puppiMET_ptJESDown"]
-        # out_events["puppiMET_ptJESUp"] = cms_events["puppiMET_ptJESUp"]
-        # out_events["puppiMET_ptUnclusteredDown"] = cms_events["puppiMET_ptUnclusteredDown"]
-        # out_events["puppiMET_ptUnclusteredUp"] = cms_events["puppiMET_ptUnclusteredUp"]
-        # out_events["puppiMET_sumEt"] = cms_events["puppiMET_sumEt"]
-        ##--------------
+
+        out_events["puppiMET_phiJERDown"] = cms_events["puppiMET_phiJERDown"]
+        out_events["puppiMET_phiJERUp"] = cms_events["puppiMET_phiJERUp"]
+        out_events["puppiMET_phiJESDown"] = cms_events["puppiMET_phiJESDown"]
+        out_events["puppiMET_phiJESUp"] = cms_events["puppiMET_phiJESUp"]
+        out_events["puppiMET_phiUnclusteredDown"] = cms_events["puppiMET_phiUnclusteredDown"]
+        out_events["puppiMET_phiUnclusteredUp"] = cms_events["puppiMET_phiUnclusteredUp"]
+        out_events["puppiMET_ptJERDown"] = cms_events["puppiMET_ptJERDown"]
+        out_events["puppiMET_ptJERUp"] = cms_events["puppiMET_ptJERUp"]
+        out_events["puppiMET_ptJESDown"] = cms_events["puppiMET_ptJESDown"]
+        out_events["puppiMET_ptJESUp"] = cms_events["puppiMET_ptJESUp"]
+        #out_events["puppiMET_ptUnclusteredDown"] = cms_events["puppiMET_ptUnclusteredDown"]
+        #out_events["puppiMET_ptUnclusteredUp"] = cms_events["puppiMET_ptUnclusteredUp"]
+        #out_events["puppiMET_sumEt"] = cms_events["puppiMET_sumEt"]
+        ###--------------
         out_events["lead_pho_pt"] = cms_events["lead_pho_pt"]
         # Adding new variable
         out_events["lead_pho_eta"] = cms_events["lead_pho_eta"]

@@ -175,11 +175,92 @@ def stack1d_histograms(
         mc_stack.plot(ax=ax, stack=True, histtype="fill", flow="sum", sort="yield")
 
         # Plot signal histograms
+#        if "srbbgg" in hist_name or "srbbggMET" in hist_name:
+#            for signal_sample in signal_samples:
+#                signal_histogram = get_histogram(
+#                    uproot_loaded_filename, f"{signal_sample}/{hist_name}"
+#                )
+#                signal_histogram.plot(
+#                    ax=ax,
+#                    histtype="step",
+#                    yerr=True,
+#                    xerr=True,
+#                    label=legend_dict[signal_sample],
+#                    color="red",
+#                )
+#            
+#            region_name = r'sr: $b\bar{b}\gamma\gamma$' if "srbbgg" in hist_name else r'sr: $b\bar{b}\gamma\gamma$(MET)' 
+#            
+#            ax.text(
+#            x=ax.get_xlim()[0] + 0.05 * (ax.get_xlim()[1] - ax.get_xlim()[0]),  
+#            # y=ax.get_ylim()[1] - 0.05 * (ax.get_ylim()[1] - ax.get_ylim()[0]),  
+#            y = 1e8*0.20,
+#            s=region_name,
+#            fontsize=25,
+#            ha='left',  
+#            va='top',   
+#            bbox=dict(facecolor='white', alpha=1)
+#             )
+#
+#        # for control regions
+#        if "crantibbgg" in hist_name or "crbbantigg" in hist_name:
+#            region_name = r'cr: anti$b\bar{b}\gamma\gamma$' if "crantibbgg" in hist_name else r'cr: $b\bar{b}anti\gamma\gamma$' 
+#
+#            ax.text(
+#            x=ax.get_xlim()[0] + 0.05 * (ax.get_xlim()[1] - ax.get_xlim()[0]),
+#            # y=ax.get_ylim()[1] - 0.05 * (ax.get_ylim()[1] - ax.get_ylim()[0]),  
+#            y = 1e8*0.20,
+#            s=region_name,
+#            fontsize=20,
+#            ha='left',
+#            va='top',
+#            bbox=dict(facecolor='white', alpha=1)
+#             )
+#
+        
+
+        text_srbbgg = "Pass medium Btag\nPass tight photonID "
+        text_srbbggMET = "Pass medium Btag\nPass tight photonID"
+        text_crantibbgg = "Fail Medium Btag\nPass tight photonID"
+        text_crbbantigg = "Pass Medium Btag\nPass loose photonID\nfail tight photonID "
+
+
+
+        if "srbbgg" in hist_name:
+            region_name = r'sr: $b\bar{b}\gamma\gamma$'
+            additional_text = text_srbbgg
+        elif "srbbggMET" in hist_name:
+            region_name = r'sr: $b\bar{b}\gamma\gamma$+MET'
+            additional_text = text_srbbggMET
+        elif "crantibbgg" in hist_name:
+            region_name = r'cr: anti$b\bar{b}\gamma\gamma$'
+            additional_text = text_crantibbgg
+        elif "crbbantigg" in hist_name:
+            region_name = r'cr: $b\bar{b}anti\gamma\gamma$'
+            additional_text = text_crbbantigg
+        else:
+            region_name = None
+            additional_text = None
+
+        
+        if region_name and additional_text:
+            combined_text = f"{region_name}\n{additional_text}"
+            ax.text(
+                x=ax.get_xlim()[0] + 0.02 * (ax.get_xlim()[1] - ax.get_xlim()[0]),
+                y=1e8*0.20,
+                s=combined_text,
+                fontsize=15,
+                ha='left',
+                va='top',
+                bbox=dict(facecolor='white', alpha=1)
+            )
+
+        # plot signal histogram
         if "srbbgg" in hist_name or "srbbggMET" in hist_name:
             for signal_sample in signal_samples:
                 signal_histogram = get_histogram(
                     uproot_loaded_filename, f"{signal_sample}/{hist_name}"
-                )
+                 )       
                 signal_histogram.plot(
                     ax=ax,
                     histtype="step",
@@ -187,7 +268,11 @@ def stack1d_histograms(
                     xerr=True,
                     label=legend_dict[signal_sample],
                     color="red",
-                )
+                  )   
+
+
+
+
 
         # Plot ratio plot
         ratio, error = get_ratio(data_histogram, sum_histograms(mc_stack))
@@ -333,6 +418,7 @@ def main():
         "diphoton_bbgg_mass",
         "dibjet_bbgg_mass",
     ]
+
     specific_variable_names = [
         "puppiMET_pt",
         "puppiMET_phi",
@@ -343,6 +429,7 @@ def main():
         # "puppiMET_ptJESUp", "puppiMET_ptUnclusteredDown",
         # "puppiMET_ptUnclusteredUp", "puppiMET_sumEt"
     ]
+
     specific_regions = ["srbbggMET"]
 
     histogram_names = [
@@ -402,7 +489,16 @@ def main():
         "diphoton_bbgg_mass": r"$p_T^{\gamma\gamma}/M_{b\bar{b}\gamma\gamma}$",
         "dibjet_bbgg_mass": r"$p_T^{b\bar{b}}/m_{b\bar{b}\gamma\gamma}$",
         "puppiMET_pt": r"puppi $p_T^{miss}$ [GeV]",
-        "puppiMET_phi": r"puppi $\phi^{miss}$ [GeV]",
+        "puppiMET_phi": r"puppi $\phi^{miss}$",
+        #"puppiMET_phiJERDown": r"puppi $\phi^{JERDown}$",
+        #"puppiMET_phiJERUp": r"puppi $\phi^{JERUp}$",
+        #"puppiMET_phiJESDown": r"puppi $\phi^{JESDown}$",
+        #"puppiMET_phiUnclusteredDown": r"puppi $\phi^{UnclusterDown}$",
+        #"puppiMET_phiUnclusteredUp": r"puppi $\phi^{UnclusterUp}$",
+        #"puppiMET_ptJERDown": r"puppi $p_T^{JERDown}$ [GeV]",
+        #"puppiMET_ptJERUp": r"puppi $p_T^{JERUp}$ [GeV]",
+        #"puppiMET_ptJESDown": r"puppi $p_T^{JESDown}$ [GeV]",
+        #"puppiMET_ptJESUp": r"puppi $p_T^{JESUp}$ [GeV]",
     }
 
     # create the tdirectory to save plots

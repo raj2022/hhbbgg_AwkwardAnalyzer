@@ -45,6 +45,17 @@ vardict = {
     "dibjet_bbgg_mass": "dibjet_bbgg_mass",
     "puppiMET_pt": "puppiMET_pt",
     "puppiMET_phi": "puppiMET_phi",
+    "puppiMET_phiJERDown": "puppiMET_phiJERDown",
+    "puppiMET_phiJERUp": "puppiMET_phiJERUp",
+    "puppiMET_phiJESDown": "puppiMET_phiJESDown",
+    "puppiMET_phiJESUp": "puppiMET_phiJESUp",
+    "puppiMET_phiUnclusteredDown": "puppiMET_phiUnclusteredDown",
+    "puppiMET_phiUnclusteredUp": "puppiMET_phiUnclusteredUp",
+    "puppiMET_ptJERDown":"puppiMET_ptJERDown",
+    "puppiMET_ptJERUp":"puppiMET_ptJERUp",
+    "puppiMET_ptJESDown":"puppiMET_ptJESDown",
+    "puppiMET_ptJESUp":"puppiMET_ptJESUp",
+    
 }
 
 variables_common = {
@@ -96,5 +107,5 @@ for ireg in regions:
     print(ireg)
     variables_common[ireg] = copy.deepcopy(variables_common["preselection"])
 
-srbbggMET = ["puppiMET_pt", "puppiMET_phi"]
+srbbggMET = ["puppiMET_pt", "puppiMET_phi", "puppiMET_phiJERDown", "puppiMET_phiJERUp","puppiMET_phiJESDown", "puppiMET_phiJESUp", "puppiMET_phiUnclusteredDown", "puppiMET_phiUnclusteredUp", "puppiMET_ptJERDown", "puppiMET_ptJERUp", "puppiMET_ptJESDown", "puppiMET_ptJESUp"]
 variables_common["srbbggMET"] = variables_common["srbbggMET"] + srbbggMET
