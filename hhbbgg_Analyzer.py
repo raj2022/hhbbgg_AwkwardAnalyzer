@@ -235,6 +235,7 @@ def runOneFile(inputfile, outputrootfile):
         # Adding puppi MET and associated variables
         out_events["puppiMET_pt"] = cms_events["puppiMET_pt"]
         out_events["puppiMET_phi"] = cms_events["puppiMET_phi"]
+
         out_events["puppiMET_phiJERDown"] = cms_events["puppiMET_phiJERDown"]
         out_events["puppiMET_phiJERUp"] = cms_events["puppiMET_phiJERUp"]
         out_events["puppiMET_phiJESDown"] = cms_events["puppiMET_phiJESDown"]
