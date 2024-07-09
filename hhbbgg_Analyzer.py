@@ -80,7 +80,7 @@ def runOneFile(inputfile, outputrootfile):
             "lead_eta",
             "lead_phi",
             "lead_mvaID_WP90",
-            "lead_mvaID_WP80",  # loose PhotonID
+            "lead_mvaID_WP80",  # tight PhotonID? or is it loose?
             "sublead_pt",
             "sublead_eta",
             "sublead_phi",
@@ -100,6 +100,8 @@ def runOneFile(inputfile, outputrootfile):
             "phosublead_PtOverM",
             "FirstJet_PtOverM",
             "SecondJet_PtOverM",
+            "lead_mvaID",
+            "sublead_mvaID",
         ],
         step_size=10000,
     ):
@@ -157,6 +159,8 @@ def runOneFile(inputfile, outputrootfile):
                 "phosublead_PtOverM": tree_["phosublead_PtOverM"],
                 "FirstJet_PtOverM": tree_["FirstJet_PtOverM"],
                 "SecondJet_PtOverM": tree_["SecondJet_PtOverM"],
+                "lead_pho_mvaID": tree_["lead_mvaID"],
+                "sublead_pho_mvaID": tree_["sublead_mvaID"],
             },
             depth_limit=1,
         )
@@ -220,6 +224,7 @@ def runOneFile(inputfile, outputrootfile):
 
         from regions import (
             get_mask_preselection,
+            get_mask_selection,
             get_mask_srbbgg,
             get_mask_srbbggMET,
             get_mask_crantibbgg,
@@ -227,6 +232,7 @@ def runOneFile(inputfile, outputrootfile):
         )
 
         cms_events["mask_preselection"] = get_mask_preselection(cms_events)
+        cms_events["mask_selection"] = get_mask_selection(cms_events)
         cms_events["mask_srbbgg"] = get_mask_srbbgg(cms_events)
         cms_events["mask_srbbggMET"] = get_mask_srbbggMET(cms_events)
         cms_events["mask_crbbantigg"] = get_mask_crbbantigg(cms_events)
@@ -282,6 +288,9 @@ def runOneFile(inputfile, outputrootfile):
         out_events["weight_preselection"] = (
             cms_events["weight"] * xsec_ * lumi_ / out_events.weight_central
         )
+        out_events["weight_selection"] = (
+            cms_events["weight"] * xsec_ * lumi_ / out_events.weight_central
+        )
         out_events["weight_srbbgg"] = (
             cms_events["weight"] * xsec_ * lumi_ / out_events.weight_central
         )
@@ -326,7 +335,19 @@ def runOneFile(inputfile, outputrootfile):
         out_events["diphoton_bbgg_mass"] = cms_events["diphoton_bbgg_mass"]
         out_events["dibjet_bbgg_mass"] = cms_events["dibjet_bbgg_mass"]
 
+        #--------------------------------------------------
+        
+        out_events["lead_pho_mvaID_WP90"] = cms_events["lead_pho_mvaID_WP90"]
+        out_events["lead_pho_mvaID_WP80"] = cms_events["lead_pho_mvaID_WP80"]
+        out_events["sublead_pho_mvaID_WP90"] = cms_events["sublead_pho_mvaID_WP90"]
+        out_events["sublead_pho_mvaID_WP80"] = cms_events["sublead_pho_mvaID_WP80"]
+        out_events["lead_pho_mvaID"] = cms_events["lead_pho_mvaID"]
+        out_events["sublead_pho_mvaID"] = cms_events["sublead_pho_mvaID"]
+
+        #--------------------------------------------------
+        #--------------------------------------------------
         out_events["preselection"] = cms_events["mask_preselection"]
+        out_events["selection"] = cms_events["mask_selection"]
         out_events["srbbgg"] = cms_events["mask_srbbgg"]
         out_events["srbbggMET"] = cms_events["mask_srbbggMET"]
         out_events["crantibbgg"] = cms_events["mask_crantibbgg"]

@@ -11,3 +11,8 @@ dependencies:
    - root==6.30.04
    - awkward==2.6.3
    - pandas==2.2.2
+   # ML
+   - scikit-learn
+   - scipy
+   - libstdcxx-ng
+   - seaborn-0.13.2
