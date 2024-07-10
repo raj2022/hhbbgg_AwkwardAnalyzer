@@ -14,5 +14,10 @@ dependencies:
    # ML
    - scikit-learn
    - scipy
+   - xgboost
    - libstdcxx-ng
    - seaborn-0.13.2
+   - pip:
+    - torch==1.10.0+cpu torchvision==0.11.1+cpu torchaudio==0.10.0+cpu  # CPU version
+    - torch==1.10.0 torchvision==0.11.1 torchaudio==0.10.0+cpu  # GPU version (CUDA 11.1)
+
