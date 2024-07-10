@@ -1,3 +1,7 @@
+## Commments:
+##.1 Check with preselection as we have less evetns for the preselection
+## 2.
+
 import uproot
 import pandas as pd
 from sklearn.model_selection import train_test_split, GridSearchCV
@@ -6,6 +10,7 @@ from sklearn.metrics import accuracy_score, roc_auc_score, classification_report
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import MinMaxScaler
 
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc
@@ -23,46 +28,46 @@ bkg_treename_3 = 'GJetPt40'
 
 # keys
 keys = [
-    'srbbgg-dibjet_mass',
-    'srbbgg-diphoton_mass',
-    'srbbgg-bbgg_mass',
-    'srbbgg-dibjet_pt',
-    'srbbgg-diphoton_pt',
-    'srbbgg-bbgg_pt',
-    'srbbgg-lead_pho_pt',
-    'srbbgg-sublead_pho_pt',
-    'srbbgg-bbgg_eta',
-    'srbbgg-bbgg_phi',
-    'srbbgg-lead_pho_eta',
-    'srbbgg-lead_pho_phi',
-    'srbbgg-sublead_pho_eta',
-    'srbbgg-sublead_pho_phi',
-    'srbbgg-diphoton_eta',
-    'srbbgg-diphoton_phi',
-    'srbbgg-dibjet_eta',
-    'srbbgg-dibjet_phi',
-    'srbbgg-lead_bjet_pt',
-    'srbbgg-sublead_bjet_pt',
-    'srbbgg-lead_bjet_eta',
-    'srbbgg-lead_bjet_phi',
-    'srbbgg-sublead_bjet_eta',
-    'srbbgg-sublead_bjet_phi',
-    'srbbgg-sublead_bjet_PNetB',
-    'srbbgg-lead_bjet_PNetB',
-    'srbbgg-CosThetaStar_gg',
-    'srbbgg-CosThetaStar_jj',
-    'srbbgg-CosThetaStar_CS',
-    'srbbgg-DeltaR_jg_min',
-    'srbbgg-pholead_PtOverM',
-    'srbbgg-phosublead_PtOverM',
-    'srbbgg-FirstJet_PtOverM',
-    'srbbgg-SecondJet_PtOverM',
-    'srbbgg-lead_pt_over_diphoton_mass',
-    'srbbgg-sublead_pt_over_diphoton_mass',
-    'srbbgg-lead_pt_over_dibjet_mass',
-    'srbbgg-sublead_pt_over_dibjet_mass',
-    'srbbgg-diphoton_bbgg_mass',
-    'srbbgg-dibjet_bbgg_mass',
+    'preselection-dibjet_mass',
+    'preselection-diphoton_mass',
+    'preselection-bbgg_mass',
+    'preselection-dibjet_pt',
+    'preselection-diphoton_pt',
+    'preselection-bbgg_pt',
+    'preselection-lead_pho_pt',
+    'preselection-sublead_pho_pt',
+    'preselection-bbgg_eta',
+    'preselection-bbgg_phi',
+    'preselection-lead_pho_eta',
+    'preselection-lead_pho_phi',
+    'preselection-sublead_pho_eta',
+    'preselection-sublead_pho_phi',
+    'preselection-diphoton_eta',
+    'preselection-diphoton_phi',
+    'preselection-dibjet_eta',
+    'preselection-dibjet_phi',
+    'preselection-lead_bjet_pt',
+    'preselection-sublead_bjet_pt',
+    'preselection-lead_bjet_eta',
+    'preselection-lead_bjet_phi',
+    'preselection-sublead_bjet_eta',
+    'preselection-sublead_bjet_phi',
+    'preselection-sublead_bjet_PNetB',
+    'preselection-lead_bjet_PNetB',
+    'preselection-CosThetaStar_gg',
+    'preselection-CosThetaStar_jj',
+    'preselection-CosThetaStar_CS',
+    'preselection-DeltaR_jg_min',
+    'preselection-pholead_PtOverM',
+    'preselection-phosublead_PtOverM',
+    'preselection-FirstJet_PtOverM',
+    'preselection-SecondJet_PtOverM',
+    'preselection-lead_pt_over_diphoton_mass',
+    'preselection-sublead_pt_over_diphoton_mass',
+    'preselection-lead_pt_over_dibjet_mass',
+    'preselection-sublead_pt_over_dibjet_mass',
+    'preselection-diphoton_bbgg_mass',
+    'preselection-dibjet_bbgg_mass',
 ]
 
 file = uproot.open(file_path)
@@ -86,10 +91,16 @@ dfs[bkg_treename_1] = read_histograms(bkg_treename_1)
 dfs[bkg_treename_2] = read_histograms(bkg_treename_2)
 dfs[bkg_treename_3] = read_histograms(bkg_treename_3)
 
+
 signal_df = pd.concat(dfs['signal'].values(), axis=1)
 background_df_1 = pd.concat(dfs[bkg_treename_1].values(), axis=1)
 background_df_2 = pd.concat(dfs[bkg_treename_2].values(), axis=1)
 background_df_3 = pd.concat(dfs[bkg_treename_3].values(), axis=1)
+print(signal_df)
+print(background_df_1)
+print(background_df_2)
+print(background_df_3)
+
 
 background_df = pd.concat([background_df_1, background_df_2, background_df_3], ignore_index=True)
 
@@ -99,42 +110,42 @@ background_df['label'] = 0
 combined_df = pd.concat([signal_df, background_df], ignore_index=True)
 
 features = [
-    'srbbgg-diphoton_mass',
-    'srbbgg-dibjet_mass',
-    'srbbgg-lead_pho_pt',
-    'srbbgg-sublead_pho_pt',
-    'srbbgg-bbgg_eta',
-    'srbbgg-bbgg_phi',
-    'srbbgg-lead_pho_eta',
-    'srbbgg-lead_pho_phi',
-    'srbbgg-sublead_pho_eta',
-    'srbbgg-sublead_pho_phi',
-    'srbbgg-diphoton_eta',
-    'srbbgg-diphoton_phi',
-    'srbbgg-dibjet_eta',
-    'srbbgg-dibjet_phi',
-    'srbbgg-lead_bjet_pt',
-    'srbbgg-sublead_bjet_pt',
-    'srbbgg-lead_bjet_eta',
-    'srbbgg-lead_bjet_phi',
-    'srbbgg-sublead_bjet_eta',
-    'srbbgg-sublead_bjet_phi',
-    'srbbgg-sublead_bjet_PNetB',
-    'srbbgg-lead_bjet_PNetB',
-    'srbbgg-CosThetaStar_gg',
-    'srbbgg-CosThetaStar_jj',
-    'srbbgg-CosThetaStar_CS',
-    'srbbgg-DeltaR_jg_min',
-    'srbbgg-pholead_PtOverM',
-    'srbbgg-phosublead_PtOverM',
-    'srbbgg-FirstJet_PtOverM',
-    'srbbgg-SecondJet_PtOverM',
-    'srbbgg-lead_pt_over_diphoton_mass',
-    'srbbgg-sublead_pt_over_diphoton_mass',
-    'srbbgg-lead_pt_over_dibjet_mass',
-    'srbbgg-sublead_pt_over_dibjet_mass',
-    'srbbgg-diphoton_bbgg_mass',
-    'srbbgg-dibjet_bbgg_mass',
+    'preselection-diphoton_mass',
+    'preselection-dibjet_mass',
+    'preselection-lead_pho_pt',
+    'preselection-sublead_pho_pt',
+    'preselection-bbgg_eta',
+    'preselection-bbgg_phi',
+    'preselection-lead_pho_eta',
+    'preselection-lead_pho_phi',
+    'preselection-sublead_pho_eta',
+    'preselection-sublead_pho_phi',
+    'preselection-diphoton_eta',
+    'preselection-diphoton_phi',
+    'preselection-dibjet_eta',
+    'preselection-dibjet_phi',
+    'preselection-lead_bjet_pt',
+    'preselection-sublead_bjet_pt',
+    'preselection-lead_bjet_eta',
+    'preselection-lead_bjet_phi',
+    'preselection-sublead_bjet_eta',
+    'preselection-sublead_bjet_phi',
+    'preselection-sublead_bjet_PNetB',
+    'preselection-lead_bjet_PNetB',
+    'preselection-CosThetaStar_gg',
+    'preselection-CosThetaStar_jj',
+    'preselection-CosThetaStar_CS',
+    'preselection-DeltaR_jg_min',
+    'preselection-pholead_PtOverM',
+    'preselection-phosublead_PtOverM',
+    'preselection-FirstJet_PtOverM',
+    'preselection-SecondJet_PtOverM',
+    'preselection-lead_pt_over_diphoton_mass',
+    'preselection-sublead_pt_over_diphoton_mass',
+    'preselection-lead_pt_over_dibjet_mass',
+    'preselection-sublead_pt_over_dibjet_mass',
+    'preselection-diphoton_bbgg_mass',
+    'preselection-dibjet_bbgg_mass',
 ]
 
 X = combined_df[features]
@@ -153,7 +164,7 @@ X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, 
 
 # Define parameter grid for GridSearchCV
 param_grid = {
-    'model__n_estimators': [100, 1000],
+    'model__n_estimators': [100,500, 1000],
     'model__learning_rate': [0.001, 0.01, 0.1, 1.0],
     'model__max_depth': [3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 35, 40]
 }
@@ -161,7 +172,7 @@ param_grid = {
 # Create a pipeline
 pipeline = Pipeline([
     ('imputer', SimpleImputer(strategy='mean')),
-    ('scaler', StandardScaler()),
+    ('scaler', MinMaxScaler()),
     ('model', GradientBoostingClassifier())
 ])
 
@@ -236,7 +247,7 @@ for feature in [features[i] for i in indices[:5]]:
 #---------------------------
 
 # Feature to plot
-feature = 'srbbgg-diphoton_mass'
+feature = 'preselection-diphoton_mass'
 
 # Plotting
 plt.figure(figsize=(8, 6))
