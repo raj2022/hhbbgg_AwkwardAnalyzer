@@ -4,6 +4,4 @@
 analysis.sh
 stack_plots/**/*.pdf
 stack_plots/**/*.png
-bdt/bdtplots/*.pdf
-bdt/bdtplots/*.png
 outputfiles/*.root
