@@ -141,13 +141,22 @@ features = [
 X = combined_df[features]
 y = combined_df['label']
 
+# Check dataset size
+print(f"Total samples: {len(X)}")
+
 imputer = SimpleImputer(strategy='mean')
 X_imputed = imputer.fit_transform(X)
 
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X_imputed)
 
-X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+# Check for a sufficient number of events for training and testing
+if len(X) > 100:
+    test_size = 0.2
+else:
+    test_size = 0.5  # Use a higher test size if the dataset is small
+
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=test_size, random_state=42)
 
 param_grid = {
     'model__n_estimators': [100, 300, 500],
@@ -169,14 +178,53 @@ grid_search = GridSearchCV(pipeline, param_grid, cv=3, scoring='roc_auc', n_jobs
 grid_search.fit(X_train, y_train)
 
 best_model = grid_search.best_estimator_
-y_pred = best_model.predict(X_test)
-accuracy = accuracy_score(y_test, y_pred)
-roc_auc = roc_auc_score(y_test, y_pred)
+
+y_train_pred = best_model.predict(X_train)
+y_test_pred = best_model.predict(X_test)
+
+y_train_scores = best_model.predict_proba(X_train)[:, 1]
+y_test_scores = best_model.predict_proba(X_test)[:, 1]
+
+# Classifier output plot
+plt.figure(figsize=(10, 8))
+plt.hist(y_train_scores[y_train == 1], bins=20, color='blue', alpha=0.5, label='S (Train)', density=True)
+plt.hist(y_train_scores[y_train == 0], bins=20, color='red', alpha=0.5, label='R (Train)', density=True)
+plt.scatter(y_test_scores[y_test == 1], np.full(y_test[y_test == 1].shape, -0.01), color='blue', label='S (Test)')
+plt.scatter(y_test_scores[y_test == 0], np.full(y_test[y_test == 0].shape, -0.01), color='red', label='R (Test)')
+plt.xlabel('Classifier output')
+plt.ylabel('Normalized Yields')
+plt.title('Classification with scikit-learn')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# ROC curve
+fpr, tpr, thresholds = roc_curve(y_test, y_test_scores)
+roc_auc = auc(fpr, tpr)
+
+plt.figure(figsize=(8, 6))
+plt.plot(fpr, tpr, color='darkorange', lw=2, label='ROC curve (area = {:.2f})'.format(roc_auc))
+plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.0])
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('Receiver Operating Characteristic (ROC) Curve')
+plt.legend(loc='lower right')
+plt.grid(True)
+plt.show()
+
+print("Best parameters:", grid_search.best_params_)
+print("Accuracy on test set:", accuracy_score(y_test, y_test_pred))
+print("ROC AUC on test set:", roc_auc_score(y_test, y_test_scores))
+print(classification_report(y_test, y_test_pred))
+
+#---------------------------
 
 y_scores = best_model.predict_proba(X_test)[:, 1]
 
 fpr, tpr, _ = roc_curve(y_test, y_scores)
-roc_auc = auc(fpr, tpr)
+
 
 plt.figure(figsize=(8, 6))
 plt.plot(fpr, tpr, color='darkorange', lw=2, label='ROC curve (area = %0.2f)' % roc_auc)
@@ -190,12 +238,10 @@ plt.legend(loc="lower right")
 plt.grid(True)
 
 print(f"Best parameters: {grid_search.best_params_}")
-print(f"Accuracy: {accuracy}")
 
 
-print(f"ROC AUC: {roc_auc}")
-print(classification_report(y_test, y_pred))
 
+#--------------------
 # Save the plot to a file
 plt.savefig('bdtplots/roc_curve.png')
 plt.savefig('bdtplots/roc_curve.pdf')
