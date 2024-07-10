@@ -1,26 +1,25 @@
+import numpy as np
 import uproot
 import pandas as pd
-from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.model_selection import train_test_split
 from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.metrics import accuracy_score, roc_auc_score, classification_report
 from sklearn.preprocessing import StandardScaler
-from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 
 import matplotlib.pyplot as plt
-#from sklearn.metrics import plot_roc_curve
-from sklearn.metrics import roc_curve, auc
-
 import seaborn as sns
 
-file_path = '../outputfiles/hhbbgg_analyzer-histograms.root'
+from sklearn.metrics import roc_curve, auc  # Add this line
 
+
+# File and tree names
+file_path = '../outputfiles/hhbbgg_analyzer-histograms.root'
 sig_treename = 'GluGluToHH'
 bkg_treename_1 = 'GGJets'
 bkg_treename_2 = 'GJetPt20To40'
 bkg_treename_3 = 'GJetPt40'
 
-# keys
+# Keys
 keys = [
     'srbbgg-dibjet_mass',
     'srbbgg-diphoton_mass',
@@ -150,85 +149,70 @@ X_scaled = scaler.fit_transform(X_imputed)
 # Splitting the data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
 
-# Define parameter grid for GridSearchCV
-param_grid = {
-    'model__n_estimators': [100, 200],
-    'model__learning_rate': [0.01, 0.1, 0.2],
-    'model__max_depth': [3, 4, 5]
-}
+# Train the classifier
+model = GradientBoostingClassifier(n_estimators=200, learning_rate=0.1, max_depth=4)
+model.fit(X_train, y_train)
 
-# Create a pipeline
-pipeline = Pipeline([
-    ('scaler', StandardScaler()),
-    ('imputer', SimpleImputer(strategy='mean')),
-    ('model', GradientBoostingClassifier())
-])
-
-# Perform grid search with the pipeline
-grid_search = GridSearchCV(pipeline, param_grid, cv=3, scoring='roc_auc')
-grid_search.fit(X_train, y_train)
-
-# Best parameters and model evaluation
-best_model = grid_search.best_estimator_
-y_pred = best_model.predict(X_test)
-accuracy = accuracy_score(y_test, y_pred)
-roc_auc = roc_auc_score(y_test, y_pred)
-
-
-# Get predicted probabilities for positive class
-y_scores = best_model.predict_proba(X_test)[:, 1]
-
-# Compute ROC curve and ROC area for each class
-fpr, tpr, _ = roc_curve(y_test, y_scores)
-roc_auc = auc(fpr, tpr)
-
-# Plot ROC curve
-plt.figure(figsize=(8, 6))
-plt.plot(fpr, tpr, color='darkorange', lw=2, label='ROC curve (area = %0.2f)' % roc_auc)
-plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
-plt.xlim([0.0, 1.0])
-plt.ylim([0.0, 1.05])
-plt.xlabel('False Positive Rate')
-plt.ylabel('True Positive Rate')
-plt.title('Receiver Operating Characteristic (ROC) Curve')
-plt.legend(loc="lower right")
-plt.grid(True)
-
-
-print(f"Best parameters: {grid_search.best_params_}")
-print(f"Accuracy: {accuracy}")
-print(f"ROC AUC: {roc_auc}")
-print(classification_report(y_test, y_pred))
-
-# Save the plot to a file
-plt.savefig('bdtplots/roc_curve.png')
-plt.savefig('bdtplots/roc_curve.pdf')
-
-# Show plot
-plt.show()
-
-
-#---------------------------
-
-# Feature to plot
-feature = 'srbbgg-diphoton_mass'
+# Predict probabilities
+y_train_scores = model.predict_proba(X_train)[:, 1]
+y_test_scores = model.predict_proba(X_test)[:, 1]
 
 # Plotting
+bins = np.linspace(0, 1, 50)
+
 plt.figure(figsize=(8, 6))
 
-# Plot signal and background distributions
-sns.histplot(signal_df[feature], color='blue', label='Signal', kde=True)
-sns.histplot(background_df[feature], color='red', label='Background', kde=True)
+# Train signal
+train_sig_hist, _ = np.histogram(y_train_scores[y_train == 1], bins=bins, density=True)
+train_bkg_hist, _ = np.histogram(y_train_scores[y_train == 0], bins=bins, density=True)
 
-# Customize plot
-plt.title(f'Distribution of {feature} for Signal and Background')
-plt.xlabel(feature)
-plt.ylabel('Density')
-plt.legend()
+# Test signal
+test_sig_hist, _ = np.histogram(y_test_scores[y_test == 1], bins=bins, density=True)
+test_bkg_hist, _ = np.histogram(y_test_scores[y_test == 0], bins=bins, density=True)
 
-# Save the plot to a file
-plt.savefig('bdtplots/signal_background_distribution.png')
-plt.savefig('bdtplots/signal_background_distribution.pdf')
+bin_centers = 0.5 * (bins[1:] + bins[:-1])
 
-# Show plot
+# Plot histograms with error bars
+plt.errorbar(bin_centers, train_sig_hist, yerr=np.sqrt(train_sig_hist), fmt='o', label='S (Train)', color='blue')
+plt.errorbar(bin_centers, test_sig_hist, yerr=np.sqrt(test_sig_hist), fmt='^', label='S (Test)', color='blue', alpha=0.7)
+plt.errorbar(bin_centers, train_bkg_hist, yerr=np.sqrt(train_bkg_hist), fmt='o', label='R (Train)', color='red')
+plt.errorbar(bin_centers, test_bkg_hist, yerr=np.sqrt(test_bkg_hist), fmt='^', label='R (Test)', color='red', alpha=0.7)
+
+plt.fill_between(bin_centers, train_sig_hist, step='mid', alpha=0.2, color='blue', lw=0)
+plt.fill_between(bin_centers, train_bkg_hist, step='mid', alpha=0.2, color='red', lw=0)
+
+plt.xlabel('Classifier output')
+plt.ylabel('Normalized Yields')
+plt.title('Classification with scikit-learn')
+plt.legend(loc='upper center', frameon=False)
+plt.ylim(0, 0.5)
 plt.show()
+
+# Plotting functions
+def plot_roc_curve(y_true, y_scores, title='ROC Curve'):
+    fpr, tpr, _ = roc_curve(y_true, y_scores)
+    roc_auc = auc(fpr, tpr)
+    plt.figure()
+    plt.plot(fpr, tpr, color='darkorange', lw=2, label=f'ROC curve (area = {roc_auc:.2f})')
+    plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title(title)
+    plt.legend(loc='lower right')
+    plt.show()
+
+def plot_feature_importances(model, feature_names):
+    importances = model.feature_importances_
+    indices = np.argsort(importances)[::-1]
+    plt.figure(figsize=(12, 6))
+    plt.title('Feature Importances')
+    plt.bar(range(len(importances)), importances[indices], align='center')
+    plt.xticks(range(len(importances)), [feature_names[i] for i in indices], rotation=90)
+    plt.tight_layout()
+    plt.show()
+
+plot_roc_curve(y_test, y_test_scores)
+plot_feature_importances(model, features)
+
