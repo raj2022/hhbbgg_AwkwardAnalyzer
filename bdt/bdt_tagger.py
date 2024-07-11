@@ -92,12 +92,18 @@ background_df_1 = pd.concat(dfs[bkg_treename_1].values(), axis=1)
 background_df_2 = pd.concat(dfs[bkg_treename_2].values(), axis=1)
 background_df_3 = pd.concat(dfs[bkg_treename_3].values(), axis=1)
 
+print(signal_df.shape)
+print(background_df_1.shape)
+print(background_df_2.shape)
+print(background_df_3.shape)
+
 background_df = pd.concat([background_df_1, background_df_2, background_df_3], ignore_index=True)
 
 signal_df['label'] = 1
 background_df['label'] = 0
 
 combined_df = pd.concat([signal_df, background_df], ignore_index=True)
+print(combined_df.shape)
 
 features = [
     'preselection-diphoton_mass',
@@ -157,6 +163,13 @@ else:
     test_size = 0.5  # Use a higher test size if the dataset is small
 
 X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=test_size, random_state=42)
+
+print(f"X_train Shape:", X_train.shape)
+print(f"X_test Shape:", X_test.shape)
+print(f"y_train Shape:", y_train.shape)
+print(f"y_test Shape:", y_test.shape)
+
+
 
 param_grid = {
     'model__n_estimators': [100, 300, 500],
@@ -243,8 +256,8 @@ print(f"Best parameters: {grid_search.best_params_}")
 
 #--------------------
 # Save the plot to a file
-plt.savefig('bdtplots/roc_curve.png')
-plt.savefig('bdtplots/roc_curve.pdf')
+plt.savefig('bdtplots/bdt/roc_curve.png')
+plt.savefig('bdtplots/bdt/roc_curve.pdf')
 
 # Plot feature importances
 importances = best_model.named_steps['model'].feature_importances_
@@ -258,8 +271,8 @@ plt.xlim([-1, X.shape[1]])
 plt.tight_layout()
 
 # Save the plot to a file
-plt.savefig('bdtplots/feature_importances.png')
-plt.savefig('bdtplots/feature_importances.pdf')
+plt.savefig('bdtplots/bdt/feature_importances.png')
+plt.savefig('bdtplots/bdt/feature_importances.pdf')
 
 # Plot distribution of the top 5 important features for both signal and background
 top_features = [features[i] for i in indices[:5]]
@@ -276,8 +289,8 @@ for i, feature in enumerate(top_features):
 plt.tight_layout()
 
 # Save the plots to files
-plt.savefig('bdtplots/top_features_distributions.png')
-plt.savefig('bdtplots/top_features_distributions.pdf')
+plt.savefig('bdtplots/bdt/top_features_distributions.png')
+plt.savefig('bdtplots/bdt/top_features_distributions.pdf')
 
 # Plot decision scores for signal and background
 signal_indices = combined_df[combined_df['label'] == 1].index
@@ -296,10 +309,10 @@ plt.legend()
 plt.grid(True)
 
 # Save the plot to a file
-plt.savefig('bdtplots/decision_scores.png')
-plt.savefig('bdtplots/decision_scores.pdf')
+plt.savefig('bdtplots/bdt/decision_scores.png')
+plt.savefig('bdtplots/bdt/decision_scores.pdf')
 
-print("Plots have been saved to the 'bdtplots' directory.")
+print("Plots have been saved to the 'bdtplots/bdt' directory.")
 
 
 
@@ -318,5 +331,5 @@ plt.xlabel('Feature Importance Score')
 plt.ylabel('Features')
 plt.title('Feature Importance')
 plt.grid(True)
-plt.savefig("bdtplots/Feature_importance.png")
-plt.savefig("bdtplots/Feature_importance.pdf")
+plt.savefig("bdtplots/bdt/Feature_importance.png")
+plt.savefig("bdtplots/bdt/Feature_importance.pdf")
