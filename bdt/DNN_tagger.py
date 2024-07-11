@@ -7,6 +7,8 @@ from sklearn.impute import SimpleImputer
 from sklearn.metrics import accuracy_score, roc_auc_score, classification_report, roc_curve, auc
 import matplotlib.pyplot as plt
 import seaborn as sns
+from torchsummary import summary
+
 
 import torch
 import torch.nn as nn
@@ -14,80 +16,78 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 
 # Define file path and tree names
-file_path = '../outputfiles/hhbbgg_analyzer-histograms.root'
-sig_treename = 'GluGluToHH'
-bkg_treename_1 = 'GGJets'
-bkg_treename_2 = 'GJetPt20To40'
-bkg_treename_3 = 'GJetPt40'
-
+files = [
+    ("../outputfiles/hhbbgg_analyzer-trees.root", "/GluGluToHH/preselection"),
+    ("../outputfiles/hhbbgg_analyzer-trees.root", "/GGJets/preselection"),
+    ("../outputfiles/hhbbgg_analyzer-trees.root", "/GJetPt20To40/preselection"),
+    ("../outputfiles/hhbbgg_analyzer-trees.root", "/GJetPt40/preselection")
+]
 keys = [
-    'preselection-dibjet_mass',
-    'preselection-diphoton_mass',
-    'preselection-bbgg_mass',
-    'preselection-dibjet_pt',
-    'preselection-diphoton_pt',
-    'preselection-bbgg_pt',
-    'preselection-lead_pho_pt',
-    'preselection-sublead_pho_pt',
-    'preselection-bbgg_eta',
-    'preselection-bbgg_phi',
-    'preselection-lead_pho_eta',
-    'preselection-lead_pho_phi',
-    'preselection-sublead_pho_eta',
-    'preselection-sublead_pho_phi',
-    'preselection-diphoton_eta',
-    'preselection-diphoton_phi',
-    'preselection-dibjet_eta',
-    'preselection-dibjet_phi',
-    'preselection-lead_bjet_pt',
-    'preselection-sublead_bjet_pt',
-    'preselection-lead_bjet_eta',
-    'preselection-lead_bjet_phi',
-    'preselection-sublead_bjet_eta',
-    'preselection-sublead_bjet_phi',
-    'preselection-sublead_bjet_PNetB',
-    'preselection-lead_bjet_PNetB',
-    'preselection-CosThetaStar_gg',
-    'preselection-CosThetaStar_jj',
-    'preselection-CosThetaStar_CS',
-    'preselection-DeltaR_jg_min',
-    'preselection-pholead_PtOverM',
-    'preselection-phosublead_PtOverM',
-    'preselection-FirstJet_PtOverM',
-    'preselection-SecondJet_PtOverM',
-    'preselection-lead_pt_over_diphoton_mass',
-    'preselection-sublead_pt_over_diphoton_mass',
-    'preselection-lead_pt_over_dibjet_mass',
-    'preselection-sublead_pt_over_dibjet_mass',
-    'preselection-diphoton_bbgg_mass',
-    'preselection-dibjet_bbgg_mass',
+    'dibjet_mass',
+    'diphoton_mass',
+    'bbgg_mass',
+    'dibjet_pt',
+    'diphoton_pt',
+    'bbgg_pt',
+    'lead_pho_pt',
+    'sublead_pho_pt',
+    'bbgg_eta',
+    'bbgg_phi',
+    'lead_pho_eta',
+    'lead_pho_phi',
+    'sublead_pho_eta',
+    'sublead_pho_phi',
+    'diphoton_eta',
+    'diphoton_phi',
+    'dibjet_eta',
+    'dibjet_phi',
+    'lead_bjet_pt',
+    'sublead_bjet_pt',
+    'lead_bjet_eta',
+    'lead_bjet_phi',
+    'sublead_bjet_eta',
+    'sublead_bjet_phi',
+    'sublead_bjet_PNetB',
+    'lead_bjet_PNetB',
+    'CosThetaStar_gg',
+    'CosThetaStar_jj',
+    'CosThetaStar_CS',
+    'DeltaR_jg_min',
+    'pholead_PtOverM',
+    'phosublead_PtOverM',
+    'FirstJet_PtOverM',
+    'SecondJet_PtOverM',
+    'lead_pt_over_diphoton_mass',
+    'sublead_pt_over_diphoton_mass',
+    'lead_pt_over_dibjet_mass',
+    'sublead_pt_over_dibjet_mass',
+    'diphoton_bbgg_mass',
+    'dibjet_bbgg_mass',
 ]
 
-file = uproot.open(file_path)
 
-def read_histograms(treename):
-    tree_dfs = {}
-    for branch in keys:
-        full_key = f"{treename}/{branch}"
-        if full_key in file:
-            hist = file[full_key]
-            values, _ = hist.to_numpy() 
-            df = pd.DataFrame(values, columns=[branch])
-            tree_dfs[branch] = df
-        else:
-            print(f"{full_key} not found in the file.")
-    return tree_dfs
-
+# Initialize an empty dictionary to store dataframes
 dfs = {}
-dfs['signal'] = read_histograms(sig_treename)
-dfs[bkg_treename_1] = read_histograms(bkg_treename_1)
-dfs[bkg_treename_2] = read_histograms(bkg_treename_2)
-dfs[bkg_treename_3] = read_histograms(bkg_treename_3)
 
-signal_df = pd.concat(dfs['signal'].values(), axis=1)
-background_df_1 = pd.concat(dfs[bkg_treename_1].values(), axis=1)
-background_df_2 = pd.concat(dfs[bkg_treename_2].values(), axis=1)
-background_df_3 = pd.concat(dfs[bkg_treename_3].values(), axis=1)
+# Loop through each file and load the corresponding dataframe
+for file, key in files:
+    with uproot.open(file) as f:
+        dfs[key] = f[key].arrays(keys, library="pd")
+
+# Access your dataframes by key
+signal_df = dfs["/GluGluToHH/preselection"]
+background_df_1 = dfs["/GGJets/preselection"]
+background_df_2 = dfs["/GJetPt20To40/preselection"]
+background_df_3 = dfs["/GJetPt40/preselection"]
+
+
+weight = 'weight_preselection'
+
+print(signal_df.shape)
+print(background_df_1.shape)
+print(background_df_2.shape)
+print(background_df_3.shape)
+
 
 background_df = pd.concat([background_df_1, background_df_2, background_df_3], ignore_index=True)
 
@@ -97,42 +97,42 @@ background_df['label'] = 0
 combined_df = pd.concat([signal_df, background_df], ignore_index=True)
 
 features = [
-    'preselection-diphoton_mass',
-    'preselection-dibjet_mass',
-    'preselection-lead_pho_pt',
-    'preselection-sublead_pho_pt',
-    'preselection-bbgg_eta',
-    'preselection-bbgg_phi',
-    'preselection-lead_pho_eta',
-    'preselection-lead_pho_phi',
-    'preselection-sublead_pho_eta',
-    'preselection-sublead_pho_phi',
-    'preselection-diphoton_eta',
-    'preselection-diphoton_phi',
-    'preselection-dibjet_eta',
-    'preselection-dibjet_phi',
-    'preselection-lead_bjet_pt',
-    'preselection-sublead_bjet_pt',
-    'preselection-lead_bjet_eta',
-    'preselection-lead_bjet_phi',
-    'preselection-sublead_bjet_eta',
-    'preselection-sublead_bjet_phi',
-    'preselection-sublead_bjet_PNetB',
-    'preselection-lead_bjet_PNetB',
-    'preselection-CosThetaStar_gg',
-    'preselection-CosThetaStar_jj',
-    'preselection-CosThetaStar_CS',
-    'preselection-DeltaR_jg_min',
-    'preselection-pholead_PtOverM',
-    'preselection-phosublead_PtOverM',
-    'preselection-FirstJet_PtOverM',
-    'preselection-SecondJet_PtOverM',
-    'preselection-lead_pt_over_diphoton_mass',
-    'preselection-sublead_pt_over_diphoton_mass',
-    'preselection-lead_pt_over_dibjet_mass',
-    'preselection-sublead_pt_over_dibjet_mass',
-    'preselection-diphoton_bbgg_mass',
-    'preselection-dibjet_bbgg_mass',
+    'diphoton_mass',
+    'dibjet_mass',
+    'lead_pho_pt',
+    'sublead_pho_pt',
+    'bbgg_eta',
+    'bbgg_phi',
+    'lead_pho_eta',
+    'lead_pho_phi',
+    'sublead_pho_eta',
+    'sublead_pho_phi',
+    'diphoton_eta',
+    'diphoton_phi',
+    'dibjet_eta',
+    'dibjet_phi',
+    'lead_bjet_pt',
+    'sublead_bjet_pt',
+    'lead_bjet_eta',
+    'lead_bjet_phi',
+    'sublead_bjet_eta',
+    'sublead_bjet_phi',
+    'sublead_bjet_PNetB',
+    'lead_bjet_PNetB',
+    'CosThetaStar_gg',
+    'CosThetaStar_jj',
+    'CosThetaStar_CS',
+    'DeltaR_jg_min',
+    'pholead_PtOverM',
+    'phosublead_PtOverM',
+    'FirstJet_PtOverM',
+    'SecondJet_PtOverM',
+    'lead_pt_over_diphoton_mass',
+    'sublead_pt_over_diphoton_mass',
+    'lead_pt_over_dibjet_mass',
+    'sublead_pt_over_dibjet_mass',
+    'diphoton_bbgg_mass',
+    'dibjet_bbgg_mass',
 ]
 
 X = combined_df[features]
@@ -158,8 +158,9 @@ class DNN(nn.Module):
         self.fc1 = nn.Linear(len(features), 128)
         self.fc2 = nn.Linear(128, 64)
         self.fc3 = nn.Linear(64, 64)
-        self.fc4 = nn.Linear(64, 32)
-        self.fc5 = nn.Linear(32, 1)
+        self.fc4 = nn.Linear(64, 64)
+        self.fc5 = nn.Linear(64, 32)
+        self.fc6 = nn.Linear(32, 1)
         self.dropout = nn.Dropout(0.5)
         self.sigmoid = nn.Sigmoid()
 
@@ -173,24 +174,46 @@ class DNN(nn.Module):
         x = self.sigmoid(self.fc4(x))
         x = self.dropout(x)
         x = self.sigmoid(self.fc5(x))
+        x = self.dropout(x)
+        x = self.sigmoid(self.fc6(x))
         return x
 
 model = DNN()
+
+# Save model summary to file
+with open("bdtplots/dnn/model_summary.txt", "w") as f:
+    summary(model, input_size=(1, X_train.shape[1]), file=f)
+
 criterion = nn.BCELoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
-num_epochs = 500
+num_epochs = 50
+train_losses = []
+train_accuracy = []
 
 for epoch in range(num_epochs):
     model.train()
+    epoch_loss = 0.0
+    correct = 0.0
+    total = 0.0
     for X_batch, y_batch in train_loader:
         optimizer.zero_grad()
         outputs = model(X_batch).squeeze()
         loss = criterion(outputs, y_batch.float())
         loss.backward()
         optimizer.step()
+        
+        # training accuracy
+        predicted = (outputs > 0.5).float()
+        correct += (predicted == y_batch).sum().item()
+        total += y_batch.size(0)
 
-    print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
+        epoch_loss += loss.item()
+
+    train_losses.append(epoch_loss / len(train_loader))
+    train_accuracy.append(correct / total)
+
+    print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {train_losses[-1]:.4f}, Accuracy: {train_accuracy[-1]*100:.2f}%')
 
 model.eval()
 with torch.no_grad():
