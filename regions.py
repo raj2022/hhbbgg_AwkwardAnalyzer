@@ -42,8 +42,8 @@ def get_mask_selection(cms_events):
 
 def get_mask_srbbgg(cms_events):
     mask_srbbgg = (
-        (cms_events.lead_pho_mvaID_WP90 == 1)
-        & (cms_events.sublead_pho_mvaID_WP90 == 1)
+        (cms_events.lead_pho_mvaID_WP80 == 1)
+        & (cms_events.sublead_pho_mvaID_WP80 == 1)
         & (cms_events.lead_bjet_PNetB > 0.2605)
         & (cms_events.sublead_bjet_PNetB > 0.2605)
         & (cms_events.lead_isScEtaEB == 1)
@@ -68,8 +68,8 @@ def get_mask_srbbgg(cms_events):
 
 def get_mask_srbbggMET(cms_events):
     mask_srbbggMET = (
-        (cms_events.lead_pho_mvaID_WP90 == 1)
-        & (cms_events.sublead_pho_mvaID_WP90 == 1)
+        (cms_events.lead_pho_mvaID_WP80 == 1)
+        & (cms_events.sublead_pho_mvaID_WP80 == 1)
         & (cms_events.lead_bjet_PNetB > 0.2605)
         & (cms_events.sublead_bjet_PNetB > 0.2605)
         & (cms_events.lead_isScEtaEB == 1)
@@ -106,10 +106,10 @@ def get_mask_crantibbgg(cms_events):
 
 def get_mask_crbbantigg(cms_events):
     mask_crbbantigg = (
-        (cms_events.lead_pho_mvaID_WP80 == 1)
-        & (cms_events.sublead_pho_mvaID_WP80 == 1)
-        & (cms_events.lead_pho_mvaID_WP90 == 0)
-        & (cms_events.sublead_pho_mvaID_WP90 == 0)
+        (cms_events.lead_pho_mvaID_WP80 == 0)
+        & (cms_events.sublead_pho_mvaID_WP80 == 0)
+        & (cms_events.lead_pho_mvaID_WP90 == 1)
+        & (cms_events.sublead_pho_mvaID_WP90 == 1)
         & (
             (cms_events.lead_bjet_PNetB < 0.2605)
             & (cms_events.lead_bjet_PNetB > 0.0499)
