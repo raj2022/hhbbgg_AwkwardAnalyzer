@@ -5,3 +5,4 @@ analysis.sh
 stack_plots/**/*.pdf
 stack_plots/**/*.png
 outputfiles/*.root
+outputfiles/*.ipynb
