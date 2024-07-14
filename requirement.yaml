@@ -15,7 +15,6 @@ dependencies:
   - scikit-learn
   - scipy
   - xgboost
-  - libstdcxx-ng
   - seaborn==0.13.2
   - pip:
     - torch==1.10.0+cpu
