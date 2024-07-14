@@ -2,23 +2,27 @@ name: hhbbgg-awk
 channels:
    - conda-forge
 dependencies:
-   - matplotlib==3.8.4
-   - uproot==5.3.3
-   - hist==2.7.3
-   - numpy==1.26.4
-   - mplhep==0.3.48
-   - vector==1.4.0
-   - root==6.30.04
-   - awkward==2.6.3
-   - pandas==2.2.2
-   # ML
-   - scikit-learn
-   - scipy
-   - xgboost
-   - libstdcxx-ng
-   - seaborn-0.13.2
-   - pip:
-    - torch==1.10.0+cpu torchvision==0.11.1+cpu torchaudio==0.10.0+cpu  # CPU version
-    - torch==1.10.0 torchvision==0.11.1 torchaudio==0.10.0+cpu  # GPU version (CUDA 11.1)
+  - matplotlib==3.8.4
+  - uproot==5.3.3
+  - hist==2.7.3
+  - numpy==1.26.4
+  - mplhep==0.3.48
+  - vector==1.4.0
+  - root==6.30.04
+  - awkward==2.6.3
+  - pandas==2.2.2
+  # ML
+  - scikit-learn
+  - scipy
+  - xgboost
+  - seaborn==0.13.2
+  - pip:
+    - torch==1.10.0+cpu
+    - torchvision==0.11.1+cpu
+    - torchaudio==0.10.0+cpu  # CPU version
+    - torch==1.10.0
+    - torchvision==0.11.1
+    - torchaudio==0.10.0+cpu  # GPU version (CUDA 11.1)
     - torch-summary
     - tensorflow
+
