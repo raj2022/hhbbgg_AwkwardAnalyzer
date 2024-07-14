@@ -20,7 +20,6 @@ from tensorflow.keras import layers, models, optimizers, losses
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 
 
-<<<<<<< Updated upstream
 
 # Define file path and tree names
 files = [
@@ -74,70 +73,8 @@ keys = [
 ]
 
 
-# Initialize an empty dictionary to store dataframes
-=======
-keys = [
-    'preselection-dibjet_mass',
-    'preselection-diphoton_mass',
-    'preselection-bbgg_mass',
-    'preselection-dibjet_pt',
-    'preselection-diphoton_pt',
-    'preselection-bbgg_pt',
-    'preselection-lead_pho_pt',
-    'preselection-sublead_pho_pt',
-    'preselection-bbgg_eta',
-    'preselection-bbgg_phi',
-    'preselection-lead_pho_eta',
-    'preselection-lead_pho_phi',
-    'preselection-sublead_pho_eta',
-    'preselection-sublead_pho_phi',
-    'preselection-diphoton_eta',
-    'preselection-diphoton_phi',
-    'preselection-dibjet_eta',
-    'preselection-dibjet_phi',
-    'preselection-lead_bjet_pt',
-    'preselection-sublead_bjet_pt',
-    'preselection-lead_bjet_eta',
-    'preselection-lead_bjet_phi',
-    'preselection-sublead_bjet_eta',
-    'preselection-sublead_bjet_phi',
-    'preselection-sublead_bjet_PNetB',
-    'preselection-lead_bjet_PNetB',
-    'preselection-CosThetaStar_gg',
-    'preselection-CosThetaStar_jj',
-    'preselection-CosThetaStar_CS',
-    'preselection-DeltaR_jg_min',
-    'preselection-pholead_PtOverM',
-    'preselection-phosublead_PtOverM',
-    'preselection-FirstJet_PtOverM',
-    'preselection-SecondJet_PtOverM',
-    'preselection-lead_pt_over_diphoton_mass',
-    'preselection-sublead_pt_over_diphoton_mass',
-    'preselection-lead_pt_over_dibjet_mass',
-    'preselection-sublead_pt_over_dibjet_mass',
-    'preselection-diphoton_bbgg_mass',
-    'preselection-dibjet_bbgg_mass',
-]
-
-file = uproot.open(file_path)
-
-def read_histograms(treename):
-    tree_dfs = {}
-    for branch in keys:
-        full_key = f"{treename}/{branch}"
-        if full_key in file:
-            hist = file[full_key]
-            values, _ = hist.to_numpy()
-            df = pd.DataFrame(values, columns=[branch])
-            tree_dfs[branch] = df
-        else:
-            print(f"{full_key} not found in the file.")
-    return tree_dfs
-
->>>>>>> Stashed changes
 dfs = {}
 
-<<<<<<< Updated upstream
 # Loop through each file and load the corresponding dataframe
 for file, key in files:
     with uproot.open(file) as f:
@@ -156,27 +93,16 @@ print('singal df', signal_df.shape)
 print('background_df_1 ', background_df_1.shape)
 print('background_df_2', background_df_2.shape)
 print('background_df_1 ', background_df_3.shape)
-=======
-signal_df = pd.concat(dfs['signal'].values(), axis=1)
-background_df_1 = pd.concat(dfs[bkg_treename_1].values(), axis=1)
-background_df_2 = pd.concat(dfs[bkg_treename_2].values(), axis=1)
-background_df_3 = pd.concat(dfs[bkg_treename_3].values(), axis=1)
->>>>>>> Stashed changes
 
 background_df = pd.concat([background_df_1, background_df_2, background_df_3], ignore_index=True)
 print('background_df', background_df.shape)
 
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 signal_df['label'] = 1
 background_df['label'] = 0
 
 combined_df = pd.concat([signal_df, background_df], ignore_index=True)
 
 features = [
-<<<<<<< Updated upstream
     'diphoton_mass',
     'dibjet_mass',
     'lead_pho_pt',
@@ -214,44 +140,6 @@ features = [
     'sublead_pt_over_dibjet_mass',
     'diphoton_bbgg_mass',
     'dibjet_bbgg_mass',
-=======
-    'preselection-diphoton_mass',
-    'preselection-dibjet_mass',
-    'preselection-lead_pho_pt',
-    'preselection-sublead_pho_pt',
-    'preselection-bbgg_eta',
-    'preselection-bbgg_phi',
-    'preselection-lead_pho_eta',
-    'preselection-lead_pho_phi',
-    'preselection-sublead_pho_eta',
-    'preselection-sublead_pho_phi',
-    'preselection-diphoton_eta',
-    'preselection-diphoton_phi',
-    'preselection-dibjet_eta',
-    'preselection-dibjet_phi',
-    'preselection-lead_bjet_pt',
-    'preselection-sublead_bjet_pt',
-    'preselection-lead_bjet_eta',
-    'preselection-lead_bjet_phi',
-    'preselection-sublead_bjet_eta',
-    'preselection-sublead_bjet_phi',
-    'preselection-sublead_bjet_PNetB',
-    'preselection-lead_bjet_PNetB',
-    'preselection-CosThetaStar_gg',
-    'preselection-CosThetaStar_jj',
-    'preselection-CosThetaStar_CS',
-    'preselection-DeltaR_jg_min',
-    'preselection-pholead_PtOverM',
-    'preselection-phosublead_PtOverM',
-    'preselection-FirstJet_PtOverM',
-    'preselection-SecondJet_PtOverM',
-    'preselection-lead_pt_over_diphoton_mass',
-    'preselection-sublead_pt_over_diphoton_mass',
-    'preselection-lead_pt_over_dibjet_mass',
-    'preselection-sublead_pt_over_dibjet_mass',
-    'preselection-diphoton_bbgg_mass',
-    'preselection-dibjet_bbgg_mass',
->>>>>>> Stashed changes
 ]
 
 X = combined_df[features]
@@ -264,7 +152,6 @@ X_imputed = imputer.fit_transform(X)
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X_imputed)
 
-<<<<<<< Updated upstream
 
 
 X_train, X_test, y_train, y_test = train_test_split(combined_df[features], combined_df['label'], test_size=0.2, random_state=42, stratify=combined_df['label'])
@@ -397,6 +284,63 @@ test_loader = DataLoader(test_data, batch_size=32, shuffle=False)
 #
 
 
+#def create_dnn_model(input_dim):
+#    model = models.Sequential()
+#    model.add(layers.Dense(256, input_dim=input_dim, activation='relu'))
+#    model.add(layers.BatchNormalization())
+#    model.add(layers.Dropout(0.5))
+#    
+#    model.add(layers.Dense(128, activation='relu'))
+#    model.add(layers.BatchNormalization())
+#    model.add(layers.Dropout(0.5))
+#    
+#    model.add(layers.Dense(128, activation='relu'))
+#    model.add(layers.BatchNormalization())
+#    model.add(layers.Dropout(0.5))
+#    
+#    model.add(layers.Dense(64, activation='relu'))
+#    model.add(layers.BatchNormalization())
+#    model.add(layers.Dropout(0.5))
+#    
+#    model.add(layers.Dense(64, activation='relu'))
+#    model.add(layers.BatchNormalization())
+#    model.add(layers.Dropout(0.5))
+#    
+#    model.add(layers.Dense(32, activation='relu'))
+#    model.add(layers.BatchNormalization())
+#    model.add(layers.Dropout(0.5))
+#    
+#    model.add(layers.Dense(1, activation='sigmoid'))
+#    
+#    return model
+#
+#input_dim = len(features)  
+#model = create_dnn_model(input_dim)
+#
+#model.compile(optimizer=optimizers.Adam(learning_rate=0.001),
+#              loss=losses.BinaryCrossentropy(),
+#              metrics=['accuracy'])
+#
+#model.summary()
+#
+#os.makedirs("bdtplots/dnn", exist_ok=True)
+#with open("bdtplots/dnn/model_summary.txt", "w") as f:
+#    model.summary(print_fn=lambda x: f.write(x + '\n'))
+#
+#early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+#model_checkpoint = ModelCheckpoint('best_model.keras', monitor='val_loss', save_best_only=True)
+#
+#history = model.fit(X_train, y_train, 
+#                    epochs=50, 
+#                    batch_size=32,
+#                    validation_split=0.2,
+#                    callbacks=[early_stopping, model_checkpoint])
+#
+#model.load_weights('best_model.keras')
+#
+#
+#
+
 def create_dnn_model(input_dim):
     model = models.Sequential()
     model.add(layers.Dense(256, input_dim=input_dim, activation='relu'))
@@ -427,30 +371,41 @@ def create_dnn_model(input_dim):
     
     return model
 
-input_dim = len(features)  # Assuming 'features' is defined
-model = create_dnn_model(input_dim)
+def train_model(input_dim, X_train, y_train):
+    model = create_dnn_model(input_dim)
+    
+    model.compile(optimizer=optimizers.Adam(learning_rate=0.001),
+                  loss=losses.BinaryCrossentropy(),
+                  metrics=['accuracy'])
+    
+    os.makedirs("bdtplots/dnn", exist_ok=True)
+    with open("bdtplots/dnn/model_summary.txt", "w") as f:
+        model.summary(print_fn=lambda x: f.write(x + '\n'))
+    
+    early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+    model_checkpoint = ModelCheckpoint('best_model.keras', monitor='val_loss', save_best_only=True)
+    
+    history = model.fit(X_train, y_train, 
+                        epochs=50, 
+                        batch_size=32,
+                        validation_split=0.2,
+                        callbacks=[early_stopping, model_checkpoint])
+    
+    return model
 
-model.compile(optimizer=optimizers.Adam(learning_rate=0.001),
-              loss=losses.BinaryCrossentropy(),
-              metrics=['accuracy'])
+input_dim = len(features)  
+model_path = 'best_model.keras'
+
+if os.path.exists(model_path):
+    model = create_dnn_model(input_dim)
+    model.load_weights(model_path)
+    print("Model loaded from disk.")
+else:
+    model = train_model(input_dim, X_train, y_train)
+    model.save_weights(model_path)
+    print("Model trained and saved to disk.")
 
 model.summary()
-
-os.makedirs("bdtplots/dnn", exist_ok=True)
-with open("bdtplots/dnn/model_summary.txt", "w") as f:
-    model.summary(print_fn=lambda x: f.write(x + '\n'))
-
-early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
-model_checkpoint = ModelCheckpoint('best_model.keras', monitor='val_loss', save_best_only=True)
-
-history = model.fit(X_train, y_train, 
-                    epochs=50, 
-                    batch_size=32,
-                    validation_split=0.2,
-                    callbacks=[early_stopping, model_checkpoint])
-
-model.load_weights('best_model.keras')
-
 
 
 history_dict = history.history
@@ -557,101 +512,14 @@ plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('Receiver Operating Characteristic (ROC) Curve')
 plt.legend(loc="lower right")
-=======
-X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42, stratify=y)
+plt.tight_layout()
 
-train_data = TensorDataset(torch.tensor(X_train, dtype=torch.float32), torch.tensor(y_train.values, dtype=torch.long))
-test_data = TensorDataset(torch.tensor(X_test, dtype=torch.float32), torch.tensor(y_test.values, dtype=torch.long))
 
-train_loader = DataLoader(train_data, batch_size=32, shuffle=True)
-test_loader = DataLoader(test_data, batch_size=32, shuffle=False)
-
-class DNN(nn.Module):
-    def __init__(self):
-        super(DNN, self).__init__()
-        self.fc1 = nn.Linear(len(features), 128)
-        self.fc2 = nn.Linear(128, 64)
-        self.fc3 = nn.Linear(64, 32)
-        self.fc4 = nn.Linear(32, 1)
-        self.dropout = nn.Dropout(0.5)
-        self.sigmoid = nn.Sigmoid()
-
-    def forward(self, x):
-        x = torch.relu(self.fc1(x))
-        x = self.dropout(x)
-        x = torch.relu(self.fc2(x))
-        x = self.dropout(x)
-        x = torch.relu(self.fc3(x))
-        x = self.dropout(x)
-        x = self.sigmoid(self.fc4(x))
-        return x
-
-model = DNN()
-criterion = nn.BCELoss()
-optimizer = optim.Adam(model.parameters(), lr=0.001)
-
-num_epochs = 50
-
-for epoch in range(num_epochs):
-    model.train()
-    for X_batch, y_batch in train_loader:
-        optimizer.zero_grad()
-        outputs = model(X_batch).squeeze()
-        loss = criterion(outputs, y_batch.float())
-        loss.backward()
-        optimizer.step()
-
-    print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
-
-model.eval()
-with torch.no_grad():
-    y_train_pred = model(torch.tensor(X_train, dtype=torch.float32)).squeeze().numpy()
-    y_test_pred = model(torch.tensor(X_test, dtype=torch.float32)).squeeze().numpy()
-
-y_train_pred_class = (y_train_pred > 0.5).astype(int)
-y_test_pred_class = (y_test_pred > 0.5).astype(int)
-
-# Classifier output plot
-plt.figure(figsize=(10, 8))
-plt.hist(y_train_pred[y_train == 1], bins=20, color='blue', alpha=0.5, label='S (Train)', density=True)
-plt.hist(y_train_pred[y_train == 0], bins=20, color='red', alpha=0.5, label='R (Train)', density=True)
-plt.scatter(y_test_pred[y_test == 1], np.full(y_test[y_test == 1].shape, -0.1), color='blue', label='S (Test)', alpha=0.6)
-plt.scatter(y_test_pred[y_test == 0], np.full(y_test[y_test == 0].shape, -0.1), color='red', label='R (Test)', alpha=0.6)
-plt.xlabel('Classifier output')
-plt.ylabel('Normalized Yields')
-plt.title('Classification with scikit-learn')
-plt.legend()
->>>>>>> Stashed changes
-plt.grid(True)
-plt.savefig("bdtplots/dnn/roc_curve.png")
-plt.savefig("bdtplots/dnn/roc_curve.pdf")
-plt.close()
-
-<<<<<<< Updated upstream
-=======
-# ROC curve
-fpr, tpr, thresholds = roc_curve(y_test, y_test_pred)
-roc_auc = auc(fpr, tpr)
-
-plt.figure(figsize=(8, 6))
-plt.plot(fpr, tpr, color='darkorange', lw=2, label='ROC curve (area = {:.2f})'.format(roc_auc))
-plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
-plt.xlim([0.0, 1.0])
-plt.ylim([0.0, 1.0])
-plt.xlabel('False Positive Rate')
-plt.ylabel('True Positive Rate')
-plt.title('Receiver Operating Characteristic (ROC) Curve')
-plt.legend(loc='lower right')
-plt.grid(True)
-plt.show()
-
->>>>>>> Stashed changes
 print("Accuracy on test set:", accuracy_score(y_test, y_test_pred_class))
 print("ROC AUC on test set:", roc_auc_score(y_test, y_test_pred))
 print(classification_report(y_test, y_test_pred_class))
 
-<<<<<<< Updated upstream
-# Assuming `history` is the history object returned by `model.fit`
+
 # Plot training accuracy over epochs
 plt.figure(figsize=(10, 6))
 plt.plot(range(1, len(history.history['accuracy']) + 1), history.history['accuracy'], label='Training Accuracy')
@@ -661,5 +529,4 @@ plt.title('Training Accuracy Over Epochs')
 plt.legend()
 plt.grid(True)
 plt.savefig("bdtplots/dnn/training_accuracy.png")
-=======
->>>>>>> Stashed changes
+plt.show()
