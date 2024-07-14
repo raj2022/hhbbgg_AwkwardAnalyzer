@@ -103,6 +103,7 @@ signal_df['label'] = 1
 background_df['label'] = 0
 
 combined_df = pd.concat([signal_df, background_df], ignore_index=True)
+print(f'combined dataframe size', combined_df)
 
 features = [
     'diphoton_mass',
@@ -148,6 +149,13 @@ X = combined_df[features]
 y = combined_df['label']
 weight = combined_df['weight_preselection']
 
+print(f'X(features) size', X.shape)
+print(f'y(label) size', y.shape)
+print(f'weight size', weight.shape)
+
+
+
+
 imputer = SimpleImputer(strategy='mean')
 X_imputed = imputer.fit_transform(X)
 
@@ -157,6 +165,10 @@ X_scaled = scaler.fit_transform(X_imputed)
 
 
 X_train, X_test, y_train, y_test = train_test_split(combined_df[features], combined_df['label'], test_size=0.2, random_state=42, stratify=combined_df['label'])
+
+
+print(f'X(train) size', X_train.shape)
+print(f'X(test) size', X_test.shape)
 
 # Extract the weights for train and test datasets
 X_train_weights = combined_df.loc[X_train.index, 'weight_preselection']
