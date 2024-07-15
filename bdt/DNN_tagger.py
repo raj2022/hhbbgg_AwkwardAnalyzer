@@ -296,63 +296,6 @@ test_loader = DataLoader(test_data, batch_size=32, shuffle=False)
 #
 
 
-#def create_dnn_model(input_dim):
-#    model = models.Sequential()
-#    model.add(layers.Dense(256, input_dim=input_dim, activation='relu'))
-#    model.add(layers.BatchNormalization())
-#    model.add(layers.Dropout(0.5))
-#    
-#    model.add(layers.Dense(128, activation='relu'))
-#    model.add(layers.BatchNormalization())
-#    model.add(layers.Dropout(0.5))
-#    
-#    model.add(layers.Dense(128, activation='relu'))
-#    model.add(layers.BatchNormalization())
-#    model.add(layers.Dropout(0.5))
-#    
-#    model.add(layers.Dense(64, activation='relu'))
-#    model.add(layers.BatchNormalization())
-#    model.add(layers.Dropout(0.5))
-#    
-#    model.add(layers.Dense(64, activation='relu'))
-#    model.add(layers.BatchNormalization())
-#    model.add(layers.Dropout(0.5))
-#    
-#    model.add(layers.Dense(32, activation='relu'))
-#    model.add(layers.BatchNormalization())
-#    model.add(layers.Dropout(0.5))
-#    
-#    model.add(layers.Dense(1, activation='sigmoid'))
-#    
-#    return model
-#
-#input_dim = len(features)  
-#model = create_dnn_model(input_dim)
-#
-#model.compile(optimizer=optimizers.Adam(learning_rate=0.001),
-#              loss=losses.BinaryCrossentropy(),
-#              metrics=['accuracy'])
-#
-#model.summary()
-#
-#os.makedirs("bdtplots/dnn", exist_ok=True)
-#with open("bdtplots/dnn/model_summary.txt", "w") as f:
-#    model.summary(print_fn=lambda x: f.write(x + '\n'))
-#
-#early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
-#model_checkpoint = ModelCheckpoint('best_model.keras', monitor='val_loss', save_best_only=True)
-#
-#history = model.fit(X_train, y_train, 
-#                    epochs=50, 
-#                    batch_size=32,
-#                    validation_split=0.2,
-#                    callbacks=[early_stopping, model_checkpoint])
-#
-#model.load_weights('best_model.keras')
-#
-#
-#
-
 def create_dnn_model(input_dim):
     model = models.Sequential()
     model.add(layers.Dense(256, input_dim=input_dim, activation='relu'))
@@ -383,28 +326,86 @@ def create_dnn_model(input_dim):
     
     return model
 
-def train_model(input_dim, X_train, y_train):
-    model = create_dnn_model(input_dim)
-    
-    model.compile(optimizer=optimizers.Adam(learning_rate=0.001),
-                  loss=losses.BinaryCrossentropy(),
-                  metrics=['accuracy'])
-    
-    os.makedirs("bdtplots/dnn", exist_ok=True)
-    with open("bdtplots/dnn/model_summary.txt", "w") as f:
-        model.summary(print_fn=lambda x: f.write(x + '\n'))
-    
-    early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
-    model_checkpoint = ModelCheckpoint('best_model.keras', monitor='val_loss', save_best_only=True)
-    
-    history = model.fit(X_train, y_train, 
-                        epochs=50, 
-                        batch_size=32,
-                        validation_split=0.2,
-                        callbacks=[early_stopping, model_checkpoint])
-    
-    return model
+input_dim = len(features)  
+model = create_dnn_model(input_dim)
 
+model.compile(optimizer=optimizers.Adam(learning_rate=0.001),
+              loss=losses.BinaryCrossentropy(),
+              metrics=['accuracy'])
+
+model.summary()
+
+os.makedirs("bdtplots/dnn", exist_ok=True)
+with open("bdtplots/dnn/model_summary.txt", "w") as f:
+    model.summary(print_fn=lambda x: f.write(x + '\n'))
+
+early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+model_checkpoint = ModelCheckpoint('best_model.keras', monitor='val_loss', save_best_only=True)
+
+history = model.fit(X_train, y_train, 
+                    epochs=50, 
+                    batch_size=32,
+                    validation_split=0.2,
+                    callbacks=[early_stopping, model_checkpoint])
+
+model.load_weights('best_model.keras')
+
+
+model.summary()
+
+#
+#def create_dnn_model(input_dim):
+#    model = models.Sequential()
+#    model.add(layers.Dense(256, input_dim=input_dim, activation='relu'))
+#    model.add(layers.BatchNormalization())
+#    model.add(layers.Dropout(0.5))
+#    
+#    model.add(layers.Dense(128, activation='relu'))
+#    model.add(layers.BatchNormalization())
+#    model.add(layers.Dropout(0.5))
+#    
+#    model.add(layers.Dense(128, activation='relu'))
+#    model.add(layers.BatchNormalization())
+#    model.add(layers.Dropout(0.5))
+#    
+#    model.add(layers.Dense(64, activation='relu'))
+#    model.add(layers.BatchNormalization())
+#    model.add(layers.Dropout(0.5))
+#    
+#    model.add(layers.Dense(64, activation='relu'))
+#    model.add(layers.BatchNormalization())
+#    model.add(layers.Dropout(0.5))
+#    
+#    model.add(layers.Dense(32, activation='relu'))
+#    model.add(layers.BatchNormalization())
+#    model.add(layers.Dropout(0.5))
+#    
+#    model.add(layers.Dense(1, activation='sigmoid'))
+#    
+#    return model
+#
+#def train_model(input_dim, X_train, y_train):
+#    model = create_dnn_model(input_dim)
+#    
+#    model.compile(optimizer=optimizers.Adam(learning_rate=0.001),
+#                  loss=losses.BinaryCrossentropy(),
+#                  metrics=['accuracy'])
+#    
+#    os.makedirs("bdtplots/dnn", exist_ok=True)
+#    with open("bdtplots/dnn/model_summary.txt", "w") as f:
+#        model.summary(print_fn=lambda x: f.write(x + '\n'))
+#    
+#    early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+#    model_checkpoint = ModelCheckpoint('best_model.keras', monitor='val_loss', save_best_only=True)
+#    
+#    history = model.fit(X_train, y_train, 
+#                        epochs=50, 
+#                        batch_size=32,
+#                        validation_split=0.2,
+#                        callbacks=[early_stopping, model_checkpoint])
+#    
+#    return model, history
+#
 input_dim = len(features)  
 model_path = 'best_model.keras'
 
@@ -417,7 +418,6 @@ else:
     model.save_weights(model_path)
     print("Model trained and saved to disk.")
 
-model.summary()
 
 
 history_dict = history.history
