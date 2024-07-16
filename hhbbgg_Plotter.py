@@ -252,7 +252,7 @@ def stack1d_histograms(
                 fontsize=15,
                 ha='left',
                 va='top',
-                bbox=dict(facecolor='white', alpha=1)
+                bbox=dict(facecolor='white', alpha=1, edgecolor='none')
             )
 
         # plot signal histogram
@@ -373,7 +373,7 @@ def main():
     }
 
     # List of regions names
-    regions = ["preselection", "srbbgg", "srbbggMET", "crantibbgg", "crbbantigg"]
+    regions = ["preselection","selection", "srbbgg", "srbbggMET", "crantibbgg", "crbbantigg"]
     # List of variable names
     variable_names = [
         "dibjet_mass",
@@ -417,6 +417,12 @@ def main():
         "sublead_pt_over_dibjet_mass",
         "diphoton_bbgg_mass",
         "dibjet_bbgg_mass",
+        "lead_pho_mvaID_WP90",
+        "lead_pho_mvaID_WP80",
+        "sublead_pho_mvaID_WP90",
+        "sublead_pho_mvaID_WP80",
+        "lead_pho_mvaID",
+        "sublead_pho_mvaID",
     ]
 
     specific_variable_names = [
@@ -499,6 +505,12 @@ def main():
         #"puppiMET_ptJERUp": r"puppi $p_T^{JERUp}$ [GeV]",
         #"puppiMET_ptJESDown": r"puppi $p_T^{JESDown}$ [GeV]",
         #"puppiMET_ptJESUp": r"puppi $p_T^{JESUp}$ [GeV]",
+        "lead_pho_mvaID_WP90": r"lead_PhoMVAID90",
+        "sublead_pho_mvaID_WP90": r"sublead_PhoMVAID90",
+        "lead_pho_mvaID_WP80": r"lead_PhoMVAID80",
+        "sublead_pho_mvaID_WP80": r"sublead_PhoMVAID80",
+        "lead_pho_mvaID": r"lead_PhoMVAID",
+        "sublead_pho_mvaID": r"sublead_PhoMVAID",
     }
 
     # create the tdirectory to save plots
