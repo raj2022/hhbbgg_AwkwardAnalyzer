@@ -42,9 +42,16 @@ binning["preselection"] = {
     "lead_pt_over_dibjet_mass": [20, 0, 4],
     "sublead_pt_over_dibjet_mass": [20, 0, 2],
     "diphoton_bbgg_mass": [20, 0, 1],
-    "dibjet_bbgg_mass": [20, 0, 2],
+    "dibjet_bbgg_mass": [20, -1, 2],
+    "lead_pho_mvaID_WP90": [2, 0, 1],
+    "sublead_pho_mvaID_WP90": [2, 0, 1],
+    "lead_pho_mvaID_WP80": [2, 0, 1],
+    "sublead_pho_mvaID_WP80": [2, 0, 1],
+    "lead_pho_mvaID": [20, -1, 1],
+    "sublead_pho_mvaID": [20, -1, 1],
 }
 
+binning["selection"] = copy.deepcopy(binning["preselection"])
 binning["srbbgg"] = copy.deepcopy(binning["preselection"])
 binning["srbbggMET"] = copy.deepcopy(binning["preselection"])
 met_variables = {"puppiMET_pt": [20, 100, 200],

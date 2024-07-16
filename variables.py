@@ -1,6 +1,6 @@
 import copy
 
-regions = ["preselection", "srbbgg", "srbbggMET", "crantibbgg", "crbbantigg"]
+regions = ["preselection", "selection", "srbbgg", "srbbggMET", "crantibbgg", "crbbantigg"]
 vardict = {
     "dibjet_mass": "dibjet_mass",
     "diphoton_mass": "diphoton_mass",
@@ -55,6 +55,12 @@ vardict = {
     "puppiMET_ptJERUp":"puppiMET_ptJERUp",
     "puppiMET_ptJESDown":"puppiMET_ptJESDown",
     "puppiMET_ptJESUp":"puppiMET_ptJESUp",
+    "lead_pho_mvaID_WP90":"lead_pho_mvaID_WP90",
+    "lead_pho_mvaID_WP80":"lead_pho_mvaID_WP80",
+    "sublead_pho_mvaID_WP90":"sublead_pho_mvaID_WP90",
+    "sublead_pho_mvaID_WP80":"sublead_pho_mvaID_WP80",
+    "lead_pho_mvaID":"lead_pho_mvaID",
+    "sublead_pho_mvaID":"sublead_pho_mvaID",
     
 }
 
@@ -100,6 +106,12 @@ variables_common = {
         "sublead_pt_over_dibjet_mass",
         "diphoton_bbgg_mass",
         "dibjet_bbgg_mass",
+        "lead_pho_mvaID_WP90",
+        "lead_pho_mvaID_WP80",
+        "sublead_pho_mvaID_WP90",
+        "sublead_pho_mvaID_WP80",
+        "lead_pho_mvaID",
+        "sublead_pho_mvaID",
     ]
 }
 
