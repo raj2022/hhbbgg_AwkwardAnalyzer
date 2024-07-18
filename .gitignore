@@ -6,3 +6,4 @@ stack_plots/**/*.pdf
 stack_plots/**/*.png
 outputfiles/*.root
 outputfiles/*.ipynb
+**.ipynb_checkpoints
