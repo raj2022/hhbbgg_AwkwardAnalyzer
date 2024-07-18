@@ -1,6 +1,0 @@
-**/__pycache__/
-**.pyc
-**.DS_Store
-bdtplots/**/*.pdf
-bdtplots/**/*.png
-bdtplots/**/*.txt
