@@ -4,11 +4,11 @@
     <Info name="TMVA Release" value="4.2.1 [262657]"/>
     <Info name="ROOT Release" value="6.30/04 [400900]"/>
     <Info name="Creator" value="ptiwari"/>
-    <Info name="Date" value="Sat Jul 20 02:50:49 2024"/>
+    <Info name="Date" value="Sat Jul 20 03:21:08 2024"/>
     <Info name="Host" value="Darwin ChristohersMBP8.localdomain 23.1.0 Darwin Kernel Version 23.1.0: Mon Oct 9 21:27:24 PDT 2023; root:xnu-10002.41.9~6/RELEASE_ARM64_T6000 arm64"/>
     <Info name="Dir" value="/Users/ptiwari/Development/hepProjects/hhbbgg_AwkwardAnalyzer/bdt/notebook"/>
     <Info name="Training events" value="20000"/>
-    <Info name="TrainingTime" value="5.61555290e+00"/>
+    <Info name="TrainingTime" value="5.63916612e+00"/>
     <Info name="AnalysisType" value="Multiclass"/>
   </GeneralInfo>
   <Options>

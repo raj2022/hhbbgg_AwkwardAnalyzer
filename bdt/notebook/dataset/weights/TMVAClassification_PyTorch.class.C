@@ -10,7 +10,7 @@ Method         : PyTorch::PyTorch
 TMVA Release   : 4.2.1         [262657]
 ROOT Release   : 6.30/04       [400900]
 Creator        : ptiwari
-Date           : Sat Jul 20 02:50:49 2024
+Date           : Sat Jul 20 03:21:08 2024
 Host           : Darwin ChristohersMBP8.localdomain 23.1.0 Darwin Kernel Version 23.1.0: Mon Oct 9 21:27:24 PDT 2023; root:xnu-10002.41.9~6/RELEASE_ARM64_T6000 arm64
 Dir            : /Users/ptiwari/Development/hepProjects/hhbbgg_AwkwardAnalyzer/bdt/notebook
 Training events: 20000
