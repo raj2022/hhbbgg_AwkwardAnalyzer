@@ -7,3 +7,4 @@ stack_plots/**/*.png
 outputfiles/*.root
 outputfiles/*.ipynb
 **.ipynb_checkpoints
+**.vscode
