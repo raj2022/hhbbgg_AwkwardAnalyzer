@@ -1,0 +1,79 @@
+{
+    "samplejson": "sample_v1_test.json",
+    "workflow": "HHbbgg",
+    "metaconditions": "Era2022_v1",
+    "year": {
+        "NMSSM_650_Y60": [
+            "2022postEE"
+        ],
+        "NMSSM_650_Y70": [
+            "2022postEE"
+        ],
+        "NMSSM_650_Y80": [
+            "2022postEE"
+        ],
+        "NMSSM_650_Y90": [
+            "2022postEE"
+        ],
+        "NMSSM_650_Y95": [
+            "2022postEE"
+        ],
+        "NMSSM_650_Y100": [
+            "2022postEE"
+        ]
+    },
+    "taggers": [],
+    "systematics": {
+        "NMSSM_650_Y60": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_650_Y70": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_650_Y80": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_650_Y90": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_650_Y95": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_650_Y100": [
+            "Smearing",
+            "Pileup"
+        ]
+    },
+    "corrections": {
+        "NMSSM_650_Y60": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_650_Y70": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_650_Y80": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_650_Y90": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_650_Y95": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_650_Y100": [
+            "Smearing",
+            "Pileup"
+        ]
+    },
+    "analysis": "mainAnalysis"
+}
