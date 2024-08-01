@@ -54,4 +54,5 @@ The `HHbbgg.py` file defines the HHbbgg processor (`HHbbggProcessor`), which inh
 
 ## References:
 1. https://gitlab.cern.ch/hhbbgg/HiggsDNA#worfklow
-2. 
+2. https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookStartingGrid#BasicGrid
+3. https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookXrootdService 
