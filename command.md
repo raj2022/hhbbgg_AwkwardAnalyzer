@@ -11,7 +11,15 @@
     pip install -e .
     python scripts/pull_all.py --all
    ``` 
-    
+ * lpc:   
+    ```bash
+    login on fermilab
+    cd ~/Analysis/Analysis_HH-bbgg
+    conda activate higgs-dna
+    #Go to HiggsDNA
+    pip install -e .
+    python scripts/pull_all.py --all
+   ``` 
 
 
 ### Job submission
