@@ -58,6 +58,11 @@ The `HHbbgg.py` file defines the HHbbgg processor (`HHbbggProcessor`), which inh
 
 - **`higgs_dna/workflows/__init__.py`**: This file is where the processors are defined with names recognized by `run_analysis.py`.
 
+**NOTE** Sometimes, we have error in configuration due to mismtach of `setuptools`
+```bash
+pip install setuptools==65.0.1
+```
+
 
 ## References:
 1. https://gitlab.cern.ch/hhbbgg/HiggsDNA#worfklow
