@@ -1,5 +1,19 @@
 # List of commands which we are using frequently
 
+### Commands to Setup:
+* For lxplus:
+
+    ```bash
+    source lxplus.cern.ch
+    cd ~/Analysis/Analysis_HH-bbgg
+    conda activate higgs-dna
+    #Go to HiggsDNA
+    pip install -e .
+    python scripts/pull_all.py --all
+   ``` 
+    
+
+
 ### Job submission
 
 1. **HTCondor**
