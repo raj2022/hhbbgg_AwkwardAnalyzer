@@ -30,6 +30,10 @@ To produce .parquet files, follow the instructions provided in the [manual](http
 
 3. **Set Up Voms Proxy (if not already done)**
    - Follow the instructions provided [here](https://uscms.org/uscms_at_work/computing/getstarted/get_grid_cert.shtml).
+   - Setup `VOMS`:
+	```bash
+	voms-proxy-init --voms cms --valid 192:00
+	```
 
 4. **Run the Analysis**
    - Basic command line:
