@@ -34,6 +34,14 @@ To produce .parquet files, follow the instructions provided in the [manual](http
 	```bash
 	voms-proxy-init --voms cms --valid 192:00
 	```
+   - To check the proxy:
+	```bash
+	voms-proxy-info -all
+	```
+   - To test the grid certificates:
+	```
+	grid-proxy-init -debug -verify 
+	```
 
 4. **Run the Analysis**
    - Basic command line:
