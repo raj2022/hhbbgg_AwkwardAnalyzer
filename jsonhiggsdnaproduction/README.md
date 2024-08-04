@@ -62,7 +62,10 @@ The `HHbbgg.py` file defines the HHbbgg processor (`HHbbggProcessor`), which inh
 ```bash
 pip install setuptools==65.0.1
 ```
-
+To convert `.parquet` to root we can follow this [step](https://higgs-dna.readthedocs.io/en/latest/postprocessing.html). All the steps can be performed in one go with a command more or less like this:
+```bash
+python3 prepare_output_file.py --input [path to output dir] --merge --root --ws --syst --cats --args "--do_syst"
+```
 
 ## References:
 1. https://gitlab.cern.ch/hhbbgg/HiggsDNA#worfklow
