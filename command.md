@@ -90,6 +90,48 @@ To resolve this, open a new "CMS Storage Space Request" (Enable), using your ser
 
 
 
+# Commands for VOMS Setup
+## Prerequisites
+
+- Ensure you have the OpenSSL tool installed.
+- Obtain a valid `.p12` certificate file from your certificate authority.
+
+## Steps for VOMS Setup
+
+### Generate User Certificate and Key
+
+If you have a `.p12` file, extract the user certificate and key using OpenSSL:
+
+```bash
+openssl pkcs12 -in myCertificate_lpc.p12 -out usercert.pem -clcerts -nokeys
+openssl pkcs12 -in myCertificate_lpc.p12 -out userkey.pem -nocerts -nodes
+
+Set premission for the key file:
+```bash
+chmod 400 userkey.pem
+```
+Set Environment variables:
+```bash
+export X509_USER_CERT=$HOME/.globus/usercert.pem
+export X509_USER_KEY=$HOME/.globus/userkey.pem
+```
+Initialize a VOMS proxy certificate with the following command:
+```bash
+voms-proxy-init --rfc --voms cms -valid 192:00
+```
+To view information about your VOMS proxy certificate:
+```bash
+voms-proxy-info --all
+```
+If you need to remove an old or expired VOMS proxy:
+```bash
+voms-proxy-destroy
+```
+To regenerate or update a VOMS proxy certificate:
+```bash
+voms-proxy-regen --voms cms
+voms-proxy-update --voms cms
+```
 
 
 
@@ -191,4 +233,5 @@ find /path/to/search -name filename
 
 man command
 ```
-
+# References:
+1. 

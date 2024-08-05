@@ -33,6 +33,7 @@ To produce .parquet files, follow the instructions provided in the [manual](http
    - Setup `VOMS`:
 	```bash
 	voms-proxy-init --voms cms --valid 192:00
+    voms-proxy-init --rfc --voms cms -valid 192:00
 	```
    - To check the proxy:
 	```bash
