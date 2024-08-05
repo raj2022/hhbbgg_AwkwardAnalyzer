@@ -1,0 +1,475 @@
+{
+    "samplejson": "sample_v1_test.json",
+    "workflow": "HHbbgg",
+    "metaconditions": "Era2022_v1",
+    "year": {
+        "NMSSM_300_Y60": [
+            "2022postEE"
+        ],
+        "NMSSM_300_Y70": [
+            "2022postEE"
+        ],
+        "NMSSM_300_Y80": [
+            "2022postEE"
+        ],
+        "NMSSM_300_Y90": [
+            "2022postEE"
+        ],
+        "NMSSM_300_Y95": [
+            "2022postEE"
+        ],
+        "NMSSM_300_Y100": [
+            "2022postEE"
+        ],
+        "NMSSM_400_Y60": [
+            "2022postEE"
+        ],
+        "NMSSM_400_Y70": [
+            "2022postEE"
+        ],
+        "NMSSM_400_Y80": [
+            "2022postEE"
+        ],
+        "NMSSM_400_Y90": [
+            "2022postEE"
+        ],
+        "NMSSM_400_Y95": [
+            "2022postEE"
+        ],
+        "NMSSM_400_Y100": [
+            "2022postEE"
+        ],
+        "NMSSM_500_Y60": [
+            "2022postEE"
+        ],
+        "NMSSM_500_Y70": [
+            "2022postEE"
+        ],
+        "NMSSM_500_Y80": [
+            "2022postEE"
+        ],
+        "NMSSM_500_Y90": [
+            "2022postEE"
+        ],
+        "NMSSM_500_Y95": [
+            "2022postEE"
+        ],
+        "NMSSM_500_Y100": [
+            "2022postEE"
+        ],
+        "NMSSM_550_Y60": [
+            "2022postEE"
+        ],
+        "NMSSM_550_Y70": [
+            "2022postEE"
+        ],
+        "NMSSM_550_Y80": [
+            "2022postEE"
+        ],
+        "NMSSM_550_Y90": [
+            "2022postEE"
+        ],
+        "NMSSM_550_Y95": [
+            "2022postEE"
+        ],
+        "NMSSM_550_Y100": [
+            "2022postEE"
+        ],
+        "NMSSM_600_Y60": [
+            "2022postEE"
+        ],
+        "NMSSM_600_Y70": [
+            "2022postEE"
+        ],
+        "NMSSM_600_Y80": [
+            "2022postEE"
+        ],
+        "NMSSM_600_Y90": [
+            "2022postEE"
+        ],
+        "NMSSM_600_Y95": [
+            "2022postEE"
+        ],
+        "NMSSM_600_Y100": [
+            "2022postEE"
+        ],
+        "NMSSM_650_Y60": [
+            "2022postEE"
+        ],
+        "NMSSM_650_Y70": [
+            "2022postEE"
+        ],
+        "NMSSM_650_Y80": [
+            "2022postEE"
+        ],
+        "NMSSM_650_Y90": [
+            "2022postEE"
+        ],
+        "NMSSM_650_Y95": [
+            "2022postEE"
+        ],
+        "NMSSM_650_Y100": [
+            "2022postEE"
+        ],
+        "NMSSM_700_Y60": [
+            "2022postEE"
+        ],
+        "NMSSM_700_Y70": [
+            "2022postEE"
+        ],
+        "NMSSM_700_Y80": [
+            "2022postEE"
+        ],
+        "NMSSM_700_Y90": [
+            "2022postEE"
+        ],
+        "NMSSM_700_Y95": [
+            "2022postEE"
+        ],
+        "NMSSM_700_Y100": [
+            "2022postEE"
+        ]
+    },
+    "taggers": [],
+    "systematics": {
+        "NMSSM_300_Y60": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_300_Y70": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_300_Y80": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_300_Y90": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_300_Y95": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_300_Y100": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_400_Y60": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_400_Y70": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_400_Y80": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_400_Y90": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_400_Y95": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_500_Y100": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_500_Y60": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_500_Y70": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_500_Y80": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_500_Y90": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_500_Y95": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_500_Y100": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_550_Y60": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_550_Y70": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_550_Y80": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_550_Y90": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_550_Y95": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_550_Y100": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_600_Y60": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_600_Y70": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_600_Y80": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_600_Y90": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_600_Y95": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_600_Y100": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_650_Y60": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_650_Y70": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_650_Y80": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_650_Y90": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_650_Y95": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_650_Y100": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_700_Y60": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_700_Y70": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_700_Y80": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_700_Y90": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_700_Y95": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_700_Y100": [
+            "Smearing",
+            "Pileup"
+        ]
+    },
+    "corrections": {
+        "NMSSM_300_Y60": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_300_Y70": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_300_Y80": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_300_Y90": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_300_Y95": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_300_Y100": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_400_Y60": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_400_Y70": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_400_Y80": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_400_Y90": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_400_Y95": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_400_Y100": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_500_Y60": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_500_Y70": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_500_Y80": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_500_Y90": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_500_Y95": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_500_Y100": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_550_Y60": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_550_Y70": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_550_Y80": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_550_Y90": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_550_Y95": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_550_Y100": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_600_Y60": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_600_Y70": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_600_Y80": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_600_Y90": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_600_Y95": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_600_Y100": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_650_Y60": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_650_Y70": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_650_Y80": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_650_Y90": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_650_Y95": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_650_Y100": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_700_Y60": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_700_Y70": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_700_Y80": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_700_Y90": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_700_Y95": [
+            "Smearing",
+            "Pileup"
+        ],
+        "NMSSM_700_Y100": [
+            "Smearing",
+            "Pileup"
+        ]
+    },
+    "analysis": "mainAnalysis"
+}
