@@ -257,7 +257,8 @@ cd /uscms/home/sraj/nobackup/Hh-bbgg/Analysis_HH-bbgg/hhbbgg_AwkwardAnalyzer
 ```
 2. lxplus
 - navigate manually
--```bash
+- 
+```bash
 # Env setup
 conda activate hhbbgg-awk
 ```
