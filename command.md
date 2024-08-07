@@ -105,7 +105,7 @@ If you have a `.p12` file, extract the user certificate and key using OpenSSL:
 ```bash
 openssl pkcs12 -in myCertificate_lpc.p12 -out usercert.pem -clcerts -nokeys
 openssl pkcs12 -in myCertificate_lpc.p12 -out userkey.pem -nocerts -nodes
-
+```
 Set premission for the key file:
 ```bash
 chmod 400 userkey.pem
@@ -262,20 +262,17 @@ cd /uscms/home/sraj/nobackup/Hh-bbgg/Analysis_HH-bbgg/hhbbgg_AwkwardAnalyzer
 # Env setup
 conda activate hhbbgg-awk
 ```
-
-
-
-# Git commands
-
-New Branch
+command to merge all produced `.parquet` files:
 ```bash
-git branch new-branch-name
+python3 prepare_output_file.py --input /afs/cern.ch/user/s/sraj/Analysis/output_parquet/ --merge --root --ws --syst --cats --args "--do_syst"
 ```
-Switch to new branch
+To convert merged `.parquet` to `.root` using
+
+in general( [HiggsDNA folder](https://higgs-dna.readthedocs.io/en/latest/postprocessing.html#root-step))
 ```bash
-git checkout new-branch-name
+python scripts/postprocessing/convert_parquet_to_root.py --input_parquet_files --output_parquet_file_output/file_name.root mc
 ```
-Above both can be combined in one as 
+eg. 
 ```bash
-git push origin new-branch-name
+python scripts/postprocessing/convert_parquet_to_root.py ../../../output_parquet/merged/NMSSM_X300_Y100/nominal/NOTAG_NOTAG_merged.parquet ../../../output_root/NMSSM_X300_Y100/NMSSM_X300_Y100.root mc
 ```
