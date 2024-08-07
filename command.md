@@ -105,7 +105,7 @@ If you have a `.p12` file, extract the user certificate and key using OpenSSL:
 ```bash
 openssl pkcs12 -in myCertificate_lpc.p12 -out usercert.pem -clcerts -nokeys
 openssl pkcs12 -in myCertificate_lpc.p12 -out userkey.pem -nocerts -nodes
-
+```
 Set premission for the key file:
 ```bash
 chmod 400 userkey.pem
@@ -261,4 +261,8 @@ cd /uscms/home/sraj/nobackup/Hh-bbgg/Analysis_HH-bbgg/hhbbgg_AwkwardAnalyzer
 ```bash
 # Env setup
 conda activate hhbbgg-awk
+```
+command to merge all produced `.parquet` files:
+```bash
+python3 prepare_output_file.py --input /afs/cern.ch/user/s/sraj/Analysis/output_parquet/ --merge --root --ws --syst --cats --args "--do_syst"
 ```
