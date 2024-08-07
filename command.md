@@ -262,3 +262,20 @@ cd /uscms/home/sraj/nobackup/Hh-bbgg/Analysis_HH-bbgg/hhbbgg_AwkwardAnalyzer
 # Env setup
 conda activate hhbbgg-awk
 ```
+
+
+
+# Git commands
+
+New Branch
+```bash
+git branch new-branch-name
+```
+Switch to new branch
+```bash
+git checkout new-branch-name
+```
+Above both can be combined in one as 
+```bash
+git push origin new-branch-name
+```

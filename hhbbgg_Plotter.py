@@ -338,7 +338,7 @@ def stack1d_histograms(
 
 def main():
     # Open the ROOT file
-    file_path = "outputfiles/hhbbgg_analyzer-histograms.root"
+    file_path = "outputfiles/hhbbgg_analyzerNMSSM-histograms.root"
     uproot_loaded_filename = uproot.open(file_path)
 
     # List of data histograms
@@ -356,9 +356,27 @@ def main():
     ]
 
     # List of signal processes
+    #signal_samples = [
+    #    "GluGluToHH",
+    #]
+
     signal_samples = [
-        "GluGluToHH",
-    ]
+    "GluGluToHH",
+         "NMSSM_X300_Y100", "NMSSM_X400_Y80", "NMSSM_X550_Y100", "NMSSM_X600_Y80", "NMSSM_X700_Y100",
+         "NMSSM_X300_Y60", "NMSSM_X400_Y90", "NMSSM_X550_Y60", "NMSSM_X600_Y90", "NMSSM_X700_Y60",
+         "NMSSM_X300_Y70", "NMSSM_X400_Y95", "NMSSM_X550_Y70", "NMSSM_X600_Y95", "NMSSM_X700_Y70",
+         "NMSSM_X300_Y80", "NMSSM_X500_Y100", "NMSSM_X550_Y80", "NMSSM_X650_Y100", "NMSSM_X700_Y80",
+         "NMSSM_X300_Y90", "NMSSM_X500_Y60", "NMSSM_X550_Y90", "NMSSM_X650_Y60", "NMSSM_X700_Y90",
+         "NMSSM_X300_Y95", "NMSSM_X500_Y70", "NMSSM_X550_Y95", "NMSSM_X650_Y70", "NMSSM_X700_Y95",
+         "NMSSM_X400_Y100", "NMSSM_X500_Y80", "NMSSM_X600_Y100", "NMSSM_X650_Y80",
+         "NMSSM_X400_Y60", "NMSSM_X500_Y90", "NMSSM_X600_Y60", "NMSSM_X650_Y90",
+         "NMSSM_X400_Y70", "NMSSM_X500_Y95", "NMSSM_X600_Y70", "NMSSM_X650_Y95",
+    ]   
+
+
+
+
+
 
     # Dictionary for legends
     legend_dict = {
@@ -370,6 +388,49 @@ def main():
         "VHToGG": r"$V\:H\rightarrow\gamma\gamma$",
         "ttHToGG": r"$t\bar{t}H\rightarrow\gamma\gamma$",
         "GluGluToHH": r"$gg\rightarrow\,HH$",
+        # NMSSM samples legends
+        "NMSSM_X300_Y100": r"$NMSSM\_X300\_Y100$",
+        "NMSSM_X400_Y80": r"$NMSSM\_X400\_Y80$",
+        "NMSSM_X550_Y100": r"$NMSSM\_X550\_Y100$",
+        "NMSSM_X600_Y80": r"$NMSSM\_X600\_Y80$",
+        "NMSSM_X700_Y100": r"$NMSSM\_X700\_Y100$",
+        "NMSSM_X300_Y60": r"$NMSSM\_X300\_Y60$",
+        "NMSSM_X400_Y90": r"$NMSSM\_X400\_Y90$",
+        "NMSSM_X550_Y60": r"$NMSSM\_X550\_Y60$",
+        "NMSSM_X600_Y90": r"$NMSSM\_X600\_Y90$",
+        "NMSSM_X700_Y60": r"$NMSSM\_X700\_Y60$",
+        "NMSSM_X300_Y70": r"$NMSSM\_X300\_Y70$",
+        "NMSSM_X400_Y95": r"$NMSSM\_X400\_Y95$",
+        "NMSSM_X550_Y70": r"$NMSSM\_X550\_Y70$",
+        "NMSSM_X600_Y95": r"$NMSSM\_X600\_Y95$",
+        "NMSSM_X700_Y70": r"$NMSSM\_X700\_Y70$",
+        "NMSSM_X300_Y80": r"$NMSSM\_X300\_Y80$",
+        "NMSSM_X500_Y100": r"$NMSSM\_X500\_Y100$",
+        "NMSSM_X550_Y80": r"$NMSSM\_X550\_Y80$",
+        "NMSSM_X650_Y100": r"$NMSSM\_X650\_Y100$",
+        "NMSSM_X700_Y80": r"$NMSSM\_X700\_Y80$",
+        "NMSSM_X300_Y90": r"$NMSSM\_X300\_Y90$",
+        "NMSSM_X500_Y60": r"$NMSSM\_X500\_Y60$",
+        "NMSSM_X550_Y90": r"$NMSSM\_X550\_Y90$",
+        "NMSSM_X650_Y60": r"$NMSSM\_X650\_Y60$",
+        "NMSSM_X700_Y90": r"$NMSSM\_X700\_Y90$",
+        "NMSSM_X300_Y95": r"$NMSSM\_X300\_Y95$",
+        "NMSSM_X500_Y70": r"$NMSSM\_X500\_Y70$",
+        "NMSSM_X550_Y95": r"$NMSSM\_X550\_Y95$",
+        "NMSSM_X650_Y70": r"$NMSSM\_X650\_Y70$",
+        "NMSSM_X700_Y95": r"$NMSSM\_X700\_Y95$",
+        "NMSSM_X400_Y100": r"$NMSSM\_X400\_Y100$",
+        "NMSSM_X500_Y80": r"$NMSSM\_X500\_Y80$",
+        "NMSSM_X600_Y100": r"$NMSSM\_X600\_Y100$",
+        "NMSSM_X650_Y80": r"$NMSSM\_X650\_Y80$",
+        "NMSSM_X400_Y60": r"$NMSSM\_X400\_Y60$",
+        "NMSSM_X500_Y90": r"$NMSSM\_X500\_Y90$",
+        "NMSSM_X600_Y60": r"$NMSSM\_X600\_Y60$",
+        "NMSSM_X650_Y90": r"$NMSSM\_X650\_Y90$",
+        "NMSSM_X400_Y70": r"$NMSSM\_X400\_Y70$",
+        "NMSSM_X500_Y95": r"$NMSSM\_X500\_Y95$",
+        "NMSSM_X600_Y70": r"$NMSSM\_X600\_Y70$",
+        "NMSSM_X650_Y95": r"$NMSSM\_X650\_Y95$"
     }
 
     # List of regions names
