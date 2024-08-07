@@ -90,6 +90,48 @@ To resolve this, open a new "CMS Storage Space Request" (Enable), using your ser
 
 
 
+# Commands for VOMS Setup
+## Prerequisites
+
+- Ensure you have the OpenSSL tool installed.
+- Obtain a valid `.p12` certificate file from your certificate authority.
+
+## Steps for VOMS Setup
+
+### Generate User Certificate and Key
+
+If you have a `.p12` file, extract the user certificate and key using OpenSSL:
+
+```bash
+openssl pkcs12 -in myCertificate_lpc.p12 -out usercert.pem -clcerts -nokeys
+openssl pkcs12 -in myCertificate_lpc.p12 -out userkey.pem -nocerts -nodes
+```
+Set premission for the key file:
+```bash
+chmod 400 userkey.pem
+```
+Set Environment variables:
+```bash
+export X509_USER_CERT=$HOME/.globus/usercert.pem
+export X509_USER_KEY=$HOME/.globus/userkey.pem
+```
+Initialize a VOMS proxy certificate with the following command:
+```bash
+voms-proxy-init --rfc --voms cms -valid 192:00
+```
+To view information about your VOMS proxy certificate:
+```bash
+voms-proxy-info --all
+```
+If you need to remove an old or expired VOMS proxy:
+```bash
+voms-proxy-destroy
+```
+To regenerate or update a VOMS proxy certificate:
+```bash
+voms-proxy-regen --voms cms
+voms-proxy-update --voms cms
+```
 
 
 
@@ -191,4 +233,46 @@ find /path/to/search -name filename
 
 man command
 ```
+## Higgs-dna setup
+1. lxplus/lpc: mentioned in the [tutorial](https://indico.cern.ch/event/1360961/contributions/5777678/attachments/2788218/4861762/HiggsDNA_tutorial.pdf) and [here](https://higgs-dna.readthedocs.io/en/latest/index.html) as well.
 
+```bash
+conda activate higgs-dna
+```
+ 
+## Analysis setup
+1. On LPC
+```bash
+
+source ~/.bashrc
+
+# Env setup
+conda activate hhbbgg-awk
+
+
+##Navigate to the specified directory
+cd /uscms/home/sraj/nobackup/Hh-bbgg/Analysis_HH-bbgg/hhbbgg_AwkwardAnalyzer
+#
+
+```
+2. lxplus
+- navigate manually
+- 
+```bash
+# Env setup
+conda activate hhbbgg-awk
+```
+command to merge all produced `.parquet` files:
+```bash
+python3 prepare_output_file.py --input /afs/cern.ch/user/s/sraj/Analysis/output_parquet/ --merge --root --ws --syst --cats --args "--do_syst"
+```
+To convert merged `.parquet` to `.root` using
+
+in general( [HiggsDNA folder](https://higgs-dna.readthedocs.io/en/latest/postprocessing.html#root-step))
+```bash
+python scripts/postprocessing/convert_parquet_to_root.py --input_parquet_files --output_parquet_file_output/file_name.root mc
+```
+eg. 
+```bash
+python scripts/postprocessing/convert_parquet_to_root.py ../../../output_parquet/merged/NMSSM_X300_Y100/nominal/NOTAG_NOTAG_merged.parquet ../../../output_root/NMSSM_X300_Y100/NMSSM_X300_Y100.root mc
+```

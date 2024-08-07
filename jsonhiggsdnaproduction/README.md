@@ -33,13 +33,14 @@ To produce .parquet files, follow the instructions provided in the [manual](http
    - Setup `VOMS`:
 	```bash
 	voms-proxy-init --voms cms --valid 192:00
+    voms-proxy-init --rfc --voms cms -valid 192:00
 	```
    - To check the proxy:
 	```bash
 	voms-proxy-info -all
 	```
    - To test the grid certificates:
-	```
+	```bash
 	grid-proxy-init -debug -verify 
 	```
 
@@ -83,3 +84,4 @@ python3 prepare_output_file.py --input [path to output dir] --merge --root --ws 
 1. https://gitlab.cern.ch/hhbbgg/HiggsDNA#worfklow
 2. https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookStartingGrid#BasicGrid
 3. https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookXrootdService 
+4. https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideRunningGridPrerequisites#Test_your_grid_certificate
