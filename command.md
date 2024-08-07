@@ -268,7 +268,7 @@ python3 prepare_output_file.py --input /afs/cern.ch/user/s/sraj/Analysis/output_
 ```
 To convert merged `.parquet` to `.root` using
 
-in general( HiggsDNA folder)
+in general( [HiggsDNA folder](https://higgs-dna.readthedocs.io/en/latest/postprocessing.html#root-step))
 ```bash
 python scripts/postprocessing/convert_parquet_to_root.py --input_parquet_files --output_parquet_file_output/file_name.root mc
 ```
