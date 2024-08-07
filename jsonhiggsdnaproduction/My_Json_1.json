@@ -3,74 +3,74 @@
     "workflow": "HHbbgg",
     "metaconditions": "Era2022_v1",
     "year": {
-        "NMSSM_500_Y60": [
+        "NMSSM_X500_Y60": [
             "2022postEE"
         ],
-        "NMSSM_500_Y70": [
+        "NMSSM_X500_Y70": [
             "2022postEE"
         ],
-        "NMSSM_500_Y80": [
+        "NMSSM_X500_Y80": [
             "2022postEE"
         ],
-        "NMSSM_500_Y90": [
+        "NMSSM_X500_Y90": [
             "2022postEE"
         ],
-        "NMSSM_500_Y95": [
+        "NMSSM_X500_Y95": [
             "2022postEE"
         ],
-        "NMSSM_500_Y100": [
+        "NMSSM_X500_Y100": [
             "2022postEE"
         ]
     },
     "taggers": [],
     "systematics": {
-        "NMSSM_500_Y60": [
+        "NMSSM_X500_Y60": [
             "Smearing",
             "Pileup"
         ],
-        "NMSSM_500_Y70": [
+        "NMSSM_X500_Y70": [
             "Smearing",
             "Pileup"
         ],
-        "NMSSM_500_Y80": [
+        "NMSSM_X500_Y80": [
             "Smearing",
             "Pileup"
         ],
-        "NMSSM_500_Y90": [
+        "NMSSM_X500_Y90": [
             "Smearing",
             "Pileup"
         ],
-        "NMSSM_500_Y95": [
+        "NMSSM_X500_Y95": [
             "Smearing",
             "Pileup"
         ],
-        "NMSSM_500_Y100": [
+        "NMSSM_X500_Y100": [
             "Smearing",
             "Pileup"
         ]
     },
     "corrections": {
-        "NMSSM_500_Y60": [
+        "NMSSM_X500_Y60": [
             "Smearing",
             "Pileup"
         ],
-        "NMSSM_500_Y70": [
+        "NMSSM_X500_Y70": [
             "Smearing",
             "Pileup"
         ],
-        "NMSSM_500_Y80": [
+        "NMSSM_X500_Y80": [
             "Smearing",
             "Pileup"
         ],
-        "NMSSM_500_Y90": [
+        "NMSSM_X500_Y90": [
             "Smearing",
             "Pileup"
         ],
-        "NMSSM_500_Y95": [
+        "NMSSM_X500_Y95": [
             "Smearing",
             "Pileup"
         ],
-        "NMSSM_500_Y100": [
+        "NMSSM_X500_Y100": [
             "Smearing",
             "Pileup"
         ]
