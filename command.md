@@ -276,3 +276,21 @@ eg.
 ```bash
 python scripts/postprocessing/convert_parquet_to_root.py ../../../output_parquet/merged/NMSSM_X300_Y100/nominal/NOTAG_NOTAG_merged.parquet ../../../output_root/NMSSM_X300_Y100/NMSSM_X300_Y100.root mc
 ```
+
+
+
+## Git Commands
+
+New branch
+```bash
+git branch new-branch-name
+```
+
+Switch to new branch
+```bash
+git checkout new-branch-name
+```
+both can be executed in a single command using 
+```bash
+git checkout -b new-branch-name
+```
