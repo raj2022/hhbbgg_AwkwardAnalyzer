@@ -84,3 +84,4 @@ python3 prepare_output_file.py --input [path to output dir] --merge --root --ws 
 1. https://gitlab.cern.ch/hhbbgg/HiggsDNA#worfklow
 2. https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookStartingGrid#BasicGrid
 3. https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookXrootdService 
+4. https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideRunningGridPrerequisites#Test_your_grid_certificate

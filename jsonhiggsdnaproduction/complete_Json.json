@@ -1,5 +1,5 @@
 {
-    "samplejson": "sample_v1_test.json",
+    "samplejson": "signal.json",
     "workflow": "HHbbgg",
     "metaconditions": "Era2022_v1",
     "year": {
