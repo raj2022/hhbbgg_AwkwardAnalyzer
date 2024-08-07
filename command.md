@@ -233,5 +233,31 @@ find /path/to/search -name filename
 
 man command
 ```
-# References:
-1. 
+## Higgs-dna setup
+1. lxplus/lpc: mentioned in the [tutorial](https://indico.cern.ch/event/1360961/contributions/5777678/attachments/2788218/4861762/HiggsDNA_tutorial.pdf) and [here](https://higgs-dna.readthedocs.io/en/latest/index.html) as well.
+
+```bash
+conda activate higgs-dna
+```
+ 
+## Analysis setup
+1. On LPC
+```bash
+
+source ~/.bashrc
+
+# Env setup
+conda activate hhbbgg-awk
+
+
+##Navigate to the specified directory
+cd /uscms/home/sraj/nobackup/Hh-bbgg/Analysis_HH-bbgg/hhbbgg_AwkwardAnalyzer
+#
+
+```
+2. lxplus
+- navigate manually
+-```bash
+# Env setup
+conda activate hhbbgg-awk
+```

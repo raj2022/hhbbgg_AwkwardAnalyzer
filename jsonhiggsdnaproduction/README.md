@@ -40,7 +40,7 @@ To produce .parquet files, follow the instructions provided in the [manual](http
 	voms-proxy-info -all
 	```
    - To test the grid certificates:
-	```
+	```bash
 	grid-proxy-init -debug -verify 
 	```
 
