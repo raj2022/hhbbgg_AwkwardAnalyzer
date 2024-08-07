@@ -266,3 +266,7 @@ command to merge all produced `.parquet` files:
 ```bash
 python3 prepare_output_file.py --input /afs/cern.ch/user/s/sraj/Analysis/output_parquet/ --merge --root --ws --syst --cats --args "--do_syst"
 ```
+To convert merged `.parquet` to `.root` using
+```bash
+python scripts/postprocessing/convert_parquet_to_root.py ../../../output_parquet/merged/NMSSM_X300_Y100/nominal/NOTAG_NOTAG_merged.parquet ../../../output_root/NMSSM_X300_Y100/NMSSM_X300_Y100.root mc
+```
