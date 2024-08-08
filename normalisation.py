@@ -5,7 +5,6 @@ def getXsec(samplename):
     BR_HToGG = 2.270e-03
     BR_HTobb = 5.824e-01
     BR_HTogg = 2.270e-03  # https://twiki.cern.ch/twiki/bin/view/LHCPhysics/CERNYellowReportPageBR
-    
     #if samplename in nmssm_samples:
     if "NMSSM_X" in samplename:
         xsec = 1.0
@@ -39,3 +38,4 @@ def getLumi():
     total_integrated_luminosity = sum(integrated_luminosities.values())
     return total_integrated_luminosity
 
+~   
