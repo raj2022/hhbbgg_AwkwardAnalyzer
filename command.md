@@ -423,3 +423,126 @@ root
 - `git blame <file>`: Shows who modified each line of a file and when.
 - `git shortlog`: Summarizes `git log` output by author.
 
+---
+# Vim Commands
+
+## Basic Navigation
+- `h`: Move cursor left.
+- `j`: Move cursor down.
+- `k`: Move cursor up.
+- `l`: Move cursor right.
+- `0`: Move to the beginning of the line.
+- `$`: Move to the end of the line.
+- `w`: Move to the beginning of the next word.
+- `b`: Move to the beginning of the previous word.
+- `G`: Go to the end of the file.
+- `gg`: Go to the beginning of the file.
+- `:n`: Go to line `n` (e.g., `:10` to go to line 10).
+- `Ctrl + f`: Move forward one screen.
+- `Ctrl + b`: Move backward one screen.
+
+## Modes
+- `i`: Insert mode (start inserting text before the cursor).
+- `I`: Insert mode at the beginning of the line.
+- `a`: Insert mode (start inserting text after the cursor).
+- `A`: Insert mode at the end of the line.
+- `o`: Insert a new line below the current line and enter insert mode.
+- `O`: Insert a new line above the current line and enter insert mode.
+- `Esc`: Return to normal mode.
+- `v`: Enter visual mode (select text).
+- `V`: Enter visual line mode (select whole lines).
+- `Ctrl + v`: Enter visual block mode (select a block of text).
+
+## Editing Text
+- `x`: Delete the character under the cursor.
+- `dd`: Delete the current line.
+- `dw`: Delete from the cursor to the end of the word.
+- `d$`: Delete from the cursor to the end of the line.
+- `d0`: Delete from the cursor to the beginning of the line.
+- `u`: Undo the last action.
+- `Ctrl + r`: Redo the last undone action.
+- `yy`: Copy (yank) the current line.
+- `yw`: Copy (yank) from the cursor to the end of the word.
+- `y$`: Copy (yank) from the cursor to the end of the line.
+- `p`: Paste after the cursor.
+- `P`: Paste before the cursor.
+- `r`: Replace the character under the cursor.
+- `R`: Enter replace mode (overwrite characters).
+
+## Searching and Replacing
+- `/pattern`: Search for `pattern` in the file (e.g., `/foo` to search for "foo").
+- `n`: Move to the next occurrence of the search pattern.
+- `N`: Move to the previous occurrence of the search pattern.
+- `:%s/old/new/g`: Replace all occurrences of `old` with `new` in the file.
+- `:%s/old/new/gc`: Replace all occurrences with confirmation.
+
+## Saving and Exiting
+- `:w`: Save the current file.
+- `:wq`: Save and exit Vim.
+- `:q`: Quit Vim.
+- `:q!`: Quit without saving changes.
+- `:wq!`: Force save and exit (useful when the file is read-only).
+- `ZZ`: Save and quit (equivalent to `:wq`).
+- `ZQ`: Quit without saving (equivalent to `:q!`).
+
+## Visual Mode
+- `v`: Start visual mode.
+- `V`: Start visual line mode.
+- `Ctrl + v`: Start visual block mode.
+- `y`: Yank (copy) the selected text.
+- `d`: Delete the selected text.
+- `p`: Paste the yanked text after the selection.
+- `>`: Indent the selected text.
+- `<`: Unindent the selected text.
+
+## Indentation
+- `>>`: Indent the current line.
+- `<<`: Unindent the current line.
+- `=`: Auto-indent the selected text or current line.
+
+## Working with Multiple Files
+- `:e filename`: Open `filename` for editing.
+- `:bnext` or `:bn`: Go to the next buffer.
+- `:bprev` or `:bp`: Go to the previous buffer.
+- `:bd`: Close the current buffer.
+- `:ls`: List all open buffers.
+
+## Splits and Tabs
+- `:split filename`: Open `filename` in a horizontal split.
+- `:vsplit filename`: Open `filename` in a vertical split.
+- `Ctrl + w, s`: Split the current window horizontally.
+- `Ctrl + w, v`: Split the current window vertically.
+- `Ctrl + w, w`: Switch between split windows.
+- `Ctrl + w, q`: Close the current split window.
+- `:tabnew filename`: Open `filename` in a new tab.
+- `gt`: Go to the next tab.
+- `gT`: Go to the previous tab.
+- `:tabclose`: Close the current tab.
+
+## Useful Commands
+- `.`: Repeat the last command.
+- `:!command`: Run an external shell command (e.g., `:!ls`).
+- `:set number`: Show line numbers.
+- `:set nonumber`: Hide line numbers.
+- `:set ignorecase`: Ignore case in searches.
+- `:set noignorecase`: Make searches case-sensitive.
+- `:set hlsearch`: Highlight search results.
+- `:set nohlsearch`: Disable search result highlighting.
+
+## Registers
+- `"a`: Access register `a`.
+- `"ap`: Paste the contents of register `a`.
+- `"ayy`: Yank into register `a`.
+- `:reg`: View the contents of all registers.
+
+## Macros
+- `qa`: Start recording a macro into register `a`.
+- `q`: Stop recording the macro.
+- `@a`: Play the macro stored in register `a`.
+- `@@`: Replay the last played macro.
+
+## Exiting Insert Mode
+- `jk`: Map `jk` to exit insert mode (can be set in your `.vimrc`).
+
+
+---
