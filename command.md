@@ -334,25 +334,25 @@ root
 ```
 
 
-# Git Commands
+## Git Commands
 
-## Configuration
+### Configuration
 - `git config --global user.name "Your Name"`: Sets your name in Git configuration.
 - `git config --global user.email "you@example.com"`: Sets your email in Git configuration.
 - `git config --global color.ui auto`: Enables colored output in Git.
 
-## Repository Setup
+### Repository Setup
 - `git init`: Initializes a new Git repository.
 - `git clone <repo-url>`: Clones an existing repository from a remote source.
 
-## Basic Snapshotting
+### Basic Snapshotting
 - `git status`: Displays the state of the working directory and staging area.
 - `git add <file>`: Stages a file.
 - `git add .`: Stages all changes in the current directory.
 - `git commit -m "Commit message"`: Commits staged changes with a message.
 - `git commit -am "Commit message"`: Adds and commits changes in one step.
 
-## Branching and Merging
+### Branching and Merging
 - `git branch`: Lists all branches in your repository.
 - `git branch <branch-name>`: Creates a new branch.
 - `git checkout <branch-name>`: Switches to the specified branch.
@@ -361,7 +361,7 @@ root
 - `git branch -d <branch-name>`: Deletes the specified branch.
 - `git branch -D <branch-name>`: Force-deletes the specified branch.
 
-## Remote Repositories
+### Remote Repositories
 - `git remote add <name> <url>`: Adds a remote repository.
 - `git remote -v`: Lists the URLs of all remote repositories.
 - `git fetch <remote>`: Fetches changes from the remote repository.
@@ -369,21 +369,21 @@ root
 - `git push <remote> <branch>`: Pushes committed changes to the remote branch.
 - `git push origin --delete <branch-name>`: Deletes a remote branch.
 
-## Undoing Changes
+### Undoing Changes
 - `git checkout -- <file>`: Discards changes in the working directory.
 - `git reset HEAD <file>`: Unstages a file without discarding changes.
 - `git reset --hard`: Discards all local changes.
 - `git revert <commit>`: Creates a new commit that undoes changes made in the specified commit.
 - `git reset --soft <commit>`: Resets the index to the specified commit without changing the working directory.
 
-## Viewing History
+### Viewing History
 - `git log`: Shows commit history.
 - `git log --oneline`: Displays the commit history in a condensed format.
 - `git log --graph --oneline --all`: Visualizes the commit history as a graph.
 - `git diff`: Shows changes between commits, commit and working tree, etc.
 - `git show <commit>`: Displays changes introduced by a specific commit.
 
-## Stashing
+### Stashing
 - `git stash`: Stashes the current changes in the working directory.
 - `git stash list`: Lists all stashes.
 - `git stash apply`: Applies the most recent stash.
@@ -391,35 +391,35 @@ root
 - `git stash drop`: Deletes the most recent stash.
 - `git stash drop stash@{n}`: Deletes a specific stash.
 
-## Submodules
+### Submodules
 - `git submodule add <repo-url>`: Adds a submodule to your repository.
 - `git submodule update --init`: Initializes, fetches, and checks out the content of the submodule.
 - `git submodule update --remote`: Updates the submodule to the latest commit.
 
-## Working with Tags
+### Working with Tags
 - `git tag`: Lists all tags.
 - `git tag <tag-name>`: Creates a new tag.
 - `git tag -d <tag-name>`: Deletes a local tag.
 - `git push origin <tag-name>`: Pushes a tag to the remote repository.
 - `git push origin --tags`: Pushes all tags to the remote repository.
 
-## Advanced Commands
+### Advanced Commands
 - `git cherry-pick <commit>`: Applies the changes from a specific commit.
 - `git rebase <branch>`: Applies commits from another branch onto the current branch.
 - `git reflog`: Shows a log of all the references in the local repository.
 - `git bisect start`: Starts a bisecting session to find a specific commit that introduced a bug.
 
-## Resolving Conflicts
+### Resolving Conflicts
 - `git merge --abort`: Aborts the merge process and attempts to reconstruct the pre-merge state.
 - `git mergetool`: Opens a merge tool to resolve conflicts.
 - `git add <file>`: After resolving conflicts, stage the resolved file(s).
 - `git commit`: Completes the merge after resolving conflicts.
 
-## Cleaning Up
+### Cleaning Up
 - `git clean -f`: Removes untracked files.
 - `git clean -fd`: Removes untracked files and directories.
 
-## Miscellaneous
+### Miscellaneous
 - `git blame <file>`: Shows who modified each line of a file and when.
 - `git shortlog`: Summarizes `git log` output by author.
 
