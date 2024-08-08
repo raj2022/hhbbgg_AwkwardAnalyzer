@@ -277,6 +277,7 @@ eg.
 python scripts/postprocessing/convert_parquet_to_root.py ../../../output_parquet/merged/NMSSM_X300_Y100/nominal/NOTAG_NOTAG_merged.parquet ../../../output_root/NMSSM_X300_Y100/NMSSM_X300_Y100.root mc
 ```
 
+<<<<<<< HEAD
 # Setup ROOT
 Instruction to setup root(Ubuntu)
 1. Update and upgrade your system
