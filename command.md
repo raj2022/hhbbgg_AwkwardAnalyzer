@@ -276,3 +276,59 @@ eg.
 ```bash
 python scripts/postprocessing/convert_parquet_to_root.py ../../../output_parquet/merged/NMSSM_X300_Y100/nominal/NOTAG_NOTAG_merged.parquet ../../../output_root/NMSSM_X300_Y100/NMSSM_X300_Y100.root mc
 ```
+
+# Setup ROOT
+Instruction to setup root(Ubuntu)
+1. Update and upgrade your system
+```bash
+sudo apt update
+sudo apt upgrade
+```
+
+2. Install dependencies
+```bash
+sudo apt install dpkg-dev cmake g++ gcc binutils libx11-dev libxpm-dev libxft-dev libxext-dev python3 libssl-dev
+```
+3. Install optional dependencies
+```bash
+sudo apt install libpng-dev libjpeg-dev libgif-dev libtiff-dev libxml2-dev libssl-dev libgsl-dev
+```
+4. Download ROOT. ROOT can be downloaded from ROOT website with latst realease, 
+https://root.cern.ch/doc/master/group__Tutorials.html, but it is preferred to use the git instructions. 
+```bash
+git clone https://github.com/root-project/root.git
+```
+5. Build and install ROOT
+```bash
+cd root
+mkdir build
+cd build
+```
+configure the build with Cmake:
+```bash
+cmake ..
+```
+To build ROOT (this may take some time):
+```bash
+cmake --build . -- -j$(nproc)
+```
+Once the build process is complete, you can install ROOT by running:
+```bash
+sudo cmake --build . --target install
+```
+ 6. Set Up Environment Variables
+Add ROOT to your environment variables by adding the following lines to your .bashrc or .bash_profile:
+```bash
+source /path/to/your/root/build/bin/thisroot.sh
+```
+Make sure to replace /path/to/your/root/build/ with the actual path to your ROOT installation.
+
+Then apply changes,
+```bash
+source ~/.bashrc
+```
+7. Verify the installation
+```bash
+root
+```
+
