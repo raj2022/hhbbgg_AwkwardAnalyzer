@@ -38,4 +38,3 @@ def getLumi():
     total_integrated_luminosity = sum(integrated_luminosities.values())
     return total_integrated_luminosity
 
-~   
