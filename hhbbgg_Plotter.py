@@ -175,84 +175,80 @@ def stack1d_histograms(
         mc_stack.plot(ax=ax, stack=True, histtype="fill", flow="sum", sort="yield")
 
         # Plot signal histograms
-#        if "srbbgg" in hist_name or "srbbggMET" in hist_name:
-#            for signal_sample in signal_samples:
-#                signal_histogram = get_histogram(
-#                    uproot_loaded_filename, f"{signal_sample}/{hist_name}"
-#                )
-#                signal_histogram.plot(
-#                    ax=ax,
-#                    histtype="step",
-#                    yerr=True,
-#                    xerr=True,
-#                    label=legend_dict[signal_sample],
-#                    color="red",
-#                )
-#            
-#            region_name = r'sr: $b\bar{b}\gamma\gamma$' if "srbbgg" in hist_name else r'sr: $b\bar{b}\gamma\gamma$(MET)' 
-#            
-#            ax.text(
-#            x=ax.get_xlim()[0] + 0.05 * (ax.get_xlim()[1] - ax.get_xlim()[0]),  
-#            # y=ax.get_ylim()[1] - 0.05 * (ax.get_ylim()[1] - ax.get_ylim()[0]),  
-#            y = 1e8*0.20,
-#            s=region_name,
-#            fontsize=25,
-#            ha='left',  
-#            va='top',   
-#            bbox=dict(facecolor='white', alpha=1)
-#             )
-#
-#        # for control regions
-#        if "crantibbgg" in hist_name or "crbbantigg" in hist_name:
-#            region_name = r'cr: anti$b\bar{b}\gamma\gamma$' if "crantibbgg" in hist_name else r'cr: $b\bar{b}anti\gamma\gamma$' 
-#
-#            ax.text(
-#            x=ax.get_xlim()[0] + 0.05 * (ax.get_xlim()[1] - ax.get_xlim()[0]),
-#            # y=ax.get_ylim()[1] - 0.05 * (ax.get_ylim()[1] - ax.get_ylim()[0]),  
-#            y = 1e8*0.20,
-#            s=region_name,
-#            fontsize=20,
-#            ha='left',
-#            va='top',
-#            bbox=dict(facecolor='white', alpha=1)
-#             )
-#
-        
+        #        if "srbbgg" in hist_name or "srbbggMET" in hist_name:
+        #            for signal_sample in signal_samples:
+        #                signal_histogram = get_histogram(
+        #                    uproot_loaded_filename, f"{signal_sample}/{hist_name}"
+        #                )
+        #                signal_histogram.plot(
+        #                    ax=ax,
+        #                    histtype="step",
+        #                    yerr=True,
+        #                    xerr=True,
+        #                    label=legend_dict[signal_sample],
+        #                    color="red",
+        #                )
+        #
+        #            region_name = r'sr: $b\bar{b}\gamma\gamma$' if "srbbgg" in hist_name else r'sr: $b\bar{b}\gamma\gamma$(MET)'
+        #
+        #            ax.text(
+        #            x=ax.get_xlim()[0] + 0.05 * (ax.get_xlim()[1] - ax.get_xlim()[0]),
+        #            # y=ax.get_ylim()[1] - 0.05 * (ax.get_ylim()[1] - ax.get_ylim()[0]),
+        #            y = 1e8*0.20,
+        #            s=region_name,
+        #            fontsize=25,
+        #            ha='left',
+        #            va='top',
+        #            bbox=dict(facecolor='white', alpha=1)
+        #             )
+        #
+        #        # for control regions
+        #        if "crantibbgg" in hist_name or "crbbantigg" in hist_name:
+        #            region_name = r'cr: anti$b\bar{b}\gamma\gamma$' if "crantibbgg" in hist_name else r'cr: $b\bar{b}anti\gamma\gamma$'
+        #
+        #            ax.text(
+        #            x=ax.get_xlim()[0] + 0.05 * (ax.get_xlim()[1] - ax.get_xlim()[0]),
+        #            # y=ax.get_ylim()[1] - 0.05 * (ax.get_ylim()[1] - ax.get_ylim()[0]),
+        #            y = 1e8*0.20,
+        #            s=region_name,
+        #            fontsize=20,
+        #            ha='left',
+        #            va='top',
+        #            bbox=dict(facecolor='white', alpha=1)
+        #             )
+        #
 
         text_srbbgg = "Pass medium Btag\nPass tight photonID "
         text_srbbggMET = "Pass medium Btag\nPass tight photonID"
         text_crantibbgg = "Fail Medium Btag\nPass tight photonID"
         text_crbbantigg = "Pass Medium Btag\nPass loose photonID\nfail tight photonID "
 
-
-
         if "srbbgg" in hist_name:
-            region_name = r'sr: $b\bar{b}\gamma\gamma$'
+            region_name = r"sr: $b\bar{b}\gamma\gamma$"
             additional_text = text_srbbgg
         elif "srbbggMET" in hist_name:
-            region_name = r'sr: $b\bar{b}\gamma\gamma$+MET'
+            region_name = r"sr: $b\bar{b}\gamma\gamma$+MET"
             additional_text = text_srbbggMET
         elif "crantibbgg" in hist_name:
-            region_name = r'cr: anti$b\bar{b}\gamma\gamma$'
+            region_name = r"cr: anti$b\bar{b}\gamma\gamma$"
             additional_text = text_crantibbgg
         elif "crbbantigg" in hist_name:
-            region_name = r'cr: $b\bar{b}anti\gamma\gamma$'
+            region_name = r"cr: $b\bar{b}anti\gamma\gamma$"
             additional_text = text_crbbantigg
         else:
             region_name = None
             additional_text = None
 
-        
         if region_name and additional_text:
             combined_text = f"{region_name}\n{additional_text}"
             ax.text(
                 x=ax.get_xlim()[0] + 0.02 * (ax.get_xlim()[1] - ax.get_xlim()[0]),
-                y=1e8*0.20,
+                y=1e8 * 0.20,
                 s=combined_text,
                 fontsize=15,
-                ha='left',
-                va='top',
-                bbox=dict(facecolor='white', alpha=1, edgecolor='none')
+                ha="left",
+                va="top",
+                bbox=dict(facecolor="white", alpha=1, edgecolor="none"),
             )
 
         # plot signal histogram
@@ -260,7 +256,7 @@ def stack1d_histograms(
             for signal_sample in signal_samples:
                 signal_histogram = get_histogram(
                     uproot_loaded_filename, f"{signal_sample}/{hist_name}"
-                 )       
+                )
                 signal_histogram.plot(
                     ax=ax,
                     histtype="step",
@@ -268,11 +264,7 @@ def stack1d_histograms(
                     xerr=True,
                     label=legend_dict[signal_sample],
                     color="red",
-                  )   
-
-
-
-
+                )
 
         # Plot ratio plot
         ratio, error = get_ratio(data_histogram, sum_histograms(mc_stack))
@@ -356,27 +348,55 @@ def main():
     ]
 
     # List of signal processes
-    #signal_samples = [
+    # signal_samples = [
     #    "GluGluToHH",
-    #]
+    # ]
 
     signal_samples = [
-    "GluGluToHH",
-         "NMSSM_X300_Y100", "NMSSM_X400_Y80", "NMSSM_X550_Y100", "NMSSM_X600_Y80", "NMSSM_X700_Y100",
-         "NMSSM_X300_Y60", "NMSSM_X400_Y90", "NMSSM_X550_Y60", "NMSSM_X600_Y90", "NMSSM_X700_Y60",
-         "NMSSM_X300_Y70", "NMSSM_X400_Y95", "NMSSM_X550_Y70", "NMSSM_X600_Y95", "NMSSM_X700_Y70",
-         "NMSSM_X300_Y80", "NMSSM_X500_Y100", "NMSSM_X550_Y80", "NMSSM_X650_Y100", "NMSSM_X700_Y80",
-         "NMSSM_X300_Y90", "NMSSM_X500_Y60", "NMSSM_X550_Y90", "NMSSM_X650_Y60", "NMSSM_X700_Y90",
-         "NMSSM_X300_Y95", "NMSSM_X500_Y70", "NMSSM_X550_Y95", "NMSSM_X650_Y70", "NMSSM_X700_Y95",
-         "NMSSM_X400_Y100", "NMSSM_X500_Y80", "NMSSM_X600_Y100", "NMSSM_X650_Y80",
-         "NMSSM_X400_Y60", "NMSSM_X500_Y90", "NMSSM_X600_Y60", "NMSSM_X650_Y90",
-         "NMSSM_X400_Y70", "NMSSM_X500_Y95", "NMSSM_X600_Y70", "NMSSM_X650_Y95",
-    ]   
-
-
-
-
-
+        "GluGluToHH",
+        "NMSSM_X300_Y100",
+        "NMSSM_X400_Y80",
+        "NMSSM_X550_Y100",
+        "NMSSM_X600_Y80",
+        "NMSSM_X700_Y100",
+        "NMSSM_X300_Y60",
+        "NMSSM_X400_Y90",
+        "NMSSM_X550_Y60",
+        "NMSSM_X600_Y90",
+        "NMSSM_X700_Y60",
+        "NMSSM_X300_Y70",
+        "NMSSM_X400_Y95",
+        "NMSSM_X550_Y70",
+        "NMSSM_X600_Y95",
+        "NMSSM_X700_Y70",
+        "NMSSM_X300_Y80",
+        "NMSSM_X500_Y100",
+        "NMSSM_X550_Y80",
+        "NMSSM_X650_Y100",
+        "NMSSM_X700_Y80",
+        "NMSSM_X300_Y90",
+        "NMSSM_X500_Y60",
+        "NMSSM_X550_Y90",
+        "NMSSM_X650_Y60",
+        "NMSSM_X700_Y90",
+        "NMSSM_X300_Y95",
+        "NMSSM_X500_Y70",
+        "NMSSM_X550_Y95",
+        "NMSSM_X650_Y70",
+        "NMSSM_X700_Y95",
+        "NMSSM_X400_Y100",
+        "NMSSM_X500_Y80",
+        "NMSSM_X600_Y100",
+        "NMSSM_X650_Y80",
+        "NMSSM_X400_Y60",
+        "NMSSM_X500_Y90",
+        "NMSSM_X600_Y60",
+        "NMSSM_X650_Y90",
+        "NMSSM_X400_Y70",
+        "NMSSM_X500_Y95",
+        "NMSSM_X600_Y70",
+        "NMSSM_X650_Y95",
+    ]
 
     # Dictionary for legends
     legend_dict = {
@@ -430,11 +450,18 @@ def main():
         "NMSSM_X400_Y70": r"$NMSSM\_X400\_Y70$",
         "NMSSM_X500_Y95": r"$NMSSM\_X500\_Y95$",
         "NMSSM_X600_Y70": r"$NMSSM\_X600\_Y70$",
-        "NMSSM_X650_Y95": r"$NMSSM\_X650\_Y95$"
+        "NMSSM_X650_Y95": r"$NMSSM\_X650\_Y95$",
     }
 
     # List of regions names
-    regions = ["preselection","selection", "srbbgg", "srbbggMET", "crantibbgg", "crbbantigg"]
+    regions = [
+        "preselection",
+        "selection",
+        "srbbgg",
+        "srbbggMET",
+        "crantibbgg",
+        "crbbantigg",
+    ]
     # List of variable names
     variable_names = [
         "dibjet_mass",
@@ -557,15 +584,15 @@ def main():
         "dibjet_bbgg_mass": r"$p_T^{b\bar{b}}/m_{b\bar{b}\gamma\gamma}$",
         "puppiMET_pt": r"puppi $p_T^{miss}$ [GeV]",
         "puppiMET_phi": r"puppi $\phi^{miss}$",
-        #"puppiMET_phiJERDown": r"puppi $\phi^{JERDown}$",
-        #"puppiMET_phiJERUp": r"puppi $\phi^{JERUp}$",
-        #"puppiMET_phiJESDown": r"puppi $\phi^{JESDown}$",
-        #"puppiMET_phiUnclusteredDown": r"puppi $\phi^{UnclusterDown}$",
-        #"puppiMET_phiUnclusteredUp": r"puppi $\phi^{UnclusterUp}$",
-        #"puppiMET_ptJERDown": r"puppi $p_T^{JERDown}$ [GeV]",
-        #"puppiMET_ptJERUp": r"puppi $p_T^{JERUp}$ [GeV]",
-        #"puppiMET_ptJESDown": r"puppi $p_T^{JESDown}$ [GeV]",
-        #"puppiMET_ptJESUp": r"puppi $p_T^{JESUp}$ [GeV]",
+        # "puppiMET_phiJERDown": r"puppi $\phi^{JERDown}$",
+        # "puppiMET_phiJERUp": r"puppi $\phi^{JERUp}$",
+        # "puppiMET_phiJESDown": r"puppi $\phi^{JESDown}$",
+        # "puppiMET_phiUnclusteredDown": r"puppi $\phi^{UnclusterDown}$",
+        # "puppiMET_phiUnclusteredUp": r"puppi $\phi^{UnclusterUp}$",
+        # "puppiMET_ptJERDown": r"puppi $p_T^{JERDown}$ [GeV]",
+        # "puppiMET_ptJERUp": r"puppi $p_T^{JERUp}$ [GeV]",
+        # "puppiMET_ptJESDown": r"puppi $p_T^{JESDown}$ [GeV]",
+        # "puppiMET_ptJESUp": r"puppi $p_T^{JESUp}$ [GeV]",
         "lead_pho_mvaID_WP90": r"lead_PhoMVAID90",
         "sublead_pho_mvaID_WP90": r"sublead_PhoMVAID90",
         "lead_pho_mvaID_WP80": r"lead_PhoMVAID80",
