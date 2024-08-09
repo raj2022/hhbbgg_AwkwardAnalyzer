@@ -12,44 +12,38 @@
 
 
 import os
-os.environ['MPLCONFIGDIR'] = '/uscms_data/d1/sraj/matplotlib_tmp' # Disk quota error fix
+os.environ['MPLCONFIGDIR'] = '/uscms_data/d1/sraj/matplotlib_tmp'
 import matplotlib
-matplotlib.use("Agg")
-
 import uproot
 from hist import Hist
 import numpy as np
 import matplotlib.pyplot as plt
 import mplhep as hep
-from normalisation import getLumi
 from cycler import cycler
+from normalisation import getLumi
+
+# Fix disk quota error for matplotlib
+matplotlib.use("Agg")
 
 # Load CMS style including color-scheme
 hep.style.use("CMS")
 plt.rcParams["axes.prop_cycle"] = cycler(
     color=[
-        "#3f90da",
-        "#ffa90e",
-        "#bd1f01",
-        "#94a4a2",
-        "#832db6",
-        "#a96b59",
-        "#e76300",
-        "#b9ac70",
-        "#717581",
-        "#92dadd",
+        "#3f90da", "#ffa90e", "#bd1f01", "#94a4a2",
+        "#832db6", "#a96b59", "#e76300", "#b9ac70",
+        "#717581", "#92dadd",
     ]
 )
 plt.rcParams.update({
-    "axes.labelsize": 16,  # X/Y labels size
-    "axes.titlesize": 20,  # Title size
-    "xtick.labelsize": 14,  # X-axis tick label size
-    "ytick.labelsize": 14,  # Y-axis tick label size
-    "legend.fontsize": 14,  # Legend font size
-    "figure.figsize": (10, 8),  # Figure size
-    "lines.linewidth": 2.5,  # Line width
-    "axes.edgecolor": "black",  # Make axes edges black
-    "axes.linewidth": 1.5,  # Thicker axes
+    "axes.labelsize": 16,
+    "axes.titlesize": 20,
+    "xtick.labelsize": 14,
+    "ytick.labelsize": 14,
+    "legend.fontsize": 14,
+    "figure.figsize": (10, 8),
+    "lines.linewidth": 2.5,
+    "axes.edgecolor": "black",
+    "axes.linewidth": 1.5,
 })
 
 # Legend label formatting
@@ -62,17 +56,12 @@ legend_labels = {
     "bbgg_pt": r"$p_T^{b\bar{b}\gamma\gamma}$ [GeV]",
 }
 
-
-
-# Function to read histograms and normalize them
+# Function to read and normalize histograms
 def get_histogram(file, hist_name, hist_label=None):
     histogram = file[hist_name].to_hist()
-    
-    # Normalize the histogram by its integral
     integral = np.sum(histogram.values())
     if integral > 0:
         histogram = histogram / integral
-    
     if hist_label is not None:
         histogram.label = hist_label
     return histogram
@@ -82,17 +71,12 @@ def plot_histograms(histograms, xlabel, ylabel, output_name):
     plt.figure(figsize=(10, 8))
     for hist in histograms:
         plt.step(hist.axes.centers[0], hist.values(), where="mid", label=legend_labels.get(hist.label, hist.label))
-
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.legend()
     plt.grid(True)
-    
-    # Add "CMS Preliminary" and integrated luminosity outside the plot box
-    hep.cms.text("Preliminary", loc=0, ax=plt.gca())
-    plt.text(1.0, 1.02, f'{getLumi():.1f} fb$^{{-1}}$ (13 TeV)', fontsize=17,
-             transform=plt.gca().transAxes, ha='right')
-
+    hep.cms.text("CMS Preliminary", loc=0, ax=plt.gca())
+    plt.text(1.0, 1.02, f'{getLumi():.1f} fb$^{{-1}}$ (13 TeV)', fontsize=17, transform=plt.gca().transAxes, ha='right')
     plt.savefig(output_name)
     plt.close()
 
@@ -104,6 +88,18 @@ def process_mass_point(root_file, mass_point, variables):
         hist = get_histogram(root_file, hist_name, f"{mass_point} {variable}")
         histograms.append(hist)
     return histograms
+
+# Function to process and plot for each X with varying Y
+def process_X_group(root_file, X_value, Y_values, variables):
+    for variable in variables:
+        histograms = []
+        for Y_value in Y_values:
+            mass_point = f"NMSSM_X{X_value}_Y{Y_value}"
+            hist_name = f"{mass_point}/preselection-{variable}"
+            hist = get_histogram(root_file, hist_name, f"Y={Y_value}")
+            histograms.append(hist)
+        output_name = f"stack_plots/NMSSM_X{X_value}_{variable}.png"
+        plot_histograms(histograms, f"{legend_labels[variable]}", "Entries", output_name)
 
 # Define the mass points in the ROOT file and variables to process
 mass_points = [
@@ -127,6 +123,9 @@ variables = [
     "bbgg_pt",
 ]
 
+X_values = [300, 400, 500, 550, 600, 650, 700]
+Y_values = [60, 70, 80, 90, 95, 100]
+
 # Ensure the output directory exists
 output_dir = "stack_plots/"
 os.makedirs(output_dir, exist_ok=True)
@@ -135,84 +134,14 @@ os.makedirs(output_dir, exist_ok=True)
 file_path = "outputfiles/hhbbgg_analyzerNMSSM-histograms.root"
 root_file = uproot.open(file_path)
 
-# Loop through each mass point and plot the histograms
+# Process and plot for each mass point and each X with varying Y
 for mass_point in mass_points:
-    # Process and plot each variable for the given mass point
     for variable in variables:
         histograms = process_mass_point(root_file, mass_point, [variable])
         output_name = f"{output_dir}{mass_point}_{variable}.png"
-        plot_histograms(histograms, f"{variable} [GeV]", "Entries", output_name)
+        plot_histograms(histograms, f"{legend_labels[variable]}", "Entries", output_name)
 
-
-
-#########################################
-
-# Function to read and normalize histograms
-def get_histogram(file, hist_name, hist_label=None):
-    histogram = file[hist_name].to_hist()
-
-    # Normalize the histogram by its integral
-    integral = np.sum(histogram.values())
-    if integral > 0:
-        histogram = histogram / integral
-
-    if hist_label is not None:
-        histogram.label = hist_label
-    return histogram
-
-# Function to plot histograms
-def plot_histograms(histograms, xlabel, ylabel, output_name):
-    plt.figure(figsize=(10, 8))
-    for hist in histograms:
-        plt.step(hist.axes.centers[0], hist.values(), where="mid", label=legend_labels.get(hist.label, hist.label))
-
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
-    plt.legend()
-    plt.grid(True)
-
-    # Add "CMS Preliminary" and integrated luminosity outside the plot box
-    hep.cms.text("Preliminary", loc=0, ax=plt.gca())
-    plt.text(1.0, 1.02, f'{getLumi():.1f} fb$^{{-1}}$ (13 TeV)', fontsize=17,
-             transform=plt.gca().transAxes, ha='right')
-
-    plt.savefig(output_name)
-    plt.close()
-
-# Function to process and plot for each X with varying Y
-def process_X_group(root_file, X_value, Y_values, variables):
-    for variable in variables:
-        histograms = []
-        for Y_value in Y_values:
-            mass_point = f"NMSSM_X{X_value}_Y{Y_value}"
-            hist_name = f"{mass_point}/preselection-{variable}"
-            hist = get_histogram(root_file, hist_name, f"Y={Y_value}")
-            histograms.append(hist)
-
-        output_name = f"stack_plots/NMSSM_X{X_value}_{variable}.png"
-        plot_histograms(histograms, f"{variable} [GeV]", "Entries", output_name)
-
-# Define the X and Y values and variables to process
-X_values = [300, 400, 500, 550, 600, 650, 700]
-Y_values = [60, 70, 80, 90, 95, 100]
-variables = [
-    "dibjet_pt",
-    "dibjet_mass",
-    "diphoton_mass",
-    "diphoton_pt",
-    "bbgg_mass",
-    "bbgg_pt",
-]
-
-# Ensure the output directory exists
-output_dir = "stack_plots/"
-os.makedirs(output_dir, exist_ok=True)
-
-# Load the ROOT file
-file_path = "outputfiles/hhbbgg_analyzerNMSSM-histograms.root"
-root_file = uproot.open(file_path)
-
-# Loop through each X value and plot the corresponding Y values
+# Process and plot for each X with varying Y
 for X_value in X_values:
     process_X_group(root_file, X_value, Y_values, variables)
 
