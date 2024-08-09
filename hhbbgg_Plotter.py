@@ -1,5 +1,6 @@
 # %%
 import os
+#os.environ['MPLCONFIGDIR'] = '/uscms_data/d1/sraj/matplotlib_tmp' #Disk quota error fix for shivam on lpc
 import matplotlib
 
 matplotlib.use("Agg")
