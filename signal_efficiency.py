@@ -46,46 +46,21 @@ legend_labels = {
     "bbgg_pt": r"$p_T^{b\bar{b}\gamma\gamma}$ [GeV]",
 }
 
-# Function to read histograms and normalize them
+# Function to read histograms without normalizing
 def get_histogram(file, hist_name):
     histogram = file[hist_name].to_hist()
-    
-    # Normalize the histogram by its integral
-    integral = np.sum(histogram.values())
-    if integral > 0:
-        histogram = histogram / integral
-    
     return histogram
-
-# Function to plot histograms
-def plot_histograms(histograms, xlabel, ylabel, output_name):
-    plt.figure(figsize=(10, 8))
-    for hist in histograms:
-        plt.step(hist.axes.centers[0], hist.values(), where="mid", label=legend_labels.get(hist.label, hist.label))
-
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
-    plt.legend()
-    plt.grid(True)
-    
-    # Add "CMS Preliminary" and integrated luminosity outside the plot box
-    hep.cms.text("CMS Preliminary", loc=0, ax=plt.gca())
-    plt.text(1.0, 1.02, f'{getLumi():.1f} fb$^{{-1}}$ (13 TeV)', fontsize=17,
-             transform=plt.gca().transAxes, ha='right')
-
-    plt.savefig(output_name)
-    plt.close()
 
 # Function to plot signal efficiency for a fixed X
 def plot_signal_efficiency(root_file, X_value, Y_values):
     efficiency = []
+    total_integral = sum(np.sum(get_histogram(root_file, f"NMSSM_X{X_value}_Y{y}/preselection-dibjet_pt").values()) for y in Y_values)
+    
+    print(f"Total integral for X={X_value}: {total_integral}")
+    
     for Y_value in Y_values:
-        mass_point = f"NMSSM_X{X_value}_Y{Y_value}"
-        hist_name = f"{mass_point}/preselection-dibjet_pt"
+        hist_name = f"NMSSM_X{X_value}_Y{Y_value}/preselection-dibjet_pt"
         hist = get_histogram(root_file, hist_name)
-        
-        # Calculate total integral for all Y values
-        total_integral = sum(np.sum(get_histogram(root_file, f"NMSSM_X{X_value}_Y{y}/preselection-dibjet_pt").values()) for y in Y_values)
         
         # Calculate efficiency for this Y
         integral = np.sum(hist.values())
@@ -94,19 +69,22 @@ def plot_signal_efficiency(root_file, X_value, Y_values):
         else:
             eff = 0
         
+        print(f"Integral for NMSSM_X{X_value}_Y{Y_value}: {integral}")
+        print(f"Efficiency for Y={Y_value}: {eff}")
+        
         efficiency.append((Y_value, eff))
     
     # Plot efficiency vs. Y
     Y_values, eff_values = zip(*efficiency)
     plt.figure(figsize=(10, 8))
     plt.plot(Y_values, eff_values, marker='o', linestyle='-', color='b')
-    plt.xlabel("Y value")
+    plt.xlabel("Y value(GeV)")
     plt.ylabel("Signal Efficiency")
-    plt.title(f"Signal Efficiency for X={X_value}")
+    #plt.title(f"Signal Efficiency for X={X_value}")
     plt.grid(True)
     
     # Add "CMS Preliminary" and integrated luminosity outside the plot box
-    hep.cms.text("CMS Preliminary", loc=0, ax=plt.gca())
+    hep.cms.text("Preliminary", loc=0, ax=plt.gca())
     plt.text(1.0, 1.02, f'{getLumi():.1f} fb$^{{-1}}$ (13 TeV)', fontsize=17,
              transform=plt.gca().transAxes, ha='right')
 
