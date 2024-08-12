@@ -34,17 +34,31 @@ plt.rcParams["axes.prop_cycle"] = cycler(
         "#717581", "#92dadd",
     ]
 )
+
 plt.rcParams.update({
-    "axes.labelsize": 16,
-    "axes.titlesize": 20,
-    "xtick.labelsize": 14,
-    "ytick.labelsize": 14,
-    "legend.fontsize": 14,
-    "figure.figsize": (10, 8),
-    "lines.linewidth": 2.5,
+    "axes.labelsize": 22,
+    "axes.titlesize": 22,
+    "xtick.labelsize": 16,
+    "ytick.labelsize": 16,
+    "xtick.major.width": 2.0,  # Increased width of the major ticks
+    "ytick.major.width": 2.0,  # Increased width of the major ticks
+    "xtick.minor.width": 1.5,  # Increased width of the minor ticks
+    "ytick.minor.width": 1.5,  # Increased width of the minor ticks
+    "xtick.direction": "in",
+    "ytick.direction": "in",
+    "legend.fontsize": 16,
+    "figure.figsize": (12, 10),
+    "lines.linewidth": 3.5,  # Increased line width
     "axes.edgecolor": "black",
-    "axes.linewidth": 1.5,
+    "axes.linewidth": 2.0,  # Thicker axis lines
+    "grid.color": "black",  # Grid color for higher contrast
+    "grid.linestyle": "-",  # Solid grid lines
+    "grid.linewidth": 0.1,  # Thicker grid lines
+    "axes.labelweight": "bold",  # Make axis labels bold
+    "xtick.labelsize": 18,  # Increased size for x-tick labels
+    "ytick.labelsize": 18,  # Increased size for y-tick labels
 })
+
 
 # Legend label formatting
 legend_labels = {
@@ -67,18 +81,32 @@ def get_histogram(file, hist_name, hist_label=None):
     return histogram
 
 # Function to plot histograms
-def plot_histograms(histograms, xlabel, ylabel, output_name):
+def plot_histograms(histograms, xlabel, ylabel, output_name, x_limits=None):
     plt.figure(figsize=(10, 8))
     for hist in histograms:
         plt.step(hist.axes.centers[0], hist.values(), where="mid", label=legend_labels.get(hist.label, hist.label))
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
+    plt.xlabel(xlabel, fontsize=20)
+    plt.ylabel(ylabel, fontsize=20)
+    if x_limits:
+        plt.xlim(x_limits)
     plt.legend()
     plt.grid(True)
-    hep.cms.text("CMS Preliminary", loc=0, ax=plt.gca())
-    plt.text(1.0, 1.02, f'{getLumi():.1f} fb$^{{-1}}$ (13 TeV)', fontsize=17, transform=plt.gca().transAxes, ha='right')
+    hep.cms.text("Preliminary", loc=0, ax=plt.gca())
+    plt.text(1.0, 1.02, f'{getLumi():.1f} fb$^{{-1}}$ (13 TeV)', fontsize=18, transform=plt.gca().transAxes, ha='right')
     plt.savefig(output_name)
     plt.close()
+
+
+# Define x-axis limits for each variable
+x_axis_limits = {
+    "dibjet_mass": (50, 200),
+    "diphoton_mass": (50, 180),
+    "bbgg_mass": (150, 800),
+    "dibjet_pt": (30, 500),
+    "diphoton_pt": (30, 500),
+    "bbgg_pt": (50, 1000),
+}
+
 
 # Function to process a mass point
 def process_mass_point(root_file, mass_point, variables):
@@ -99,7 +127,7 @@ def process_X_group(root_file, X_value, Y_values, variables):
             hist = get_histogram(root_file, hist_name, f"Y={Y_value}")
             histograms.append(hist)
         output_name = f"stack_plots/NMSSM_X{X_value}_{variable}.png"
-        plot_histograms(histograms, f"{legend_labels[variable]}", "Entries", output_name)
+        plot_histograms(histograms, f"{legend_labels[variable]}", "Entries", output_name, x_limits=x_axis_limits.get(variable))
 
 # Define the mass points in the ROOT file and variables to process
 mass_points = [
@@ -139,7 +167,7 @@ for mass_point in mass_points:
     for variable in variables:
         histograms = process_mass_point(root_file, mass_point, [variable])
         output_name = f"{output_dir}{mass_point}_{variable}.png"
-        plot_histograms(histograms, f"{legend_labels[variable]}", "Entries", output_name)
+        plot_histograms(histograms, f"{legend_labels[variable]}", "Entries", output_name, x_limits=x_axis_limits.get(variable))
 
 # Process and plot for each X with varying Y
 for X_value in X_values:
