@@ -50,25 +50,35 @@ legend_labels = {
 def get_histogram(file, hist_name):
     return file[hist_name].to_hist()
 
-# Function to plot signal efficiency for a fixed X
 def plot_signal_efficiency(root_file, X_value, Y_values):
     efficiency = []
-    
+    total_integral = 0
+
+    # Calculate total integral for normalization
     for Y_value in Y_values:
         hist_name = f"NMSSM_X{X_value}_Y{Y_value}/preselection-dibjet_pt"
         hist = get_histogram(root_file, hist_name)
-        
+        total_integral += np.sum(hist.values())
+
+    # Calculate and plot efficiency for each Y value
+    for Y_value in Y_values:
+        hist_name = f"NMSSM_X{X_value}_Y{Y_value}/preselection-dibjet_pt"
+        hist = get_histogram(root_file, hist_name)
+
         # Calculate integral of the histogram
         integral = np.sum(hist.values())
-        
-        # Calculate efficiency (as integral in this case)
-        eff = integral
-        
+
+        # Normalize efficiency
+        if total_integral > 0:
+            eff = integral / total_integral
+        else:
+            eff = 0
+
         print(f"Integral for NMSSM_X{X_value}_Y{Y_value}: {integral}")
-        print(f"Efficiency for Y={Y_value}: {eff}")
-        
+        print(f"Normalized Efficiency for Y={Y_value}: {eff}")
+
         efficiency.append((Y_value, eff))
-    
+
     # Plot efficiency vs. Y
     Y_values, eff_values = zip(*efficiency)
     plt.figure(figsize=(10, 8))
