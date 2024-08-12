@@ -62,7 +62,6 @@ legend_labels = {
     "bbgg_pt": r"$p_T^{b\bar{b}\gamma\gamma}$ [GeV]",
 }
 
-# Define the mass points in the ROOT file and variables to process
 mass_points = [
     "NMSSM_X300_Y100", "NMSSM_X400_Y80", "NMSSM_X550_Y100", "NMSSM_X600_Y80", "NMSSM_X700_Y100",
     "NMSSM_X300_Y60", "NMSSM_X400_Y90", "NMSSM_X550_Y60", "NMSSM_X600_Y90", "NMSSM_X700_Y60",
@@ -74,7 +73,6 @@ mass_points = [
     "NMSSM_X500_Y90", "NMSSM_X600_Y60", "NMSSM_X650_Y90", "NMSSM_X400_Y70", "NMSSM_X500_Y95",
     "NMSSM_X600_Y70", "NMSSM_X650_Y95"
 ]
-
 
 variables = [
     "dibjet_pt",
@@ -127,17 +125,16 @@ x_axis_limits = {
     "bbgg_pt": (50, 1000),
 }
 
-def process_X_group(root_file, X_value, Y_values, variables):
+def process_X_group(root_file, X_value, Y_values, variables, output_dir, normalize=False):
     for variable in variables:
         histograms = []
         for Y_value in Y_values:
             mass_point = f"NMSSM_X{X_value}_Y{Y_value}"
             hist_name = f"{mass_point}/preselection-{variable}"
-            hist = get_histogram(root_file, hist_name, f"Y={Y_value}")
+            hist = get_histogram(root_file, hist_name, f"Y={Y_value}", normalize=normalize)
             histograms.append(hist)
-        output_name = f"stack_plots/NMSSM_X{X_value}_{variable}.png"
-        plot_histograms(histograms, f"{legend_labels[variable]}", "Entries", output_name, x_limits=x_axis_limits.get(variable))
-
+        suffix = "_normalized" if normalize else ""
+        plot_histograms(histograms, f"{legend_labels[variable]}", "Entries", f"{output_dir}/NMSSM_X{X_value}_{variable}.png", x_limits=x_axis_limits.get(variable))
 
 def process_mass_point(root_file, mass_point, variables):
     histograms = []
@@ -149,16 +146,21 @@ def process_mass_point(root_file, mass_point, variables):
             histograms.append((unnormalized_hist, normalized_hist))
     return histograms
 
-def plot_both_histograms(histograms, variable, mass_point, output_dir, x_limits=None):
+def plot_both_histograms(histograms, variable, mass_point, output_dirs, x_limits=None):
+    unnormalized_output_dir, normalized_output_dir = output_dirs
     for unnormalized_hist, normalized_hist in histograms:
         if unnormalized_hist is not None:
-            unnormalized_output = f"{output_dir}{mass_point}_{variable}_unnormalized.png"
-            normalized_output = f"{output_dir}{mass_point}_{variable}_normalized.png"
+            unnormalized_output = f"{unnormalized_output_dir}{mass_point}_{variable}_unnormalized.png"
+            normalized_output = f"{normalized_output_dir}{mass_point}_{variable}_normalized.png"
             plot_histograms([unnormalized_hist], f"{legend_labels[variable]}", "Entries", unnormalized_output, x_limits)
             plot_histograms([normalized_hist], f"{legend_labels[variable]}", "Entries (Normalized)", normalized_output, x_limits)
 
 output_dir = "stack_plots/"
-os.makedirs(output_dir, exist_ok=True)
+unnormalized_output_dir = f"{output_dir}/unnormalized/"
+normalized_output_dir = f"{output_dir}/normalized/"
+
+os.makedirs(unnormalized_output_dir, exist_ok=True)
+os.makedirs(normalized_output_dir, exist_ok=True)
 
 file_path = "outputfiles/hhbbgg_analyzerNMSSM-histograms.root"
 root_file = uproot.open(file_path)
@@ -166,8 +168,9 @@ root_file = uproot.open(file_path)
 for mass_point in mass_points:
     for variable in variables:
         histograms = process_mass_point(root_file, mass_point, [variable])
-        plot_both_histograms(histograms, variable, mass_point, output_dir, x_limits=x_axis_limits.get(variable))
+        plot_both_histograms(histograms, variable, mass_point, (unnormalized_output_dir, normalized_output_dir), x_limits=x_axis_limits.get(variable))
 
 for X_value in X_values:
-    process_X_group(root_file, X_value, Y_values, variables)
+    process_X_group(root_file, X_value, Y_values, variables, unnormalized_output_dir)
+    process_X_group(root_file, X_value, Y_values, variables, normalized_output_dir)
 

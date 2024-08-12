@@ -54,9 +54,10 @@ def get_histogram(file, hist_name):
 # Function to plot signal efficiency for a fixed X
 def plot_signal_efficiency(root_file, X_value, Y_values):
     efficiency = []
-    total_integral = sum(np.sum(get_histogram(root_file, f"NMSSM_X{X_value}_Y{y}/preselection-dibjet_pt").values()) for y in Y_values)
+    #total_integral = sum(np.sum(get_histogram(root_file, f"NMSSM_X{X_value}_Y{y}/preselection-dibjet_pt").values()) for y in Y_values)
     
-    print(f"Total integral for X={X_value}: {total_integral}")
+    #print(f"Total integral for X={X_value}: {total_integral}")
+
     
     for Y_value in Y_values:
         hist_name = f"NMSSM_X{X_value}_Y{Y_value}/preselection-dibjet_pt"
@@ -65,7 +66,8 @@ def plot_signal_efficiency(root_file, X_value, Y_values):
         # Calculate efficiency for this Y
         integral = np.sum(hist.values())
         if total_integral > 0:
-            eff = integral / total_integral
+            #eff = integral / total_integral
+            eff = integral 
         else:
             eff = 0
         
