@@ -48,45 +48,48 @@ legend_labels = {
 
 # Function to read histograms without normalizing
 def get_histogram(file, hist_name):
-    histogram = file[hist_name].to_hist()
-    return histogram
+    return file[hist_name].to_hist()
 
-# Function to plot signal efficiency for a fixed X
 def plot_signal_efficiency(root_file, X_value, Y_values):
     efficiency = []
-    total_integral = sum(np.sum(get_histogram(root_file, f"NMSSM_X{X_value}_Y{y}/preselection-dibjet_pt").values()) for y in Y_values)
-    
-    print(f"Total integral for X={X_value}: {total_integral}")
-    
+    total_integral = 0
+
+    # Calculate total integral for normalization
     for Y_value in Y_values:
         hist_name = f"NMSSM_X{X_value}_Y{Y_value}/preselection-dibjet_pt"
         hist = get_histogram(root_file, hist_name)
-        
-        # Calculate efficiency for this Y
+        total_integral += np.sum(hist.values())
+
+    # Calculate and plot efficiency for each Y value
+    for Y_value in Y_values:
+        hist_name = f"NMSSM_X{X_value}_Y{Y_value}/preselection-dibjet_pt"
+        hist = get_histogram(root_file, hist_name)
+
+        # Calculate integral of the histogram
         integral = np.sum(hist.values())
+
+        # Normalize efficiency
         if total_integral > 0:
             eff = integral / total_integral
         else:
             eff = 0
-        
+
         print(f"Integral for NMSSM_X{X_value}_Y{Y_value}: {integral}")
-        print(f"Efficiency for Y={Y_value}: {eff}")
-        
+        print(f"Normalized Efficiency for Y={Y_value}: {eff}")
+
         efficiency.append((Y_value, eff))
-    
+
     # Plot efficiency vs. Y
     Y_values, eff_values = zip(*efficiency)
     plt.figure(figsize=(10, 8))
     plt.plot(Y_values, eff_values, marker='o', linestyle='-', color='b', label=f'X={X_value} GeV')
-    plt.xlabel("Y value (GeV)")
+    plt.xlabel("$m_Y$ [GeV]")
     plt.ylabel("Signal Efficiency")
-    #plt.title(f"Signal Efficiency for X={X_value}")
-    plt.grid(True)
-    
+    plt.grid(True, which='both', linestyle='--', linewidth=0.1, color='gray')
+
     # Add "CMS Preliminary" and integrated luminosity outside the plot box
     hep.cms.text("Preliminary", loc=0, ax=plt.gca())
-    plt.text(1.0, 1.02, f'{getLumi():.1f} fb$^{{-1}}$ (13 TeV)', fontsize=17,
-             transform=plt.gca().transAxes, ha='right')
+    plt.text(1.0, 1.02, f'{getLumi():.1f} fb$^{{-1}}$ (13 TeV)', fontsize=17, transform=plt.gca().transAxes, ha='right')
 
     # Add legend
     plt.legend(loc='best')
@@ -101,14 +104,16 @@ def plot_combined_signal_efficiency(root_file, X_values, Y_values):
     
     for X_value in X_values:
         efficiency = []
-        total_integral = sum(np.sum(get_histogram(root_file, f"NMSSM_X{X_value}_Y{y}/preselection-dibjet_pt").values()) for y in Y_values)
         
         for Y_value in Y_values:
             hist_name = f"NMSSM_X{X_value}_Y{Y_value}/preselection-dibjet_pt"
             hist = get_histogram(root_file, hist_name)
             
-            # Calculate efficiency for this Y
+            # Calculate integral of the histogram
             integral = np.sum(hist.values())
+            
+            # Calculate efficiency (relative to total integral for this X value)
+            total_integral = sum(np.sum(get_histogram(root_file, f"NMSSM_X{X_value}_Y{y}/preselection-dibjet_pt").values()) for y in Y_values)
             if total_integral > 0:
                 eff = integral / total_integral
             else:
@@ -120,15 +125,13 @@ def plot_combined_signal_efficiency(root_file, X_values, Y_values):
         Y_values, eff_values = zip(*efficiency)
         plt.plot(Y_values, eff_values, marker='o', linestyle='-', label=f'X={X_value} GeV')
     
-    plt.xlabel("Y value (GeV)")
+    plt.xlabel("$m_Y$ (GeV)")
     plt.ylabel("Signal Efficiency")
-    #plt.title("Combined Signal Efficiency for All X Values")
-    plt.grid(True)
-    
+    plt.grid(True, which='both', linestyle='--', linewidth=0.1, color='gray')
+
     # Add "CMS Preliminary" and integrated luminosity outside the plot box
     hep.cms.text("Preliminary", loc=0, ax=plt.gca())
-    plt.text(1.0, 1.02, f'{getLumi():.1f} fb$^{{-1}}$ (13 TeV)', fontsize=17,
-             transform=plt.gca().transAxes, ha='right')
+    plt.text(1.0, 1.02, f'{getLumi():.1f} fb$^{{-1}}$ (13 TeV)', fontsize=17, transform=plt.gca().transAxes, ha='right')
 
     # Add legend
     plt.legend(loc='best')
