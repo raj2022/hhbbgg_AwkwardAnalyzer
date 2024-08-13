@@ -81,6 +81,17 @@ python3 prepare_output_file.py --input [path to output dir] --merge --root --ws 
 ```
 Produced root files are named as `merged.parquet`, to convert into root, we are using these two shell scripts, [filename_change.sh](https://github.com/raj2022/hhbbgg_AwkwardAnalyzer/blob/main/jsonhiggsdnaproduction/filename_change.sh) and [run_conversion.sh](https://github.com/raj2022/hhbbgg_AwkwardAnalyzer/blob/main/jsonhiggsdnaproduction/run_conversion.sh) 
 
+Further, to convert to `.root` files, eg:-
+```bash
+python scripts/postprocessing/convert_parquet_to_root.py ../../../output_parquet/merged/NMSSM_X400_Y70/nominal/NOTAG_merged.parquet ../../../output_root/NMSSM/NMSSM_X400_Y70.root mc
+```
+**NOTE** sometimes we have name error of `NOTAG`
+On lxplus
+```bash
+conda activate higgs-dna
+cd /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/higgsDNA_prav
+cd HiggsDNA_v1_setup # Can enter HiggsDNA_v1_setup_0 as well
+```
 ## References:
 1. https://gitlab.cern.ch/hhbbgg/HiggsDNA#worfklow
 2. https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookStartingGrid#BasicGrid
