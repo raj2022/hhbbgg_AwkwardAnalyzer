@@ -82,7 +82,7 @@ def plot_signal_efficiency(root_file, X_value, Y_values):
     # Plot efficiency vs. Y
     Y_values, eff_values = zip(*efficiency)
     plt.figure(figsize=(10, 8))
-    plt.plot(Y_values, eff_values, marker='o', linestyle='-', color='b', label=f'$m_Y={X_value} GeV')
+    plt.plot(Y_values, eff_values, marker='o', linestyle='-', color='b', label=f'$m_X$={X_value} GeV')
     plt.xlabel("$m_Y$ [GeV]")
     plt.ylabel("Signal Efficiency")
     plt.grid(True, which='both', linestyle='--', linewidth=0.1, color='gray')
