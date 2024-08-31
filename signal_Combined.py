@@ -87,7 +87,7 @@ def plot_combined_histograms(histograms, xlabel, ylabel, output_name, x_limits=N
     if log_scale:
         plt.yscale('log')
     plt.legend()
-    plt.grid(True, which='both', linestyle='--', linewidth=0.5)
+    plt.grid(True, which='both', linestyle='-', linewidth=0.1)
     hep.cms.text("Preliminary", loc=0, ax=plt.gca())
     plt.text(1.0, 1.02, f'{getLumi():.1f} fb$^{{-1}}$ (13 TeV)', fontsize=18, transform=plt.gca().transAxes, ha='right')
     plt.savefig(output_name)

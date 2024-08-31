@@ -49,6 +49,49 @@ To resolve this, open a new "CMS Storage Space Request" (Enable), using your ser
     python scripts/pull_all.py --all
    ``` 
 
+### Setup a CMSSW release area
+```bash
+source /cvmfs/cms.cern.ch/cmsset_default.sh
+export CMSSW_GIT_REFERENCE=/cvmfs/cms.cern.ch/cmssw.git.daily
+
+cd /eos/user/<first-letter-of-username>/<username>
+mkdir YOURWORKINGAREA
+cd YOURWORKINGAREA
+### If you are using Bash shell
+export SCRAM_ARCH=el9_amd64_gcc11
+### Alternatively, If you are using the default tcsh shell (or csh shell)
+setenv SCRAM_ARCH el9_amd64_gcc11
+### Then, in both cases:
+cmsrel CMSSW_13_0_17
+cd CMSSW_13_0_17/src
+cmsenv
+```
+
+To be able to check out specific CMSSW packages from GitHub, you will need to configure your local account. You only have to do this command once for any given cluster you are working on, such as lxplus:
+
+```bash
+git config --global user.name "[Name]"
+git config --global user.email [Email]
+git config --global user.github [Account]
+```
+
+To see your current git configuration you can use the following command:
+
+```shell
+git config --global -l
+```
+Now you can initialize the CMSSW area as a local git repository:
+
+```bash
+git cms-init
+```
+This last command will take some time to execute and will produce some long output, be patient.
+
+When you get the prompt again, run the following command:
+
+```shell
+echo $CMSSW_BASE
+```
 
 ### Job submission
 
@@ -133,6 +176,23 @@ voms-proxy-regen --voms cms
 voms-proxy-update --voms cms
 ```
 
+# setup jupyter on LPC
+```bash
+ssh -L localhost:8899:localhost:8899 sraj@cmslpc-el9.fnal.gov
+
+source ~/.bashrc
+
+# Env setup
+conda activate hhbbgg-awk
+
+
+##Navigate to the specified directory
+jupyter notebook --no-browser --port=8899 --ip 127.0.0.1
+
+
+# Notify the user that the script has finished
+echo "Initialized mamba, activated hhbbgg-awk environment, and changed directory to hhbbgg_AwkwardAnalyzer."
+```
 
 
 
