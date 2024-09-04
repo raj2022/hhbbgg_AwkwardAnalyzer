@@ -165,16 +165,26 @@ test_loader = DataLoader(test_data, batch_size=32, shuffle=False)
 class SimpleDNN(nn.Module):
     def __init__(self, input_dim):
         super(SimpleDNN, self).__init__()
-        self.fc1 = nn.Linear(input_dim, 64)
-        self.fc2 = nn.Linear(64, 32)
-        self.fc3 = nn.Linear(32, 1)
+        self.fc1 = nn.Linear(input_dim, 128)
+        self.bn1 = nn.BatchNorm1d(128)
+        self.fc2 = nn.Linear(128, 64)
+        self.bn2 = nn.BatchNorm1d(64)
+        self.fc3 = nn.Linear(64, 32)
+        self.bn3 = nn.BatchNorm1d(32)
+        self.fc4 = nn.Linear(32, 16)
+        self.dropout = nn.Dropout(0.3)
+        self.output = nn.Linear(16, 1)
         self.relu = nn.ReLU()
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
-        x = self.relu(self.fc1(x))
-        x = self.relu(self.fc2(x))
-        x = self.sigmoid(self.fc3(x))
+        x = self.relu(self.bn1(self.fc1(x)))
+        x = self.dropout(x)
+        x = self.relu(self.bn2(self.fc2(x)))
+        x = self.dropout(x)
+        x = self.relu(self.bn3(self.fc3(x)))
+        x = self.relu(self.fc4(x))
+        x = self.sigmoid(self.output(x))
         return x
 
 # Initialize the model
