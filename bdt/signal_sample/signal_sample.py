@@ -146,8 +146,9 @@ X_test_scaled = scaler.transform(X_test_imputed)
 
 
 # Convert data to torch tensors
-X_train_tensor = torch.tensor(X_train, dtype=torch.float32)
-X_test_tensor = torch.tensor(X_test, dtype=torch.float32)
+X_train_tensor = torch.tensor(X_train.values, dtype=torch.float32)
+X_test_tensor = torch.tensor(X_test.values, dtype=torch.float32)
+
 y_train_tensor = torch.tensor(y_train.values, dtype=torch.long)
 y_test_tensor = torch.tensor(y_test.values, dtype=torch.long)
 X_train_weights_tensor = torch.tensor(X_train_weights.values, dtype=torch.float32)
@@ -180,12 +181,24 @@ class SimpleDNN(nn.Module):
 input_dim = X_train.shape[1]
 model = SimpleDNN(input_dim)
 
-# Load the saved model weights
-try:
-    model.load_state_dict(torch.load('preselection_simple_dnn_model.pth'))
-    model.eval()
-except Exception as e:
-    print(f"Error loading model: {e}")
+# Load the saved model weights, or handle the case if the file is missing
+model_path = 'preselection_simple_dnn_model.pth'
+
+if os.path.exists(model_path):
+    try:
+        model.load_state_dict(torch.load(model_path))
+        model.eval()
+        print("Model loaded successfully.")
+    except Exception as e:
+        print(f"Error loading model: {e}")
+else:
+    print(f"Model file '{model_path}' not found. Please ensure the model is trained and saved at this path.")
+    # Optional: Add code here to train the model if needed
+    # Example:
+    # Train the model here...
+    # Save the trained model:
+    # torch.save(model.state_dict(), model_path)
+
 
 # Function to get predictions
 def get_predictions(loader, model):
@@ -235,5 +248,8 @@ plt.xlim(0, 1)
 plt.legend()
 plt.title('Classifier Output with PyTorch')
 plt.tight_layout()
-plt.show()
+# Save the plot instead of showing it interactively
+plt.savefig('classifier_output.png')
+print("Plot saved as 'classifier_output.png'.")
+#plt.show()
 
