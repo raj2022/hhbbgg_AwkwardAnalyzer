@@ -19,8 +19,16 @@ from torch.optim import Adam
 signal_files_lowX_lowY = [
     ("../../outputfiles/hhbbgg_analyzerNMSSM-trees.root", "/NMSSM_X300_Y60/preselection"),
     ("../../outputfiles/hhbbgg_analyzerNMSSM-trees.root", "/NMSSM_X300_Y70/preselection"),
+    ("../../outputfiles/hhbbgg_analyzerNMSSM-trees.root", "/NMSSM_X300_Y80/preselection"),
+    ("../../outputfiles/hhbbgg_analyzerNMSSM-trees.root", "/NMSSM_X300_Y90/preselection"),
+    ("../../outputfiles/hhbbgg_analyzerNMSSM-trees.root", "/NMSSM_X300_Y95/preselection"),
+    ("../../outputfiles/hhbbgg_analyzerNMSSM-trees.root", "/NMSSM_X300_Y100/preselection"),
     ("../../outputfiles/hhbbgg_analyzerNMSSM-trees.root", "/NMSSM_X400_Y60/preselection"),
     ("../../outputfiles/hhbbgg_analyzerNMSSM-trees.root", "/NMSSM_X400_Y70/preselection"),
+    ("../../outputfiles/hhbbgg_analyzerNMSSM-trees.root", "/NMSSM_X400_Y80/preselection"),
+    ("../../outputfiles/hhbbgg_analyzerNMSSM-trees.root", "/NMSSM_X400_Y90/preselection"),
+    ("../../outputfiles/hhbbgg_analyzerNMSSM-trees.root", "/NMSSM_X400_Y95/preselection"),
+    ("../../outputfiles/hhbbgg_analyzerNMSSM-trees.root", "/NMSSM_X400_Y100/preselection"),
 ]
 background_files = [
     ("../../outputfiles/hhbbgg_analyzerNMSSM-trees.root", "/GGJets/preselection"),
@@ -61,8 +69,16 @@ for file, key in background_files:
 # Extracting DataFrames
 signal_df_1 = dfs.get("/NMSSM_X300_Y60/preselection", pd.DataFrame())
 signal_df_2 = dfs.get("/NMSSM_X300_Y70/preselection", pd.DataFrame())
-signal_df_3 = dfs.get("/NMSSM_X400_Y60/preselection", pd.DataFrame())
-signal_df_4 = dfs.get("/NMSSM_X400_Y70/preselection", pd.DataFrame())
+signal_df_3 = dfs.get("/NMSSM_X300_Y80/preselection", pd.DataFrame())
+signal_df_4 = dfs.get("/NMSSM_X300_Y90/preselection", pd.DataFrame())
+signal_df_5 = dfs.get("/NMSSM_X300_Y95/preselection", pd.DataFrame())
+signal_df_6 = dfs.get("/NMSSM_X300_Y100/preselection", pd.DataFrame())
+signal_df_7 = dfs.get("/NMSSM_X400_Y60/preselection", pd.DataFrame())
+signal_df_8 = dfs.get("/NMSSM_X400_Y70/preselection", pd.DataFrame())
+signal_df_9 = dfs.get("/NMSSM_X400_Y80/preselection", pd.DataFrame())
+signal_df_10 = dfs.get("/NMSSM_X400_Y90/preselection", pd.DataFrame())
+signal_df_11 = dfs.get("/NMSSM_X400_Y95/preselection", pd.DataFrame())
+signal_df_12 = dfs.get("/NMSSM_X400_Y100/preselection", pd.DataFrame())
 
 background_df_1 = dfs.get("/GGJets/preselection", pd.DataFrame())
 background_df_2 = dfs.get("/GJetPt20To40/preselection", pd.DataFrame())
@@ -88,7 +104,9 @@ background_df = pd.concat([background_df_1, background_df_2, background_df_3], i
 print('Total Background Shape:', background_df.shape)
 
 # Combine signal DataFrames
-signal_df = pd.concat([signal_df_1, signal_df_2, signal_df_3, signal_df_4], ignore_index=True)
+signal_df = pd.concat([signal_df_1, signal_df_2, signal_df_3, signal_df_4,
+#    signal_df_5, signal_df_6, signal_df_7, signal_df_8, signal_df_9, signal_df_10, signal_df_11, signal_df_12
+    ], ignore_index=True)
 print('===============================================')
 print('Total Background Shape:', background_df.shape)
 print('Total Signal Shape:', signal_df.shape)
@@ -164,15 +182,36 @@ train_loader = DataLoader(train_data, batch_size=32, shuffle=True)
 test_loader = DataLoader(test_data, batch_size=32, shuffle=False)
 
 # Define the neural network model
+#class SimpleDNN(nn.Module):
+#    def __init__(self, input_dim):
+#        super(SimpleDNN, self).__init__()
+#        self.fc1 = nn.Linear(input_dim, 128)
+##        self.bn1 = nn.BatchNorm1d(128)
+#        self.fc2 = nn.Linear(128, 64)
+##        self.bn2 = nn.BatchNorm1d(64)
+#        self.fc3 = nn.Linear(64, 32)
+##        self.bn3 = nn.BatchNorm1d(32)
+#        self.fc4 = nn.Linear(32, 16)
+##        self.dropout = nn.Dropout(0.3)
+#        self.output = nn.Linear(16, 1)
+#        self.relu = nn.ReLU()
+#        self.sigmoid = nn.Sigmoid()
+#
+#    def forward(self, x):
+#        x = self.relu(self.bn1(self.fc1(x)))
+##        x = self.dropout(x)
+#        x = self.relu(self.bn2(self.fc2(x)))
+##        x = self.dropout(x)
+#        x = self.relu(self.bn3(self.fc3(x)))
+#        x = self.relu(self.fc4(x))
+#        x = self.sigmoid(self.output(x))
+#        return x
 class SimpleDNN(nn.Module):
     def __init__(self, input_dim):
         super(SimpleDNN, self).__init__()
         self.fc1 = nn.Linear(input_dim, 128)
-        self.bn1 = nn.BatchNorm1d(128)
         self.fc2 = nn.Linear(128, 64)
-        self.bn2 = nn.BatchNorm1d(64)
         self.fc3 = nn.Linear(64, 32)
-        self.bn3 = nn.BatchNorm1d(32)
         self.fc4 = nn.Linear(32, 16)
         self.dropout = nn.Dropout(0.3)
         self.output = nn.Linear(16, 1)
@@ -180,11 +219,11 @@ class SimpleDNN(nn.Module):
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
-        x = self.relu(self.bn1(self.fc1(x)))
+        x = self.relu(self.fc1(x))
         x = self.dropout(x)
-        x = self.relu(self.bn2(self.fc2(x)))
+        x = self.relu(self.fc2(x))
         x = self.dropout(x)
-        x = self.relu(self.bn3(self.fc3(x)))
+        x = self.relu(self.fc3(x))
         x = self.relu(self.fc4(x))
         x = self.sigmoid(self.output(x))
         return x
@@ -308,7 +347,7 @@ model = SimpleDNN(input_dim).to(device)
 # Training settings
 criterion = nn.BCELoss(reduction='none')
 optimizer = Adam(model.parameters(), lr=0.001)
-num_epochs = 20  # Set this to the desired number of epochs
+num_epochs =50  # Set this to the desired number of epochs
 
 # Function to calculate weighted loss
 def weighted_loss(outputs, targets, weights):
