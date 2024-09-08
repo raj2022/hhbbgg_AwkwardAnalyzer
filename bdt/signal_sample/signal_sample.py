@@ -14,6 +14,9 @@ import torch.nn as nn
 from torch.utils.data import DataLoader, TensorDataset
 from torch.optim import Adam
 
+# for correlation 
+import seaborn as sns
+
 
 # File paths
 signal_files_lowX_lowY = [
@@ -163,7 +166,14 @@ scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train_imputed)
 X_test_scaled = scaler.transform(X_test_imputed)
 
-
+ Function to plot correlation matrix
+def plot_correlation_matrix(df, title):
+    plt.figure(figsize=(14, 12))
+    corr_matrix = df.corr()
+    sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt=".2f")
+    plt.title(title)
+    plt.tight_layout()
+    plt.show()
 
 # Convert data to torch tensors
 X_train_tensor = torch.tensor(X_train.values, dtype=torch.float32)
@@ -428,6 +438,36 @@ def get_predictions(loader, model):
             all_labels.extend(labels.cpu().numpy())
     return np.array(all_preds), np.array(all_labels)
 
+# Function to plot and save the correlation matrix
+def plot_correlation_matrix(df, title, filename):
+    plt.figure(figsize=(12, 10))
+    corr_matrix = df.corr()
+    plt.matshow(corr_matrix, fignum=0, cmap='coolwarm')
+    plt.xticks(range(len(corr_matrix.columns)), corr_matrix.columns, rotation=90)
+    plt.yticks(range(len(corr_matrix.columns)), corr_matrix.columns)
+    plt.colorbar()
+    plt.title(title, pad=20)
+    plt.tight_layout()
+    plt.savefig(filename)
+    plt.close()
+    print(f"Correlation matrix saved as '{filename}'.")
+
+# Plot and save the correlation matrix before training (unscaled)
+plot_correlation_matrix(combined_df[features], "Correlation Matrix Before Training", "correlation_matrix_before_training.png")
+
+# Train the model (existing training code remains the same)
+# ... (Training code)
+
+# Plot and save the correlation matrix after scaling (features after training)
+# Use the scaled training data to visualize any changes post-processing
+X_train_scaled_df = pd.DataFrame(X_train_scaled, columns=features)
+plot_correlation_matrix(X_train_scaled_df, "Correlation Matrix After Scaling", "correlation_matrix_after_scaling.png")
+
+
+plot_correlation_matrix(pd.DataFrame(X_train_scaled, columns=features), 'Correlation Matrix Before Training')
+
+
+
 # Get predictions for training and test data
 train_preds, train_true = get_predictions(train_loader, model)
 test_preds, test_true = get_predictions(test_loader, model)
@@ -489,4 +529,5 @@ print("Plot saved as 'classifier_output.png'.")
 #plt.show()
 
 
+plot_correlation_matrix(pd.DataFrame(X_train_scaled, columns=features), 'Correlation Matrix After Training')
 
