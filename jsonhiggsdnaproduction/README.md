@@ -98,7 +98,7 @@ On the production of background files, the `.json` file can be found [here](http
 To run the smaple with the above `.json` files, we can run the command
 ```bash
 # Make sure you are in the hhbbgg/HiggsDNA folder
-cd test
+cd tests
 python ../scripts/run_analysis.py --json-analysis HHbbgg_xrootd.json --dump ../../../../output_parquet/ --skipCQR --executor futures
 ```
 
