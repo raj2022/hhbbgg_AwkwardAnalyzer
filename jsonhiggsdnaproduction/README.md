@@ -92,6 +92,16 @@ conda activate higgs-dna
 cd /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/higgsDNA_prav
 cd HiggsDNA_v1_setup # Can enter HiggsDNA_v1_setup_0 as well
 ```
+## Production of background files
+On the production of background files, the `.json` file can be found [here](https://gitlab.cern.ch/hhbbgg/HiggsDNA/-/blob/master/tests/HHbbgg_xrootd.json?ref_type=heads) and all of the samples are present [here](https://gitlab.cern.ch/hhbbgg/HiggsDNA/-/blob/master/tests/samples_v12_HHbbgg_xrootd.json?ref_type=heads)
+
+To run the smaple with the above `.json` files, we can run the command
+```bash
+# Make sure you are in the hhbbgg/HiggsDNA folder
+cd test
+python ../scripts/run_analysis.py --json-analysis HHbbgg_xrootd.json --dump ../../../../output_parquet/ --skipCQR --executor futures
+```
+
 ## References:
 1. https://gitlab.cern.ch/hhbbgg/HiggsDNA#worfklow
 2. https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookStartingGrid#BasicGrid
