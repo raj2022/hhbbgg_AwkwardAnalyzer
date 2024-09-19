@@ -1,4 +1,5 @@
-https://cmsweb.cern.ch/das/request?view=plain&limit=50&instance=prod%2Fglobal&input=file+dataset%3D%2FNMSSM_XtoYHto2B2G_MX-300_MY-60_TuneCP5_13p6TeV_madgraph-pythia8%2FRun3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v2%2FNANOAODSIM
+X = 300
+https://cmsweb.cern.ch/das/request?view=plain&limit=50&instance=prod%2Fglobal&input=file+dataset%3D%2FNMSSM_XtoYHto2B2G_MX-300_MY-60_TuneCP5_13p6TeV_madgraph-pythia8%2FRun3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v2%2FNANOAODSIM 
 
 https://cmsweb.cern.ch/das/request?view=plain&limit=50&instance=prod%2Fglobal&input=file+dataset%3D%2FNMSSM_XtoYHto2B2G_MX-300_MY-70_TuneCP5_13p6TeV_madgraph-pythia8%2FRun3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v2%2FNANOAODSIM
 
