@@ -79,6 +79,10 @@ To convert `.parquet` to root we can follow this [step](https://higgs-dna.readth
 ```bash
 python3 prepare_output_file.py --input [path to output dir] --merge --root --ws --syst --cats --args "--do_syst"
 ```
+Example to convert to `.parquet` to merged folder
+```bash
+ python3 prepare_output_file.py --input ../../../output_parquet  --merge --root --ws --syst --cats --args "--do_syst"
+ ```
 Produced root files are named as `merged.parquet`, to convert into root, we are using these two shell scripts, [filename_change.sh](https://github.com/raj2022/hhbbgg_AwkwardAnalyzer/blob/main/jsonhiggsdnaproduction/filename_change.sh) and [run_conversion.sh](https://github.com/raj2022/hhbbgg_AwkwardAnalyzer/blob/main/jsonhiggsdnaproduction/run_conversion.sh) 
 
 Further, to convert to `.root` files, eg:-
