@@ -346,6 +346,9 @@ eg.
 ```bash
 python scripts/postprocessing/convert_parquet_to_root.py ../../../output_parquet/merged/NMSSM_X300_Y100/nominal/NOTAG_NOTAG_merged.parquet ../../../output_root/NMSSM_X300_Y100/NMSSM_X300_Y100.root mc
 ```
+## LCG environment and Containers
+Container instructions: https://cms-ml.github.io/documentation/software_envs/containers.html
+LCG environemnt: https://cms-ml.github.io/documentation/software_envs/lcg_environments.html
 
 ## Setup ROOT
 ### Instruction to setup root(Ubuntu)
