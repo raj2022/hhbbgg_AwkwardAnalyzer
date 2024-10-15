@@ -336,7 +336,7 @@ def runOneFile(inputfile, outputrootfile):
         out_events["dibjet_bbgg_mass"] = cms_events["dibjet_bbgg_mass"]
 
         #--------------------------------------------------
-        
+
         out_events["lead_pho_mvaID_WP90"] = cms_events["lead_pho_mvaID_WP90"]
         out_events["lead_pho_mvaID_WP80"] = cms_events["lead_pho_mvaID_WP80"]
         out_events["sublead_pho_mvaID_WP90"] = cms_events["sublead_pho_mvaID_WP90"]
@@ -390,8 +390,8 @@ else:
     ]
 
 outputrootfile = {
-    "hist": uproot.recreate(f"{output_dir}/hhbbgg_analyzerNMSSM-histograms.root"),
-    "tree": uproot.recreate(f"{output_dir}/hhbbgg_analyzerNMSSM-trees.root"),
+    "hist": uproot.recreate(f"{output_dir}/hhbbgg_analyzer-histograms.root"),
+    "tree": uproot.recreate(f"{output_dir}/hhbbgg_analyzer-trees.root"),
 }
 
 
