@@ -12,28 +12,20 @@ from cycler import cycler
 hep.style.use("CMS")
 plt.rcParams["axes.prop_cycle"] = cycler(
     color=[
-        "#3f90da",
-        "#ffa90e",
-        "#bd1f01",
-        "#94a4a2",
-        "#832db6",
-        "#a96b59",
-        "#e76300",
-        "#b9ac70",
-        "#717581",
-        "#92dadd",
+        "#3f90da", "#ffa90e", "#bd1f01", "#94a4a2", "#832db6",
+        "#a96b59", "#e76300", "#b9ac70", "#717581", "#92dadd"
     ]
 )
 plt.rcParams.update({
-    "axes.labelsize": 16,  # X/Y labels size
-    "axes.titlesize": 20,  # Title size
-    "xtick.labelsize": 14,  # X-axis tick label size
-    "ytick.labelsize": 14,  # Y-axis tick label size
-    "legend.fontsize": 14,  # Legend font size
-    "figure.figsize": (10, 8),  # Figure size
-    "lines.linewidth": 2.5,  # Line width
-    "axes.edgecolor": "black",  # Make axes edges black
-    "axes.linewidth": 1.5,  # Thicker axes
+    "axes.labelsize": 16,
+    "axes.titlesize": 20,
+    "xtick.labelsize": 14,
+    "ytick.labelsize": 14,
+    "legend.fontsize": 14,
+    "figure.figsize": (10, 8),
+    "lines.linewidth": 2.5,
+    "axes.edgecolor": "black",
+    "axes.linewidth": 1.5,
 })
 
 # Legend label formatting
@@ -50,98 +42,78 @@ legend_labels = {
 def get_histogram(file, hist_name):
     return file[hist_name].to_hist()
 
-def plot_signal_efficiency(root_file, X_value, Y_values):
+# Preload all histograms to avoid repeated file reads
+def get_all_histograms(root_file, X_values, Y_values):
+    histograms = {}
+    for X_value in X_values:
+        histograms[X_value] = {}
+        for Y_value in Y_values:
+            hist_name = f"NMSSM_X{X_value}_Y{Y_value}/preselection-dibjet_pt"
+            histograms[X_value][Y_value] = get_histogram(root_file, hist_name)
+    return histograms
+
+# Function to plot signal efficiency for each X value
+def plot_signal_efficiency(histograms, X_value, Y_values):
     efficiency = []
-    total_integral = 0
+    total_integral = sum(np.sum(histograms[X_value][y].values()) for y in Y_values)
 
-    # Calculate total integral for normalization
     for Y_value in Y_values:
-        hist_name = f"NMSSM_X{X_value}_Y{Y_value}/preselection-dibjet_pt"
-        hist = get_histogram(root_file, hist_name)
-        total_integral += np.sum(hist.values())
-
-    # Calculate and plot efficiency for each Y value
-    for Y_value in Y_values:
-        hist_name = f"NMSSM_X{X_value}_Y{Y_value}/preselection-dibjet_pt"
-        hist = get_histogram(root_file, hist_name)
-
-        # Calculate integral of the histogram
-        integral = np.sum(hist.values())
-
-        # Normalize efficiency
-        if total_integral > 0:
-            eff = integral / total_integral
-        else:
-            eff = 0
-
+        integral = np.sum(histograms[X_value][Y_value].values())
+        eff = integral / total_integral if total_integral > 0 else 0
         print(f"Integral for NMSSM_X{X_value}_Y{Y_value}: {integral}")
         print(f"Normalized Efficiency for Y={Y_value}: {eff}")
-
         efficiency.append((Y_value, eff))
 
-    # Plot efficiency vs. Y
-    Y_values, eff_values = zip(*efficiency)
+    # Plot efficiency vs. Y values
+    Y_vals, eff_vals = zip(*efficiency)
     plt.figure(figsize=(10, 8))
-    plt.plot(Y_values, eff_values, marker='o', linestyle='-', color='b', label=f'$m_X$={X_value} GeV')
+    plt.plot(Y_vals, eff_vals, marker='o', linestyle='-', color='b', label=f'$m_X$={X_value} GeV')
     plt.xlabel("$m_Y$ [GeV]")
     plt.ylabel("Signal Efficiency")
-    plt.grid(True, which='both', linestyle='--', linewidth=0.1, color='gray')
+    plt.grid(True, which='both', linestyle='--', linewidth=0.5, color='gray')
 
-    # Add "CMS Preliminary" and integrated luminosity outside the plot box
+    # Add CMS Preliminary and integrated luminosity
     hep.cms.text("Preliminary", loc=0, ax=plt.gca())
     plt.text(1.0, 1.02, f'{getLumi():.1f} fb$^{{-1}}$ (13 TeV)', fontsize=17, transform=plt.gca().transAxes, ha='right')
 
-    # Add legend
+    # Add legend and save the plot
     plt.legend(loc='best')
-
     output_name = f"stack_plots/signal_efficiency_X{X_value}.png"
     plt.savefig(output_name)
     plt.close()
 
 # Function to plot combined signal efficiency for all X values
-def plot_combined_signal_efficiency(root_file, X_values, Y_values):
+def plot_combined_signal_efficiency(histograms, X_values, Y_values):
     plt.figure(figsize=(10, 8))
-    
+
     for X_value in X_values:
         efficiency = []
-        
+        total_integral = sum(np.sum(histograms[X_value][y].values()) for y in Y_values)
+
         for Y_value in Y_values:
-            hist_name = f"NMSSM_X{X_value}_Y{Y_value}/preselection-dibjet_pt"
-            hist = get_histogram(root_file, hist_name)
-            
-            # Calculate integral of the histogram
-            integral = np.sum(hist.values())
-            
-            # Calculate efficiency (relative to total integral for this X value)
-            total_integral = sum(np.sum(get_histogram(root_file, f"NMSSM_X{X_value}_Y{y}/preselection-dibjet_pt").values()) for y in Y_values)
-            if total_integral > 0:
-                eff = integral / total_integral
-            else:
-                eff = 0
-            
+            integral = np.sum(histograms[X_value][Y_value].values())
+            eff = integral / total_integral if total_integral > 0 else 0
             efficiency.append((Y_value, eff))
-        
-        # Plot efficiency vs. Y for this X value
-        Y_values, eff_values = zip(*efficiency)
-        plt.plot(Y_values, eff_values, marker='o', linestyle='-', label=f'$m_X={X_value}$ GeV')
-    
+
+        Y_vals, eff_vals = zip(*efficiency)
+        plt.plot(Y_vals, eff_vals, marker='o', linestyle='-', label=f'$m_X={X_value}$ GeV')
+
     plt.xlabel("$m_Y$ (GeV)")
     plt.ylabel("Signal Efficiency")
-    plt.grid(True, which='both', linestyle='--', linewidth=0.1, color='gray')
+    plt.grid(True, which='both', linestyle='--', linewidth=0.5, color='gray')
 
-    # Add "CMS Preliminary" and integrated luminosity outside the plot box
+    # Add CMS Preliminary and integrated luminosity
     hep.cms.text("Preliminary", loc=0, ax=plt.gca())
     plt.text(1.0, 1.02, f'{getLumi():.1f} fb$^{{-1}}$ (13 TeV)', fontsize=17, transform=plt.gca().transAxes, ha='right')
 
-    # Add legend
+    # Add legend and save the plot
     plt.legend(loc='best')
-
     output_name = "stack_plots/combined_signal_efficiency.png"
     plt.savefig(output_name)
-    plt.savefig("stack_plots/combined_signal_efficiency.pdf")
+    plt.savefig(output_name.replace(".png", ".pdf"))
     plt.close()
 
-# Define the X and Y values and variables to process
+# Define the X and Y values
 X_values = [300, 400, 500, 550, 600, 650, 700]
 Y_values = [60, 70, 80, 90, 95, 100, 125]
 
@@ -149,14 +121,15 @@ Y_values = [60, 70, 80, 90, 95, 100, 125]
 output_dir = "stack_plots/"
 os.makedirs(output_dir, exist_ok=True)
 
-# Load the ROOT file
+# Load the ROOT file and histograms
 file_path = "outputfiles/hhbbgg_analyzerNMSSM-histograms.root"
 root_file = uproot.open(file_path)
+histograms = get_all_histograms(root_file, X_values, Y_values)
 
-# Loop through each X value and plot the signal efficiency
+# Loop through each X value and plot signal efficiency
 for X_value in X_values:
-    plot_signal_efficiency(root_file, X_value, Y_values)
+    plot_signal_efficiency(histograms, X_value, Y_values)
 
 # Plot combined signal efficiency for all X values
-plot_combined_signal_efficiency(root_file, X_values, Y_values)
+plot_combined_signal_efficiency(histograms, X_values, Y_values)
 
