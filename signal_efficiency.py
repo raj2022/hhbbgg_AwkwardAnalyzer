@@ -138,11 +138,12 @@ def plot_combined_signal_efficiency(root_file, X_values, Y_values):
 
     output_name = "stack_plots/combined_signal_efficiency.png"
     plt.savefig(output_name)
+    plt.savefig("stack_plots/combined_signal_efficiency.pdf")
     plt.close()
 
 # Define the X and Y values and variables to process
 X_values = [300, 400, 500, 550, 600, 650, 700]
-Y_values = [60, 70, 80, 90, 95, 100]
+Y_values = [60, 70, 80, 90, 95, 100, 125]
 
 # Ensure the output directory exists
 output_dir = "stack_plots/"
