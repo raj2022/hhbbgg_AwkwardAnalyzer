@@ -70,6 +70,7 @@ def plot_signal_efficiency(histograms, X_value, Y_values):
     plt.plot(Y_vals, eff_vals, marker='o', linestyle='-', color='b', label=f'$m_X$={X_value} GeV')
     plt.xlabel("$m_Y$ [GeV]")
     plt.ylabel("Signal Efficiency")
+    plt.xlim(0, 130)  # Set x-axis limit to 130
     plt.grid(True, which='both', linestyle='--', linewidth=0.5, color='gray')
 
     # Add CMS Preliminary and integrated luminosity
@@ -100,6 +101,7 @@ def plot_combined_signal_efficiency(histograms, X_values, Y_values):
 
     plt.xlabel("$m_Y$ (GeV)")
     plt.ylabel("Signal Efficiency")
+    plt.xlim(0, 130)  # Set x-axis limit to 130
     plt.grid(True, which='both', linestyle='--', linewidth=0.5, color='gray')
 
     # Add CMS Preliminary and integrated luminosity
