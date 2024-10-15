@@ -40,7 +40,7 @@ def get_mask_selection(cms_events):
 # Check https://btv-wiki.docs.cern.ch/ScaleFactors/Run3Summer22/ for the tagger point score
 
 
-def get_mask_srbbgg(cms_events):
+def get_mask_srbbgg(cms_events):    # Pass medium Btag and pass tight photonID
     mask_srbbgg = (
         (cms_events.lead_pho_mvaID_WP80 == 1)  # tight cut mvaID80
         & (cms_events.sublead_pho_mvaID_WP80 == 1)
@@ -92,10 +92,12 @@ def get_mask_srbbggMET(cms_events):
     return mask_srbbggMET
 
 
-def get_mask_crantibbgg(cms_events):
+def get_mask_crantibbgg(cms_events):   # Fail medium Btag and pass tight photonID
     mask_crantibbgg = (
-        (cms_events.lead_pho_mvaID_WP90 == 1)
-        & (cms_events.sublead_pho_mvaID_WP90 == 1)
+        #(cms_events.lead_pho_mvaID_WP90 == 1)
+        #& (cms_events.sublead_pho_mvaID_WP90 == 1)
+         (cms_events.lead_pho_mvaID_WP80 == 1)
+        & (cms_events.sublead_pho_mvaID_WP80 == 1)
         & (cms_events.lead_bjet_PNetB < 0.2605)
         & (cms_events.sublead_bjet_PNetB < 0.2605)
         & (cms_events.lead_isScEtaEB == 1)
@@ -104,7 +106,7 @@ def get_mask_crantibbgg(cms_events):
     return mask_crantibbgg
 
 
-def get_mask_crbbantigg(cms_events):
+def get_mask_crbbantigg(cms_events):    # pass medium Btag, pass loose photonID, and fail tight photonID
     mask_crbbantigg = (
         (cms_events.lead_pho_mvaID_WP80 == 0)
         & (cms_events.sublead_pho_mvaID_WP80 == 0)
