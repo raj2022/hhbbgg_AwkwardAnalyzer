@@ -89,6 +89,7 @@ def plot_combined_signal_efficiency(histograms, X_values, Y_values):
 
     for X_value in X_values:
         efficiency = []
+<<<<<<< HEAD:signal_efficiency.py
         total_integral = sum(np.sum(histograms[X_value][y].values()) for y in Y_values)
 
         for Y_value in Y_values:
@@ -98,6 +99,28 @@ def plot_combined_signal_efficiency(histograms, X_values, Y_values):
 
         Y_vals, eff_vals = zip(*efficiency)
         plt.plot(Y_vals, eff_vals, marker='o', linestyle='-', label=f'$m_X={X_value}$ GeV')
+=======
+
+        for Y_value in Y_values:
+            hist_name = f"NMSSM_X{X_value}_Y{Y_value}/preselection-dibjet_pt"
+            hist = get_histogram(root_file, hist_name)
+
+            # Calculate integral of the histogram
+            integral = np.sum(hist.values())
+
+            # Calculate efficiency (relative to total integral for this X value)
+            total_integral = sum(np.sum(get_histogram(root_file, f"NMSSM_X{X_value}_Y{y}/preselection-dibjet_pt").values()) for y in Y_values)
+            if total_integral > 0:
+                eff = integral / total_integral
+            else:
+                eff = 0
+
+            efficiency.append((Y_value, eff))
+
+        # Plot efficiency vs. Y for this X value
+        Y_values, eff_values = zip(*efficiency)
+        plt.plot(Y_values, eff_values, marker='o', linestyle='-', label=f'$m_X={X_value}$ GeV')
+>>>>>>> 12aab03 (oprganised and added variable kinematics):signal/signal_efficiency.py
 
     plt.xlabel("$m_Y$ (GeV)")
     plt.ylabel("Signal Efficiency")
