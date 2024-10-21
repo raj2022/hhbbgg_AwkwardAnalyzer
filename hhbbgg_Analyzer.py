@@ -102,6 +102,11 @@ def runOneFile(inputfile, outputrootfile):
             "SecondJet_PtOverM",
             "lead_mvaID",
             "sublead_mvaID",
+            "DeltaR_j1g1",
+            "DeltaR_j2g1",
+            "DeltaR_j1g2",
+            "DeltaR_j2g2",
+
         ],
         step_size=10000,
     ):
@@ -161,6 +166,11 @@ def runOneFile(inputfile, outputrootfile):
                 "SecondJet_PtOverM": tree_["SecondJet_PtOverM"],
                 "lead_pho_mvaID": tree_["lead_mvaID"],
                 "sublead_pho_mvaID": tree_["sublead_mvaID"],
+                "DeltaR_j1g1": tree_["DeltaR_j1g1"],
+                "DeltaR_j2g1": tree_["DeltaR_j2g1"],
+                "DeltaR_j1g2": tree_["DeltaR_j1g2"],
+                "DeltaR_j2g2": tree_["DeltaR_j2g2"],
+
             },
             depth_limit=1,
         )
@@ -352,6 +362,12 @@ def runOneFile(inputfile, outputrootfile):
         out_events["srbbggMET"] = cms_events["mask_srbbggMET"]
         out_events["crantibbgg"] = cms_events["mask_crantibbgg"]
         out_events["crbbantigg"] = cms_events["mask_crbbantigg"]
+## Adding deltaR(j,g)
+
+        out_events["DeltaR_j1g1"] = cms_events["DeltaR_j1g1"]
+        out_events["DeltaR_j2g1"] = cms_events["DeltaR_j2g1"]
+        out_events["DeltaR_j1g2"] = cms_events["DeltaR_j1g2"]
+        out_events["DeltaR_j2g2"] = cms_events["DeltaR_j2g2"]
 
         fulltree_ = ak.concatenate([out_events, fulltree_], axis=0)
 
