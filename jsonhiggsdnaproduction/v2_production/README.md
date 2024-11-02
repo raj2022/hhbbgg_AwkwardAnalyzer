@@ -1,4 +1,4 @@
-# NanoAOD to Parquet Production
+# NanoAOD to Parquet Production(v2)
 
 To produce .parquet files, follow the instructions provided in the [manual](https://higgs-dna.readthedocs.io/en/latest/index.html) and the tutorial available [here](https://indico.cern.ch/event/1360961/contributions/5777678/attachments/2788218/4861762/HiggsDNA_tutorial.pdf).
 
@@ -9,7 +9,7 @@ To produce .parquet files, follow the instructions provided in the [manual](http
 1. **Clone the HiggsDNA Repository**
    - You can use either the main [HiggsDNA project](https://gitlab.cern.ch/HiggsDNA-project/HiggsDNA) or the [hhbbgg branch](https://gitlab.cern.ch/hhbbgg/HiggsDNA):
      ```bash
-     git clone ssh://git@gitlab.cern.ch:7999/hhbbgg/HiggsDNA.git
+     git clone --branch HHbbgg_v2_parquet ssh://git@gitlab.cern.ch:7999/cms-analysis/general/HiggsDNA.git
      cd HiggsDNA
      ```
 
@@ -27,6 +27,10 @@ To produce .parquet files, follow the instructions provided in the [manual](http
      conda activate higgs-dna
      pip install -e .[dev] # Install additional development dependencies
      ```
+   - Download necessary files:
+	```bash
+	python scripts/pull_files.py --all
+	```
 
 3. **Set Up Voms Proxy (if not already done)**
    - Follow the instructions provided [here](https://uscms.org/uscms_at_work/computing/getstarted/get_grid_cert.shtml).
