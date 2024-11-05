@@ -55,7 +55,7 @@ To produce .parquet files, follow the instructions provided in the [manual](http
      ```
    - Command line "ready to go" (in the `tests/` directory):
      ```bash
-     python scripts/run_analysis.py --json-analysis My_Json_1.json --dump ../../../output_parquet/ --skipCQR --executor futures
+    python scripts/run_analysis.py --json-analysis My_Json_1.json --dump ../../../output_parquet/v2_production/ --doFlow_corrections --fiducialCuts store_flag --skipCQR --Smear_sigma_m --doDeco --executor futures --skipbadfiles
      ```
     - Jobs to submit, more information can be found: https://higgs-dna.readthedocs.io/en/latest/postprocessing.html
     ```bash
