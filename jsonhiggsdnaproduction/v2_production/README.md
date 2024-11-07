@@ -53,7 +53,7 @@ To produce .parquet files, follow the instructions provided in the [manual](http
      ```bash
      python run_analysis.py --json-analysis YourJson.js --dump output_test
      ```
-   - Command line "ready to go" (in the `tests/` directory):
+   - Command line "ready to go" (in the `tests/` directory). Following the instruction as provided in, https://indico.cern.ch/event/1451222/contributions/6208287/attachments/2959259/5210616/HHtobbgg_meeting_20241101.pdf:
     
     ```bash
         python scripts/run_analysis.py --json-analysis My_Json_1.json --dump ../../../output_parquet/v2_production/ --doFlow_corrections --fiducialCuts store_flag --skipCQR --Smear_sigma_m --doDeco --executor futures --skipbadfiles
