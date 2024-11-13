@@ -302,14 +302,14 @@
 
 
     "NMSSM_X2500_Y2000": [
-    "/store/mc/Run3Summer22EENanoAODv12/NMSSM_XtoYHto2B2G_MX-2500_MY-2000_TuneCP5_13p6TeV_madgraph-pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_postEE_v6-v2/60000/3a315a61-afab-4497-9d85-59aa50cf819b.root",
-    "/store/mc/Run3Summer22EENanoAODv12/NMSSM_XtoYHto2B2G_MX-2500_MY-2000_TuneCP5_13p6TeV_madgraph-pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_postEE_v6-v2/60000/46bc04e1-6c18-42b3-9262-cba78944a7bc.root",
-    "/store/mc/Run3Summer22EENanoAODv12/NMSSM_XtoYHto2B2G_MX-2500_MY-2000_TuneCP5_13p6TeV_madgraph-pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_postEE_v6-v2/60000/50e90897-c956-4884-ac48-f5ffeef39532.root",
-    "/store/mc/Run3Summer22EENanoAODv12/NMSSM_XtoYHto2B2G_MX-2500_MY-2000_TuneCP5_13p6TeV_madgraph-pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_postEE_v6-v2/60000/5910560f-1feb-4b10-bfbc-fa9f70c88098.root",
-    "/store/mc/Run3Summer22EENanoAODv12/NMSSM_XtoYHto2B2G_MX-2500_MY-2000_TuneCP5_13p6TeV_madgraph-pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_postEE_v6-v2/60000/6da914b3-74f7-4bf8-bd2b-2c95d8d2f4ef.root",
-    "/store/mc/Run3Summer22EENanoAODv12/NMSSM_XtoYHto2B2G_MX-2500_MY-2000_TuneCP5_13p6TeV_madgraph-pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_postEE_v6-v2/60000/b31f4402-fd0d-42b6-b774-3ba504fe6fa3.root",
-    "/store/mc/Run3Summer22EENanoAODv12/NMSSM_XtoYHto2B2G_MX-2500_MY-2000_TuneCP5_13p6TeV_madgraph-pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_postEE_v6-v2/60000/ca1ca6c5-fc65-4b2b-84de-3a45bb8bc9f3.root",
-    "/store/mc/Run3Summer22EENanoAODv12/NMSSM_XtoYHto2B2G_MX-2500_MY-2000_TuneCP5_13p6TeV_madgraph-pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_postEE_v6-v2/60000/f5600d0c-e174-4ec3-a701-8db7295ce8bb.root"
+    "root://cms-xrd-global.cern.ch//store/mc/Run3Summer22EENanoAODv12/NMSSM_XtoYHto2B2G_MX-2500_MY-2000_TuneCP5_13p6TeV_madgraph-pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_postEE_v6-v2/60000/3a315a61-afab-4497-9d85-59aa50cf819b.root",
+    "root://cms-xrd-global.cern.ch//store/mc/Run3Summer22EENanoAODv12/NMSSM_XtoYHto2B2G_MX-2500_MY-2000_TuneCP5_13p6TeV_madgraph-pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_postEE_v6-v2/60000/46bc04e1-6c18-42b3-9262-cba78944a7bc.root",
+    "root://cms-xrd-global.cern.ch//store/mc/Run3Summer22EENanoAODv12/NMSSM_XtoYHto2B2G_MX-2500_MY-2000_TuneCP5_13p6TeV_madgraph-pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_postEE_v6-v2/60000/50e90897-c956-4884-ac48-f5ffeef39532.root",
+    "root://cms-xrd-global.cern.ch//store/mc/Run3Summer22EENanoAODv12/NMSSM_XtoYHto2B2G_MX-2500_MY-2000_TuneCP5_13p6TeV_madgraph-pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_postEE_v6-v2/60000/5910560f-1feb-4b10-bfbc-fa9f70c88098.root",
+    "root://cms-xrd-global.cern.ch//store/mc/Run3Summer22EENanoAODv12/NMSSM_XtoYHto2B2G_MX-2500_MY-2000_TuneCP5_13p6TeV_madgraph-pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_postEE_v6-v2/60000/6da914b3-74f7-4bf8-bd2b-2c95d8d2f4ef.root",
+    "root://cms-xrd-global.cern.ch//store/mc/Run3Summer22EENanoAODv12/NMSSM_XtoYHto2B2G_MX-2500_MY-2000_TuneCP5_13p6TeV_madgraph-pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_postEE_v6-v2/60000/b31f4402-fd0d-42b6-b774-3ba504fe6fa3.root",
+    "root://cms-xrd-global.cern.ch//store/mc/Run3Summer22EENanoAODv12/NMSSM_XtoYHto2B2G_MX-2500_MY-2000_TuneCP5_13p6TeV_madgraph-pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_postEE_v6-v2/60000/ca1ca6c5-fc65-4b2b-84de-3a45bb8bc9f3.root",
+    "root://cms-xrd-global.cern.ch//store/mc/Run3Summer22EENanoAODv12/NMSSM_XtoYHto2B2G_MX-2500_MY-2000_TuneCP5_13p6TeV_madgraph-pythia8/NANOAODSIM/130X_mcRun3_2022_realistic_postEE_v6-v2/60000/f5600d0c-e174-4ec3-a701-8db7295ce8bb.root"
     ]
 
 }
