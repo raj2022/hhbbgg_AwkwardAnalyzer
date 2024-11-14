@@ -101,6 +101,12 @@ Further, to convert to `.root` files, eg:-
 ```bash
 python scripts/postprocessing/convert_parquet_to_root.py ../../../output_parquet/merged/NMSSM_X400_Y70/nominal/NOTAG_merged.parquet ../../../output_root/NMSSM/NMSSM_X400_Y70.root mc
 ```
+To convert to the root file, we are trying to automate the processes with file, 
+[conversion_parquet_root.py](https://github.com/raj2022/hhbbgg_AwkwardAnalyzer/blob/NMSSM/jsonhiggsdnaproduction/v2_production/conversion_parquet_root.py), 
+```bash
+python3 conversion_parquet_root.py
+```
+
 **NOTE** sometimes we have name error of `NOTAG`
 On lxplus
 ```bash
