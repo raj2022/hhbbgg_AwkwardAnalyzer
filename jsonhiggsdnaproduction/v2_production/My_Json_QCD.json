@@ -1,21 +1,21 @@
 {
-    "samplejson": "sample_non-resonanat_background.json",
+    "samplejson": "sample_QCD_background.json",
     "workflow": "HHbbgg",
     "metaconditions": "Era2022_v1",
     "year": {
-        "GGJets": [
+        "QCD_PT30to40": [
             "2022postEE"
         ],
-        "GJetPt20To40": [
+        "QCD_PT30toinf": [
             "2022postEE"
         ],
-        "GJetPt40": [
+        "QCD_PT40toinf": [
             "2022postEE"
         ]
     },
     "taggers": [],
     "systematics": {
-        "GGJets": [
+        "QCD_PT30to40": [
             "Et_dependent_Smearing",
             "Pileup",
             "PNet_bTagShapeSF",
@@ -24,7 +24,7 @@
             "TriggerSF"
 
         ],
-        "GJetPt20To40": [
+        "QCD_PT30toinf": [
             "Et_dependent_Smearing",
             "Pileup",
             "PNet_bTagShapeSF",
@@ -32,7 +32,7 @@
             "PreselSF",
             "TriggerSF"
         ],
-        "GJetPt40": [
+        "QCD_PT40toinf": [
             "Et_dependent_Smearing",
             "Pileup",
             "PNet_bTagShapeSF",
@@ -43,7 +43,7 @@
 
     },
     "corrections": {
-        "GGJets": [
+        "QCD_PT30to40": [
             "jerc_jet",
             "Et_dependent_Smearing",
             "Pileup",
@@ -52,7 +52,7 @@
             "PreselSF",
             "TriggerSF"
         ],
-        "GJetPt20To40": [
+        "QCD_PT30toinf": [
             "jerc_jet",
             "Et_dependent_Smearing",
             "Pileup",
@@ -61,7 +61,7 @@
             "PreselSF",
             "TriggerSF"
         ],
-        "GJetPt40": [
+        "QCD_PT40toinf": [
             "jerc_jet",
             "Et_dependent_Smearing",
             "Pileup",
