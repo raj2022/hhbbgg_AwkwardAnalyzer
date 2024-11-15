@@ -159,3 +159,4 @@ HHbbgg_v2_parquet?ref_type=tags
 6. Readme for v2 parquet files: https://gitlab.cern.ch/hhbbgg/docs/-/tree/v2_ReadMe/v2?
 ref_type=heads#command-line-
 7. Samples list: https://docs.google.com/spreadsheets/d/1ZRDUpvrSmNhIzPpfc5R__G4OeucyvEmDi4EaeL0DVk/edit?gid=0#gid=0
+8. Instruction slides: https://indico.cern.ch/event/1451222/contributions/6208287/attachments/2959259/5210616/HHtobbgg_meeting_20241101.pdf
