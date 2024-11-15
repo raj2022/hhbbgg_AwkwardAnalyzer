@@ -115,8 +115,47 @@ python ../scripts/run_analysis.py --json-analysis HHbbgg_xrootd.json --dump ../.
 V2 README file: https://gitlab.cern.ch/hhbbgg/docs/-/tree/v2_ReadMe/v2?ref_type=heads
 List of samples used to produce postEE backgrounds files
 https://gitlab.cern.ch/hhbbgg/docs/-/blob/v2_ReadMe/dataset_lists_parquet_v1.md?ref_type=heads
+
+## Background production 
+Resonant and non-Resonant background production as provided samples in [here](https://gitlab.cern.ch/hhbbgg/docs/-/blob/v2_ReadMe/dataset_lists_parquet_v1.md?ref_type=heads#background-samples), with Non-Resonant samples containing, GGJEts, GJetPt20To40, GJetPt40, and resonant samples as GluGluHToGG, VHToGG, VBFHToGG, and ttHToGG.
+
+Complete overview of commands are
+```
+git clone --branch HHbbgg_v2_parquet ssh://git@gitlab.cern.ch:7999/cms-analysis/general/HiggsDNA.git
+mamba activate higgs-dna
+cd HiggsDNA && pip install -e .[dev]
+python scripts/pull_files.py --all
+voms-proxy-init --rfc --voms cms -valid 192:00
+python fetch.py -i samples.txt -w Yolo
+
+
+
+python scripts/run_analysis.py --json-analysis path_to_runner.json --dump path_to_out_directory --doFlow_corrections --fiducialCuts store_flag --skipCQR --Smear_sigma_m --doDeco --executor futures --skipbadfiles 
+
+```
+Use --skipbadfiles only for simulation
+• Use --executor futures for parallel execution
+• The default number of workers for --executor futures is 12, can be increased by specifying --workers <num>
+• —-executor also has iterative option, better for debugging
+Use scripts/postprocessing/prepare_output_file.py to account for proper normalisation after b-tagging
+shape SF is applied
+• If systematics not included:
+python scripts/postprocessing/prepare_output_file.py --input path_to_out_directory --merge
+• If systematics included:
+python scripts/postprocessing/prepare_output_file.py --input path_to_out_directory --merge --syst --
+varDict path_to_variation.json
+• This will create path_to_out_directory/merge folder with merged parquet files for each samples and
+systematics
+
+#Creation of sample.txt
+
 ## References:
 1. https://gitlab.cern.ch/hhbbgg/HiggsDNA#worfklow
 2. https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookStartingGrid#BasicGrid
 3. https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookXrootdService 
 4. https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideRunningGridPrerequisites#Test_your_grid_certificate
+5. HHbbgg_v2_parquet tag: https://gitlab.cern.ch/cms-analysis/general/HiggsDNA/-/tree/
+HHbbgg_v2_parquet?ref_type=tags
+6. Readme for v2 parquet files: https://gitlab.cern.ch/hhbbgg/docs/-/tree/v2_ReadMe/v2?
+ref_type=heads#command-line-
+7. Samples list: https://docs.google.com/spreadsheets/d/1ZRDUpvrSmNhIzPpfc5R__G4OeucyvEmDi4EaeL0DVk/edit?gid=0#gid=0
