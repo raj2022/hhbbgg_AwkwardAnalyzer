@@ -1,156 +1,122 @@
-# NanoAOD to Parquet Production (v2)
+# NanoAOD to Parquet Production
 
-To produce `.parquet` files, follow the instructions provided in the [manual](https://higgs-dna.readthedocs.io/en/latest/index.html) and the tutorial available [here](https://indico.cern.ch/event/1360961/contributions/5777678/attachments/2788218/4861762/HiggsDNA_tutorial.pdf).
+For the version 1 productions, we produce .parquet files, following the instructions provided in the [manual](https://higgs-dna.readthedocs.io/en/latest/index.html) and the tutorial available [here](https://indico.cern.ch/event/1360961/contributions/5777678/attachments/2788218/4861762/HiggsDNA_tutorial.pdf).
 
----
+While for the v2 production, we are following the instructions as given in here, https://indico.cern.ch/event/1451222/contributions/6208287/attachments/2959259/5210616/HHtobbgg_meeting_20241101.pdf
 
-## Instructions to Produce `.parquet` Files
+
+## Instructions to Produce .parquet File
 
 ### 1. Higgs DNA Installation
 
-#### a. Clone the HiggsDNA Repository
+1. **Clone the HiggsDNA Repository**
+   - You can use either the main [HiggsDNA project](https://gitlab.cern.ch/HiggsDNA-project/HiggsDNA) or the [hhbbgg branch](https://gitlab.cern.ch/hhbbgg/HiggsDNA):
+     ```bash
+     git clone ssh://git@gitlab.cern.ch:7999/hhbbgg/HiggsDNA.git
+     cd HiggsDNA
+     ```
+
+2. **Set Up the Environment**
+   - Create the Conda environment:
+     ```bash
+     conda env create -f environment.yml
+     ```
+     - If available, use `mamba` for faster setup:
+       ```bash
+       mamba env create -f environment.yml
+       ```
+   - Activate the environment and install the necessary packages:
+     ```bash
+     conda activate higgs-dna
+     pip install -e .[dev] # Install additional development dependencies
+     ```
+
+3. **Set Up Voms Proxy (if not already done)**
+   - Follow the instructions provided [here](https://uscms.org/uscms_at_work/computing/getstarted/get_grid_cert.shtml).
+   - Setup `VOMS`:
+	```bash
+	voms-proxy-init --voms cms --valid 192:00
+    voms-proxy-init --rfc --voms cms -valid 192:00
+	```
+   - To check the proxy:
+	```bash
+	voms-proxy-info -all
+	```
+   - To test the grid certificates:
+	```bash
+	grid-proxy-init -debug -verify 
+	```
+
+4. **Run the Analysis**
+   - Basic command line:
+     ```bash
+     python run_analysis.py --json-analysis YourJson.js --dump output_test
+     ```
+   - Command line "ready to go" (in the `tests/` directory):
+     ```bash
+     python scripts/run_analysis.py --json-analysis My_Json_1.json --dump ../../../output_parquet/ --skipCQR --executor futures
+     ```
+    - Jobs to submit, more information can be found: https://higgs-dna.readthedocs.io/en/latest/postprocessing.html
+    ```bash
+    python scripts/run_analysis.py --json-analysis My_Json_1.json --dump ../../../output_parquet/ --skipCQR --executor vanilla_lxplus --queue espresso
+    ```
+    With complete path 
+    ```bash
+    python scripts/run_analysis.py --json-analysis /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/higgsDNA_prav/HiggsDNA_v1_setup/My_Json_1.json --dump /afs/cern.ch/user/s/sraj/Analysis/output_parquet --skipCQR --executor vanilla_lxplus --queue espresso
+    ```
+## Workflow
+
+The workflow is based on the files found in `higgsdna/workflows/`. This is where the systematics, scale factors, MVA, and selection cuts are applied. The base workflow used for the Hgg analysis is `base.py`. 
+
+The `HHbbgg.py` file defines the HHbbgg processor (`HHbbggProcessor`), which inherits from the Hgg processor (`HggProcessor`).
+
+- **`HHbbgg.py`**: This workflow inherits directly from the base processor (the main processor for Hgg analysis). All functions defined in the base workflow are inherited and do not need to be re-implemented in `HHbbgg`, except for the `process` function.
+
+- **`higgs_dna/workflows/__init__.py`**: This file is where the processors are defined with names recognized by `run_analysis.py`.
+
+**NOTE** Sometimes, we have error in configuration due to mismtach of `setuptools`
 ```bash
-# Clone the repository (choose the appropriate branch)
-git clone --branch HHbbgg_v2_parquet ssh://git@gitlab.cern.ch:7999/cms-analysis/general/HiggsDNA.git
-cd HiggsDNA
-```
-#### b. Set Up the Environment
-```bash
-# Create the Conda environment
-conda env create -f environment.yml
-
-# (Optional) Faster setup using mamba
-mamba env create -f environment.yml
-
-# Activate the environment and install dependencies
-conda activate higgs-dna
-pip install -e .[dev]
-
-# Download necessary files
-python scripts/pull_files.py --all
-```
-### c. Set Up Voms Proxy
-```bash
-# Initialize VOMS proxy
-voms-proxy-init --voms cms --valid 192:00
-voms-proxy-init --rfc --voms cms --valid 192:00
-
-# Verify proxy
-voms-proxy-info -all
-
-# Test grid certificates
-grid-proxy-init -debug -verify
-```
-
-
-### 2. Running the Analysis
-
-#### Basic Command
-```bash
-python run_analysis.py --json-analysis YourJson.js --dump output_test
-```
-##### Full Command Example
-```bash
-python scripts/run_analysis.py \
-  --json-analysis My_Json_1.json \
-  --dump ../../../output_parquet/v2_production/ \
-  --doFlow_corrections --fiducialCuts store_flag --skipCQR \
-  --Smear_sigma_m --doDeco --executor futures --skipbadfiles
-```
-#### Submitting Jobs
-```bash
-# Submitting jobs with the vanilla executor
-python scripts/run_analysis.py \
-  --json-analysis My_Json_1.json \
-  --dump ../../../output_parquet/ \
-  --skipCQR --executor vanilla_lxplus --queue espresso
-
-# Using absolute paths
-python scripts/run_analysis.py \
-  --json-analysis /afs/cern.ch/user/s/sraj/Analysis/My_Json_1.json \
-  --dump /afs/cern.ch/user/s/sraj/Analysis/output_parquet \
-  --skipCQR --executor vanilla_lxplus --queue espresso
-```
-
-## Workflow Overview
-
-### Key Files
-```bash
-- base.py: Base workflow for Hgg analysis.
-- HHbbgg.py: Inherits from base.py and defines HHbbggProcessor.
-```
-### Notes
-```bash
-# Ensure setuptools compatibility
 pip install setuptools==65.0.1
 ```
-Converting `.parquet` to `.root`
+To convert `.parquet` to root we can follow this [step](https://higgs-dna.readthedocs.io/en/latest/postprocessing.html). All the steps can be performed in one go with a command more or less like this:
 ```bash
-python3 prepare_output_file.py --input [path_to_output_dir] --merge --root --ws --syst --cats --args "--do_syst"
+python3 prepare_output_file.py --input [path to output dir] --merge --root --ws --syst --cats --args "--do_syst"
 ```
-
-#### Example Conversion Command
+Example to convert to `.parquet` to merged folder
 ```bash
-python3 prepare_output_file.py \
-  --input ../../../output_parquet \
-  --merge --root --ws --syst --cats --args "--do_syst"
-```
+ python3 prepare_output_file.py --input ../../../output_parquet  --merge --root --ws --syst --cats --args "--do_syst"
+ ```
+Produced root files are named as `merged.parquet`, to convert into root, we are using these two shell scripts, [filename_change.sh](https://github.com/raj2022/hhbbgg_AwkwardAnalyzer/blob/main/jsonhiggsdnaproduction/filename_change.sh) and [run_conversion.sh](https://github.com/raj2022/hhbbgg_AwkwardAnalyzer/blob/main/jsonhiggsdnaproduction/run_conversion.sh) 
 
-
-## Background Production
-V2 README file: https://gitlab.cern.ch/hhbbgg/docs/-/tree/v2_ReadMe/v2?ref_type=heads
-List of samples used to produce postEE backgrounds files
-https://gitlab.cern.ch/hhbbgg/docs/-/blob/v2_ReadMe/dataset_lists_parquet_v1.md?ref_type=heads
-
-## Background production 
-Resonant and non-Resonant background production as provided samples in [here](https://gitlab.cern.ch/hhbbgg/docs/-/blob/v2_ReadMe/dataset_lists_parquet_v1.md?ref_type=heads#background-samples), with Non-Resonant samples containing, GGJEts, GJetPt20To40, GJetPt40, and resonant samples as GluGluHToGG, VHToGG, VBFHToGG, and ttHToGG.
-
-Complete overview of commands are
-```text
-git clone --branch HHbbgg_v2_parquet ssh://git@gitlab.cern.ch:7999/cms-analysis/general/HiggsDNA.git
-mamba activate higgs-dna
-cd HiggsDNA && pip install -e .[dev]
-python scripts/pull_files.py --all
-voms-proxy-init --rfc --voms cms -valid 192:00
-python fetch.py -i samples.txt -w Yolo
-```
+Further, to convert to `.root` files, eg:-
 ```bash
-python scripts/run_analysis.py --json-analysis path_to_runner.json --dump path_to_out_directory --doFlow_corrections --fiducialCuts store_flag --skipCQR --Smear_sigma_m --doDeco --executor futures --skipbadfiles
+python scripts/postprocessing/convert_parquet_to_root.py ../../../output_parquet/merged/NMSSM_X400_Y70/nominal/NOTAG_merged.parquet ../../../output_root/NMSSM/NMSSM_X400_Y70.root mc
 ```
-Instructions:
-* Use --skipbadfiles only for simulation
-* Use --executor futures for parallel execution
-* The default number of workers for --executor futures is 12, can be increased by specifying --workers <num>
-*  —-executor also has iterative option, better for debugging
-Use scripts/postprocessing/prepare_output_file.py to account for proper normalisation after b-tagging
-* shape SF is applied
-* If systematics not included:
-python scripts/postprocessing/prepare_output_file.py --input path_to_out_directory --merge
-* If systematics included:
-python scripts/postprocessing/prepare_output_file.py --input path_to_out_directory --merge --syst -- varDict path_to_variation.json
-* This will create path_to_out_directory/merge folder with merged parquet files for each samples and systematics
+**NOTE** sometimes we have name error of `NOTAG`
+On lxplus
+```bash
+conda activate higgs-dna
+cd /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/higgsDNA_prav
+cd HiggsDNA_v1_setup # Can enter HiggsDNA_v1_setup_0 as well
+```
+## Production of background files
+On the production of background files, the `.json` file can be found [here](https://gitlab.cern.ch/hhbbgg/HiggsDNA/-/blob/master/tests/HHbbgg_xrootd.json?ref_type=heads) and all of the samples are present [here](https://gitlab.cern.ch/hhbbgg/HiggsDNA/-/blob/master/tests/samples_v12_HHbbgg_xrootd.json?ref_type=heads)
 
-### Producing Background Files
+To run the smaple with the above `.json` files, we can run the command
 ```bash
-# JSON configuration
-# HHbbgg_xrootd.json: https://gitlab.cern.ch/hhbbgg/HiggsDNA/-/blob/master/tests/HHbbgg_xrootd.json
-# Samples: https://gitlab.cern.ch/hhbbgg/HiggsDNA/-/blob/master/tests/samples_v12_HHbbgg_xrootd.json
-```
-#### Example Command
-```bash
+# Make sure you are in the hhbbgg/HiggsDNA folder
 cd tests
-python ../scripts/run_analysis.py \
-  --json-analysis HHbbgg_xrootd.json \
-  --dump ../../../../output_parquet/ \
-  --skipCQR --executor futures
+python ../scripts/run_analysis.py --json-analysis HHbbgg_xrootd.json --dump ../../../../output_parquet/ --skipCQR --executor futures
 ```
-## Samples information
 
-## Additional Resources
-1. HiggsDNA Workflow Documentation: https://gitlab.cern.ch/hhbbgg/HiggsDNA#worfklow
-2. Grid Computing Guide: https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookStartingGrid
-3. VOMS Proxy Documentation: https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideRunningGridPrerequisites#Test_your_grid_certificate
-4. V2 Parquet Files README: https://gitlab.cern.ch/hhbbgg/docs/-/tree/v2_ReadMe/v2?ref_type=heads#command-line
-5. Sample List: https://docs.google.com/spreadsheets/d/1ZRDUpvrSmNhIzPpfc5R__G4OeucyvEmDi4EaeL0DVk/edit?gid=0#gid=0
-6. Instruction Slides: https://indico.cern.ch/event/1451222/contributions/6208287/attachments/2959259/5210616/HHtobbgg_meeting_20241101.pdf
-7. V1 Sakples list and links: https://gitlab.cern.ch/hhbbgg/docs/-/blob/v2_ReadMe/dataset_lists_parquet_v1.md?ref_type=heads#background-samples
+## References:
+1. https://gitlab.cern.ch/hhbbgg/HiggsDNA#worfklow
+2. https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookStartingGrid#BasicGrid
+3. https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookXrootdService 
+4. https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideRunningGridPrerequisites#Test_your_grid_certificate
+5. Grid Computing Guide: https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookStartingGrid
+6. VOMS Proxy Documentation: https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideRunningGridPrerequisites#Test_your_grid_certificate
+7. V2 Parquet Files README: https://gitlab.cern.ch/hhbbgg/docs/-/tree/v2_ReadMe/v2?ref_type=heads#command-line
+8. Sample List: https://docs.google.com/spreadsheets/d/1ZRDUpvrSmNhIzPpfc5R__G4OeucyvEmDi4EaeL0DVk/edit?gid=0#gid=0
+9. Instruction Slides: https://indico.cern.ch/event/1451222/contributions/6208287/attachments/2959259/5210616/HHtobbgg_meeting_20241101.pdf
+10. V1 Sakples list and links: https://gitlab.cern.ch/hhbbgg/docs/-/blob/v2_ReadMe/dataset_lists_parquet_v1.md?ref_type=heads#background-samples
