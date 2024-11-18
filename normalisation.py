@@ -16,8 +16,6 @@ def getXsec(samplename):
         xsec = 919.1
     elif "GluGluHToGG" in samplename:
         xsec = 52.23 * BR_HToGG
-    elif "GluGluToHH" in samplename:
-        xsec = 34.43 * BR_HTobb * BR_HTogg * 2
     elif "ttHToGG" in samplename:
         xsec = 0.0013
     elif "VBFHToGG" in samplename:

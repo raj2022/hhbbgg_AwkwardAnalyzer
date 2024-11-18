@@ -433,8 +433,8 @@ else:
     ]
 
 outputrootfile = {
-    "hist": uproot.recreate(f"{output_dir}/hhbbgg_analyzer_NMSSMv2-histograms.root"),
-    "tree": uproot.recreate(f"{output_dir}/hhbbgg_analyzer_NMSSMv2-trees.root"),
+    "hist": uproot.recreate(f"{output_dir}/hhbbgg_analyzer_v2-histograms.root"),
+    "tree": uproot.recreate(f"{output_dir}/hhbbgg_analyzer_v2-trees.root"),
 }
 
 
