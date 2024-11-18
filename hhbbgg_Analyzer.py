@@ -92,20 +92,25 @@ def runOneFile(inputfile, outputrootfile):
             "sublead_bjet_btagPNetB",
             "lead_isScEtaEB",
             "sublead_isScEtaEB",
-            "CosThetaStar_CS",
-            "CosThetaStar_gg",
-            "CosThetaStar_jj",
-            "DeltaR_jg_min",
-            "pholead_PtOverM",
-            "phosublead_PtOverM",
-            "FirstJet_PtOverM",
-            "SecondJet_PtOverM",
+            "Res_HHbbggCandidate_pt",
+            "Res_HHbbggCandidate_eta",
+            "Res_HHbbggCandidate_phi",
+            "Res_HHbbggCandidate_mass",
+            "Res_CosThetaStar_CS",
+            "Res_CosThetaStar_gg",
+            "Res_CosThetaStar_jj",
+            "Res_DeltaR_jg_min",
+            "Res_pholead_PtOverM",
+            "Res_phosublead_PtOverM",
+            "Res_FirstJet_PtOverM",
+            "Res_SecondJet_PtOverM",
             "lead_mvaID",
             "sublead_mvaID",
-            "DeltaR_j1g1",
-            "DeltaR_j2g1",
-            "DeltaR_j1g2",
-            "DeltaR_j2g2",
+            "Res_DeltaR_j1g1",
+            "Res_DeltaR_j2g1",
+            "Res_DeltaR_j1g2",
+            "Res_DeltaR_j2g2",
+            "Res_M_X",
 
         ],
         step_size=10000,
@@ -156,20 +161,25 @@ def runOneFile(inputfile, outputrootfile):
                 "sublead_bjet_PNetB": tree_["sublead_bjet_btagPNetB"],
                 "lead_isScEtaEB": tree_["lead_isScEtaEB"],
                 "sublead_isScEtaEB": tree_["sublead_isScEtaEB"],
-                "CosThetaStar_CS": tree_["CosThetaStar_CS"],
-                "CosThetaStar_gg": tree_["CosThetaStar_gg"],
-                "CosThetaStar_jj": tree_["CosThetaStar_jj"],
-                "DeltaR_jg_min": tree_["DeltaR_jg_min"],
-                "pholead_PtOverM": tree_["pholead_PtOverM"],
-                "phosublead_PtOverM": tree_["phosublead_PtOverM"],
-                "FirstJet_PtOverM": tree_["FirstJet_PtOverM"],
-                "SecondJet_PtOverM": tree_["SecondJet_PtOverM"],
+                "CosThetaStar_CS": tree_["Res_CosThetaStar_CS"],
+                "CosThetaStar_gg": tree_["Res_CosThetaStar_gg"],
+                "CosThetaStar_jj": tree_["Res_CosThetaStar_jj"],
+                "DeltaR_jg_min": tree_["Res_DeltaR_jg_min"],
+                "pholead_PtOverM": tree_["Res_pholead_PtOverM"],
+                "phosublead_PtOverM": tree_["Res_phosublead_PtOverM"],
+                "FirstJet_PtOverM": tree_["Res_FirstJet_PtOverM"],
+                "SecondJet_PtOverM": tree_["Res_SecondJet_PtOverM"],
                 "lead_pho_mvaID": tree_["lead_mvaID"],
                 "sublead_pho_mvaID": tree_["sublead_mvaID"],
-                "DeltaR_j1g1": tree_["DeltaR_j1g1"],
-                "DeltaR_j2g1": tree_["DeltaR_j2g1"],
-                "DeltaR_j1g2": tree_["DeltaR_j1g2"],
-                "DeltaR_j2g2": tree_["DeltaR_j2g2"],
+                "DeltaR_j1g1": tree_["Res_DeltaR_j1g1"],
+                "DeltaR_j2g1": tree_["Res_DeltaR_j2g1"],
+                "DeltaR_j1g2": tree_["Res_DeltaR_j1g2"],
+                "DeltaR_j2g2": tree_["Res_DeltaR_j2g2"],
+                "bbgg_mass": tree_["Res_HHbbggCandidate_mass"],
+                "bbgg_pt": tree_["Res_HHbbggCandidate_pt"],
+                "bbgg_eta": tree_["Res_HHbbggCandidate_eta"],
+                "bbgg_phi": tree_["Res_HHbbggCandidate_phi"],
+                "MX": tree_["Res_M_X"],
 
             },
             depth_limit=1,
@@ -202,10 +212,10 @@ def runOneFile(inputfile, outputrootfile):
         cms_events["dibjet_pt"] = dibjet_.pt
         cms_events["diphoton_mass"] = diphoton_.mass
         cms_events["diphoton_pt"] = diphoton_.pt
-        cms_events["bbgg_mass"] = (dibjet_ + diphoton_).mass
-        cms_events["bbgg_pt"] = (dibjet_ + diphoton_).pt
-        cms_events["bbgg_eta"] = (dibjet_ + diphoton_).eta
-        cms_events["bbgg_phi"] = (dibjet_ + diphoton_).phi
+#        cms_events["bbgg_mass"] = (dibjet_ + diphoton_).mass
+#        cms_events["bbgg_pt"] = (dibjet_ + diphoton_).pt
+#        cms_events["bbgg_eta"] = (dibjet_ + diphoton_).eta
+#        cms_events["bbgg_phi"] = (dibjet_ + diphoton_).phi
         # Adding new variables
         cms_events["dibjet_eta"] = dibjet_.eta
         cms_events["dibjet_phi"] = dibjet_.phi
@@ -369,6 +379,10 @@ def runOneFile(inputfile, outputrootfile):
         out_events["DeltaR_j1g2"] = cms_events["DeltaR_j1g2"]
         out_events["DeltaR_j2g2"] = cms_events["DeltaR_j2g2"]
 
+        #---------------------------------------------------
+        #---------------------------------------------------
+        out_events["MX"] = cms_events["MX"]
+
         fulltree_ = ak.concatenate([out_events, fulltree_], axis=0)
 
     from variables import vardict, regions, variables_common
@@ -406,8 +420,8 @@ else:
     ]
 
 outputrootfile = {
-    "hist": uproot.recreate(f"{output_dir}/hhbbgg_analyzer-histograms.root"),
-    "tree": uproot.recreate(f"{output_dir}/hhbbgg_analyzer-trees.root"),
+    "hist": uproot.recreate(f"{output_dir}/hhbbgg_analyzer_NMSSMv2-histograms.root"),
+    "tree": uproot.recreate(f"{output_dir}/hhbbgg_analyzer_NMSSMv2-trees.root"),
 }
 
 
