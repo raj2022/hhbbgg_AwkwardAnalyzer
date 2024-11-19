@@ -44,7 +44,7 @@ While for the v2 production, we are following the instructions as given in here,
 	```
    - To test the grid certificates:
 	```bash
-	grid-proxy-init -debug -verify 
+	grid-proxy-init -debug -verify
 	```
 
 4. **Run the Analysis**
@@ -60,13 +60,13 @@ While for the v2 production, we are following the instructions as given in here,
     ```bash
     python scripts/run_analysis.py --json-analysis My_Json_1.json --dump ../../../output_parquet/ --skipCQR --executor vanilla_lxplus --queue espresso
     ```
-    With complete path 
+    With complete path
     ```bash
     python scripts/run_analysis.py --json-analysis /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/higgsDNA_prav/HiggsDNA_v1_setup/My_Json_1.json --dump /afs/cern.ch/user/s/sraj/Analysis/output_parquet --skipCQR --executor vanilla_lxplus --queue espresso
     ```
 ## Workflow
 
-The workflow is based on the files found in `higgsdna/workflows/`. This is where the systematics, scale factors, MVA, and selection cuts are applied. The base workflow used for the Hgg analysis is `base.py`. 
+The workflow is based on the files found in `higgsdna/workflows/`. This is where the systematics, scale factors, MVA, and selection cuts are applied. The base workflow used for the Hgg analysis is `base.py`.
 
 The `HHbbgg.py` file defines the HHbbgg processor (`HHbbggProcessor`), which inherits from the Hgg processor (`HggProcessor`).
 
@@ -86,7 +86,7 @@ Example to convert to `.parquet` to merged folder
 ```bash
  python3 prepare_output_file.py --input ../../../output_parquet  --merge --root --ws --syst --cats --args "--do_syst"
  ```
-Produced root files are named as `merged.parquet`, to convert into root, we are using these two shell scripts, [filename_change.sh](https://github.com/raj2022/hhbbgg_AwkwardAnalyzer/blob/main/jsonhiggsdnaproduction/filename_change.sh) and [run_conversion.sh](https://github.com/raj2022/hhbbgg_AwkwardAnalyzer/blob/main/jsonhiggsdnaproduction/run_conversion.sh) 
+Produced root files are named as `merged.parquet`, to convert into root, we are using these two shell scripts, [filename_change.sh](https://github.com/raj2022/hhbbgg_AwkwardAnalyzer/blob/main/jsonhiggsdnaproduction/filename_change.sh) and [run_conversion.sh](https://github.com/raj2022/hhbbgg_AwkwardAnalyzer/blob/main/jsonhiggsdnaproduction/run_conversion.sh)
 
 Further, to convert to `.root` files, eg:-
 ```bash
@@ -109,14 +109,14 @@ cd tests
 python ../scripts/run_analysis.py --json-analysis HHbbgg_xrootd.json --dump ../../../../output_parquet/ --skipCQR --executor futures
 ```
 ## Data Production
-2022PostEE data stored in here, 
+2022PostEE data stored in here,
 1. /EGamma/Run2022E-22Sep2023-v1/NANOAOD
 2. /EGamma/Run2022F-22Sep2023-v1/NANOAOD
 3. /EGamma/Run2022G-22Sep2023-v2/NANOAOD
 ## References:
 1. https://gitlab.cern.ch/hhbbgg/HiggsDNA#worfklow
 2. https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookStartingGrid#BasicGrid
-3. https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookXrootdService 
+3. https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookXrootdService
 4. https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideRunningGridPrerequisites#Test_your_grid_certificate
 5. Grid Computing Guide: https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookStartingGrid
 6. VOMS Proxy Documentation: https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideRunningGridPrerequisites#Test_your_grid_certificate
