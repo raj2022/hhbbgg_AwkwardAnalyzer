@@ -1,6 +1,9 @@
+import os
 def getXsec(samplename):
-    #samplename = str(samplename).split("/")[-1].replace(".root", "")
-    samplename = str(samplename).split("/")[-1]
+    sampdlename = str(samplename).split("/")[-1].replace(".root", "").strip()
+    print(f"Extracted sample name: '{samplename}'")  # Debugging line
+
+    #samplename = str(samplename).split("/")[-1]
     # Branching ratio
     BR_HToGG = 2.270e-03
     BR_HTobb = 5.824e-01
@@ -10,11 +13,11 @@ def getXsec(samplename):
         xsec = 1.0
     elif "GGJets" in samplename:
         xsec = 88.75
-    elif "GJetPt20To40" in samplename:
+    elif "GJetPt20to40" in samplename:
         xsec = 242.5
     elif "GJetPt40" in samplename:
         xsec = 919.1
-    elif "GluGluHToGG" in samplename:
+    elif "GluGluHtoGG" in samplename:
         xsec = 52.23 * BR_HToGG
     elif "ttHToGG" in samplename:
         xsec = 0.0013

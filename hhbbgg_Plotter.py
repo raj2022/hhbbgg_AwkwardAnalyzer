@@ -332,7 +332,7 @@ def stack1d_histograms(
 
 def main():
     # Open the ROOT file
-    file_path = "outputfiles/hhbbgg_analyzer-histograms.root"
+    file_path = "outputfiles/hhbbgg_analyzer_v2-histograms.root"
     uproot_loaded_filename = uproot.open(file_path)
 
     # List of data histograms
