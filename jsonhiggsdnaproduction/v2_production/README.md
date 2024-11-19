@@ -12,7 +12,7 @@ While for the v2 production, we are following the instructions as given in here,
 1. **Clone the HiggsDNA Repository**
    - You can use either the main [HiggsDNA project](https://gitlab.cern.ch/HiggsDNA-project/HiggsDNA) or the [hhbbgg branch](https://gitlab.cern.ch/hhbbgg/HiggsDNA):
      ```bash
-     git clone ssh://git@gitlab.cern.ch:7999/hhbbgg/HiggsDNA.git
+     git clone --branch HHbbgg_v2_parquet ssh://git@gitlab.cern.ch:7999/cms-analysis/general/HiggsDNA.git
      cd HiggsDNA
      ```
 
@@ -31,7 +31,11 @@ While for the v2 production, we are following the instructions as given in here,
      pip install -e .[dev] # Install additional development dependencies
      ```
 
-3. **Set Up Voms Proxy (if not already done)**
+3. Following the above, we can download all necessary files
+```bash
+python higgs-dna/samples/pull_files.py --all
+```
+4. **Set Up Voms Proxy (if not already done)**
    - Follow the instructions provided [here](https://uscms.org/uscms_at_work/computing/getstarted/get_grid_cert.shtml).
    - Setup `VOMS`:
 	```bash
@@ -109,7 +113,8 @@ cd tests
 python ../scripts/run_analysis.py --json-analysis HHbbgg_xrootd.json --dump ../../../../output_parquet/ --skipCQR --executor futures
 ```
 ## Data Production
-2022PostEE data stored in here,
+2022PostEE data stored in here, the link can corresponding to each dataset are also provided in here, https://gitlab.cern.ch/hhbbgg/docs/-/blob/v2_ReadMe/dataset_lists_parquet_v1.md?ref_type=heads#background-samples
+
 1. /EGamma/Run2022E-22Sep2023-v1/NANOAOD
 2. /EGamma/Run2022F-22Sep2023-v1/NANOAOD
 3. /EGamma/Run2022G-22Sep2023-v2/NANOAOD
@@ -120,6 +125,12 @@ python scripts/run_analysis.py --json-analysis My_Json_data.json --dump ../../..
 ```
 `--skipbadfiles` only while doing simulation, not while going to final prodcutions.
 
+complete set of commands on lxplus
+```bash
+cd Analysis
+mamba activate higgs-dna
+voms-proxy-init --rfc --voms cms -valid 192:00
+python scripts/run_analysis.py --json-analysis My_Json_data.json --dump ../../../output_parquet/v2_production/data/ --executor futures --skipbadfiles
 
 ## References:
 1. https://gitlab.cern.ch/hhbbgg/HiggsDNA#worfklow
