@@ -108,7 +108,11 @@ To run the smaple with the above `.json` files, we can run the command
 cd tests
 python ../scripts/run_analysis.py --json-analysis HHbbgg_xrootd.json --dump ../../../../output_parquet/ --skipCQR --executor futures
 ```
-
+## Data Production
+2022PostEE data stored in here, 
+1. /EGamma/Run2022E-22Sep2023-v1/NANOAOD
+2. /EGamma/Run2022F-22Sep2023-v1/NANOAOD
+3. /EGamma/Run2022G-22Sep2023-v2/NANOAOD
 ## References:
 1. https://gitlab.cern.ch/hhbbgg/HiggsDNA#worfklow
 2. https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookStartingGrid#BasicGrid
