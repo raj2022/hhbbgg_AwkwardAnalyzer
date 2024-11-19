@@ -131,6 +131,10 @@ cd Analysis
 mamba activate higgs-dna
 voms-proxy-init --rfc --voms cms -valid 192:00
 python scripts/run_analysis.py --json-analysis My_Json_data.json --dump ../../../output_parquet/v2_production/data/ --executor futures --skipbadfiles
+```
+
+
+
 
 ## References:
 1. https://gitlab.cern.ch/hhbbgg/HiggsDNA#worfklow
