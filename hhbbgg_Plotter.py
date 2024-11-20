@@ -341,9 +341,9 @@ def main():
     # List of MC processes
     mc_samples = [
         "GGJets",
-        "GJetPt20To40",
+        "GJetPt20to40",
         "GJetPt40",
-        "GluGluHToGG",
+        "GluGluHtoGG",
         "VBFHToGG",
         "VHToGG",
         "ttHToGG",
@@ -410,13 +410,12 @@ def main():
     # Dictionary for legends
     legend_dict = {
         "GGJets": r"$\gamma\gamma$+jets",
-        "GJetPt20To40": r"$\gamma$+jets ($20< p_T < 40$)",
+        "GJetPt20to40": r"$\gamma$+jets ($20< p_T < 40$)",
         "GJetPt40": r"$\gamma$+jets ($p_T > 40$)",
-        "GluGluHToGG": r"$gg\rightarrow\,H\rightarrow\gamma\gamma$",
+        "GluGluHtoGG": r"$gg\rightarrow\,H\rightarrow\gamma\gamma$",
         "VBFHToGG": r"$VBF\:H\rightarrow\gamma\gamma$",
         "VHToGG": r"$V\:H\rightarrow\gamma\gamma$",
         "ttHToGG": r"$t\bar{t}H\rightarrow\gamma\gamma$",
-        "GluGluToHH": r"$gg\rightarrow\,HH$ \times 10",
         # NMSSM samples legends
         #"NMSSM_X300_Y60": r"$NMSSM\_X300\_Y60$",
         #"NMSSM_X300_Y70": r"$NMSSM\_X300\_Y70$",
