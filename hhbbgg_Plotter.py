@@ -352,7 +352,7 @@ def main():
     # List of signal processes
     signal_samples = [
        # "GluGluToHH",
-       "NMSSM_X300_Y60",
+       "NMSSM_X300_Y60",   # updating signal sample
      ]
 
     #signal_samples = [
