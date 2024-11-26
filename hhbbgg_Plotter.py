@@ -121,9 +121,18 @@ def stack1d_histograms(
     blind=True,
 ):
     for hist_name in histogram_names:
+        # Determine size based on number of MC samples or histogram width
+        dynamic_width = max(8, len(mc_samples) * 1.5)  # Adjust width based on MC samples
+        dynamic_height = 12  # Default height
         fig, (ax, ax_ratio) = plt.subplots(
-            2, 1, gridspec_kw={"height_ratios": [3, 1]}, sharex=True
+            2, 1,
+            figsize=(dynamic_width, dynamic_height),
+            gridspec_kw={"height_ratios": [3, 1]},
+            sharex=True
         )
+        #fig, (ax, ax_ratio) = plt.subplots(
+        #    2, 1, gridspec_kw={"height_ratios": [3, 1]}, sharex=True
+        #)
         fig.subplots_adjust(
             hspace=0.05
         )  # Adjust space between main plot and ratio plot
@@ -351,7 +360,8 @@ def main():
 
     # List of signal processes
     signal_samples = [
-        "GluGluToHH",
+        #"GluGluToHH",
+        "NMSSM_X300_Y60",
      ]
 
     #signal_samples = [
@@ -416,6 +426,7 @@ def main():
         "VBFHToGG": r"$VBF\:H\rightarrow\gamma\gamma$",
         "VHToGG": r"$V\:H\rightarrow\gamma\gamma$",
         "ttHToGG": r"$t\bar{t}H\rightarrow\gamma\gamma$",
+        "NMSSM_X300_Y60": "NMSSM_X300_Y60 × 10",
         # NMSSM samples legends
         #"NMSSM_X300_Y60": r"$NMSSM\_X300\_Y60$",
         #"NMSSM_X300_Y70": r"$NMSSM\_X300\_Y70$",
