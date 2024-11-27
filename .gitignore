@@ -8,3 +8,5 @@ outputfiles/*.root
 outputfiles/*.ipynb
 **.ipynb_checkpoints
 **.vscode
+bdt/notebook/**/*.pt
+bdt/notebook/**/*.pth

@@ -66,7 +66,17 @@ cmsrel CMSSW_13_0_17
 cd CMSSW_13_0_17/src
 cmsenv
 ```
-
+other methods can be 
+```bash
+source /cvmfs/cms.cern.ch/cmsset_default.sh
+cmsrel CMSSW_X_Y_Z  # Replace X_Y_Z with the desired release version
+cd CMSSW_X_Y_Z/src
+cmsenv
+```
+further, compile and test using
+```bash
+scram b -j 8  # Adjust the number 8 depending on the number of cores available
+```
 To be able to check out specific CMSSW packages from GitHub, you will need to configure your local account. You only have to do this command once for any given cluster you are working on, such as lxplus:
 
 ```bash
@@ -336,6 +346,9 @@ eg.
 ```bash
 python scripts/postprocessing/convert_parquet_to_root.py ../../../output_parquet/merged/NMSSM_X300_Y100/nominal/NOTAG_NOTAG_merged.parquet ../../../output_root/NMSSM_X300_Y100/NMSSM_X300_Y100.root mc
 ```
+## LCG environment and Containers
+Container instructions: https://cms-ml.github.io/documentation/software_envs/containers.html
+LCG environemnt: https://cms-ml.github.io/documentation/software_envs/lcg_environments.html
 
 ## Setup ROOT
 ### Instruction to setup root(Ubuntu)
