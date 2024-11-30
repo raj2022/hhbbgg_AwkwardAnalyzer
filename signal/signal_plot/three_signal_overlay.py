@@ -20,3 +20,8 @@ plt.rcParams["axes.prop_cycle"] = cycler(
         "#717581", "#92dadd",
     ]
 )
+
+
+# root file reading Mx=300 GeV, My=60 GeV, Mx=650 GeV, My= 90 GeV Mx=1200 GeV, My =200 GeV
+
+NMSSM_X300_Y60 = ../
