@@ -360,8 +360,13 @@ def main():
 
     # List of signal processes
     signal_samples = [
+<<<<<<< Updated upstream
         #"GluGluToHH",
         "NMSSM_X300_Y60",
+=======
+       # "GluGluToHH",
+       "NMSSM_X300_Y60",   # updating signal sample
+>>>>>>> Stashed changes
      ]
 
     #signal_samples = [
@@ -426,7 +431,15 @@ def main():
         "VBFHToGG": r"$VBF\:H\rightarrow\gamma\gamma$",
         "VHToGG": r"$V\:H\rightarrow\gamma\gamma$",
         "ttHToGG": r"$t\bar{t}H\rightarrow\gamma\gamma$",
+<<<<<<< Updated upstream
         "NMSSM_X300_Y60": "NMSSM_X300_Y60 × 10",
+=======
+<<<<<<< HEAD
+=======
+        #"GluGluToHH": r"$gg\rightarrow\,HH$ \times 10",
+        "NMSSM_X300_Y60": r"$NMSSM\_X_{300}\_Y_{60} \times 10$",
+>>>>>>> 190abdb7c78ec52439746e9c3033d08a1b061f63
+>>>>>>> Stashed changes
         # NMSSM samples legends
         #"NMSSM_X300_Y60": r"$NMSSM\_X300\_Y60$",
         #"NMSSM_X300_Y70": r"$NMSSM\_X300\_Y70$",
