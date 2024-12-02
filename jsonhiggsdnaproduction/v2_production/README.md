@@ -143,6 +143,8 @@ cd Analysis
 mamba activate higgs-dna
 voms-proxy-init --rfc --voms cms -valid 192:00
 python scripts/run_analysis.py --json-analysis My_Json_data.json --dump ../../../output_parquet/v2_production/data/ --executor futures --skipbadfiles
+python3 prepare_output_file.py --input [path to output dir] --merge --root --ws --syst --cats --args "--do_syst"( python3 prepare_output_file.py --input ../../../output_parquet  --merge --root --ws --syst --cats --args "--do_syst")
+python scripts/postprocessing/convert_parquet_to_root.py ../../../output_parquet/merged/NMSSM_X400_Y70/nominal/NOTAG_merged.parquet ../../../output_root/NMSSM/NMSSM_X400_Y70.root mc
 ```
 
 
