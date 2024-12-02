@@ -146,7 +146,10 @@ python scripts/run_analysis.py --json-analysis My_Json_data.json --dump ../../..
 python3 prepare_output_file.py --input [path to output dir] --merge --root --ws --syst --cats --args "--do_syst"( python3 prepare_output_file.py --input ../../../output_parquet  --merge --root --ws --syst --cats --args "--do_syst")
 python scripts/postprocessing/convert_parquet_to_root.py ../../../output_parquet/merged/NMSSM_X400_Y70/nominal/NOTAG_merged.parquet ../../../output_root/NMSSM/NMSSM_X400_Y70.root mc
 ```
-
+for merging in v2 higgsDNA, we can work, 
+```bash
+python3 scripts/postprocessing/prepare_output_file.py --input ../../../output_parquet/v1_v2_comparison/  --merge --root --ws --syst --cats --args "--do_syst"
+```
 
 
 
