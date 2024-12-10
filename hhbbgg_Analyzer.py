@@ -289,9 +289,9 @@ def runOneFile(inputfile, outputrootfile):
         out_events["puppiMET_ptJERUp"] = cms_events["puppiMET_ptJERUp"]
         out_events["puppiMET_ptJESDown"] = cms_events["puppiMET_ptJESDown"]
         out_events["puppiMET_ptJESUp"] = cms_events["puppiMET_ptJESUp"]
-        # out_events["puppiMET_ptUnclusteredDown"] = cms_events["puppiMET_ptUnclusteredDown"]
-        # out_events["puppiMET_ptUnclusteredUp"] = cms_events["puppiMET_ptUnclusteredUp"]
-        # out_events["puppiMET_sumEt"] = cms_events["puppiMET_sumEt"]
+        out_events["puppiMET_ptUnclusteredDown"] = cms_events["puppiMET_ptUnclusteredDown"]
+        out_events["puppiMET_ptUnclusteredUp"] = cms_events["puppiMET_ptUnclusteredUp"]
+        out_events["puppiMET_sumEt"] = cms_events["puppiMET_sumEt"]
         ###--------------
         out_events["lead_pho_pt"] = cms_events["lead_pho_pt"]
         # Adding new variable

@@ -360,13 +360,8 @@ def main():
 
     # List of signal processes
     signal_samples = [
-<<<<<<< Updated upstream
         #"GluGluToHH",
         "NMSSM_X300_Y60",
-=======
-       # "GluGluToHH",
-       "NMSSM_X300_Y60",   # updating signal sample
->>>>>>> Stashed changes
      ]
 
     #signal_samples = [
@@ -431,15 +426,9 @@ def main():
         "VBFHToGG": r"$VBF\:H\rightarrow\gamma\gamma$",
         "VHToGG": r"$V\:H\rightarrow\gamma\gamma$",
         "ttHToGG": r"$t\bar{t}H\rightarrow\gamma\gamma$",
-<<<<<<< Updated upstream
         "NMSSM_X300_Y60": "NMSSM_X300_Y60 × 10",
-=======
-<<<<<<< HEAD
-=======
         #"GluGluToHH": r"$gg\rightarrow\,HH$ \times 10",
         "NMSSM_X300_Y60": r"$NMSSM\_X_{300}\_Y_{60} \times 10$",
->>>>>>> 190abdb7c78ec52439746e9c3033d08a1b061f63
->>>>>>> Stashed changes
         # NMSSM samples legends
         #"NMSSM_X300_Y60": r"$NMSSM\_X300\_Y60$",
         #"NMSSM_X300_Y70": r"$NMSSM\_X300\_Y70$",
@@ -555,12 +544,12 @@ def main():
     specific_variable_names = [
         "puppiMET_pt",
         "puppiMET_phi",
-        # "puppiMET_phiJERDown", "puppiMET_phiJERUp", "puppiMET_phiJESDown",
-        # "puppiMET_phiJESUp", "puppiMET_phiUnclusteredDown",
-        # "puppiMET_phiUnclusteredUp", "puppiMET_ptJERDown",
-        # "puppiMET_ptJERUp", "puppiMET_ptJESDown",
-        # "puppiMET_ptJESUp", "puppiMET_ptUnclusteredDown",
-        # "puppiMET_ptUnclusteredUp", "puppiMET_sumEt"
+        "puppiMET_phiJERDown", "puppiMET_phiJERUp", "puppiMET_phiJESDown",
+        "puppiMET_phiJESUp", "puppiMET_phiUnclusteredDown",
+        "puppiMET_phiUnclusteredUp", "puppiMET_ptJERDown",
+        "puppiMET_ptJERUp", "puppiMET_ptJESDown",
+        "puppiMET_ptJESUp", "puppiMET_ptUnclusteredDown",
+        "puppiMET_ptUnclusteredUp", "puppiMET_sumEt"
     ]
 
     specific_regions = ["srbbggMET"]
@@ -623,15 +612,15 @@ def main():
         "dibjet_bbgg_mass": r"$p_T^{b\bar{b}}/m_{b\bar{b}\gamma\gamma}$",
         "puppiMET_pt": r"puppi $p_T^{miss}$ [GeV]",
         "puppiMET_phi": r"puppi $\phi^{miss}$",
-        # "puppiMET_phiJERDown": r"puppi $\phi^{JERDown}$",
-        # "puppiMET_phiJERUp": r"puppi $\phi^{JERUp}$",
-        # "puppiMET_phiJESDown": r"puppi $\phi^{JESDown}$",
-        # "puppiMET_phiUnclusteredDown": r"puppi $\phi^{UnclusterDown}$",
-        # "puppiMET_phiUnclusteredUp": r"puppi $\phi^{UnclusterUp}$",
-        # "puppiMET_ptJERDown": r"puppi $p_T^{JERDown}$ [GeV]",
-        # "puppiMET_ptJERUp": r"puppi $p_T^{JERUp}$ [GeV]",
-        # "puppiMET_ptJESDown": r"puppi $p_T^{JESDown}$ [GeV]",
-        # "puppiMET_ptJESUp": r"puppi $p_T^{JESUp}$ [GeV]",
+        "puppiMET_phiJERDown": r"puppi $\phi^{JERDown}$",
+        "puppiMET_phiJERUp": r"puppi $\phi^{JERUp}$",
+        "puppiMET_phiJESDown": r"puppi $\phi^{JESDown}$",
+        "puppiMET_phiUnclusteredDown": r"puppi $\phi^{UnclusterDown}$",
+        "puppiMET_phiUnclusteredUp": r"puppi $\phi^{UnclusterUp}$",
+        "puppiMET_ptJERDown": r"puppi $p_T^{JERDown}$ [GeV]",
+        "puppiMET_ptJERUp": r"puppi $p_T^{JERUp}$ [GeV]",
+        "puppiMET_ptJESDown": r"puppi $p_T^{JESDown}$ [GeV]",
+        "puppiMET_ptJESUp": r"puppi $p_T^{JESUp}$ [GeV]",
         "lead_pho_mvaID_WP90": r"lead_PhoMVAID90",
         "sublead_pho_mvaID_WP90": r"sublead_PhoMVAID90",
         "lead_pho_mvaID_WP80": r"lead_PhoMVAID80",
