@@ -151,8 +151,14 @@ for merging in v2 higgsDNA, we can work,
 python3 scripts/postprocessing/prepare_output_file.py --input ../../../output_parquet/v1_v2_comparison/  --merge --root --ws --syst --cats --args "--do_syst"
 ```
 
-
-
+For the V2, the production of sample including all syhstematics and corrections can be produced like,
+```bash
+ python scripts/run_analysis.py --json-analysis error.json --dump ../../../output_parquet/v2_production/ --doFlow_corrections --fiducialCuts store_flag --skipCQR --Smear_sigma_m --doDeco --executor futures
+```
+and to submit the jobs with `vanilla_lxplus`, 
+```bash
+python scripts/run_analysis.py --json-analysis error.json --dump ../../../output_parquet/v2_production/debugging/ --doFlow_corrections --fiducialCuts store_flag --skipCQR --Smear_sigma_m --doDeco --executor vanilla_lxplus --queue espresso
+```
 ## References:
 1. https://gitlab.cern.ch/hhbbgg/HiggsDNA#worfklow
 2. https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookStartingGrid#BasicGrid
