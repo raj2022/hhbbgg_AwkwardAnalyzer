@@ -159,6 +159,9 @@ and to submit the jobs with `vanilla_lxplus`,
 ```bash
 python scripts/run_analysis.py --json-analysis error.json --dump ../../../output_parquet/v2_production/debugging/ --doFlow_corrections --fiducialCuts store_flag --skipCQR --Smear_sigma_m --doDeco --executor vanilla_lxplus --queue espresso
 ```
+On the `lxplus_vanilla`, it can be checked here, https://higgs-dna.readthedocs.io/en/latest/jobs.html#lxplus-vanilla-submitter
+
+
 ## References:
 1. https://gitlab.cern.ch/hhbbgg/HiggsDNA#worfklow
 2. https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookStartingGrid#BasicGrid
