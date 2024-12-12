@@ -552,7 +552,7 @@ def main():
         "puppiMET_ptUnclusteredUp", "puppiMET_sumEt"
     ]
 
-    specific_regions = ["srbbggMET"]
+    specific_regions = ["preselection","srbbggMET"]
 
     histogram_names = [
         f"{region}-{variable_name}"
