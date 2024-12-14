@@ -164,7 +164,25 @@ The submitted job can be checked using,
 ```bash
 condor_q
 ```
-
+usage in higgs-dna,
+```bash
+usage: run_analysis.py [-h] --json-analysis JSON_ANALYSIS_FILE [--no-trigger]
+                       [-d DUMP] [-o OUTPUT] [--schema {nano,base}]
+                       [-f {root,parquet}]
+                       [--triggerGroup {.*DoubleEG.*,.*EGamma.*2018.*,.*EGamma.*,.*SingleEle.*,.*DoubleMuon.*}]
+                       [--analysis {mainAnalysis,tagAndProbe,ZmmyAnalysis}]
+                       [--save SAVE]
+                       [--executor {iterative,futures,parsl/slurm,parsl/condor,dask/condor,dask/slurm,dask/lpc,dask/lxplus,dask/casa,vanilla_lxplus}]
+                       [-j WORKERS] [-m MEMORY] [--walltime WALLTIME]
+                       [--disk DISK] [-s SCALEOUT]
+                       [--max-scaleout MAX_SCALEOUT] [-q QUEUE] [--voms VOMS]
+                       [--validate] [--skipbadfiles] [--only ONLY] [--limit N]
+                       [--chunk N] [--max N] [--skipCQR] [--skipJetVetoMap]
+                       [--debug]
+                       [--fiducialCuts {classical,geometric,store_flag,none}]
+                       [--doDeco] [--Smear_sigma_m] [--doFlow_corrections]
+                       [--output_format {root,parquet}]
+```
 ## References:
 1. https://gitlab.cern.ch/hhbbgg/HiggsDNA#worfklow
 2. https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookStartingGrid#BasicGrid
