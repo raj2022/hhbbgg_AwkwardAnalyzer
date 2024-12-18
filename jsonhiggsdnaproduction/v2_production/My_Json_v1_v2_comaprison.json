@@ -1,0 +1,90 @@
+{
+    "samplejson": "sample_v1_test_v1_v2_comparison.json",
+    "workflow": "HHbbgg",
+    "metaconditions": "Era2022_v1",
+    "year": {
+        "NMSSM_X300_Y60": [
+            "2022postEE"
+        ],
+        "NMSSM_X400_Y60": [
+            "2022postEE"
+        ],
+        "NMSSM_X500_Y60": [
+            "2022postEE"
+        ],
+        "NMSSM_X600_Y60": [
+            "2022postEE"
+        ],
+        "NMSSM_X700_Y60": [
+            "2022postEE"
+        ],
+        "Data_EraE": [
+            "2022postEE"
+        ],
+        "Data_EraF": [
+            "2022postEE"
+        ],
+        "Data_EraG": [
+            "2022postEE"
+        ]
+    },
+    "taggers": [],
+    "systematics": {
+        "NMSSM_X300_Y60": [
+            "Et_dependent_Smearing",
+            "Pileup"
+        ], 
+        "NMSSM_X400_Y60": [
+            "Et_dependent_Smearing",
+            "Pileup"
+        ], 
+        "NMSSM_X500_Y60": [
+            "Et_dependent_Smearing",
+            "Pileup"
+        ], 
+        "NMSSM_X600_Y60": [
+            "Et_dependent_Smearing",
+            "Pileup"
+        ], 
+        "NMSSM_X700_Y60": [
+            "Et_dependent_Smearing",
+            "Pileup"
+        ], 
+        "Data_EraE": [
+        ],
+        "Data_EraF": [
+        ],
+        "Data_EraG": [
+        ]
+    },
+    "corrections": {
+        "NMSSM_X300_Y60": [
+            "Et_dependent_Smearing",
+            "Pileup"
+        ], 
+        "NMSSM_X400_Y60": [
+            "Et_dependent_Smearing",
+            "Pileup"
+        ], 
+        "NMSSM_X500_Y60": [
+            "Et_dependent_Smearing",
+            "Pileup"
+        ], 
+        "NMSSM_X600_Y60": [
+            "Et_dependent_Smearing",
+            "Pileup"
+        ], 
+        "NMSSM_X700_Y60": [
+            "Et_dependent_Smearing",
+            "Pileup"
+        ], 
+        "Data_EraE": [
+        ],
+        "Data_EraF": [
+        ],
+        "Data_EraG": [
+        ]
+    },
+    "analysis": "mainAnalysis"
+}
+

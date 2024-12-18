@@ -1,0 +1,75 @@
+{
+    "samplejson": "sample_non-resonanat_background.json",
+    "workflow": "HHbbgg",
+    "metaconditions": "Era2022_v1",
+    "year": {
+        "GGJets": [
+            "2022postEE"
+        ],
+        "GJetPt20To40": [
+            "2022postEE"
+        ],
+        "GJetPt40": [
+            "2022postEE"
+        ]
+    },
+    "taggers": [],
+    "systematics": {
+        "GGJets": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+
+        ],
+        "GJetPt20To40": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "GJetPt40": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ]
+
+    },
+    "corrections": {
+        "GGJets": [
+            "jerc_jet",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "GJetPt20To40": [
+            "jerc_jet",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "GJetPt40": [
+            "jerc_jet",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ]
+    },
+    "analysis": "mainAnalysis"
+}

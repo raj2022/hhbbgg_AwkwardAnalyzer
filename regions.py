@@ -68,12 +68,12 @@ def get_mask_srbbgg(cms_events):    # Pass medium Btag and pass tight photonID
 
 def get_mask_srbbggMET(cms_events):
     mask_srbbggMET = (
-        (cms_events.lead_pho_mvaID_WP80 == 1)
+        (cms_events.lead_pho_mvaID_WP80 == 1) # Tight working point(80% efficiency)
         & (cms_events.sublead_pho_mvaID_WP80 == 1)
         & (cms_events.lead_bjet_PNetB > 0.2605)
         & (cms_events.sublead_bjet_PNetB > 0.2605)
-        & (cms_events.lead_isScEtaEB == 1)
-        & (cms_events.sublead_isScEtaEB == 1)
+        & (cms_events.lead_isScEtaEB == 1)     # photon in the barrel region 
+        & (cms_events.sublead_isScEtaEB == 1)  # photon in the barrel region 
         & (
             (
                 (cms_events.signal == 0)
@@ -90,6 +90,7 @@ def get_mask_srbbggMET(cms_events):
         )
     )
     return mask_srbbggMET
+
 
 
 def get_mask_crantibbgg(cms_events):   # Fail medium Btag and pass tight photonID

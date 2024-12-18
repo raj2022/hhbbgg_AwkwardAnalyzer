@@ -1,0 +1,95 @@
+{
+    "samplejson": "sample_resonant_background.json",
+    "workflow": "HHbbgg",
+    "metaconditions": "Era2022_v1",
+    "year": {
+        "GluGluHtoGG": [
+            "2022postEE"
+        ],
+        "ttHtoGG": [
+            "2022postEE"
+        ],
+        "VBFHToGG": [
+            "2022postEE"
+        ],
+        "VHtoGG": [
+            "2022postEE"
+        ]
+    },
+    "taggers": [],
+    "systematics": {
+        "GluGluHtoGG": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+
+        ],
+        "ttHtoGG": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "VBFHToGG": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "VHtoGG": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ]
+
+    },
+    "corrections": {
+        "GluGluHtoGG": [
+            "jerc_jet",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "ttHtoGG": [
+            "jerc_jet",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "VBFHToGG": [
+            "jerc_jet",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "VHtoGG": [
+            "jerc_jet",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ]
+    },
+    "analysis": "mainAnalysis"
+}

@@ -104,6 +104,8 @@ To run the smaple with the above `.json` files, we can run the command
 # Make sure you are in the hhbbgg/HiggsDNA folder
 cd tests
 python ../scripts/run_analysis.py --json-analysis HHbbgg_xrootd.json --dump ../../../../output_parquet/ --skipCQR --executor futures
+python3 prepare_output_file.py --input [path to output dir] --merge --root --ws --syst --cats --args "--do_syst"( python3 prepare_output_file.py --input ../../../output_parquet  --merge --root --ws --syst --cats --args "--do_syst")
+python scripts/postprocessing/convert_parquet_to_root.py ../../../output_parquet/merged/NMSSM_X400_Y70/nominal/NOTAG_merged.parquet ../../../output_root/NMSSM/NMSSM_X400_Y70.root mc
 ```
 
 ## References:

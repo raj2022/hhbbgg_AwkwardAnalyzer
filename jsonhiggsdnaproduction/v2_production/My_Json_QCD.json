@@ -1,0 +1,75 @@
+{
+    "samplejson": "sample_QCD_background.json",
+    "workflow": "HHbbgg",
+    "metaconditions": "Era2022_v1",
+    "year": {
+        "QCD_PT30to40": [
+            "2022postEE"
+        ],
+        "QCD_PT30toinf": [
+            "2022postEE"
+        ],
+        "QCD_PT40toinf": [
+            "2022postEE"
+        ]
+    },
+    "taggers": [],
+    "systematics": {
+        "QCD_PT30to40": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+
+        ],
+        "QCD_PT30toinf": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "QCD_PT40toinf": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ]
+
+    },
+    "corrections": {
+        "QCD_PT30to40": [
+            "jerc_jet",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "QCD_PT30toinf": [
+            "jerc_jet",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "QCD_PT40toinf": [
+            "jerc_jet",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ]
+    },
+    "analysis": "mainAnalysis"
+}

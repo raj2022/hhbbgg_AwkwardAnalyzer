@@ -421,7 +421,16 @@ root -v
 ```
 
 ## Git Commands
-
+To clone/pull all branch at once from the github, as for example we are taking our hhbbgg_analyzer file, `git@github.com:raj2022/hhbbgg_AwkwardAnalyzer.git`
+- `git checkout --track "branch name"`
+Examples, 
+```bash
+git checkout --track origin/NMSSM
+```
+ and 
+```bash
+git checkout --track origin/v2_higgsdna
+```
 ### Configuration
 - `git config --global user.name "Your Name"`: Sets your name in Git configuration.
 - `git config --global user.email "you@example.com"`: Sets your email in Git configuration.
