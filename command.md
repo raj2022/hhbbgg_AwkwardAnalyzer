@@ -818,3 +818,6 @@ git checkout --track origin/v2_higgsdna
 - `uname -a`: Display system information.
 
 ---
+## Vim
+Vim commands can be found at,
+https://github.com/raj2022/_Practice_/tree/main/vim
