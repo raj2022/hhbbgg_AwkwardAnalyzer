@@ -183,7 +183,16 @@ usage: run_analysis.py [-h] --json-analysis JSON_ANALYSIS_FILE [--no-trigger]
                        [--doDeco] [--Smear_sigma_m] [--doFlow_corrections]
                        [--output_format {root,parquet}]
 ```
-## References:
+## `vanills_lxplus` submission and working
+Example on the submission of NMSSM signal submission with on lxplus:
+```bash
+mamba activate higgs-dna    #Higgs-dna activation
+voms-proxy-init --rfc --voms cms -valid 192:00  #Voms activation
+python /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/parquet_production/HiggsDNA/scripts/run_analysis.py --json-analysis My_Json_300.json --dump /afs/cern.ch/user/s/sraj/private/output/ --doFlow_corrections --fiducialCuts store_flag --skipCQR --Smear_sigma_m --doDeco --executor vanilla_lxplus --queue espresso # for sample production with all selections
+```
+
+
+# References:
 1. https://gitlab.cern.ch/hhbbgg/HiggsDNA#worfklow
 2. https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookStartingGrid#BasicGrid
 3. https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookXrootdService
