@@ -188,10 +188,14 @@ Example on the submission of NMSSM signal submission with on lxplus:
 ```bash
 mamba activate higgs-dna    #Higgs-dna activation
 voms-proxy-init --rfc --voms cms -valid 192:00  #Voms activation
+# Run the following command in afs(as we have errors in the eos), for our case, `/afs/cern.ch/user/s/sraj/private/`
 python /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/parquet_production/HiggsDNA/scripts/run_analysis.py --json-analysis My_Json_300.json --dump /afs/cern.ch/user/s/sraj/private/output/ --doFlow_corrections --fiducialCuts store_flag --skipCQR --Smear_sigma_m --doDeco --executor vanilla_lxplus --queue espresso # for sample production with all selections on the Monte Carlo
 ```
-
-
+After sample production,
+for merging the folder, running the script from the higgsDNA folder
+```bash
+python3 scripts/postprocessing/prepare_output_file.py --input ../../../output_parquet/final_v2_production/  --merge --root --ws --syst --cats --args "--do_syst"
+```
 # References:
 1. https://gitlab.cern.ch/hhbbgg/HiggsDNA#worfklow
 2. https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookStartingGrid#BasicGrid
