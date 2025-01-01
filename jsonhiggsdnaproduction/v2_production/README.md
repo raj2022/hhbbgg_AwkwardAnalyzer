@@ -184,7 +184,7 @@ usage: run_analysis.py [-h] --json-analysis JSON_ANALYSIS_FILE [--no-trigger]
                        [--output_format {root,parquet}]
 ```
 ## `vanills_lxplus` submission and working
-Example on the submission of NMSSM signal submission with on lxplus:
+Example on the submission of NMSSM signal submission with on lxplus(running on the private folder of afs):
 ```bash
 mamba activate higgs-dna    #Higgs-dna activation
 voms-proxy-init --rfc --voms cms -valid 192:00  #Voms activation
