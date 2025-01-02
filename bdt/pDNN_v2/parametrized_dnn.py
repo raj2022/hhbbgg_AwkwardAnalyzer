@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader, TensorDataset
 import numpy as np
 import os
 
-# Define a Parametrized DNN class
+# Parametrized DNN class
 class ParametrizedDNN(nn.Module):
     def __init__(self, input_size, hidden_sizes, output_size, activation='relu', dropout_rate=0.0):
         super(ParametrizedDNN, self).__init__()
