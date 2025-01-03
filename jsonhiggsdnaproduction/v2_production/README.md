@@ -196,6 +196,8 @@ for merging the folder, running the script from the higgsDNA folder
 ```bash
 python3 scripts/postprocessing/prepare_output_file.py --input ../../../output_parquet/final_v2_production/  --merge --root --ws --syst --cats --args "--do_syst"
 ```
+For the root file conversion,we can add word "NOTAG" and further use the commandas we used earlier. 
+
 # References:
 1. https://gitlab.cern.ch/hhbbgg/HiggsDNA#worfklow
 2. https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookStartingGrid#BasicGrid
