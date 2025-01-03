@@ -98,6 +98,12 @@ chmod +x filename_change.sh
 ./filename_change.sh "merged parquet file directory"( for this case while running from higgsDNA, ../../../output_parquet/v2_production/merged)
 ```
 
+To run the file, [filename_change.sh](https://github.com/raj2022/hhbbgg_AwkwardAnalyzer/blob/main/jsonhiggsdnaproduction/filename_change.sh), we can do
+```bash
+chmod +x filename_change.sh
+./filename_change.sh "merged parquet file directory"( for this case while running from higgsDNA, ../../../output_parquet/v2_production/merged)
+```
+
 Further, to convert to `.root` files, eg:-
 ```bash
 python scripts/postprocessing/convert_parquet_to_root.py ../../../output_parquet/merged/NMSSM_X400_Y70/nominal/NOTAG_merged.parquet ../../../output_root/NMSSM/NMSSM_X400_Y70.root mc
