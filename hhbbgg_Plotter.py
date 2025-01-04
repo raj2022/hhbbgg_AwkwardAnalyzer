@@ -121,9 +121,18 @@ def stack1d_histograms(
     blind=True,
 ):
     for hist_name in histogram_names:
+        # Determine size based on number of MC samples or histogram width
+        dynamic_width = max(8, len(mc_samples) * 1.5)  # Adjust width based on MC samples
+        dynamic_height = 12  # Default height
         fig, (ax, ax_ratio) = plt.subplots(
-            2, 1, gridspec_kw={"height_ratios": [3, 1]}, sharex=True
+            2, 1,
+            figsize=(dynamic_width, dynamic_height),
+            gridspec_kw={"height_ratios": [3, 1]},
+            sharex=True
         )
+        #fig, (ax, ax_ratio) = plt.subplots(
+        #    2, 1, gridspec_kw={"height_ratios": [3, 1]}, sharex=True
+        #)
         fig.subplots_adjust(
             hspace=0.05
         )  # Adjust space between main plot and ratio plot
@@ -332,7 +341,7 @@ def stack1d_histograms(
 
 def main():
     # Open the ROOT file
-    file_path = "outputfiles/hhbbgg_analyzer-histograms.root"
+    file_path = "outputfiles/hhbbgg_analyzer_v2-histograms.root"
     uproot_loaded_filename = uproot.open(file_path)
 
     # List of data histograms
@@ -341,9 +350,9 @@ def main():
     # List of MC processes
     mc_samples = [
         "GGJets",
-        "GJetPt20To40",
+        "GJetPt20to40",
         "GJetPt40",
-        "GluGluHToGG",
+        "GluGluHtoGG",
         "VBFHToGG",
         "VHToGG",
         "ttHToGG",
@@ -351,7 +360,8 @@ def main():
 
     # List of signal processes
     signal_samples = [
-        "GluGluToHH",
+        #"GluGluToHH",
+        "NMSSM_X300_Y60",
      ]
 
     #signal_samples = [
@@ -410,13 +420,15 @@ def main():
     # Dictionary for legends
     legend_dict = {
         "GGJets": r"$\gamma\gamma$+jets",
-        "GJetPt20To40": r"$\gamma$+jets ($20< p_T < 40$)",
+        "GJetPt20to40": r"$\gamma$+jets ($20< p_T < 40$)",
         "GJetPt40": r"$\gamma$+jets ($p_T > 40$)",
-        "GluGluHToGG": r"$gg\rightarrow\,H\rightarrow\gamma\gamma$",
+        "GluGluHtoGG": r"$gg\rightarrow\,H\rightarrow\gamma\gamma$",
         "VBFHToGG": r"$VBF\:H\rightarrow\gamma\gamma$",
         "VHToGG": r"$V\:H\rightarrow\gamma\gamma$",
         "ttHToGG": r"$t\bar{t}H\rightarrow\gamma\gamma$",
-        "GluGluToHH": r"$gg\rightarrow\,HH$ \times 10",
+        "NMSSM_X300_Y60": "NMSSM_X300_Y60 × 10",
+        #"GluGluToHH": r"$gg\rightarrow\,HH$ \times 10",
+        "NMSSM_X300_Y60": r"$NMSSM\_X_{300}\_Y_{60} \times 10$",
         # NMSSM samples legends
         #"NMSSM_X300_Y60": r"$NMSSM\_X300\_Y60$",
         #"NMSSM_X300_Y70": r"$NMSSM\_X300\_Y70$",
@@ -532,15 +544,15 @@ def main():
     specific_variable_names = [
         "puppiMET_pt",
         "puppiMET_phi",
-        # "puppiMET_phiJERDown", "puppiMET_phiJERUp", "puppiMET_phiJESDown",
-        # "puppiMET_phiJESUp", "puppiMET_phiUnclusteredDown",
-        # "puppiMET_phiUnclusteredUp", "puppiMET_ptJERDown",
-        # "puppiMET_ptJERUp", "puppiMET_ptJESDown",
-        # "puppiMET_ptJESUp", "puppiMET_ptUnclusteredDown",
-        # "puppiMET_ptUnclusteredUp", "puppiMET_sumEt"
+        "puppiMET_phiJERDown", "puppiMET_phiJERUp", "puppiMET_phiJESDown",
+        "puppiMET_phiJESUp", "puppiMET_phiUnclusteredDown",
+        "puppiMET_phiUnclusteredUp", "puppiMET_ptJERDown",
+        "puppiMET_ptJERUp", "puppiMET_ptJESDown",
+        "puppiMET_ptJESUp", "puppiMET_ptUnclusteredDown",
+        "puppiMET_ptUnclusteredUp", "puppiMET_sumEt"
     ]
 
-    specific_regions = ["srbbggMET"]
+    specific_regions = ["preselection","srbbggMET"]
 
     histogram_names = [
         f"{region}-{variable_name}"
@@ -600,15 +612,15 @@ def main():
         "dibjet_bbgg_mass": r"$p_T^{b\bar{b}}/m_{b\bar{b}\gamma\gamma}$",
         "puppiMET_pt": r"puppi $p_T^{miss}$ [GeV]",
         "puppiMET_phi": r"puppi $\phi^{miss}$",
-        # "puppiMET_phiJERDown": r"puppi $\phi^{JERDown}$",
-        # "puppiMET_phiJERUp": r"puppi $\phi^{JERUp}$",
-        # "puppiMET_phiJESDown": r"puppi $\phi^{JESDown}$",
-        # "puppiMET_phiUnclusteredDown": r"puppi $\phi^{UnclusterDown}$",
-        # "puppiMET_phiUnclusteredUp": r"puppi $\phi^{UnclusterUp}$",
-        # "puppiMET_ptJERDown": r"puppi $p_T^{JERDown}$ [GeV]",
-        # "puppiMET_ptJERUp": r"puppi $p_T^{JERUp}$ [GeV]",
-        # "puppiMET_ptJESDown": r"puppi $p_T^{JESDown}$ [GeV]",
-        # "puppiMET_ptJESUp": r"puppi $p_T^{JESUp}$ [GeV]",
+        "puppiMET_phiJERDown": r"puppi $\phi^{JERDown}$",
+        "puppiMET_phiJERUp": r"puppi $\phi^{JERUp}$",
+        "puppiMET_phiJESDown": r"puppi $\phi^{JESDown}$",
+        "puppiMET_phiUnclusteredDown": r"puppi $\phi^{UnclusterDown}$",
+        "puppiMET_phiUnclusteredUp": r"puppi $\phi^{UnclusterUp}$",
+        "puppiMET_ptJERDown": r"puppi $p_T^{JERDown}$ [GeV]",
+        "puppiMET_ptJERUp": r"puppi $p_T^{JERUp}$ [GeV]",
+        "puppiMET_ptJESDown": r"puppi $p_T^{JESDown}$ [GeV]",
+        "puppiMET_ptJESUp": r"puppi $p_T^{JESUp}$ [GeV]",
         "lead_pho_mvaID_WP90": r"lead_PhoMVAID90",
         "sublead_pho_mvaID_WP90": r"sublead_PhoMVAID90",
         "lead_pho_mvaID_WP80": r"lead_PhoMVAID80",

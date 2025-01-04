@@ -112,6 +112,18 @@ variables_common = {
         "sublead_pho_mvaID_WP80",
         "lead_pho_mvaID",
         "sublead_pho_mvaID",
+        "puppiMET_pt", 
+        "puppiMET_phi", 
+        "puppiMET_phiJERDown",
+        "puppiMET_phiJERUp",
+        "puppiMET_phiJESDown", 
+        "puppiMET_phiJESUp", 
+        "puppiMET_phiUnclusteredDown", 
+        "puppiMET_phiUnclusteredUp",
+        "puppiMET_ptJERDown", 
+        "puppiMET_ptJERUp", 
+        "puppiMET_ptJESDown", 
+        "puppiMET_ptJESUp"
     ]
 }
 

@@ -1,0 +1,50 @@
+{
+    "samplejson": "data_eraG.json",
+    "workflow": "HHbbgg",
+    "metaconditions": "Era2022_v1",
+    "year": {
+        "Data_EraE": [
+            "2022postEE"
+        ],
+        "Data_EraF": [
+            "2022postEE"
+        ],
+        "Data_EraG": [
+            "2022postEE"
+        ]
+    },
+    "taggers": [],
+    "systematics": {
+        "Data_EraE": [
+        ],
+        "Data_EraF": [
+        ],
+        "Data_EraG": [
+        ]
+    },
+    "corrections": {
+        "Data_EraE": [
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "Data_EraF": [
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "Data_EraG": [
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ]
+    },
+    "analysis": "mainAnalysis"
+}
+

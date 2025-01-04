@@ -421,7 +421,16 @@ root -v
 ```
 
 ## Git Commands
-
+To clone/pull all branch at once from the github, as for example we are taking our hhbbgg_analyzer file, `git@github.com:raj2022/hhbbgg_AwkwardAnalyzer.git`
+- `git checkout --track "branch name"`
+Examples, 
+```bash
+git checkout --track origin/NMSSM
+```
+ and 
+```bash
+git checkout --track origin/v2_higgsdna
+```
 ### Configuration
 - `git config --global user.name "Your Name"`: Sets your name in Git configuration.
 - `git config --global user.email "you@example.com"`: Sets your email in Git configuration.
@@ -809,3 +818,216 @@ root -v
 - `uname -a`: Display system information.
 
 ---
+## Vim
+Vim commands can be found at,
+https://github.com/raj2022/_Practice_/tree/main/vim
+
+
+## Condor commands 
+# HTCondor Commands on LXPLUS
+
+This document lists commonly used **HTCondor** commands for submitting and managing batch jobs on CERN's LXPLUS.
+
+---
+
+## Job Submission
+
+### 1. Submit a Job
+```bash
+condor_submit <submit_file>
+```
+Submit a job using a Condor submit description file.
+
+### 2. Submit a DAG Job
+```bash
+condor_submit_dag <dag_file>
+```
+Submit a Directed Acyclic Graph (DAG) job.
+
+---
+
+## Monitoring and Querying Jobs
+
+### 3. Check Job Status
+```bash
+condor_q
+```
+Show the status of jobs in the queue for the current user.
+
+#### Options:
+- View all jobs:
+  ```bash
+  condor_q -all
+  ```
+- Check jobs for a specific user:
+  ```bash
+  condor_q <username>
+  ```
+- View held jobs:
+  ```bash
+  condor_q -hold
+  ```
+- Detailed information for a specific job:
+  ```bash
+  condor_q -long <job_id>
+  ```
+
+### 4. Check Resource Status
+```bash
+condor_status
+```
+Check the status of Condor pool resources.
+
+#### Options:
+- View scheduler information:
+  ```bash
+  condor_status -schedd
+  ```
+- Detailed resource information:
+  ```bash
+  condor_status -long
+  ```
+
+---
+
+## Managing Jobs
+
+### 5. Remove a Job
+```bash
+condor_rm <job_id>
+```
+Remove a job from the queue.
+
+#### Options:
+- Remove jobs from a specific schedd:
+  ```bash
+  condor_rm -name <name>
+  ```
+- Remove jobs matching a constraint:
+  ```bash
+  condor_rm -constraint <expression>
+  ```
+
+### 6. Hold a Job
+```bash
+condor_hold <job_id>
+```
+Place a job on hold.
+
+### 7. Release a Held Job
+```bash
+condor_release <job_id>
+```
+Release a held job.
+
+### 8. Suspend a Job
+```bash
+condor_suspend <job_id>
+```
+Suspend a running job.
+
+### 9. Resume a Suspended Job
+```bash
+condor_continue <job_id>
+```
+Resume a suspended job.
+
+---
+
+## Job and System Logs
+
+### 10. View Completed Jobs
+```bash
+condor_history
+```
+View information about completed jobs.
+
+#### Options:
+- Details for a specific job:
+  ```bash
+  condor_history <job_id>
+  ```
+- Show the last `n` completed jobs:
+  ```bash
+  condor_history -limit <n>
+  ```
+
+### 11. Parse User Logs
+```bash
+condor_userlog
+```
+Parse and display events from the user log file.
+
+### 12. Fetch Remote Log Files
+```bash
+condor_fetchlog <hostname> <daemon>
+```
+Fetch log files from Condor daemons on remote machines.
+
+---
+
+## Diagnostics and Debugging
+
+### 13. Analyze Job Issues
+```bash
+condor_analyze
+```
+Analyze why a job isn't running.
+
+### 14. Ping Condor Daemons
+```bash
+condor_ping
+```
+Ping Condor daemons for communication checks.
+
+### 15. Query Configuration Values
+```bash
+condor_config_val <parameter>
+```
+Query configuration values for Condor.
+
+### 16. Monitor Condor in Real Time
+```bash
+condor_top
+```
+Monitor Condor in real time.
+
+---
+
+## Advanced Commands
+
+### 17. Compile a Program for Checkpointing
+```bash
+condor_compile <executable>
+```
+Compile a program for checkpointing.
+
+### 18. Manually Checkpoint a Job
+```bash
+condor_checkpoint
+```
+Manually checkpoint a job.
+
+### 19. Force Scheduler Re-evaluation
+```bash
+condor_reschedule
+```
+Force the scheduler to reevaluate the job queue.
+
+### 20. Monitor Interactive Jobs
+```bash
+condor_kbdd
+```
+Monitor keyboard and mouse activity for interactive jobs.
+
+---
+
+## Useful Tips on LXPLUS
+- **HTCondor is configured on CERN’s LXPLUS for the LHC computing grid.**
+  - Submit jobs using `condor_submit` with specific requirements for computing resources.
+  - Monitor jobs using `condor_q` and check logs using `condor_history`.
+
+---
+
+For more details, consult the [HTCondor Manual](https://htcondor.org/documentation/).
+

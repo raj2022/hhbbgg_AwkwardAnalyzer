@@ -68,14 +68,14 @@ def runOneFile(inputfile, outputrootfile):
             "puppiMET_ptUnclusteredDown",
             "puppiMET_ptUnclusteredUp",
             "puppiMET_sumEt",
-            "lead_bjet_pt",
-            "lead_bjet_eta",
-            "lead_bjet_phi",
-            "lead_bjet_mass",
-            "sublead_bjet_pt",
-            "sublead_bjet_eta",
-            "sublead_bjet_phi",
-            "sublead_bjet_mass",
+            "Res_lead_bjet_pt",
+            "Res_lead_bjet_eta",
+            "Res_lead_bjet_phi",
+            "Res_lead_bjet_mass",
+            "Res_sublead_bjet_pt",
+            "Res_sublead_bjet_eta",
+            "Res_sublead_bjet_phi",
+            "Res_sublead_bjet_mass",
             "lead_pt",
             "lead_eta",
             "lead_phi",
@@ -88,24 +88,42 @@ def runOneFile(inputfile, outputrootfile):
             "sublead_mvaID_WP80",
             "weight",
             "weight_central",
-            "lead_bjet_btagPNetB",
-            "sublead_bjet_btagPNetB",
+            "Res_lead_bjet_btagPNetB",
+            "Res_sublead_bjet_btagPNetB",
             "lead_isScEtaEB",
             "sublead_isScEtaEB",
-            "CosThetaStar_CS",
-            "CosThetaStar_gg",
-            "CosThetaStar_jj",
-            "DeltaR_jg_min",
-            "pholead_PtOverM",
-            "phosublead_PtOverM",
-            "FirstJet_PtOverM",
-            "SecondJet_PtOverM",
+            "Res_HHbbggCandidate_pt",
+            "Res_HHbbggCandidate_eta",
+            "Res_HHbbggCandidate_phi",
+            "Res_HHbbggCandidate_mass",
+            "Res_CosThetaStar_CS",
+            "Res_CosThetaStar_gg",
+            "Res_CosThetaStar_jj",
+            "Res_DeltaR_jg_min",
+            "Res_pholead_PtOverM",
+            "Res_phosublead_PtOverM",
+            "Res_FirstJet_PtOverM",
+            "Res_SecondJet_PtOverM",
             "lead_mvaID",
             "sublead_mvaID",
-            "DeltaR_j1g1",
-            "DeltaR_j2g1",
-            "DeltaR_j1g2",
-            "DeltaR_j2g2",
+            "Res_DeltaR_j1g1",
+            "Res_DeltaR_j2g1",
+            "Res_DeltaR_j1g2",
+            "Res_DeltaR_j2g2",
+            "Res_M_X",
+            ## Adding other variables
+            # "pholead_PtOverM",
+            # "phosublead_PtOverM",
+            # "FirstJet_PtOverM",
+            # "SecondJet_PtOverM",
+            # "CosThetaStar_CS",
+            # "CosThetaStar_gg",
+            # "CosThetaStar_jj",
+            # "DeltaR_j1g1",
+            # "DeltaR_j2g1",
+            # "DeltaR_j1g2",
+            # "DeltaR_j2g2",
+            # "DeltaR_j2g2",
 
         ],
         step_size=10000,
@@ -132,14 +150,14 @@ def runOneFile(inputfile, outputrootfile):
                 "puppiMET_ptUnclusteredDown": tree_["puppiMET_ptUnclusteredDown"],
                 "puppiMET_ptUnclusteredUp": tree_["puppiMET_ptUnclusteredUp"],
                 "puppiMET_sumEt": tree_["puppiMET_sumEt"],
-                "lead_bjet_pt": tree_["lead_bjet_pt"],
-                "lead_bjet_eta": tree_["lead_bjet_eta"],
-                "lead_bjet_phi": tree_["lead_bjet_phi"],
-                "lead_bjet_mass": tree_["lead_bjet_mass"],
-                "sublead_bjet_pt": tree_["sublead_bjet_pt"],
-                "sublead_bjet_eta": tree_["sublead_bjet_eta"],
-                "sublead_bjet_phi": tree_["sublead_bjet_phi"],
-                "sublead_bjet_mass": tree_["sublead_bjet_mass"],
+                "lead_bjet_pt": tree_["Res_lead_bjet_pt"],
+                "lead_bjet_eta": tree_["Res_lead_bjet_eta"],
+                "lead_bjet_phi": tree_["Res_lead_bjet_phi"],
+                "lead_bjet_mass": tree_["Res_lead_bjet_mass"],
+                "sublead_bjet_pt": tree_["Res_sublead_bjet_pt"],
+                "sublead_bjet_eta": tree_["Res_sublead_bjet_eta"],
+                "sublead_bjet_phi": tree_["Res_sublead_bjet_phi"],
+                "sublead_bjet_mass": tree_["Res_sublead_bjet_mass"],
                 "lead_pho_pt": tree_["lead_pt"],
                 "lead_pho_eta": tree_["lead_eta"],
                 "lead_pho_phi": tree_["lead_phi"],
@@ -152,24 +170,29 @@ def runOneFile(inputfile, outputrootfile):
                 "sublead_pho_mvaID_WP80": tree_["sublead_mvaID_WP80"],
                 "weight_central": tree_["weight_central"],
                 "weight": tree_["weight"],
-                "lead_bjet_PNetB": tree_["lead_bjet_btagPNetB"],
-                "sublead_bjet_PNetB": tree_["sublead_bjet_btagPNetB"],
+                "lead_bjet_PNetB": tree_["Res_lead_bjet_btagPNetB"],
+                "sublead_bjet_PNetB": tree_["Res_sublead_bjet_btagPNetB"],
                 "lead_isScEtaEB": tree_["lead_isScEtaEB"],
                 "sublead_isScEtaEB": tree_["sublead_isScEtaEB"],
-                "CosThetaStar_CS": tree_["CosThetaStar_CS"],
-                "CosThetaStar_gg": tree_["CosThetaStar_gg"],
-                "CosThetaStar_jj": tree_["CosThetaStar_jj"],
-                "DeltaR_jg_min": tree_["DeltaR_jg_min"],
-                "pholead_PtOverM": tree_["pholead_PtOverM"],
-                "phosublead_PtOverM": tree_["phosublead_PtOverM"],
-                "FirstJet_PtOverM": tree_["FirstJet_PtOverM"],
-                "SecondJet_PtOverM": tree_["SecondJet_PtOverM"],
+                "CosThetaStar_CS": tree_["Res_CosThetaStar_CS"],
+                "CosThetaStar_gg": tree_["Res_CosThetaStar_gg"],
+                "CosThetaStar_jj": tree_["Res_CosThetaStar_jj"],
+                "DeltaR_jg_min": tree_["Res_DeltaR_jg_min"],
+                "pholead_PtOverM": tree_["Res_pholead_PtOverM"],
+                "phosublead_PtOverM": tree_["Res_phosublead_PtOverM"],
+                "FirstJet_PtOverM": tree_["Res_FirstJet_PtOverM"],
+                "SecondJet_PtOverM": tree_["Res_SecondJet_PtOverM"],
                 "lead_pho_mvaID": tree_["lead_mvaID"],
                 "sublead_pho_mvaID": tree_["sublead_mvaID"],
-                "DeltaR_j1g1": tree_["DeltaR_j1g1"],
-                "DeltaR_j2g1": tree_["DeltaR_j2g1"],
-                "DeltaR_j1g2": tree_["DeltaR_j1g2"],
-                "DeltaR_j2g2": tree_["DeltaR_j2g2"],
+                "DeltaR_j1g1": tree_["Res_DeltaR_j1g1"],
+                "DeltaR_j2g1": tree_["Res_DeltaR_j2g1"],
+                "DeltaR_j1g2": tree_["Res_DeltaR_j1g2"],
+                "DeltaR_j2g2": tree_["Res_DeltaR_j2g2"],
+                "bbgg_mass": tree_["Res_HHbbggCandidate_mass"],
+                "bbgg_pt": tree_["Res_HHbbggCandidate_pt"],
+                "bbgg_eta": tree_["Res_HHbbggCandidate_eta"],
+                "bbgg_phi": tree_["Res_HHbbggCandidate_phi"],
+                "MX": tree_["Res_M_X"],
 
             },
             depth_limit=1,
@@ -202,10 +225,10 @@ def runOneFile(inputfile, outputrootfile):
         cms_events["dibjet_pt"] = dibjet_.pt
         cms_events["diphoton_mass"] = diphoton_.mass
         cms_events["diphoton_pt"] = diphoton_.pt
-        cms_events["bbgg_mass"] = (dibjet_ + diphoton_).mass
-        cms_events["bbgg_pt"] = (dibjet_ + diphoton_).pt
-        cms_events["bbgg_eta"] = (dibjet_ + diphoton_).eta
-        cms_events["bbgg_phi"] = (dibjet_ + diphoton_).phi
+#        cms_events["bbgg_mass"] = (dibjet_ + diphoton_).mass
+#        cms_events["bbgg_pt"] = (dibjet_ + diphoton_).pt
+#        cms_events["bbgg_eta"] = (dibjet_ + diphoton_).eta
+#        cms_events["bbgg_phi"] = (dibjet_ + diphoton_).phi
         # Adding new variables
         cms_events["dibjet_eta"] = dibjet_.eta
         cms_events["dibjet_phi"] = dibjet_.phi
@@ -266,9 +289,9 @@ def runOneFile(inputfile, outputrootfile):
         out_events["puppiMET_ptJERUp"] = cms_events["puppiMET_ptJERUp"]
         out_events["puppiMET_ptJESDown"] = cms_events["puppiMET_ptJESDown"]
         out_events["puppiMET_ptJESUp"] = cms_events["puppiMET_ptJESUp"]
-        # out_events["puppiMET_ptUnclusteredDown"] = cms_events["puppiMET_ptUnclusteredDown"]
-        # out_events["puppiMET_ptUnclusteredUp"] = cms_events["puppiMET_ptUnclusteredUp"]
-        # out_events["puppiMET_sumEt"] = cms_events["puppiMET_sumEt"]
+        out_events["puppiMET_ptUnclusteredDown"] = cms_events["puppiMET_ptUnclusteredDown"]
+        out_events["puppiMET_ptUnclusteredUp"] = cms_events["puppiMET_ptUnclusteredUp"]
+        out_events["puppiMET_sumEt"] = cms_events["puppiMET_sumEt"]
         ###--------------
         out_events["lead_pho_pt"] = cms_events["lead_pho_pt"]
         # Adding new variable
@@ -369,6 +392,10 @@ def runOneFile(inputfile, outputrootfile):
         out_events["DeltaR_j1g2"] = cms_events["DeltaR_j1g2"]
         out_events["DeltaR_j2g2"] = cms_events["DeltaR_j2g2"]
 
+        #---------------------------------------------------
+        #---------------------------------------------------
+        out_events["MX"] = cms_events["MX"]
+
         fulltree_ = ak.concatenate([out_events, fulltree_], axis=0)
 
     from variables import vardict, regions, variables_common
@@ -406,8 +433,8 @@ else:
     ]
 
 outputrootfile = {
-    "hist": uproot.recreate(f"{output_dir}/hhbbgg_analyzer-histograms.root"),
-    "tree": uproot.recreate(f"{output_dir}/hhbbgg_analyzer-trees.root"),
+    "hist": uproot.recreate(f"{output_dir}/hhbbgg_analyzer_v2-histograms.root"),
+    "tree": uproot.recreate(f"{output_dir}/hhbbgg_analyzer_v2-trees.root"),
 }
 
 

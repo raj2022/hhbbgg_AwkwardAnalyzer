@@ -1,0 +1,4 @@
+Data_EraE  /EGamma/Run2022E-22Sep2023-v1/NANOAOD
+Data_EraF  /EGamma/Run2022F-22Sep2023-v1/NANOAOD
+Data_EraG  /EGamma/Run2022G-22Sep2023-v2/NANOAOD
+
