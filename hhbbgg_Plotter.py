@@ -122,7 +122,7 @@ def stack1d_histograms(
 ):
     for hist_name in histogram_names:
         # Determine size based on number of MC samples or histogram width
-        dynamic_width = max(8, len(mc_samples) * 1.5)  # Adjust width based on MC samples
+        dynamic_width = max(11, len(mc_samples) * 1.5)  # Adjust width based on MC samples
         dynamic_height = 12  # Default height
         fig, (ax, ax_ratio) = plt.subplots(
             2, 1,
