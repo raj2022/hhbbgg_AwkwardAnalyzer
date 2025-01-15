@@ -1,36 +1,31 @@
-import os 
-import pandas as pd
 import uproot
+import pandas as pd
 import numpy as np
-
 from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer
 
 def load_data(file_paths, columns):
     """
-    Load data from ROOT files into a Pandas Dataframe.
-    
+    Load data from ROOT files into a Pandas DataFrame.
+
     Args:
         file_paths (list of tuples): List of (file_path, key) pairs.
         columns (list): List of columns to load.
-    
+
     Returns:
         dict: A dictionary of DataFrames keyed by ROOT tree names.
-    
     """
     dataframes = {}
     for file, key in file_paths:
         try:
             with uproot.open(file) as f:
                 dataframes[key] = f[key].arrays(columns, library="pd")
-        except:
+        except Exception as e:
             print(f"Error loading {file} with key {key}: {e}")
     return dataframes
 
-
 def combine_dataframes(dataframes, include_keys):
     """
-    
     Combine DataFrames based on specified keys.
 
     Args:
@@ -90,6 +85,7 @@ def split_data(signal_df, background_df, test_size=0.2):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
 
     return X_train, X_test, y_train, y_test
+
 
 
                 

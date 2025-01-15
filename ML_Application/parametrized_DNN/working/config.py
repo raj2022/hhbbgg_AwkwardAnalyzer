@@ -2,17 +2,17 @@
 
 # File paths for signal and background data
 SIGNAL_FILES = [
-    ("../../outputfiles/hhbbgg_analyzerNMSSM-trees.root", "/NMSSM_X650_Y95/preselection"),
-    ("../../outputfiles/hhbbgg_analyzerNMSSM-trees.root", "/NMSSM_X650_Y100/preselection"),
-    ("../../outputfiles/hhbbgg_analyzerNMSSM-trees.root", "/NMSSM_X650_Y125/preselection"),
-    ("../../outputfiles/hhbbgg_analyzerNMSSM-trees.root", "/NMSSM_X700_Y100/preselection"),
-    ("../../outputfiles/hhbbgg_analyzerNMSSM-trees.root", "/NMSSM_X700_Y125/preselection"),
+    ("../../outputfiles/hhbbgg_analyzer_NMSSMv2-trees.root", "/NMSSM_X300_Y60/preselection"),
+    # ("../../outputfiles/hhbbgg_analyzerNMSSM-trees.root", "/NMSSM_X650_Y100/preselection"),
+    # ("../../outputfiles/hhbbgg_analyzerNMSSM-trees.root", "/NMSSM_X650_Y125/preselection"),
+    # ("../../outputfiles/hhbbgg_analyzerNMSSM-trees.root", "/NMSSM_X700_Y100/preselection"),
+    # ("../../outputfiles/hhbbgg_analyzerNMSSM-trees.root", "/NMSSM_X700_Y125/preselection"),
 ]
 
 BACKGROUND_FILES = [
-    ("../../outputfiles/hhbbgg_analyzerNMSSM-trees.root", "/GGJets/preselection"),
-    ("../../outputfiles/hhbbgg_analyzerNMSSM-trees.root", "/GJetPt20To40/preselection"),
-    ("../../outputfiles/hhbbgg_analyzerNMSSM-trees.root", "/GJetPt40/preselection"),
+    ("../../outputfiles/hhbbgg_analyzer_NMSSMv2-trees.root", "/GGJets/preselection"),
+    # ("../../outputfiles/hhbbgg_analyzerNMSSMv2-trees.root", "/GJetPt20To40/preselection"),
+    # ("../../outputfiles/hhbbgg_analyzerNMSSMv2-trees.root", "/GJetPt40/preselection"),
 ]
 
 # Columns to be loaded from ROOT files
