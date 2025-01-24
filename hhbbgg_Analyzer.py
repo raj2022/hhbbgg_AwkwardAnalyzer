@@ -6,6 +6,7 @@ import pandas as pd
 import awkward as ak
 from config.utils import lVector, VarToHist
 from normalisation import getXsec, getLumi
+import pyarrow
 
 usage = "usage: %prog [options] arg1 arg2"
 parser = optparse.OptionParser(usage)
@@ -430,46 +431,7 @@ def process_parquet_file(inputfile):
     # Specify the necessary columns
     required_columns = [
         "run", "lumi", "event",
-        "puppiMET_pt", "puppiMET_phi",
-        "lead_pho_pt", "lead_pho_eta", "lead_pho_phi",
-        "sublead_pho_pt", "sublead_pho_eta", "sublead_pho_phi",
-        "Res_lead_bjet_pt", "Res_lead_bjet_eta", "Res_lead_bjet_phi",
-        "Res_sublead_bjet_pt", "Res_sublead_bjet_eta", "Res_sublead_bjet_phi",
-        "weight", "weight_central", "Res_M_X"
-    ]
-
-    df = pd.read_parquet(inputfile, columns=required_columns)  # Read the parquet file into a Pandas DataFrame
-    tree_ = ak.from_pandas(df)  # Convert the DataFrame to an Awkward Array
-    print(f"Parquet file loaded with {len(tree_)} entries  and {len(required_columns)} columns.")
-    isdata = False
-    isSignal = False
-    if "Data" in inputfile.split("/")[-1]:
-        isdata = True
-        xsec_ = 1
-        lumi_ = 1
-    else:
-        xsec_ = getXsec(inputfile)
-        lumi_ = getLumi() * 1000
-    if "GluGluToHH" in inputfile.split("/")[-1]:
-        isSignal = True
-
-    print("Status of the isdata flag:", isdata)
-    # mycache = uproot.LRUArrayCache("500 MB")
-
-    file_ = uproot.open(inputfile)
-
-    print("root file opened: ", inputfile)
-    print(file_.keys())
-
-    fulltree_ = ak.ArrayBuilder()
-    niterations = 0
-    for tree_ in uproot.iterate(
-        file_["DiphotonTree/data_125_13TeV_NOTAG"],
-        [
-            "run",
-            "lumi",
-            "event",
-            "puppiMET_pt",
+        "puppiMET_pt",
             "puppiMET_phi",
             "puppiMET_phiJERDown",
             "puppiMET_phiJERUp",
@@ -540,10 +502,115 @@ def process_parquet_file(inputfile):
             # "DeltaR_j1g2",
             # "DeltaR_j2g2",
             # "DeltaR_j2g2",
+    ]
 
-        ],
-        step_size=10000,
-    ):
+    df = pd.read_parquet(inputfile, columns=required_columns)  # Read the parquet file into a Pandas DataFrame
+    tree_ = ak.from_arrow(pyarrow.Table.from_pandas(df))  # Convert DataFrame to Awkward Array
+    print(f"Parquet file loaded with {len(tree_)} entries  and {len(required_columns)} columns.")
+    isdata = False
+    isSignal = False
+    if "Data" in inputfile.split("/")[-1]:
+        isdata = True
+        xsec_ = 1
+        lumi_ = 1
+    else:
+        xsec_ = getXsec(inputfile)
+        lumi_ = getLumi() * 1000
+    if "GluGluToHH" in inputfile.split("/")[-1]:
+        isSignal = True
+
+    print("Status of the isdata flag:", isdata)
+    # mycache = uproot.LRUArrayCache("500 MB")
+
+    # file_ = uproot.open(inputfile)
+
+    # print("root file opened: ", inputfile)
+    # print(file_.keys())
+
+    # fulltree_ = ak.ArrayBuilder()
+    niterations = 0
+    # for tree_ in uproot.iterate(
+    #     file_["DiphotonTree/data_125_13TeV_NOTAG"],
+    #     [
+    #         "run",
+    #         "lumi",
+    #         "event",
+    #         "puppiMET_pt",
+    #         "puppiMET_phi",
+    #         "puppiMET_phiJERDown",
+    #         "puppiMET_phiJERUp",
+    #         "puppiMET_phiJESDown",
+    #         "puppiMET_phiJESUp",
+    #         "puppiMET_phiUnclusteredDown",
+    #         "puppiMET_phiUnclusteredUp",
+    #         "puppiMET_ptJERDown",
+    #         "puppiMET_ptJERUp",
+    #         "puppiMET_ptJESDown",
+    #         "puppiMET_ptJESUp",
+    #         "puppiMET_ptUnclusteredDown",
+    #         "puppiMET_ptUnclusteredUp",
+    #         "puppiMET_sumEt",
+    #         "Res_lead_bjet_pt",
+    #         "Res_lead_bjet_eta",
+    #         "Res_lead_bjet_phi",
+    #         "Res_lead_bjet_mass",
+    #         "Res_sublead_bjet_pt",
+    #         "Res_sublead_bjet_eta",
+    #         "Res_sublead_bjet_phi",
+    #         "Res_sublead_bjet_mass",
+    #         "lead_pt",
+    #         "lead_eta",
+    #         "lead_phi",
+    #         "lead_mvaID_WP90",
+    #         "lead_mvaID_WP80",  # tight PhotonID? or is it loose?
+    #         "sublead_pt",
+    #         "sublead_eta",
+    #         "sublead_phi",
+    #         "sublead_mvaID_WP90",
+    #         "sublead_mvaID_WP80",
+    #         "weight",
+    #         "weight_central",
+    #         "Res_lead_bjet_btagPNetB",
+    #         "Res_sublead_bjet_btagPNetB",
+    #         "lead_isScEtaEB",
+    #         "sublead_isScEtaEB",
+    #         "Res_HHbbggCandidate_pt",
+    #         "Res_HHbbggCandidate_eta",
+    #         "Res_HHbbggCandidate_phi",
+    #         "Res_HHbbggCandidate_mass",
+    #         "Res_CosThetaStar_CS",
+    #         "Res_CosThetaStar_gg",
+    #         "Res_CosThetaStar_jj",
+    #         "Res_DeltaR_jg_min",
+    #         "Res_pholead_PtOverM",
+    #         "Res_phosublead_PtOverM",
+    #         "Res_FirstJet_PtOverM",
+    #         "Res_SecondJet_PtOverM",
+    #         "lead_mvaID",
+    #         "sublead_mvaID",
+    #         "Res_DeltaR_j1g1",
+    #         "Res_DeltaR_j2g1",
+    #         "Res_DeltaR_j1g2",
+    #         "Res_DeltaR_j2g2",
+    #         "Res_M_X",
+    #         ## Adding other variables
+    #         # "pholead_PtOverM",
+    #         # "phosublead_PtOverM",
+    #         # "FirstJet_PtOverM",
+    #         # "SecondJet_PtOverM",
+    #         # "CosThetaStar_CS",
+    #         # "CosThetaStar_gg",
+    #         # "CosThetaStar_jj",
+    #         # "DeltaR_j1g1",
+    #         # "DeltaR_j2g1",
+    #         # "DeltaR_j1g2",
+    #         # "DeltaR_j2g2",
+    #         # "DeltaR_j2g2",
+
+    #     ],
+    #     step_size=10000,
+    # ):
+    for entry in tree_:
         print("Tree length for iteratiion ", len(tree_), (niterations))
         niterations = niterations + 1
         cms_events = ak.zip(
@@ -812,6 +879,7 @@ def process_parquet_file(inputfile):
         #---------------------------------------------------
         out_events["MX"] = cms_events["MX"]
 
+        fulltree_ = ak.Array([]) 
         fulltree_ = ak.concatenate([out_events, fulltree_], axis=0)
 
     from variables import vardict, regions, variables_common
