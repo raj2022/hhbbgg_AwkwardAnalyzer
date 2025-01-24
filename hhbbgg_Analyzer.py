@@ -845,8 +845,8 @@ else:
     ]
 
 outputrootfile = {
-    "hist": uproot.recreate(f"{output_dir}/hhbbgg_analyzer-histograms.root"),
-    "tree": uproot.recreate(f"{output_dir}/hhbbgg_analyzer-trees.root"),
+    "hist": uproot.recreate(f"{output_dir}/hhbbgg_analyzer-v2-histograms.root"),
+    "tree": uproot.recreate(f"{output_dir}/hhbbgg_analyzer-v2-trees.root"),
 }
 
 def main():
