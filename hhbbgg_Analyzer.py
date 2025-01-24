@@ -2,6 +2,7 @@
 import os
 import optparse
 import uproot
+import pandas as pd
 import awkward as ak
 from config.utils import lVector, VarToHist
 from normalisation import getXsec, getLumi
@@ -426,9 +427,20 @@ def process_root_file(inputfile):
 
 def process_parquet_file(inputfile):
     print(f"Processing Parquet file: {inputfile}")
-    df = pd.read_parquet(inputfile)  # Read the parquet file into a Pandas DataFrame
+    # Specify the necessary columns
+    required_columns = [
+        "run", "lumi", "event",
+        "puppiMET_pt", "puppiMET_phi",
+        "lead_pho_pt", "lead_pho_eta", "lead_pho_phi",
+        "sublead_pho_pt", "sublead_pho_eta", "sublead_pho_phi",
+        "Res_lead_bjet_pt", "Res_lead_bjet_eta", "Res_lead_bjet_phi",
+        "Res_sublead_bjet_pt", "Res_sublead_bjet_eta", "Res_sublead_bjet_phi",
+        "weight", "weight_central", "Res_M_X"
+    ]
+
+    df = pd.read_parquet(inputfile, columns=required_columns)  # Read the parquet file into a Pandas DataFrame
     tree_ = ak.from_pandas(df)  # Convert the DataFrame to an Awkward Array
-    print(f"Parquet file loaded with {len(tree_)} entries.")
+    print(f"Parquet file loaded with {len(tree_)} entries  and {len(required_columns)} columns.")
     isdata = False
     isSignal = False
     if "Data" in inputfile.split("/")[-1]:
