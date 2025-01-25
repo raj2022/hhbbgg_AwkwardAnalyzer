@@ -7,6 +7,9 @@ import awkward as ak
 from config.utils import lVector, VarToHist
 from normalisation import getXsec, getLumi
 import pyarrow
+import pyarrow.parquet as pq
+from pyarrow import Table
+
 
 usage = "usage: %prog [options] arg1 arg2"
 parser = optparse.OptionParser(usage)
@@ -425,8 +428,8 @@ def process_root_file(inputfile):
         outputrootfile["tree"][f"{outputrootfileDir}/{ireg}"] = tree_data_
     print("Done")
 
-
-def process_parquet_file(inputfile):
+## Processin parquet files
+def process_parquet_file(inputfile, chunk_size=1000):
     print(f"Processing Parquet file: {inputfile}")
     # Specify the necessary columns
     required_columns = [
@@ -504,9 +507,9 @@ def process_parquet_file(inputfile):
             # "DeltaR_j2g2",
     ]
 
-    df = pd.read_parquet(inputfile, columns=required_columns)  # Read the parquet file into a Pandas DataFrame
-    tree_ = ak.from_arrow(pyarrow.Table.from_pandas(df))  # Convert DataFrame to Awkward Array
-    print(f"Parquet file loaded with {len(tree_)} entries  and {len(required_columns)} columns.")
+    # df = pd.read_parquet(inputfile, columns=required_columns)  # Read the parquet file into a Pandas DataFrame
+    # tree_ = ak.from_arrow(pyarrow.Table.from_pandas(df))  # Convert DataFrame to Awkward Array
+    # print(f"Parquet file loaded with {len(tree_)} entries  and {len(required_columns)} columns.")
     isdata = False
     isSignal = False
     if "Data" in inputfile.split("/")[-1]:
@@ -528,7 +531,7 @@ def process_parquet_file(inputfile):
     # print(file_.keys())
 
     # fulltree_ = ak.ArrayBuilder()
-    niterations = 0
+    # niterations = 0
     # for tree_ in uproot.iterate(
     #     file_["DiphotonTree/data_125_13TeV_NOTAG"],
     #     [
@@ -610,9 +613,36 @@ def process_parquet_file(inputfile):
     #     ],
     #     step_size=10000,
     # ):
-    for entry in tree_:
-        print("Tree length for iteratiion ", len(tree_), (niterations))
-        niterations = niterations + 1
+    fulltree_ = ak.Array([]) 
+    
+    parquet_file = pq.ParquetFile(inputfile)
+    total_rows = parquet_file.metadata.num_rows
+    print(f"Total rows in file: {total_rows}")
+
+    # Process in chunks
+    for start in range(0, total_rows, chunk_size):
+        end = min(start + chunk_size, total_rows)
+        print(f"Processing rows {start} to {end}...")
+
+        # Read a chunk of rows
+        row_group = parquet_file.read_row_group(
+            start // parquet_file.metadata.row_group(0).num_rows,
+            columns=required_columns
+        )
+        chunk = row_group.to_pandas()
+
+        # Convert the chunk to Awkward Array
+        tree_ = ak.from_arrow(Table.from_pandas(chunk))
+    
+    # for chunk in pd.read_parquet(inputfile, columns=required_columns, chunksize=10000):
+    #     print(f"Processing chunk with {len(chunk)} entries")
+        
+    #     # Convert the chunk to Awkward Array
+    #     tree_ = ak.from_arrow(Table.from_pandas(chunk))
+        
+    # for entry in tree_:
+    #     print("Tree length for iteratiion ", len(tree_), (niterations))
+    #     niterations = niterations + 1
         cms_events = ak.zip(
             {
                 "run": tree_["run"],
@@ -879,8 +909,10 @@ def process_parquet_file(inputfile):
         #---------------------------------------------------
         out_events["MX"] = cms_events["MX"]
 
-        fulltree_ = ak.Array([]) 
-        fulltree_ = ak.concatenate([out_events, fulltree_], axis=0)
+        # fulltree_ = ak.Array([]) 
+        fulltree_ = ak.concatenate([fulltree_, out_events], axis=0)
+        
+    print(f"Total processed entries: {len(fulltree_)}")
 
     from variables import vardict, regions, variables_common
     from binning import binning
@@ -935,17 +967,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
