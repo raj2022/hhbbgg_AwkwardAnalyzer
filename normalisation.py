@@ -13,11 +13,11 @@ def getXsec(samplename):
         xsec = 1.0
     elif "GGJets" in samplename:
         xsec = 88.75
-    elif "GJetPt20to40" in samplename:
+    elif "GJetPt20To40" in samplename:
         xsec = 242.5
     elif "GJetPt40" in samplename:
         xsec = 919.1
-    elif "GluGluHtoGG" in samplename:
+    elif "GluGluHToGG" in samplename:
         xsec = 52.23 * BR_HToGG
     elif "ttHToGG" in samplename:
         xsec = 0.0013
