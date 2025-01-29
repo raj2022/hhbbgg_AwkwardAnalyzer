@@ -1,10 +1,13 @@
-# %%
 import os
 import optparse
 import uproot
+import pandas as pd
 import awkward as ak
 from config.utils import lVector, VarToHist
 from normalisation import getXsec, getLumi
+import pyarrow.parquet as pq
+from pyarrow import Table
+import gc  # For memory cleanup
 
 usage = "usage: %prog [options] arg1 arg2"
 parser = optparse.OptionParser(usage)
@@ -17,43 +20,21 @@ parser.add_option(
 )
 (options, args) = parser.parse_args()
 
+
+
+
 if not options.inputfiles_:
     raise ValueError(
-        "Please provide either an input ROOT file or a directory of ROOT files using the -i or --inFile option"
+        "Please provide either an input ROOT/Parquet file or a directory of ROOT/Parquet files using the -i or --inFile option"
     )
 inputfiles_ = options.inputfiles_
 
-
-def runOneFile(inputfile, outputrootfile):
-    isdata = False
-    isSignal = False
-    if "Data" in inputfile.split("/")[-1]:
-        isdata = True
-        xsec_ = 1
-        lumi_ = 1
-    else:
-        xsec_ = getXsec(inputfile)
-        lumi_ = getLumi() * 1000
-    if "GluGluToHH" in inputfile.split("/")[-1]:
-        isSignal = True
-
-    print("Status of the isdata flag:", isdata)
-    # mycache = uproot.LRUArrayCache("500 MB")
-
-    file_ = uproot.open(inputfile)
-
-    print("root file opened: ", inputfile)
-    print(file_.keys())
-
-    fulltree_ = ak.ArrayBuilder()
-    niterations = 0
-    for tree_ in uproot.iterate(
-        file_["DiphotonTree/data_125_13TeV_NOTAG"],
-        [
-            "run",
-            "lumi",
-            "event",
-            "puppiMET_pt",
+def process_parquet_file(inputfile, chunk_size=1000):
+    print(f"Processing Parquet file: {inputfile}")
+    # Specify the necessary columns
+    required_columns = [
+        "run", "lumi", "event",
+        "puppiMET_pt",
             "puppiMET_phi",
             "puppiMET_phiJERDown",
             "puppiMET_phiJERUp",
@@ -124,12 +105,45 @@ def runOneFile(inputfile, outputrootfile):
             # "DeltaR_j1g2",
             # "DeltaR_j2g2",
             # "DeltaR_j2g2",
+    ]
 
-        ],
-        step_size=10000,
-    ):
-        print("Tree length for iteratiion ", len(tree_), (niterations))
-        niterations = niterations + 1
+    # df = pd.read_parquet(inputfile, columns=required_columns)  # Read the parquet file into a Pandas DataFrame
+    # tree_ = ak.from_arrow(pyarrow.Table.from_pandas(df))  # Convert DataFrame to Awkward Array
+    # print(f"Parquet file loaded with {len(tree_)} entries  and {len(required_columns)} columns.")
+    isdata = False
+    isSignal = False
+    if "Data" in inputfile.split("/")[-1]:
+        isdata = True
+        xsec_ = 1
+        lumi_ = 1
+    else:
+        xsec_ = getXsec(inputfile)
+        lumi_ = getLumi() * 1000
+    if "GluGluToHH" in inputfile.split("/")[-1]:
+        isSignal = True
+
+    print("Status of the isdata flag:", isdata)
+    fulltree_ = ak.Array([]) 
+    
+    parquet_file = pq.ParquetFile(inputfile)
+    total_rows = parquet_file.metadata.num_rows
+    print(f"Total rows in file: {total_rows}")
+
+    # Process in chunks
+    for start in range(0, total_rows, chunk_size):
+        end = min(start + chunk_size, total_rows)
+        print(f"Processing rows {start} to {end}...")
+
+        # Read a chunk of rows
+        row_group = parquet_file.read_row_group(
+            start // parquet_file.metadata.row_group(0).num_rows,
+            columns=required_columns
+        )
+        chunk = row_group.to_pandas()
+
+        # Convert the chunk to Awkward Array
+        tree_ = ak.from_arrow(Table.from_pandas(chunk))
+    
         cms_events = ak.zip(
             {
                 "run": tree_["run"],
@@ -396,19 +410,25 @@ def runOneFile(inputfile, outputrootfile):
         #---------------------------------------------------
         out_events["MX"] = cms_events["MX"]
 
-        fulltree_ = ak.concatenate([out_events, fulltree_], axis=0)
+        # fulltree_ = ak.Array([]) 
+        fulltree_ = ak.concatenate([fulltree_, out_events], axis=0)
+        
+    print(f"Total processed entries: {len(fulltree_)}")
 
+    
+    
+    # Save histograms and trees to ROOT files
     from variables import vardict, regions, variables_common
     from binning import binning
 
-    print("Making histograms and trees")
-    outputrootfileDir = inputfile.split("/")[-1].replace(".root", "")
+    print("Saving histograms and trees...")
+    outputrootfileDir = inputfile.split("/")[-1].replace(".parquet", "")
     for ireg in regions:
         thisregion = fulltree_[fulltree_[ireg] == True]
         thisregion_ = thisregion[~(ak.is_none(thisregion))]
         weight_ = "weight_" + ireg
         for ivar in variables_common[ireg]:
-            hist_name_ = ireg + "-" + vardict[ivar]
+            hist_name_ = f"{ireg}-{vardict[ivar]}"
             outputrootfile["hist"][f"{outputrootfileDir}/{hist_name_}"] = VarToHist(
                 thisregion_[ivar], thisregion_[weight_], hist_name_, binning[ireg][ivar]
             )
@@ -416,9 +436,18 @@ def runOneFile(inputfile, outputrootfile):
             [key for key in thisregion_.fields if key not in regions]
         ]
         outputrootfile["tree"][f"{outputrootfileDir}/{ireg}"] = tree_data_
-    print("Done")
+    print("Histograms and trees saved.")
 
+# Function to process each file
+def runOneFile(inputfile, outputrootfile):
+    if inputfile.endswith(".root"):
+        process_root_file(inputfile)  # Assuming you have this function defined elsewhere
+    elif inputfile.endswith(".parquet"):
+        process_parquet_file(inputfile, outputrootfile)
+    else:
+        raise ValueError(f"Unsupported file type: {inputfile}")
 
+# Setup output directories and files
 output_dir = "outputfiles"
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
@@ -429,21 +458,21 @@ else:
     inputfiles = [
         f"{inputfiles_}/{infile_}"
         for infile_ in os.listdir(inputfiles_)
-        if infile_.endswith(".root")
+        if infile_.endswith(".root") or infile_.endswith(".parquet")
     ]
 
 outputrootfile = {
-    "hist": uproot.recreate(f"{output_dir}/hhbbgg_analyzer_v2-histograms.root"),
-    "tree": uproot.recreate(f"{output_dir}/hhbbgg_analyzer_v2-trees.root"),
+    "hist": uproot.recreate(f"{output_dir}/hhbbgg_analyzer-v2-histograms.root"),
+    "tree": uproot.recreate(f"{output_dir}/hhbbgg_analyzer-v2-trees.root"),
 }
 
-
+# Main function
 def main():
     for infile_ in inputfiles:
         runOneFile(infile_, outputrootfile)
 
-
 if __name__ == "__main__":
     main()
-
-# %%
+    
+    
+    
