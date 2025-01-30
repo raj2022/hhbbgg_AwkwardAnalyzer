@@ -29,7 +29,10 @@ if not options.inputfiles_:
         "Please provide either an input ROOT/Parquet file or a directory of ROOT/Parquet files using the -i or --inFile option"
     )
 inputfiles_ = options.inputfiles_
-def process_parquet_file(inputfile):
+
+
+
+def process_parquet_file(inputfile, outputrootfile):
     print(f"Processing Parquet file: {inputfile}")
     # Specify the necessary columns
     required_columns = [
@@ -107,115 +110,27 @@ def process_parquet_file(inputfile):
             # "DeltaR_j2g2",
     ]
 
-    df = pd.read_parquet(inputfile, columns=required_columns)  # Read the parquet file into a Pandas DataFrame
-    tree_ = ak.from_arrow(pyarrow.Table.from_pandas(df))  # Convert DataFrame to Awkward Array
-    print(f"Parquet file loaded with {len(tree_)} entries  and {len(required_columns)} columns.")
-    isdata = False
-    isSignal = False
-    if "Data" in inputfile.split("/")[-1]:
-        isdata = True
-        xsec_ = 1
-        lumi_ = 1
-    else:
-        xsec_ = getXsec(inputfile)
-        lumi_ = getLumi() * 1000
-    if "GluGluToHH" in inputfile.split("/")[-1]:
-        isSignal = True
+    parquet_file = pq.ParquetFile(inputfile)  # Read the parquet file into a Pandas DataFrame
+    fulltree_ = ak.Array([]) # Empty Awkward array for storage
 
-    print("Status of the isdata flag:", isdata)
-    # mycache = uproot.LRUArrayCache("500 MB")
+    for batch in parquet_file.iter_batches(batch_size=10000, columns=required_columns):
+        df = batch.to_pandas()  # Convert chunk to Pandas DataFrame
+        tree_ = ak.from_arrow(pyarrow.Table.from_pandas(df))  
+        print(f"Parquet file loaded with {len(tree_)} entries  and {len(required_columns)} columns.")
+        isdata = False
+        isSignal = False
+        if "Data" in inputfile.split("/")[-1]:
+            isdata = True
+            xsec_ = 1
+            lumi_ = 1
+        else:
+            xsec_ = getXsec(inputfile)
+            lumi_ = getLumi() * 1000
+        if "GluGluToHH" in inputfile.split("/")[-1]:
+            isSignal = True
 
-    # file_ = uproot.open(inputfile)
-
-    # print("root file opened: ", inputfile)
-    # print(file_.keys())
-
-    # fulltree_ = ak.ArrayBuilder()
-    niterations = 0
-    # for tree_ in uproot.iterate(
-    #     file_["DiphotonTree/data_125_13TeV_NOTAG"],
-    #     [
-    #         "run",
-    #         "lumi",
-    #         "event",
-    #         "puppiMET_pt",
-    #         "puppiMET_phi",
-    #         "puppiMET_phiJERDown",
-    #         "puppiMET_phiJERUp",
-    #         "puppiMET_phiJESDown",
-    #         "puppiMET_phiJESUp",
-    #         "puppiMET_phiUnclusteredDown",
-    #         "puppiMET_phiUnclusteredUp",
-    #         "puppiMET_ptJERDown",
-    #         "puppiMET_ptJERUp",
-    #         "puppiMET_ptJESDown",
-    #         "puppiMET_ptJESUp",
-    #         "puppiMET_ptUnclusteredDown",
-    #         "puppiMET_ptUnclusteredUp",
-    #         "puppiMET_sumEt",
-    #         "Res_lead_bjet_pt",
-    #         "Res_lead_bjet_eta",
-    #         "Res_lead_bjet_phi",
-    #         "Res_lead_bjet_mass",
-    #         "Res_sublead_bjet_pt",
-    #         "Res_sublead_bjet_eta",
-    #         "Res_sublead_bjet_phi",
-    #         "Res_sublead_bjet_mass",
-    #         "lead_pt",
-    #         "lead_eta",
-    #         "lead_phi",
-    #         "lead_mvaID_WP90",
-    #         "lead_mvaID_WP80",  # tight PhotonID? or is it loose?
-    #         "sublead_pt",
-    #         "sublead_eta",
-    #         "sublead_phi",
-    #         "sublead_mvaID_WP90",
-    #         "sublead_mvaID_WP80",
-    #         "weight",
-    #         "weight_central",
-    #         "Res_lead_bjet_btagPNetB",
-    #         "Res_sublead_bjet_btagPNetB",
-    #         "lead_isScEtaEB",
-    #         "sublead_isScEtaEB",
-    #         "Res_HHbbggCandidate_pt",
-    #         "Res_HHbbggCandidate_eta",
-    #         "Res_HHbbggCandidate_phi",
-    #         "Res_HHbbggCandidate_mass",
-    #         "Res_CosThetaStar_CS",
-    #         "Res_CosThetaStar_gg",
-    #         "Res_CosThetaStar_jj",
-    #         "Res_DeltaR_jg_min",
-    #         "Res_pholead_PtOverM",
-    #         "Res_phosublead_PtOverM",
-    #         "Res_FirstJet_PtOverM",
-    #         "Res_SecondJet_PtOverM",
-    #         "lead_mvaID",
-    #         "sublead_mvaID",
-    #         "Res_DeltaR_j1g1",
-    #         "Res_DeltaR_j2g1",
-    #         "Res_DeltaR_j1g2",
-    #         "Res_DeltaR_j2g2",
-    #         "Res_M_X",
-    #         ## Adding other variables
-    #         # "pholead_PtOverM",
-    #         # "phosublead_PtOverM",
-    #         # "FirstJet_PtOverM",
-    #         # "SecondJet_PtOverM",
-    #         # "CosThetaStar_CS",
-    #         # "CosThetaStar_gg",
-    #         # "CosThetaStar_jj",
-    #         # "DeltaR_j1g1",
-    #         # "DeltaR_j2g1",
-    #         # "DeltaR_j1g2",
-    #         # "DeltaR_j2g2",
-    #         # "DeltaR_j2g2",
-
-    #     ],
-    #     step_size=10000,
-    # ):
-    for entry in tree_:
-        print("Tree length for iteratiion ", len(tree_), (niterations))
-        niterations = niterations + 1
+        print("Status of the isdata flag:", isdata)
+        
         cms_events = ak.zip(
             {
                 "run": tree_["run"],
@@ -482,37 +397,46 @@ def process_parquet_file(inputfile):
         #---------------------------------------------------
         out_events["MX"] = cms_events["MX"]
 
-        fulltree_ = ak.Array([]) 
-        fulltree_ = ak.concatenate([out_events, fulltree_], axis=0)
+        # fulltree_ = ak.concatenate([out_events, fulltree_], axis=0)
+        if len(fulltree_) == 0:
+            fulltree_ = out_events  # Initialize on the first batch
+        else:
+            fulltree_ = ak.concatenate([fulltree_, out_events], axis=0)
+
+        
+        print(f"Finished processing {len(fulltree_)} total events from {inputfile}")
+    # Convert all fields to NumPy-compatible types before writing
+    numpy_compatible_tree = {key: ak.to_numpy(fulltree_[key]) for key in fulltree_.fields}
+
+    # Write to ROOT file
+    outputrootfile["tree"]["processed_events"] = numpy_compatible_tree
+    print(f"Saved processed data to ROOT file.")
 
     from variables import vardict, regions, variables_common
     from binning import binning
 
     print("Making histograms and trees")
-    outputrootfileDir = inputfile.split("/")[-1].replace(".root", "")
+    outputrootfileDir = inputfile.split("/")[-1].replace(".parquet", "")
+
     for ireg in regions:
         thisregion = fulltree_[fulltree_[ireg] == True]
         thisregion_ = thisregion[~(ak.is_none(thisregion))]
         weight_ = "weight_" + ireg
+
         for ivar in variables_common[ireg]:
-            hist_name_ = ireg + "-" + vardict[ivar]
+            hist_name_ = f"{ireg}-{vardict[ivar]}"
             outputrootfile["hist"][f"{outputrootfileDir}/{hist_name_}"] = VarToHist(
-                thisregion_[ivar], thisregion_[weight_], hist_name_, binning[ireg][ivar]
+                ak.to_numpy(thisregion_[ivar]), 
+                ak.to_numpy(thisregion_[weight_]), 
+                hist_name_, 
+                binning[ireg][ivar]
             )
-        tree_data_ = thisregion_[
-            [key for key in thisregion_.fields if key not in regions]
-        ]
+
+        tree_data_ = {key: ak.to_numpy(thisregion_[key]) for key in thisregion_.fields if key not in regions}
         outputrootfile["tree"][f"{outputrootfileDir}/{ireg}"] = tree_data_
+
     print("Done")
-    
-    
-def runOneFile(inputfile, outputrootfile):
-    if inputfile.endswith(".root"):
-        process_root_file(inputfile)
-    elif inputfile.endswith(".parquet"):
-        process_parquet_file(inputfile)
-    else:
-        raise ValueError(f"Unsupported file type: {inputfile}")
+
 # Setup output directories and files
 output_dir = "outputfiles"
 if not os.path.exists(output_dir):
@@ -535,7 +459,7 @@ outputrootfile = {
 # Main function
 def main():
     for infile_ in inputfiles:
-        runOneFile(infile_, outputrootfile)
+        process_parquet_file(infile_, outputrootfile)
 
 if __name__ == "__main__":
     main()
