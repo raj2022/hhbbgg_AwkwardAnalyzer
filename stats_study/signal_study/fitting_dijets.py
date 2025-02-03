@@ -37,12 +37,14 @@ def fit_double_sided_crystalball(data, bins):
     return params, bin_centers
 
 # Main function
-def main(file_path, tree_name, output_dir, mass_min, mass_max):
+def main(input_file, output_dir, mass_min, mass_max):
     # Load the ROOT file and extract variables
-    with uproot.open(file_path) as file:
-        tree = file[tree_name]
+    tree = "DiphotonTree/data_125_13TeV_NOTAG/"
+
+    with uproot.open(input_file) as file:
+        tree = "DiphotonTree/data_125_13TeV_NOTAG/"
         dijet_mass = tree["Res_dijet_mass"].array(library="ak")
-    
+
     diphoton_mass_np = ak.to_numpy(dijet_mass)
     filtered_mass = diphoton_mass_np[(diphoton_mass_np >= mass_min) & (diphoton_mass_np <= mass_max)]
     bins = np.linspace(mass_min, mass_max, 50)
@@ -56,7 +58,7 @@ def main(file_path, tree_name, output_dir, mass_min, mass_max):
     errors = np.sqrt(hist_vals)
     errors[errors == 0] = 1
     chi2_val = np.sum(((hist_vals - fitted_dscb) / errors) ** 2)
-    dof = len(bin_centers) - len(params_dscb)  
+    dof = len(bin_centers) - len(params_dscb)
     chi2_dscb = chi2_val / dof if dof > 0 else 0
 
     # Plot results
@@ -83,14 +85,14 @@ def main(file_path, tree_name, output_dir, mass_min, mass_max):
     print(f"  Mu = {params_dscb[4]:.3f},  Sigma = {params_dscb[5]:.3f}")
     print(f"Chi-squared / dof: {chi2_dscb:.2f}")
 
-# Argument parsing
+# Entry point
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Fit Double-Sided Crystal Ball to dijet mass data")
-    parser.add_argument("--file_path", required=True, help="Path to the ROOT file")
-    parser.add_argument("--tree_name", required=True, help="Tree name in the ROOT file")
-    parser.add_argument("--output_dir", required=True, help="Directory to save output plots")
-    parser.add_argument("--mass_min", type=float, default=40, help="Minimum mass range")
-    parser.add_argument("--mass_max", type=float, default=180, help="Maximum mass range")
+    parser = argparse.ArgumentParser(description="Fit Crystal Ball function to diphoton mass")
+    parser.add_argument("-i", "--input", required=True, help="Path to the input ROOT file")
+    parser.add_argument("-o", "--output", required=True, help="Directory to save output plots")
+    parser.add_argument("--mass_min", type=float, default=100, help="Minimum mass range")
+    parser.add_argument("--mass_max", type=float, default=140, help="Maximum mass range")
     args = parser.parse_args()
 
-    main(args.file_path, args.tree_name, args.output_dir, args.mass_min, args.mass_max)
+
+    main(args.input, args.output,  args.mass_min, args.mass_max)
