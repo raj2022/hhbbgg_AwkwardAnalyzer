@@ -39,10 +39,10 @@ def fit_double_sided_crystalball(data, bins):
 # Main function
 def main(input_file, output_dir, mass_min, mass_max):
     # Load the ROOT file and extract variables
-    tree = "DiphotonTree/data_125_13TeV_NOTAG/"
+    tree_name = "DiphotonTree/data_125_13TeV_NOTAG/"
 
     with uproot.open(input_file) as file:
-        tree = "DiphotonTree/data_125_13TeV_NOTAG/"
+        tree = file[tree_name]
         dijet_mass = tree["Res_dijet_mass"].array(library="ak")
 
     diphoton_mass_np = ak.to_numpy(dijet_mass)
@@ -62,7 +62,7 @@ def main(input_file, output_dir, mass_min, mass_max):
     chi2_dscb = chi2_val / dof if dof > 0 else 0
 
     # Plot results
-    plt.figure(figsize=(6, 6))
+    plt.figure(figsize=(8, 8))
     plt.errorbar(bin_centers, hist_vals, fmt="o", color="black", markersize=5, label="Simulation", markerfacecolor='none')
     plt.plot(bin_centers, fitted_dscb, "b-", linewidth=2, label="Parametric model")
     hep.cms.label(data=False, lumi=13.6, loc=0, fontsize=12, label="Preliminary")
@@ -76,7 +76,7 @@ def main(input_file, output_dir, mass_min, mass_max):
     # Save plot
     plt.savefig(f"{output_dir}/Doubleside_CrystalBall_Fit_bkg_Dibjet_mass.png")
     plt.savefig(f"{output_dir}/Doubleside_CrystalBall_Fit_bkg_Dibjet_mass.pdf")
-    plt.show()
+   # plt.show()
 
     # Print Fit Parameters
     print(f"Fitted DSCB Parameters:")
