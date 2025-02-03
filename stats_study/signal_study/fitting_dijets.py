@@ -1,4 +1,6 @@
 import os
+import re
+from scipy.interpolate import interp1d
 import uproot
 import awkward as ak
 import numpy as np
@@ -37,6 +39,34 @@ def fit_double_sided_crystalball(data, bins):
     params, _ = curve_fit(double_sided_crystalball, bin_centers, hist_vals, p0=initial_params)
     return params, bin_centers
 
+def find_fwhm(x, y):
+    """Find Full Width at Half Maximum (FWHM)"""
+    max_val = np.max(y)
+    half_max = max_val / 2
+
+    # Find where the curve is equal to half max (by brute force)
+    indices = np.where((y[:-1] - half_max) * (y[1:] - half_max) < 0)[0]  # Find zero-crossings
+
+    if len(indices) >= 2:
+        # Get the x values at the crossing points
+        x_fwhm_low = x[indices[0]]
+        x_fwhm_high = x[indices[1]]
+    else:
+        x_fwhm_low, x_fwhm_high = np.nan, np.nan  # Return NaN if no valid crossing points
+
+    return x_fwhm_low, x_fwhm_high
+
+# Extract X and Y from the input file path
+def extract_x_y_from_path(input_file):
+    # Extract X and Y using regular expressions
+    match = re.search(r"X(\d+)_Y(\d+)", input_file)
+    if match:
+        x_value = match.group(1)
+        y_value = match.group(2)
+        return x_value, y_value
+    else:
+        return None, None
+
 # Main function
 def main(input_file, output_dir, mass_min, mass_max):
 
@@ -59,6 +89,10 @@ def main(input_file, output_dir, mass_min, mass_max):
     params_dscb, bin_centers = fit_double_sided_crystalball(filtered_mass, bins)
     fitted_dscb = double_sided_crystalball(bin_centers, *params_dscb)
 
+    # Compute FWHM
+    x_fwhm_low, x_fwhm_high = find_fwhm(bin_centers, fitted_dscb)
+    fwhm_value = x_fwhm_high - x_fwhm_low
+
     # Compute chi-squared
     hist_vals, _ = np.histogram(filtered_mass, bins=bins, density=True)
     errors = np.sqrt(hist_vals)
@@ -71,6 +105,12 @@ def main(input_file, output_dir, mass_min, mass_max):
     plt.figure(figsize=(8, 8))
     plt.errorbar(bin_centers, hist_vals, fmt="o", color="black", markersize=5, label="Simulation", markerfacecolor='none')
     plt.plot(bin_centers, fitted_dscb, "b-", linewidth=2, label="Parametric model")
+
+    # Highlight the FWHM region
+    plt.fill_between(bin_centers, 0, fitted_dscb, where=(bin_centers >= x_fwhm_low) & (bin_centers <= x_fwhm_high), color='gray', alpha=0.2, label="FWHM Region")
+
+
+    plt.ylim(bottom=0)  # Set the y-axis to start from 0
     hep.cms.label(data=False, lumi=13.6, loc=0, fontsize=12, label="Preliminary")
     plt.xlabel(r"$m_{jj}$ [GeV]", fontsize=14)
     plt.ylabel(r"Events / (%.1f GeV)" % (bins[1] - bins[0]), fontsize=14)
@@ -79,13 +119,20 @@ def main(input_file, output_dir, mass_min, mass_max):
     plt.yticks(fontsize=12)
     plt.xlim(mass_min, mass_max)
 
+    # Extract X and Y from the input file path
+    x_value, y_value = extract_x_y_from_path(input_file)
+
+    # If X and Y are found, add them as text to the plot
+    if x_value and y_value:
+        plt.text(0.05, 0.95, f"X = {x_value}, Y = {y_value}", transform=plt.gca().transAxes, fontsize=12, verticalalignment="top", color="blue")
+
    # Save plot with dynamic filename
     plot_filename = f"{output_dir}/{file_basename}_DSCB_Fit_bkg_Dibjet_mass"
     plt.savefig(f"{plot_filename}.png")
     plt.savefig(f"{plot_filename}.pdf")
    # plt.show()
     print(f"saved output at {output_dir}")
-
+    print(f"FWHM: {fwhm_value:.2f} GeV")
     # Print Fit Parameters
     print(f"Fitted DSCB Parameters:")
     print(f"  Alpha1 = {params_dscb[0]:.3f},  N1 = {params_dscb[1]:.3f}")
