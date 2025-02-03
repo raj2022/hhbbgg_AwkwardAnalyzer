@@ -1,3 +1,4 @@
+import os
 import uproot
 import awkward as ak
 import numpy as np
@@ -38,12 +39,17 @@ def fit_double_sided_crystalball(data, bins):
 
 # Main function
 def main(input_file, output_dir, mass_min, mass_max):
+
+    file_basename = os.path.splitext(os.path.basename(input_file))[0]
+
     # Load the ROOT file and extract variables
     tree_name = "DiphotonTree/data_125_13TeV_NOTAG/"
 
     with uproot.open(input_file) as file:
         tree = file[tree_name]
         dijet_mass = tree["Res_dijet_mass"].array(library="ak")
+
+    print("file read successfully!")
 
     diphoton_mass_np = ak.to_numpy(dijet_mass)
     filtered_mass = diphoton_mass_np[(diphoton_mass_np >= mass_min) & (diphoton_mass_np <= mass_max)]
@@ -73,10 +79,12 @@ def main(input_file, output_dir, mass_min, mass_max):
     plt.yticks(fontsize=12)
     plt.xlim(mass_min, mass_max)
 
-    # Save plot
-    plt.savefig(f"{output_dir}/Doubleside_CrystalBall_Fit_bkg_Dibjet_mass.png")
-    plt.savefig(f"{output_dir}/Doubleside_CrystalBall_Fit_bkg_Dibjet_mass.pdf")
+   # Save plot with dynamic filename
+    plot_filename = f"{output_dir}/{file_basename}_DSCB_Fit_bkg_Dibjet_mass"
+    plt.savefig(f"{plot_filename}.png")
+    plt.savefig(f"{plot_filename}.pdf")
    # plt.show()
+    print(f"saved output at {output_dir}")
 
     # Print Fit Parameters
     print(f"Fitted DSCB Parameters:")
