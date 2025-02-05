@@ -93,6 +93,7 @@ def main(input_file, output_dir, mass_min, mass_max):
     x_fwhm_low, x_fwhm_high = find_fwhm(bin_centers, fitted_dscb)
     fwhm_value = x_fwhm_high - x_fwhm_low
 
+
     # Compute chi-squared
     hist_vals, _ = np.histogram(filtered_mass, bins=bins, density=True)
     errors = np.sqrt(hist_vals)
@@ -100,6 +101,21 @@ def main(input_file, output_dir, mass_min, mass_max):
     chi2_val = np.sum(((hist_vals - fitted_dscb) / errors) ** 2)
     dof = len(bin_centers) - len(params_dscb)
     chi2_dscb = chi2_val / dof if dof > 0 else 0
+
+
+    # Create a multiline string with the fitting parameters
+
+    fitting_text = rf"""
+    $\alpha_1$ = {params_dscb[0]:.3f}
+    $N_1$ = {params_dscb[1]:.3f}
+    $\alpha_2$ = {params_dscb[2]:.3f}
+    $N_2$ = {params_dscb[3]:.3f}
+    $\mu$ = {params_dscb[4]:.3f}
+    $\sigma$ = {params_dscb[5]:.3f}
+    $\chi^2 / dof$ = {chi2_dscb:.2f}
+    """
+
+
 
     # Plot results
     plt.figure(figsize=(8, 8))
@@ -123,8 +139,18 @@ def main(input_file, output_dir, mass_min, mass_max):
     x_value, y_value = extract_x_y_from_path(input_file)
 
     # If X and Y are found, add them as text to the plot
+#    if x_value and y_value:
+#        plt.text(0.05, 0.95, f"X = {x_value}, Y = {y_value}", transform=plt.gca().transAxes, fontsize=12, verticalalignment="top", color="blue")
+
+    # If X and Y are found, add them as text to the plot
     if x_value and y_value:
         plt.text(0.05, 0.95, f"X = {x_value}, Y = {y_value}", transform=plt.gca().transAxes, fontsize=12, verticalalignment="top", color="blue")
+
+    # Add the fitting parameters inside a box
+    plt.text(0.05, 0.90, fitting_text, transform=plt.gca().transAxes, fontsize=12, verticalalignment="top", color="blue",
+         bbox=dict(facecolor='white', alpha=0.7, edgecolor='black', boxstyle='round,pad=0.5'))
+
+
 
    # Save plot with dynamic filename
     plot_filename = f"{output_dir}/{file_basename}_DSCB_Fit_bkg_Dibjet_mass"
