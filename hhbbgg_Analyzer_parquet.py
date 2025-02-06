@@ -1,5 +1,6 @@
 import os
 import optparse
+import numpy as np
 import uproot
 import pandas as pd
 import awkward as ak
@@ -395,7 +396,7 @@ def process_parquet_file(inputfile, outputrootfile):
 
         #---------------------------------------------------
         #---------------------------------------------------
-        out_events["MX"] = cms_events["MX"]
+        # out_events["MX"] = cms_events["MX"]
 
         # fulltree_ = ak.concatenate([out_events, fulltree_], axis=0)
         if len(fulltree_) == 0:
@@ -406,7 +407,15 @@ def process_parquet_file(inputfile, outputrootfile):
         
         print(f"Finished processing {len(fulltree_)} total events from {inputfile}")
     # Convert all fields to NumPy-compatible types before writing
-    numpy_compatible_tree = {key: ak.to_numpy(fulltree_[key]) for key in fulltree_.fields}
+    #numpy_compatible_tree = {key: ak.to_numpy(fulltree_[key]) for key in fulltree_.fields}
+
+    numpy_compatible_tree = {
+        key: ak.to_numpy(fulltree_[key]).astype("int64") 
+        if "int" in str(fulltree_[key].type) 
+        else ak.to_numpy(fulltree_[key]) 
+        for key in fulltree_.fields
+    }
+
 
     # Write to ROOT file
     outputrootfile["tree"]["processed_events"] = numpy_compatible_tree
@@ -433,6 +442,42 @@ def process_parquet_file(inputfile, outputrootfile):
             )
 
         tree_data_ = {key: ak.to_numpy(thisregion_[key]) for key in thisregion_.fields if key not in regions}
+        # tree_data_ = {
+        #     key: ak.to_numpy(tree_data_[key]).astype("int64")
+        #     if "int" in str(tree_data_[key].type)
+        #     else ak.to_numpy(tree_data_[key])
+        #     for key in tree_data_
+        # }
+        # tree_data_ = {
+        #     key: np.nan_to_num(ak.to_numpy(tree_data_[key]).astype("int64"), nan=-9999, posinf=999999999, neginf=-999999999)
+        #     if "int" in str(tree_data_[key].type)
+        #     else np.nan_to_num(ak.to_numpy(tree_data_[key]), nan=-9999, posinf=999999999, neginf=-999999999)
+        #     for key in tree_data_
+        # }
+
+        # tree_data_ = {
+        #     key: np.nan_to_num(ak.to_numpy(tree_data_[key]).astype("int64"), nan=-9999, posinf=999999999, neginf=-999999999)
+        #     if np.issubdtype(ak.to_numpy(tree_data_[key]).dtype, np.integer)  # ✅ Correct way to check integer type
+        #     else np.nan_to_num(ak.to_numpy(tree_data_[key]), nan=-9999, posinf=999999999, neginf=-999999999)
+        #     for key in tree_data_
+        # }
+        tree_data_ = {
+            key: np.nan_to_num(ak.to_numpy(ak.fill_none(thisregion_[key], -9999)).astype("int64"), nan=-9999, posinf=999999999, neginf=-999999999)
+            if np.issubdtype(ak.to_numpy(ak.fill_none(thisregion_[key], -9999)).dtype, np.integer)  # ✅ Check dtype correctly
+            else np.nan_to_num(ak.to_numpy(ak.fill_none(thisregion_[key], -9999)), nan=-9999, posinf=999999999, neginf=-999999999)
+            for key in thisregion_.fields
+        }
+
+
+        
+        for key in tree_data_:
+            try:        
+                max_val = ak.max(tree_data_[key])
+                min_val = ak.min(tree_data_[key])
+                print(f"{key}: min={min_val}, max={max_val}, dtype={str(tree_data_[key].type)}")
+            except Exception as e:
+                print(f"Error checking {key}: {e}")
+
         outputrootfile["tree"][f"{outputrootfileDir}/{ireg}"] = tree_data_
 
     print("Done")

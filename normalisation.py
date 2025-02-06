@@ -11,6 +11,8 @@ def getXsec(samplename):
     #if samplename in nmssm_samples:
     if "NMSSM_X" in samplename:
         xsec = 1.0
+    elif "GluGluToHH" in samplename:
+        xsec = 1.0
     elif "GGJets" in samplename:
         xsec = 88.75
     elif "GJetPt20To40" in samplename:
