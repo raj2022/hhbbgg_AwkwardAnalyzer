@@ -1,0 +1,32 @@
+imax 1  # Number of categories (1 bin)
+jmax 9  # Number of processes (e.g., 3 signals + 6 backgrounds)
+kmax *  # Number of nuisance parameters
+
+-------------------------------------------------
+# Observed data
+bin                cat1
+observation        -1  # Use Asimov dataset
+
+-------------------------------------------------
+# Signal and Background Processes
+bin                cat1         cat1         cat1         cat1         cat1         cat1         cat1         cat1    cat1
+process            NMSSM_X400_Y125  NMSSM_X400_Y100  NMSSM_X400_Y150         GJetPt40         GJetPt20to40         GGJets         VBFHTOGG         VHTOGG   ttHTOGG
+process            0            1            2            3            4            5            6            7          8 
+rate               1.0          1.0          1.0          1.0          1.0          1.0          1.0          1.0        1.0
+
+-------------------------------------------------
+# Systematic Uncertainties
+lumi       lnN     1.025        1.025        1.025        -            -            -            -            -
+NMSSM_X400_Y125Norm1   lnN     1.10         -            -            -            -            -            -            -
+NMSSM_X400_Y100Norm2   lnN     -            1.10         -            -            -            -            -            -
+NMSSM_X400_Y150Norm3   lnN     -            -            1.10         -            -            -            -            -
+GJetPt40Norm1   lnN     -            -            -            1.10         -            -            -            -
+GJetPt20to40Norm2   lnN     -            -            -            -            1.15         -            -            -
+GGJetsNorm3   lnN     -            -            -            -            -            1.20         -            -
+VBFHTOGGNorm4   lnN     -            -            -            -            -            -            1.25         -
+VHTOGGNorm5   lnN     -            -            -            -            -            -            -            1.30
+ttHTOGGNorm5   lnN     -            -            -            -            -            -            -            -  1.30
+
+-------------------------------------------------
+# Shape-based Analysis (histograms from ROOT)
+shapes * cat1 ../notebook_signal_fitting/fit_shapes.root $PROCESS $PROCESS_$SYSTEMATIC
