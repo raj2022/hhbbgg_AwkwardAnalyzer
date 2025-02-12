@@ -116,6 +116,7 @@ def process_parquet_file(inputfile, outputrootfile):
 
     for batch in parquet_file.iter_batches(batch_size=10000, columns=required_columns):
         df = batch.to_pandas()  # Convert chunk to Pandas DataFrame
+        print(f"Processing batch with {len(df)} rows.")  # Debugging
         tree_ = ak.from_arrow(pyarrow.Table.from_pandas(df))  
         print(f"Parquet file loaded with {len(tree_)} entries  and {len(required_columns)} columns.")
         isdata = False
@@ -399,7 +400,9 @@ def process_parquet_file(inputfile, outputrootfile):
         # out_events["MX"] = cms_events["MX"]
 
         # fulltree_ = ak.concatenate([out_events, fulltree_], axis=0)
+        print(f"Total number of events in fulltree_: {len(fulltree_)}") 
         if len(fulltree_) == 0:
+            print("WARNING: fulltree_ is empty! No events will be written to ROOT.")
             fulltree_ = out_events  # Initialize on the first batch
         else:
             fulltree_ = ak.concatenate([fulltree_, out_events], axis=0)
@@ -409,12 +412,16 @@ def process_parquet_file(inputfile, outputrootfile):
     # Convert all fields to NumPy-compatible types before writing
     #numpy_compatible_tree = {key: ak.to_numpy(fulltree_[key]) for key in fulltree_.fields}
 
+    print(f"Writing {len(fulltree_)} events to ROOT file.")
     numpy_compatible_tree = {
         key: ak.to_numpy(fulltree_[key]).astype("int64") 
         if "int" in str(fulltree_[key].type) 
         else ak.to_numpy(fulltree_[key]) 
         for key in fulltree_.fields
     }
+    
+    for key, value in numpy_compatible_tree.items():
+        print(f"{key}: shape {value.shape}, dtype {value.dtype}")
 
 
     # Write to ROOT file
