@@ -364,7 +364,12 @@ def main():
     # List of signal processes
     signal_samples = [
         #"GluGluToHH",
-        "NMSSM_X300_Y60",
+        " NMSSM_X400_Y100",
+        " NMSSM_X400_Y125",
+        " NMSSM_X400_Y150",
+        " NMSSM_X500_Y100",
+        " NMSSM_X500_Y125",
+        " NMSSM_X500_Y150",
      ]
 
     #signal_samples = [
@@ -429,9 +434,13 @@ def main():
         "VBFHToGG": r"$VBF\:H\rightarrow\gamma\gamma$",
         "VHToGG": r"$V\:H\rightarrow\gamma\gamma$",
         "ttHToGG": r"$t\bar{t}H\rightarrow\gamma\gamma$",
-        "NMSSM_X300_Y60": "NMSSM_X300_Y60 × 10",
         #"GluGluToHH": r"$gg\rightarrow\,HH$ \times 10",
-        "NMSSM_X300_Y60": r"$NMSSM\_X_{300}\_Y_{60} \times 10$",
+        "NMSSM_X400_Y100": r"$NMSSM\_X_{400}\_Y_{100} \times 10$",
+        "NMSSM_X400_Y125": r"$NMSSM\_X_{400}\_Y_{125} \times 10$",
+        "NMSSM_X400_Y150": r"$NMSSM\_X_{400}\_Y_{150} \times 10$",
+        "NMSSM_X500_Y100": r"$NMSSM\_X_{500}\_Y_{100} \times 10$",
+        "NMSSM_X500_Y125": r"$NMSSM\_X_{500}\_Y_{125} \times 10$",
+        "NMSSM_X500_Y150": r"$NMSSM\_X_{500}\_Y_{150} \times 10$",
         # QCD sample legends
         # "QCD_PT-30to40": r"$QCD+P_T(30to40)$",
         # "QCD_PT-30toInf": r"$QCD+P_T(30toInf)$",
