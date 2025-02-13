@@ -364,12 +364,12 @@ def main():
     # List of signal processes
     signal_samples = [
         #"GluGluToHH",
-        " NMSSM_X400_Y100",
-        " NMSSM_X400_Y125",
-        " NMSSM_X400_Y150",
-        " NMSSM_X500_Y100",
-        " NMSSM_X500_Y125",
-        " NMSSM_X500_Y150",
+        "NMSSM_X400_Y100",
+        "NMSSM_X400_Y125",
+        "NMSSM_X400_Y150",
+        "NMSSM_X500_Y100",
+        "NMSSM_X500_Y125",
+        "NMSSM_X500_Y150",
      ]
 
     #signal_samples = [
