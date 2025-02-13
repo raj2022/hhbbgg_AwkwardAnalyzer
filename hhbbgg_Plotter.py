@@ -350,15 +350,15 @@ def main():
     # List of MC processes
     mc_samples = [
         "GGJets",
-        "GJetPt20to40",
+        "GJetPt20To40",
         "GJetPt40",
-        "GluGluHtoGG",
+        "GluGluHToGG",
         "VBFHToGG",
         "VHToGG",
         "ttHToGG",
-        "QCD_PT-30to40",
-        "QCD_PT-30toInf",
-        "QCD_PT-40toInf",
+        # "QCD_PT-30to40",
+        # "QCD_PT-30toInf",
+        # "QCD_PT-40toInf",
     ]
 
     # List of signal processes
@@ -423,9 +423,9 @@ def main():
     # Dictionary for legends
     legend_dict = {
         "GGJets": r"$\gamma\gamma$+jets",
-        "GJetPt20to40": r"$\gamma$+jets ($20< p_T < 40$)",
+        "GJetPt20To40": r"$\gamma$+jets ($20< p_T < 40$)",
         "GJetPt40": r"$\gamma$+jets ($p_T > 40$)",
-        "GluGluHtoGG": r"$gg\rightarrow\,H\rightarrow\gamma\gamma$",
+        "GluGluHToGG": r"$gg\rightarrow\,H\rightarrow\gamma\gamma$",
         "VBFHToGG": r"$VBF\:H\rightarrow\gamma\gamma$",
         "VHToGG": r"$V\:H\rightarrow\gamma\gamma$",
         "ttHToGG": r"$t\bar{t}H\rightarrow\gamma\gamma$",
@@ -433,9 +433,9 @@ def main():
         #"GluGluToHH": r"$gg\rightarrow\,HH$ \times 10",
         "NMSSM_X300_Y60": r"$NMSSM\_X_{300}\_Y_{60} \times 10$",
         # QCD sample legends
-        "QCD_PT-30to40": r"$QCD+P_T(30to40)$",
-        "QCD_PT-30toInf": r"$QCD+P_T(30toInf)$",
-        "QCD_PT-40toInf": r"$QCD+P_T(40toInf)$",
+        # "QCD_PT-30to40": r"$QCD+P_T(30to40)$",
+        # "QCD_PT-30toInf": r"$QCD+P_T(30toInf)$",
+        # "QCD_PT-40toInf": r"$QCD+P_T(40toInf)$",
         # NMSSM samples legends
         #"NMSSM_X300_Y60": r"$NMSSM\_X300\_Y60$",
         #"NMSSM_X300_Y70": r"$NMSSM\_X300\_Y70$",
