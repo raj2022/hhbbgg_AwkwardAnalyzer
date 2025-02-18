@@ -8,6 +8,9 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, TensorDataset
 from torch.optim import Adam
+from torch.nn import BCEWithLogitsLoss
+
+
 
 # Taking mass X and corresponding Y mass points
 mass_points = [300, 400, 500, 550, 600, 650, 700, 900]  # Example mass points
@@ -47,7 +50,7 @@ if missing_files:
     for mass, ys in missing_files.items():
         print(f"Mass point {mass} is missing Y values: {ys}")
 
-print(signal_df.shape)
+print(f"singal shape is",signal_df.shape)
 
 # Reading background files
 # Load background data from ROOT files
@@ -101,7 +104,21 @@ df_features = df_features.fillna(df_features.mean())
 X = df_features.values
 y = df_combined["label"].values
 
-print(df_features.shape)
+print(f"total features", df_features.shape)
+
+# Undersampling the Majority Class
+
+from sklearn.utils import resample
+
+df_majority = df_combined[df_combined["label"] == 0]
+df_minority = df_combined[df_combined["label"] == 1]
+
+df_majority_downsampled = resample(df_majority, 
+                                   replace=False, 
+                                   n_samples=len(df_minority), 
+                                   random_state=42)
+
+df_balanced = pd.concat([df_majority_downsampled, df_minority])
 
 
 # Standardize features
@@ -123,6 +140,11 @@ y_tensor = torch.tensor(y, dtype=torch.float32)
 # Create DataLoader
 dataset = TensorDataset(X_tensor, y_tensor)
 dataloader = DataLoader(dataset, batch_size=64, shuffle=True)
+
+# Checking class imabalance
+class_counts = np.bincount(y)
+print(f"Class distribution: {dict(enumerate(class_counts))}")
+
 
 import torch
 import torch.nn as nn
@@ -155,9 +177,14 @@ class ParameterizedDNN(nn.Module):
 # Initialize model
 input_dim = X.shape[1]
 model = ParameterizedDNN(input_dim)
-criterion = nn.BCEWithLogitsLoss()  # Expecting raw logits
+# criterion = nn.BCEWithLogitsLoss()  # Expecting raw logits
 # criterion = nn.BCEWithLogitsLoss(pos_weight=torch.tensor([weight]))
 optimizer = Adam(model.parameters(), lr=0.0001, weight_decay=1e-5)  # Reduce learning rate
+# Compute class weights
+pos_weight = torch.tensor([class_counts[0] / class_counts[1]], dtype=torch.float32).to(device)
+
+# Update loss function
+criterion = BCEWithLogitsLoss(pos_weight=pos_weight)
 
 
 import torch
