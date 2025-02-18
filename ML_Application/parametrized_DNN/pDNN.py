@@ -4,34 +4,53 @@ import uproot
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.utils import resample
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, TensorDataset
 from torch.optim import Adam
-from sklearn.metrics import accuracy_score, roc_auc_score, roc_curve
-import matplotlib.pyplot as plt
 
-# Define mass and Y points
-mass_points = [300, 400, 500, 550, 600, 650, 700, 900]
-y_values = [100, 125, 150]
+# Taking mass X and corresponding Y mass points
+mass_points = [300, 400, 500, 550, 600, 650, 700, 900]  # Example mass points
+y_values = [100, 125, 150, 200, 300, 400, 500, 600]  # Example Y values
 
-# Load signal data
+# Initialize list to store data and a dictionary for missing files
 signal_data = []
+missing_files = {}
+
+# Load signal data from Parquet files
 for mass in mass_points:
     for y in y_values:
         file_path = f"../../../output_parquet/final_production_Syst/merged/NMSSM_X{mass}_Y{y}/nominal/NOTAG_merged.parquet"
-        if os.path.exists(file_path):
+        
+        if os.path.exists(file_path):  # Check if file exists
             try:
-                df = pd.read_parquet(file_path)
-                df["label"] = 1  # Signal
+                df = pd.read_parquet(file_path)  # Load the Parquet file
+                df["mass"] = mass  
+                df["y_value"] = y  # Store Y value if needed
+                df["label"] = 1  # Assuming signal label
                 signal_data.append(df)
             except Exception as e:
                 print(f"Warning: Could not read {file_path}. Error: {e}")
+        else:
+            print(f"Warning: File {file_path} does not exist.")
+            # Track missing files
+            if mass not in missing_files:
+                missing_files[mass] = []
+            missing_files[mass].append(y)
 
+# Combine all signal data into a single DataFrame
 signal_df = pd.concat(signal_data, ignore_index=True) if signal_data else pd.DataFrame()
 
-# Load background data
+#  print the missing files
+if missing_files:
+    print("Missing files for the following mass points and Y values:")
+    for mass, ys in missing_files.items():
+        print(f"Mass point {mass} is missing Y values: {ys}")
+
+print(signal_df.shape)
+
+# Reading background files
+# Load background data from ROOT files
 background_files = [
     ("../../outputfiles/hhbbgg_analyzer-v2-trees.root", "/GGJets/preselection"),
     ("../../outputfiles/hhbbgg_analyzer-v2-trees.root", "/GJetPt20To40/preselection"),
@@ -43,104 +62,207 @@ for file_path, tree_name in background_files:
         with uproot.open(file_path) as file:
             tree = file[tree_name]
             df = tree.arrays(library="pd")
-            df["label"] = 0  # Background
+            df["mass"] = np.random.choice(mass_points, len(df))  # Random mass assignment
+            df["label"] = 0
             background_data.append(df)
     except Exception as e:
         print(f"Warning: Could not read {file_path}. Error: {e}")
 
 df_background = pd.concat(background_data, ignore_index=True) if background_data else pd.DataFrame()
 
-# Balance dataset (resample signal to match background size)
-df_signal_balanced = resample(signal_df, replace=True, n_samples=len(df_background), random_state=42)
-df_combined = pd.concat([df_signal_balanced, df_background], ignore_index=True)
-
-# Define features
+# Define features and labels
 features = [
-    'bbgg_eta', 'bbgg_phi', 'lead_pho_phi', 'sublead_pho_eta', 'sublead_pho_phi', 'diphoton_eta', 'diphoton_phi',
-    'dibjet_eta', 'dibjet_phi', 'lead_bjet_pt', 'sublead_bjet_pt', 'lead_bjet_eta', 'lead_bjet_phi',
-    'sublead_bjet_eta', 'sublead_bjet_phi', 'sublead_bjet_PNetB', 'lead_bjet_PNetB', 'CosThetaStar_gg',
-    'CosThetaStar_jj', 'CosThetaStar_CS', 'DeltaR_jg_min', 'pholead_PtOverM', 'phosublead_PtOverM',
-    'lead_pho_mvaID', 'sublead_pho_mvaID'
+    'bbgg_eta', 'bbgg_phi', 'lead_pho_phi', 'sublead_pho_eta', 
+    'sublead_pho_phi', 'diphoton_eta', 'diphoton_phi', 'dibjet_eta', 'dibjet_phi', 
+    'lead_bjet_pt', 'sublead_bjet_pt', 'lead_bjet_eta', 'lead_bjet_phi', 'sublead_bjet_eta', 
+    'sublead_bjet_phi', 'sublead_bjet_PNetB', 'lead_bjet_PNetB', 'CosThetaStar_gg', 
+    'CosThetaStar_jj', 'CosThetaStar_CS', 'DeltaR_jg_min', 'pholead_PtOverM', 
+    'phosublead_PtOverM', 'lead_pho_mvaID', 'sublead_pho_mvaID'
 ]
 
-df_combined = df_combined.fillna(df_combined.mean())
-X = df_combined[features].values
+# Reduce background dataset size by random sampling
+background_fraction = 0.2  #  20% of the background
+df_background = df_background.sample(frac=background_fraction, random_state=42)
+
+# Combine signal and background
+df_combined = pd.concat([signal_df, df_background], ignore_index=True)
+
+# Ensure df_combined is not empty
+if df_combined.empty:
+    raise ValueError("Error: Combined DataFrame is empty. Check input files.")
+
+# Convert feature data to DataFrame to prevent AttributeError
+df_features = df_combined[features]
+
+# Fill missing values with column mean
+df_features = df_features.fillna(df_features.mean())
+
+# Extract features (X) and labels (y)
+X = df_features.values
 y = df_combined["label"].values
+
+print(df_features.shape)
+
 
 # Standardize features
 scaler = StandardScaler()
 X = scaler.fit_transform(X)
 
-# Train-test split
-X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
-
 # Convert to PyTorch tensors
-X_train_tensor = torch.tensor(X_train, dtype=torch.float32)
-y_train_tensor = torch.tensor(y_train, dtype=torch.float32)
-X_val_tensor = torch.tensor(X_val, dtype=torch.float32)
-y_val_tensor = torch.tensor(y_val, dtype=torch.float32)
+X_tensor = torch.tensor(X, dtype=torch.float32)
+y_tensor = torch.tensor(y, dtype=torch.float32)
 
-train_dataset = TensorDataset(X_train_tensor, y_train_tensor)
-val_dataset = TensorDataset(X_val_tensor, y_val_tensor)
+# Check for GPU
+# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# print(f"Using device: {device}")
 
-train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-val_loader = DataLoader(val_dataset, batch_size=64, shuffle=False)
+# Move data to GPU
+# X_tensor = X_tensor.to(device)
+# y_tensor = y_tensor.to(device)
 
-# Define model
-class SimplifiedDNN(nn.Module):
+# Create DataLoader
+dataset = TensorDataset(X_tensor, y_tensor)
+dataloader = DataLoader(dataset, batch_size=64, shuffle=True)
+
+import torch
+import torch.nn as nn
+from torch.optim import Adam
+
+class ParameterizedDNN(nn.Module):
     def __init__(self, input_dim):
-        super(SimplifiedDNN, self).__init__()
+        super(ParameterizedDNN, self).__init__()
         self.model = nn.Sequential(
-            nn.Linear(input_dim, 128),
+            nn.Linear(input_dim, 256),  # Increase neurons
             nn.ReLU(),
-            nn.BatchNorm1d(128),
-            nn.Dropout(0.4),
-            nn.Linear(128, 64),
+            nn.Dropout(0.3),  # Reduce dropout
+            
+            nn.Linear(256, 128),
             nn.ReLU(),
-            nn.BatchNorm1d(64),
-            nn.Dropout(0.4),
-            nn.Linear(64, 1)
+            nn.Dropout(0.3),
+            
+            nn.Linear(128, 64),  # Increase size from 4 → 16
+            nn.ReLU(),
+            nn.Dropout(0.2),  # Reduce dropout further
+            
+            nn.Linear(64, 1)  # Output layer (No activation function)
         )
-    def forward(self, x):
-        return self.model(x)
 
+    def forward(self, x):
+        return self.model(x)  # No sigmoid here!
+
+
+
+# Initialize model
 input_dim = X.shape[1]
-model = SimplifiedDNN(input_dim)
+model = ParameterizedDNN(input_dim)
+criterion = nn.BCEWithLogitsLoss()  # Expecting raw logits
+# criterion = nn.BCEWithLogitsLoss(pos_weight=torch.tensor([weight]))
+optimizer = Adam(model.parameters(), lr=0.0001, weight_decay=1e-5)  # Reduce learning rate
+
+
+import torch
+from sklearn.metrics import accuracy_score, roc_auc_score, roc_curve
+import matplotlib.pyplot as plt
+
+# Check if GPU is available
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
-criterion = nn.BCEWithLogitsLoss()
-optimizer = Adam(model.parameters(), lr=0.0001, weight_decay=1e-5)
-scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=5, factor=0.5, verbose=True)
-
-# Training loop
 num_epochs = 100
+train_losses = []
+train_accuracies = []
+train_aucs = []
+fpr_all, tpr_all, thresholds_all = [], [], []
+
 for epoch in range(num_epochs):
-    model.train()
     epoch_loss = 0
-    for X_batch, y_batch in train_loader:
-        X_batch, y_batch = X_batch.to(device), y_batch.to(device)
+    y_true = []
+    y_pred = []
+    
+    model.train()  # Set to training mode
+    for batch in dataloader:
+        X_batch, y_batch = batch
+        X_batch, y_batch = X_batch.to(device), y_batch.to(device)  # Move data to GPU
+
         optimizer.zero_grad()
-        outputs = model(X_batch).squeeze()
+        outputs = model(X_batch).squeeze()  # Get raw logits
+        
         loss = criterion(outputs, y_batch)
         loss.backward()
         optimizer.step()
+        
         epoch_loss += loss.item()
+        
+        # Store predictions for accuracy & AUC calculation
+        y_true.extend(y_batch.cpu().numpy())  # True labels
+        y_pred.extend(torch.sigmoid(outputs).detach().cpu().numpy())  # Apply sigmoid AFTER training
     
-    # Validation phase
-    model.eval()
-    val_losses, val_preds, val_true = [], [], []
-    with torch.no_grad():
-        for X_val_batch, y_val_batch in val_loader:
-            X_val_batch, y_val_batch = X_val_batch.to(device), y_val_batch.to(device)
-            val_outputs = model(X_val_batch).squeeze()
-            val_loss = criterion(val_outputs, y_val_batch)
-            val_losses.append(val_loss.item())
-            val_preds.extend(torch.sigmoid(val_outputs).cpu().numpy())
-            val_true.extend(y_val_batch.cpu().numpy())
+    # Compute Metrics
+    avg_loss = epoch_loss / len(dataloader)
+    y_pred_binary = [1 if p > 0.5 else 0 for p in y_pred]  # Convert to 0/1 labels
+    accuracy = accuracy_score(y_true, y_pred_binary)
+    auc = roc_auc_score(y_true, y_pred)  # Use probabilities, not logits
+
+    # Store metrics
+    train_losses.append(avg_loss)
+    train_accuracies.append(accuracy)
+    train_aucs.append(auc)
     
-    avg_val_loss = np.mean(val_losses)
-    val_auc = roc_auc_score(val_true, val_preds)
-    val_acc = accuracy_score(val_true, [1 if p > 0.5 else 0 for p in val_preds])
-    scheduler.step(avg_val_loss)
-    print(f"Epoch {epoch+1}/{num_epochs} - Loss: {epoch_loss:.4f}, Val Loss: {avg_val_loss:.4f}, AUC: {val_auc:.4f}, Accuracy: {val_acc:.4f}")
+    # Compute ROC curve for current epoch (for plotting)
+    fpr, tpr, thresholds = roc_curve(y_true, y_pred)
+    fpr_all.append(fpr)
+    tpr_all.append(tpr)
+    thresholds_all.append(thresholds)
+    
+    print(f"Epoch {epoch+1}/{num_epochs} - Loss: {avg_loss:.4f}, Accuracy: {accuracy:.4f}, AUC: {auc:.4f}")
+
+
+
+
+# Plot Loss
+plt.figure(figsize=(12, 4))
+plt.subplot(1, 3, 1)
+plt.plot(range(1, num_epochs+1), train_losses, marker='o', linestyle='-', color='blue')
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.title("Loss vs. Epochs")
+
+
+plt.tight_layout()
+plt.savefig("loss_vs_epochs.png")
+plt.savefig("loss_vs_epochs.pdf")
+
+
+# Plot Accuracy
+plt.subplot(1, 3, 2)
+plt.plot(range(1, num_epochs+1), train_accuracies, marker='o', linestyle='-', color='green')
+plt.xlabel("Epoch")
+plt.ylabel("Accuracy")
+plt.title("Accuracy vs. Epochs")
+
+plt.tight_layout()
+plt.savefig("accuracy_vs_epochs.png")
+plt.savefig("accuracy_vs_epochs.pdf")
+
+
+# Plot AUC
+
+
+# Plot the final ROC curve
+# Select the ROC curve from the last epoch
+fpr_last = fpr_all[-1]
+tpr_last = tpr_all[-1]
+
+plt.figure(figsize=(10, 6))
+plt.plot(fpr_last, tpr_last, color='darkorange', lw=2, label=f'ROC curve (AUC = {train_aucs[-1]:.2f})')
+plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')  # Random classifier line
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title(f'Final ROC Curve (AUC = {train_aucs[-1]:.2f})')
+plt.legend(loc="lower right")
+plt.savefig(AUC.png)
+plt.savefig(AUC.pdf)
+
+
