@@ -24,11 +24,11 @@ missing_files = {}
 for mass in mass_points:
     for y in y_values:
         file_path = f"../../../output_parquet/final_production_Syst/merged/NMSSM_X{mass}_Y{y}/nominal/NOTAG_merged.parquet"
-        
+
         if os.path.exists(file_path):  # Check if file exists
             try:
                 df = pd.read_parquet(file_path)  # Load the Parquet file
-                df["mass"] = mass  
+                df["mass"] = mass
                 df["y_value"] = y  # Store Y value if needed
                 df["label"] = 1  # Assuming signal label
                 signal_data.append(df)
@@ -75,11 +75,11 @@ df_background = pd.concat(background_data, ignore_index=True) if background_data
 
 # Define features and labels
 features = [
-    'bbgg_eta', 'bbgg_phi', 'lead_pho_phi', 'sublead_pho_eta', 
-    'sublead_pho_phi', 'diphoton_eta', 'diphoton_phi', 'dibjet_eta', 'dibjet_phi', 
-    'lead_bjet_pt', 'sublead_bjet_pt', 'lead_bjet_eta', 'lead_bjet_phi', 'sublead_bjet_eta', 
-    'sublead_bjet_phi', 'sublead_bjet_PNetB', 'lead_bjet_PNetB', 'CosThetaStar_gg', 
-    'CosThetaStar_jj', 'CosThetaStar_CS', 'DeltaR_jg_min', 'pholead_PtOverM', 
+    'bbgg_eta', 'bbgg_phi', 'lead_pho_phi', 'sublead_pho_eta',
+    'sublead_pho_phi', 'diphoton_eta', 'diphoton_phi', 'dibjet_eta', 'dibjet_phi',
+    'lead_bjet_pt', 'sublead_bjet_pt', 'lead_bjet_eta', 'lead_bjet_phi', 'sublead_bjet_eta',
+    'sublead_bjet_phi', 'sublead_bjet_PNetB', 'lead_bjet_PNetB', 'CosThetaStar_gg',
+    'CosThetaStar_jj', 'CosThetaStar_CS', 'DeltaR_jg_min', 'pholead_PtOverM',
     'phosublead_PtOverM', 'lead_pho_mvaID', 'sublead_pho_mvaID'
 ]
 
@@ -113,9 +113,9 @@ from sklearn.utils import resample
 df_majority = df_combined[df_combined["label"] == 0]
 df_minority = df_combined[df_combined["label"] == 1]
 
-df_majority_downsampled = resample(df_majority, 
-                                   replace=False, 
-                                   n_samples=len(df_minority), 
+df_majority_downsampled = resample(df_majority,
+                                   replace=False,
+                                   n_samples=len(df_minority),
                                    random_state=42)
 
 df_balanced = pd.concat([df_majority_downsampled, df_minority])
@@ -157,15 +157,15 @@ class ParameterizedDNN(nn.Module):
             nn.Linear(input_dim, 256),  # Increase neurons
             nn.ReLU(),
             nn.Dropout(0.3),  # Reduce dropout
-            
+
             nn.Linear(256, 128),
             nn.ReLU(),
             nn.Dropout(0.3),
-            
+
             nn.Linear(128, 64),  # Increase size from 4 → 16
             nn.ReLU(),
             nn.Dropout(0.2),  # Reduce dropout further
-            
+
             nn.Linear(64, 1)  # Output layer (No activation function)
         )
 
@@ -205,7 +205,7 @@ for epoch in range(num_epochs):
     epoch_loss = 0
     y_true = []
     y_pred = []
-    
+
     model.train()  # Set to training mode
     for batch in dataloader:
         X_batch, y_batch = batch
@@ -213,17 +213,17 @@ for epoch in range(num_epochs):
 
         optimizer.zero_grad()
         outputs = model(X_batch).squeeze()  # Get raw logits
-        
+
         loss = criterion(outputs, y_batch)
         loss.backward()
         optimizer.step()
-        
+
         epoch_loss += loss.item()
-        
+
         # Store predictions for accuracy & AUC calculation
         y_true.extend(y_batch.cpu().numpy())  # True labels
         y_pred.extend(torch.sigmoid(outputs).detach().cpu().numpy())  # Apply sigmoid AFTER training
-    
+
     # Compute Metrics
     avg_loss = epoch_loss / len(dataloader)
     y_pred_binary = [1 if p > 0.5 else 0 for p in y_pred]  # Convert to 0/1 labels
@@ -234,13 +234,13 @@ for epoch in range(num_epochs):
     train_losses.append(avg_loss)
     train_accuracies.append(accuracy)
     train_aucs.append(auc)
-    
+
     # Compute ROC curve for current epoch (for plotting)
     fpr, tpr, thresholds = roc_curve(y_true, y_pred)
     fpr_all.append(fpr)
     tpr_all.append(tpr)
     thresholds_all.append(thresholds)
-    
+
     print(f"Epoch {epoch+1}/{num_epochs} - Loss: {avg_loss:.4f}, Accuracy: {accuracy:.4f}, AUC: {auc:.4f}")
 
 
