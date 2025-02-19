@@ -181,7 +181,7 @@ model = ParameterizedDNN(input_dim)
 # criterion = nn.BCEWithLogitsLoss(pos_weight=torch.tensor([weight]))
 optimizer = Adam(model.parameters(), lr=0.0001, weight_decay=1e-5)  # Reduce learning rate
 # Compute class weights
-pos_weight = torch.tensor([class_counts[0] / class_counts[1]], dtype=torch.float32).to(device)
+pos_weight = torch.tensor([class_counts[0] / class_counts[1]], dtype=torch.float32)
 
 # Update loss function
 criterion = BCEWithLogitsLoss(pos_weight=pos_weight)
