@@ -1,5 +1,7 @@
 import os
+import sys
 os.environ['MPLCONFIGDIR'] = '/uscms_data/d1/sraj/matplotlib_tmp'
+sys.path.append(os.path.abspath("../.."))
 import uproot
 from hist import Hist
 import numpy as np
@@ -89,7 +91,6 @@ def plot_combined_signal_efficiency(histograms, X_values, Y_values):
 
     for X_value in X_values:
         efficiency = []
-<<<<<<< HEAD:signal_efficiency.py
         total_integral = sum(np.sum(histograms[X_value][y].values()) for y in Y_values)
 
         for Y_value in Y_values:
@@ -99,7 +100,6 @@ def plot_combined_signal_efficiency(histograms, X_values, Y_values):
 
         Y_vals, eff_vals = zip(*efficiency)
         plt.plot(Y_vals, eff_vals, marker='o', linestyle='-', label=f'$m_X={X_value}$ GeV')
-=======
 
         for Y_value in Y_values:
             hist_name = f"NMSSM_X{X_value}_Y{Y_value}/preselection-dibjet_pt"
@@ -120,7 +120,6 @@ def plot_combined_signal_efficiency(histograms, X_values, Y_values):
         # Plot efficiency vs. Y for this X value
         Y_values, eff_values = zip(*efficiency)
         plt.plot(Y_values, eff_values, marker='o', linestyle='-', label=f'$m_X={X_value}$ GeV')
->>>>>>> 12aab03 (oprganised and added variable kinematics):signal/signal_efficiency.py
 
     plt.xlabel("$m_Y$ (GeV)")
     plt.ylabel("Signal Efficiency")
@@ -139,15 +138,15 @@ def plot_combined_signal_efficiency(histograms, X_values, Y_values):
     plt.close()
 
 # Define the X and Y values
-X_values = [300, 400, 500, 550, 600, 650, 700, 800, 900, 1000]
-Y_values = [60, 70, 80, 90, 95, 100, 125, 150]
+X_values = [300, 400, 500, 550, 600, 700, 1000]
+Y_values = [60, 70, 95, 100, 125, 150]
 
 # Ensure the output directory exists
 output_dir = "stack_plots/"
 os.makedirs(output_dir, exist_ok=True)
 
 # Load the ROOT file and histograms
-file_path = "outputfiles/hhbbgg_analyzerNMSSM-histograms.root"
+file_path = "outputfiles/hhbbgg_analyzer-v2-histograms.root"
 root_file = uproot.open(file_path)
 histograms = get_all_histograms(root_file, X_values, Y_values)
 
