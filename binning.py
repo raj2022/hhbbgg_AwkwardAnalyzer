@@ -2,7 +2,7 @@ import copy
 
 binning = {}
 binning["preselection"] = {
-    "dibjet_mass": [33, 50, 180],
+    "dibjet_mass": [33, 0, 180],
     "diphoton_mass": [25, 50, 180],
     "bbgg_mass": [45, 150, 800],
     "dibjet_pt": [25, 30, 500],
