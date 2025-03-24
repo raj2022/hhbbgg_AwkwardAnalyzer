@@ -10,4 +10,5 @@ outputfiles/*.ipynb
 **.vscode
 bdt/notebook/**/*.pt
 bdt/notebook/**/*.pth
+stats_study/CMSSW_*/
 stats_study/datacards/CMSSW*
