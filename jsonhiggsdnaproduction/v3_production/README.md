@@ -13,7 +13,7 @@
 1. **Clone the HiggsDNA Repository**
    - You can use either the main [HiggsDNA project](https://gitlab.cern.ch/HiggsDNA-project/HiggsDNA) or the [hhbbgg branch](https://gitlab.cern.ch/hhbbgg/HiggsDNA):
      ```bash
-     git clone --branch HHbbgg_v2_parquet ssh://git@gitlab.cern.ch:7999/cms-analysis/general/HiggsDNA.git
+     git clone --branch HHbbgg_v3_parquet ssh://git@gitlab.cern.ch:7999/cms-analysis/general/HiggsDNA.git 
      cd HiggsDNA
      ```
 
@@ -26,11 +26,12 @@
        ```bash
        mamba env create -f environment.yml
        ```
-   - Activate the environment and install the necessary packages:
+   - Activate the environment and install the necessary packages. If everything is already installed:
      ```bash
      conda activate higgs-dna
      pip install -e .[dev] # Install additional development dependencies
      ```
+   - Download necessary files: python higgs_dna/scripts/pull_files.py --all
 
 3. Following the above, we can download all necessary files
 ```bash
