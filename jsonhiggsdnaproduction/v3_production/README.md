@@ -6,7 +6,35 @@
 * v3 Production: https://indico.cern.ch/event/1499924/contributions/6478750/attachments/3053886/5398744/For_Hgg_v3_production-2.pdf
    
 
+## Error i ma having right now, 
+
+```bash
+
+(higgs-dna) [sraj@lxplus982 private]$ (higgs-dna) [sraj@lxplus982 private]$ python /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/parquet_production_v3/HiggsDNA/higgs_dna/scripts/run_analysis.py --json-analysis My_Json_300.json --dump /afs/cern.ch/user/s/sraj/private/output/ --doFlow_corrections --fiducialCuts store_flag --skipCQR --Smear_sigma_m --doDeco --executor vanilla_lxplus --queue espresso --nanoaod-version 12
+
+
+usage: run_analysis.py [-h] --json-analysis JSON_ANALYSIS_FILE [--no-trigger] [-d DUMP] [-o OUTPUT]
+                       [--schema {nano,base}] [-f {root,parquet}]
+                       [--triggerGroup {.*DoubleEG.*,.*EGamma.*2018.*,.*EGamma.*,.*SingleEle.*,.*DoubleMuon.*}]
+                       [--analysis {mainAnalysis,tagAndProbe,ZmmyAnalysis}] [--save SAVE]
+                       [--executor {iterative,futures,parsl/slurm,parsl/condor,dask/condor,dask/slurm,dask/lpc,dask/lxplus,dask/casa,vanilla_lxplus}]
+                       [-j WORKERS] [-m MEMORY] [--walltime WALLTIME] [--disk DISK] [-s SCALEOUT]
+                       [--max-scaleout MAX_SCALEOUT] [-q QUEUE] [--voms VOMS] [--validate]
+                       [--skipbadfiles] [--only ONLY] [--limit N] [--chunk N] [--max N] [--skipCQR]
+                       [--skipJetVetoMap] [--debug]
+                       [--fiducialCuts {classical,geometric,store_flag,none}] [--doDeco]
+                       [--Smear_sigma_m] [--doFlow_corrections] [--output_format {root,parquet}]
+run_analysis.py: error: unrecognized arguments: --nanoaod-version 12
+
+
+```
+
+
+
+
 ## Instructions to Produce .parquet File
+
+
 
 ### 1. Higgs DNA Installation
 
