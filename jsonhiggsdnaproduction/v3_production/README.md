@@ -9,8 +9,7 @@
 ## Error i ma having right now, 
 
 ```bash
-
-(higgs-dna) [sraj@lxplus982 private]$ (higgs-dna) [sraj@lxplus982 private]$ python /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/parquet_production_v3/HiggsDNA/higgs_dna/scripts/run_analysis.py --json-analysis My_Json_300.json --dump /afs/cern.ch/user/s/sraj/private/output/ --doFlow_corrections --fiducialCuts store_flag --skipCQR --Smear_sigma_m --doDeco --executor vanilla_lxplus --queue espresso --nanoaod-version 12
+ python /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/parquet_production_v3/HiggsDNA/higgs_dna/scripts/run_analysis.py --json-analysis My_Json_300.json --dump /afs/cern.ch/user/s/sraj/private/output/ --doFlow_corrections --fiducialCuts store_flag --skipCQR --Smear_sigma_m --doDeco --executor vanilla_lxplus --queue espresso --nanoaod-version 12
 
 
 usage: run_analysis.py [-h] --json-analysis JSON_ANALYSIS_FILE [--no-trigger] [-d DUMP] [-o OUTPUT]
