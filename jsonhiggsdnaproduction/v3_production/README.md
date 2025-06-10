@@ -1,35 +1,17 @@
 # NanoAOD to Parquet Production
 
-* V1 proudction instruction: https://higgs-dna.readthedocs.io/en/latest/index.html 
-* V1 Production tutorial:(https://indico.cern.ch/event/1360961/contributions/5777678/attachments/2788218/4861762/HiggsDNA_tutorial.pdf) 
-* v2 production: https://indico.cern.ch/event/1451222/contributions/6208287/attachments/2959259/5210616/HHtobbgg_meeting_20241101.pdf
-* v3 Production: https://indico.cern.ch/event/1499924/contributions/6478750/attachments/3053886/5398744/For_Hgg_v3_production-2.pdf
-   
 
-## Error i ma having right now, 
-
+The error of `--nano-version 12` fixed by updating the HiggsDNA.
+before running the command, we had to run,
 ```bash
- python /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/parquet_production_v3/HiggsDNA/higgs_dna/scripts/run_analysis.py --json-analysis My_Json_300.json --dump /afs/cern.ch/user/s/sraj/private/output/ --doFlow_corrections --fiducialCuts store_flag --skipCQR --Smear_sigma_m --doDeco --executor vanilla_lxplus --queue espresso --nanoaod-version 12
-
-
-usage: run_analysis.py [-h] --json-analysis JSON_ANALYSIS_FILE [--no-trigger] [-d DUMP] [-o OUTPUT]
-                       [--schema {nano,base}] [-f {root,parquet}]
-                       [--triggerGroup {.*DoubleEG.*,.*EGamma.*2018.*,.*EGamma.*,.*SingleEle.*,.*DoubleMuon.*}]
-                       [--analysis {mainAnalysis,tagAndProbe,ZmmyAnalysis}] [--save SAVE]
-                       [--executor {iterative,futures,parsl/slurm,parsl/condor,dask/condor,dask/slurm,dask/lpc,dask/lxplus,dask/casa,vanilla_lxplus}]
-                       [-j WORKERS] [-m MEMORY] [--walltime WALLTIME] [--disk DISK] [-s SCALEOUT]
-                       [--max-scaleout MAX_SCALEOUT] [-q QUEUE] [--voms VOMS] [--validate]
-                       [--skipbadfiles] [--only ONLY] [--limit N] [--chunk N] [--max N] [--skipCQR]
-                       [--skipJetVetoMap] [--debug]
-                       [--fiducialCuts {classical,geometric,store_flag,none}] [--doDeco]
-                       [--Smear_sigma_m] [--doFlow_corrections] [--output_format {root,parquet}]
-run_analysis.py: error: unrecognized arguments: --nanoaod-version 12
-
-
+ pip install -e .[dev]
 ```
+`mamba activate higgs-dna`
 
-
-
+Working command 
+```bash
+python3 higgs_dna/scripts/run_analysis.py --json-analysis My_Json_300.json --dump output/  --fiducialCuts store_flag --doDeco --executor futures --nano-version 12   
+```
 
 ## Instructions to Produce .parquet File
 
@@ -40,7 +22,7 @@ run_analysis.py: error: unrecognized arguments: --nanoaod-version 12
 1. **Clone the HiggsDNA Repository**
    - You can use either the main [HiggsDNA project](https://gitlab.cern.ch/HiggsDNA-project/HiggsDNA) or the [hhbbgg branch](https://gitlab.cern.ch/hhbbgg/HiggsDNA):
      ```bash
-     git clone --branch HHbbgg_v3_parquet ssh://git@gitlab.cern.ch:7999/cms-analysis/general/HiggsDNA.git 
+     git clone --branch HHbbgg_v3_parquet ssh://git@gitlab.cern.ch:7999/cms-analysis/general/HiggsDNA.git  
      cd HiggsDNA
      ```
 
@@ -244,3 +226,7 @@ For the root file conversion,we can add word "NOTAG" and further use the command
 8. Sample List: https://docs.google.com/spreadsheets/d/1ZRDUpvrSmNhIzPpfc5R__G4OeucyvEmDi4EaeL0DVk/edit?gid=0#gid=0
 9. Instruction Slides: https://indico.cern.ch/event/1451222/contributions/6208287/attachments/2959259/5210616/HHtobbgg_meeting_20241101.pdf
 10. V1 Sakples list and links: https://gitlab.cern.ch/hhbbgg/docs/-/blob/v2_ReadMe/dataset_lists_parquet_v1.md?ref_type=heads#background-samples
+11. * V1 proudction instruction: https://higgs-dna.readthedocs.io/en/latest/index.html 
+12. V1 Production tutorial:(https://indico.cern.ch/event/1360961/contributions/5777678/attachments/2788218/4861762/HiggsDNA_tutorial.pdf) 
+13. v2 production: https://indico.cern.ch/event/1451222/contributions/6208287/attachments/2959259/5210616/HHtobbgg_meeting_20241101.pdf
+14. v3 Production: https://indico.cern.ch/event/1499924/contributions/6478750/attachments/3053886/5398744/For_Hgg_v3_production-2.pdf
