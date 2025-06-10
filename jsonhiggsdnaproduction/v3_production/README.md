@@ -13,6 +13,12 @@ Working command
 python3 higgs_dna/scripts/run_analysis.py --json-analysis My_Json_300.json --dump output/  --fiducialCuts store_flag --doDeco --executor futures --nano-version 12   
 ```
 
+
+While having submission on condor:
+```bash
+python3 ~/Analysis/Analysis_HH-bbgg/parquet_production_v3/HiggsDNA/higgs_dna/scripts/run_analysis.py --json-analysis My_Json_300.json --dump output/ --fiducialCuts store_flag --doDeco --executor vanilla_lxplus --queue espresso --nano-version 12
+```
+
 ## Instructions to Produce .parquet File
 
 
