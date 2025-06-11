@@ -13,6 +13,12 @@ Working command
 python3 higgs_dna/scripts/run_analysis.py --json-analysis My_Json_300.json --dump output/  --fiducialCuts store_flag --doDeco --executor futures --nano-version 12   
 ```
 
+to run and save file in the `eos`:
+```bash
+python3 higgs_dna/scripts/run_analysis.py --json-analysis My_Json_
+300.json --dump ../../../output_parquet/v3_production/  --fiducialCuts store_flag --doDeco --executor fut
+ures --nano-version 12   
+```
 
 While having submission on condor:
 ```bash
