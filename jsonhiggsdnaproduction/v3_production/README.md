@@ -25,8 +25,13 @@ While having submission on condor:
 python3 ~/Analysis/Analysis_HH-bbgg/parquet_production_v3/HiggsDNA/higgs_dna/scripts/run_analysis.py --json-analysis My_Json_300.json --dump output/ --fiducialCuts store_flag --doDeco --executor vanilla_lxplus --queue espresso --nano-version 12
 ```
 
-## Instructions to Produce .parquet File
 
+
+### Issues
+* Systematics having issues in prrocessing which could be same error as we are not getting any output or the path has not been defined properly.
+
+
+## Instructions to Produce .parquet File
 
 
 ### 1. Higgs DNA Installation
