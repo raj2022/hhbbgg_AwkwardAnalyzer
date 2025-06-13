@@ -932,6 +932,12 @@ condor_continue <job_id>
 ```
 Resume a suspended job.
 
+### 10. Remove all jobs
+```bash
+condor_q | awk '$6=="R" || $6=="H" {print $1}' | xargs condor_rm
+```
+
+
 ---
 
 ## Job and System Logs
