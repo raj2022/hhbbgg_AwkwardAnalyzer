@@ -1,0 +1,42 @@
+{
+  "BLACKHAT_BASE": "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/blackhat/0.9.9-1c4d15453173567f06dd11a7f5263d1e",
+  "INCLUDE": [
+    "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/blackhat/0.9.9-1c4d15453173567f06dd11a7f5263d1e/include"
+  ],
+  "LIB": [
+    "Ampl_eval",
+    "BG",
+    "BH",
+    "BHcore",
+    "CutPart",
+    "Cut_wCI",
+    "Cuteval",
+    "Integrals",
+    "Interface",
+    "OLA",
+    "RatPart",
+    "Rateval",
+    "Spinors",
+    "assembly",
+    "ratext"
+  ],
+  "LIBDIR": [
+    "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/blackhat/0.9.9-1c4d15453173567f06dd11a7f5263d1e/lib/blackhat"
+  ],
+  "RUNTIME": {
+    "PATH:WORKER_DATA_PATH": [
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/blackhat/0.9.9-1c4d15453173567f06dd11a7f5263d1e/share/blackhat/datafiles/"
+    ]
+  },
+  "TOOLNAME": "blackhat",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "0.9.9-1c4d15453173567f06dd11a7f5263d1e",
+  "USE": [
+    "qd"
+  ],
+  "VARIABLES": [
+    "BLACKHAT_BASE",
+    "LIBDIR",
+    "INCLUDE"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "PY3_PKGINFO_BASE": "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-pkginfo/1.10.0-e2f6f730f60de4123384dc5674c26015",
+  "RUNTIME": {
+    "PATH:PATH": [
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-pkginfo/1.10.0-e2f6f730f60de4123384dc5674c26015/bin"
+    ]
+  },
+  "TOOLNAME": "py3-pkginfo",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "1.10.0-e2f6f730f60de4123384dc5674c26015",
+  "VARIABLES": [
+    "PY3_PKGINFO_BASE"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "INCLUDE": [
+    "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/re2/2021-06-01-9effece1d52fe4315cd5231654cb2160/include"
+  ],
+  "LIB": [
+    "re2"
+  ],
+  "LIBDIR": [
+    "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/re2/2021-06-01-9effece1d52fe4315cd5231654cb2160/lib"
+  ],
+  "RE2_BASE": "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/re2/2021-06-01-9effece1d52fe4315cd5231654cb2160",
+  "TOOLNAME": "re2",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "2021-06-01-9effece1d52fe4315cd5231654cb2160",
+  "VARIABLES": [
+    "RE2_BASE",
+    "LIBDIR",
+    "INCLUDE"
+  ]
+}

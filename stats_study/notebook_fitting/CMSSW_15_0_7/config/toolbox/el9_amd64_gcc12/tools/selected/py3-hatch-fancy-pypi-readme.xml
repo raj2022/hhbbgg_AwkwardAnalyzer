@@ -1,0 +1,6 @@
+<tool name="py3-hatch-fancy-pypi-readme" version="24.1.0-e89440bc80521d5772fd2ad202834495" revision="1">
+  <client>
+    <environment name="PY3_HATCH_FANCY_PYPI_README_BASE" default="/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-hatch-fancy-pypi-readme/24.1.0-e89440bc80521d5772fd2ad202834495"/>
+  </client>
+  <runtime name="PATH" value="$PY3_HATCH_FANCY_PYPI_README_BASE/bin" type="path"/>
+</tool>

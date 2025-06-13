@@ -1,0 +1,14 @@
+{
+  "GIT_LFS_BASE": "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/git-lfs/3.6.0-ab0140107f0483185e0c333c508a3003",
+  "RUNTIME": {
+    "PATH:PATH": [
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/git-lfs/3.6.0-ab0140107f0483185e0c333c508a3003/bin"
+    ]
+  },
+  "TOOLNAME": "git-lfs",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "3.6.0-ab0140107f0483185e0c333c508a3003",
+  "VARIABLES": [
+    "GIT_LFS_BASE"
+  ]
+}

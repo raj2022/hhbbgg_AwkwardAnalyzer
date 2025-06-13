@@ -1,0 +1,106 @@
+{
+  "CLASSPATH": [
+    "+Project/BigProducts+SubSystem/+BigProduct/+donothing",
+    "+Project/+SubSystem/+Package/scripts+scripts",
+    "+Project/Documentation+Documentation/+doc",
+    "+Project/+SubSystem/+Package/src+library",
+    "+Project/+SubSystem/+Package/bin+binary",
+    "+Project/+SubSystem/+Package/test+test",
+    "+Project/+SubSystem/+Package/plugins+plugins",
+    "+Project/+SubSystem/+Package/python+python",
+    "+Project/LCG+SubSystem/+Package/tests+binary"
+  ],
+  "FLAGS": {
+    "BIGOBJ_CXXFLAGS": [
+      "-Wl,--exclude-libs,ALL"
+    ],
+    "CPPDEFINES": [
+      "USE_CMS_DEPRECATED"
+    ],
+    "CXXFLAGS": [
+      "-DBOOST_DISABLE_ASSERTS"
+    ],
+    "LCGDICT_CPPFLAGS": [
+      "-DCMSSW_REFLEX_DICT"
+    ],
+    "LCGDICT_CXXFLAGS": [
+      "-Os -Wno-unused-variable"
+    ],
+    "LLVM_CHECKERS": [
+      "-enable-checker threadsafety"
+    ],
+    "LLVM_PLUGIN": [
+      "UtilitiesStaticAnalyzers"
+    ],
+    "MISSING_SYMBOL_FLAGS": [
+      "-Wl,-z,defs"
+    ],
+    "PYTHON_PACKAGE_SYMLINK": [
+      "YES"
+    ],
+    "REM_LCGDICT_CPPFLAGS": [
+      "-O%"
+    ],
+    "REM_LCGDICT_CXXFLAGS": [
+      "-O%",
+      "-fipa%"
+    ],
+    "REM_ROOTDICT_CXXFLAGS": [
+      "-pedantic"
+    ],
+    "ROOTDICT_CXXFLAGS": [
+      "-Wno-unknown-pragmas"
+    ]
+  },
+  "PRODUCTSTORE": [
+    {
+      "name": "lib",
+      "swap": "true",
+      "type": "arch"
+    },
+    {
+      "name": "bin",
+      "swap": "true",
+      "type": "arch"
+    },
+    {
+      "name": "test",
+      "swap": "true",
+      "type": "arch"
+    },
+    {
+      "name": "logs",
+      "swap": "true",
+      "type": "arch"
+    },
+    {
+      "name": "objs",
+      "swap": "true",
+      "type": "arch"
+    },
+    {
+      "name": "biglib",
+      "swap": "true",
+      "type": "arch"
+    },
+    {
+      "name": "cfipython",
+      "swap": "true",
+      "type": "arch"
+    },
+    {
+      "name": "static",
+      "swap": "true",
+      "type": "arch"
+    },
+    {
+      "name": "include"
+    },
+    {
+      "name": "doc"
+    },
+    {
+      "name": "python"
+    }
+  ]
+}

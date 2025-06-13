@@ -1,0 +1,11 @@
+<tool name="hdf5" version="1.14.1-27bf63f2b1ecffe45a93f1817b549f46" revision="1">
+  <info url="https://support.hdfgroup.org/HDF5/"/>
+  <lib name="hdf5"/>
+  <lib name="hdf5_hl"/>
+  <client>
+    <environment name="HDF5_BASE" default="/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/hdf5/1.14.1-27bf63f2b1ecffe45a93f1817b549f46"/>
+    <environment name="LIBDIR" default="$HDF5_BASE/lib"/>
+    <environment name="INCLUDE" default="$HDF5_BASE/include"/>
+  </client>
+  <use name="openmpi"/>
+</tool>

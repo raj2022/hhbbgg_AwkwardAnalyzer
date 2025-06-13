@@ -1,0 +1,341 @@
+{ decls }
+namespace __gnu_cxx {  }
+namespace __gnu_cxx { template <typename _Iterator, typename _Container> class __normal_iterator; }
+namespace std {  }
+namespace cmsmath {  }
+template <int> class RooBernsteinFast;
+namespace RooStats { namespace HistFactory {  } }
+template <typename U> class FastHistoAxis_t;
+template <typename T> class FastTemplate_t;
+template <typename T, typename U> class FastHisto_t;
+template <typename T, typename U> class FastHisto2D_t;
+template <typename T, typename U> class FastHisto3D_t;
+template <typename T> class FastTemplateFunc_t;
+template <typename T, typename U> class FastHistoFunc_t;
+template <typename T, typename U> class FastHisto2DFunc_t;
+template <typename T, typename U> class FastHisto3DFunc_t;
+
+[ libHiggsAnalysisCombinedLimit.so ]
+# List of selected classes
+class AsymPow
+class AsymQuad
+class CMSHggFormulaA1
+class CMSHggFormulaA2
+class CMSHggFormulaB1
+class CMSHggFormulaB2
+class CMSHggFormulaC1
+class CMSHggFormulaD1
+class CMSHggFormulaD2
+class CMSHistErrorPropagator
+class CMSHistFunc
+class CMSHistFuncWrapper
+class CMSHistSum
+class CombDataSetFactory
+class DebugProposal
+class FastHisto
+class FastHisto2D
+class FastHisto2DFunc_d
+class FastHisto2DFunc_f
+class FastHisto2DFunc_t<double,double>
+class FastHisto2DFunc_t<float,double>
+class FastHisto2D_d
+class FastHisto2D_f
+class FastHisto2D_t<double,double>
+class FastHisto2D_t<float,double>
+class FastHisto3D
+class FastHisto3DFunc_d
+class FastHisto3DFunc_f
+class FastHisto3DFunc_t<double,double>
+class FastHisto3DFunc_t<float,double>
+class FastHisto3D_d
+class FastHisto3D_f
+class FastHisto3D_t<double,double>
+class FastHisto3D_t<float,double>
+class FastHistoAxis_d
+class FastHistoAxis_f
+class FastHistoAxis_t<double>
+class FastHistoAxis_t<float>
+class FastHistoFunc_d
+class FastHistoFunc_f
+class FastHistoFunc_t<double,double>
+class FastHistoFunc_t<float,double>
+class FastHisto_d
+class FastHisto_f
+class FastHisto_t<double,double>
+class FastHisto_t<float,double>
+class FastTemplate
+class FastTemplateFunc_d
+class FastTemplateFunc_f
+class FastTemplateFunc_t<double>
+class FastTemplateFunc_t<float>
+class FastTemplate_d
+class FastTemplate_f
+class FastTemplate_t<double>
+class FastTemplate_t<float>
+class FastVerticalInterpHistPdf
+class FastVerticalInterpHistPdf2
+class FastVerticalInterpHistPdf2Base
+class FastVerticalInterpHistPdf2D
+class FastVerticalInterpHistPdf2D2
+class FastVerticalInterpHistPdf3D
+class FastVerticalInterpHistPdfBase
+class FastVerticalInterpHistPdfBase::Morph
+class GaussExp
+class HZZ4L_RooCTauPdf_1D
+class HZZ4L_RooCTauPdf_1D_Expanded
+class HZZ4L_RooCTauPdf_2D
+class HZZ4L_RooSpinZeroPdf
+class HZZ4L_RooSpinZeroPdf_1D
+class HZZ4L_RooSpinZeroPdf_1D_fast
+class HZZ4L_RooSpinZeroPdf_2D
+class HZZ4L_RooSpinZeroPdf_2D_fast
+class HZZ4L_RooSpinZeroPdf_phase
+class HZZ4L_RooSpinZeroPdf_phase_fast
+class ProcessNormalization
+class Roo2ExpPdf
+class Roo4lMasses2D
+class Roo4lMasses2D_Bkg
+class Roo4lMasses2D_BkgGGZZ
+class RooAlpha
+class RooAlpha42ExpPdf
+class RooAlpha4ErfPow2Pdf
+class RooAlpha4ErfPowExpPdf
+class RooAlpha4ErfPowPdf
+class RooAlpha4ExpNPdf
+class RooAlpha4ExpTailPdf
+class RooAlpha4GausExpPdf
+class RooAlphaExp
+class RooAnaExpNPdf
+class RooBWHighMassGGH
+class RooBWRunPdf
+class RooBernsteinFast<1>
+class RooBernsteinFast<2>
+class RooBernsteinFast<3>
+class RooBernsteinFast<4>
+class RooBernsteinFast<5>
+class RooBernsteinFast<6>
+class RooBernsteinFast<7>
+class RooBetaFunc_v2
+class RooCB
+class RooCPSHighMassGGH
+class RooCPSHighMassGGHNoInterf
+class RooCPSHighMassVBF
+class RooCPSHighMassVBFNoInterf
+class RooCheapProduct
+class RooChebyshevPDF
+class RooDoubleCB
+class RooDoubleCBFast
+class RooDoubleCrystalBall
+class RooErfExpPdf
+class RooErfPdf
+class RooErfPow2Pdf
+class RooErfPowExpPdf
+class RooErfPowPdf
+class RooExpNPdf
+class RooExpPoly
+class RooExpTailPdf
+class RooFermi
+class RooFourEMassRes
+class RooFourEMassShapePdf2
+class RooFourMuMassRes
+class RooFourMuMassShapePdf2
+class RooFuncPdf
+class RooGausExpPdf
+class RooGaussStepBernstein
+class RooLevelledExp
+class RooMorphingPdf
+class RooMultiPdf
+class RooNCSplineCore
+class RooNCSpline_1D_fast
+class RooNCSpline_2D_fast
+class RooNCSpline_3D_fast
+class RooParamKeysPdf
+class RooParametricHist
+class RooParametricHist2D
+class RooParametricShapeBinPdf
+class RooPiecewisePolynomial
+class RooPow2Pdf
+class RooPowPdf
+class RooPower
+class RooPowerExpPdf
+class RooPowerFunction
+class RooPowerLaw
+class RooQCDPdf
+class RooRealFlooredSumPdf
+class RooRelBW
+class RooRelBW1
+class RooRelBWHighMass
+class RooRelBWUF
+class RooRelBWUFParam
+class RooRelBWUFParamWidth
+class RooRelBWUF_SM4
+class RooScaleHGamGamLOSM
+class RooScaleHGamGamLOSMPlusX
+class RooScaleHGluGluLOSM
+class RooScaleHGluGluLOSMPlusX
+class RooScaleLOSM
+class RooSigPlusInt
+class RooSimultaneousOpt
+class RooSpline1D
+class RooSplineND
+class RooStarMomentMorph
+class RooStats::HistFactory::RooBSpline
+class RooStats::HistFactory::RooBSplineBases
+class RooStepBernstein
+class RooTH1DPdf
+class RooTaylorExpansion
+class RooTsallis
+class RooTwoETwoMuMassRes
+class RooTwoETwoMuMassShapePdf2
+class RooUser1Pdf
+class RooVBFZZPdf
+class RooVBFZZPdf_v2
+class RooaDoubleCBxBW
+class RooggZZPdf
+class RooggZZPdf_v2
+class RooqqZZPdf
+class RooqqZZPdf_v2
+class SimpleCacheSentry
+class SimpleConstraintGroup
+class SimpleGaussianConstraint
+class SimplePoissonConstraint
+class SimpleProdPdf
+class SimpleTaylorExpansion1D
+class TH1Keys
+class TestProposal
+class Triangle
+class VBFHZZ4L_RooSpinZeroPdf
+class VBFHZZ4L_RooSpinZeroPdf_fast
+class VVHZZ4L_RooSpinZeroPdf_1D_fast
+class VerticalInterpHistPdf
+class VerticalInterpPdf
+class __gnu_cxx::__normal_iterator<const vector<double>*,vector<vector<double> > >
+class __gnu_cxx::__normal_iterator<const vector<float>*,vector<vector<float> > >
+class __gnu_cxx::__normal_iterator<const vector<vector<double> >*,vector<vector<vector<double> > > >
+class __gnu_cxx::__normal_iterator<const vector<vector<float> >*,vector<vector<vector<float> > > >
+class __gnu_cxx::__normal_iterator<const vector<vector<vector<double> > >*,vector<vector<vector<vector<double> > > > >
+class __gnu_cxx::__normal_iterator<const vector<vector<vector<float> > >*,vector<vector<vector<vector<float> > > > >
+class __gnu_cxx::__normal_iterator<const vector<vector<vector<vector<double> > > >*,vector<vector<vector<vector<vector<double> > > > > >
+class __gnu_cxx::__normal_iterator<const vector<vector<vector<vector<float> > > >*,vector<vector<vector<vector<vector<float> > > > > >
+class __gnu_cxx::__normal_iterator<const vector<vector<vector<vector<vector<double> > > > >*,vector<vector<vector<vector<vector<vector<double> > > > > > >
+class __gnu_cxx::__normal_iterator<const vector<vector<vector<vector<vector<float> > > > >*,vector<vector<vector<vector<vector<vector<float> > > > > > >
+class __gnu_cxx::__normal_iterator<vector<double>*,vector<vector<double> > >
+class __gnu_cxx::__normal_iterator<vector<float>*,vector<vector<float> > >
+class __gnu_cxx::__normal_iterator<vector<vector<double> >*,vector<vector<vector<double> > > >
+class __gnu_cxx::__normal_iterator<vector<vector<float> >*,vector<vector<vector<float> > > >
+class __gnu_cxx::__normal_iterator<vector<vector<vector<double> > >*,vector<vector<vector<vector<double> > > > >
+class __gnu_cxx::__normal_iterator<vector<vector<vector<float> > >*,vector<vector<vector<vector<float> > > > >
+class __gnu_cxx::__normal_iterator<vector<vector<vector<vector<double> > > >*,vector<vector<vector<vector<vector<double> > > > > >
+class __gnu_cxx::__normal_iterator<vector<vector<vector<vector<float> > > >*,vector<vector<vector<vector<vector<float> > > > > >
+class __gnu_cxx::__normal_iterator<vector<vector<vector<vector<vector<double> > > > >*,vector<vector<vector<vector<vector<vector<double> > > > > > >
+class __gnu_cxx::__normal_iterator<vector<vector<vector<vector<vector<float> > > > >*,vector<vector<vector<vector<vector<vector<float> > > > > > >
+class cmsmath::SequentialMinimizer
+class map<int,pair<double,double> >
+class map<int,std::pair<double,double> >
+class map<int,std::vector<double> >
+class map<int,vector<double> >
+class map<vector<int>,int,less<vector<int> >,allocator<pair<const vector<int>,int> > >
+class map<vector<int>,int>
+class vector<std::vector<Double_t> >
+class vector<std::vector<Double_t> >::const_iterator
+class vector<std::vector<Double_t> >::iterator
+class vector<std::vector<Float_t> >
+class vector<std::vector<Float_t> >::const_iterator
+class vector<std::vector<Float_t> >::iterator
+class vector<std::vector<std::vector<Double_t> > >
+class vector<std::vector<std::vector<Double_t> > >::const_iterator
+class vector<std::vector<std::vector<Double_t> > >::iterator
+class vector<std::vector<std::vector<Float_t> > >
+class vector<std::vector<std::vector<Float_t> > >::const_iterator
+class vector<std::vector<std::vector<Float_t> > >::iterator
+class vector<std::vector<std::vector<std::vector<Double_t> > > >
+class vector<std::vector<std::vector<std::vector<Double_t> > > >::const_iterator
+class vector<std::vector<std::vector<std::vector<Double_t> > > >::iterator
+class vector<std::vector<std::vector<std::vector<Float_t> > > >
+class vector<std::vector<std::vector<std::vector<Float_t> > > >::const_iterator
+class vector<std::vector<std::vector<std::vector<Float_t> > > >::iterator
+class vector<std::vector<std::vector<std::vector<std::vector<Double_t> > > > >
+class vector<std::vector<std::vector<std::vector<std::vector<Double_t> > > > >::const_iterator
+class vector<std::vector<std::vector<std::vector<std::vector<Double_t> > > > >::iterator
+class vector<std::vector<std::vector<std::vector<std::vector<Float_t> > > > >
+class vector<std::vector<std::vector<std::vector<std::vector<Float_t> > > > >::const_iterator
+class vector<std::vector<std::vector<std::vector<std::vector<Float_t> > > > >::iterator
+class vector<std::vector<std::vector<std::vector<std::vector<std::vector<Double_t> > > > > >
+class vector<std::vector<std::vector<std::vector<std::vector<std::vector<Double_t> > > > > >::const_iterator
+class vector<std::vector<std::vector<std::vector<std::vector<std::vector<Double_t> > > > > >::iterator
+class vector<std::vector<std::vector<std::vector<std::vector<std::vector<Float_t> > > > > >
+class vector<std::vector<std::vector<std::vector<std::vector<std::vector<Float_t> > > > > >::const_iterator
+class vector<std::vector<std::vector<std::vector<std::vector<std::vector<Float_t> > > > > >::iterator
+class vector<vector<double> >
+class vector<vector<float> >
+class vector<vector<vector<double> > >
+class vector<vector<vector<float> > >
+class vector<vector<vector<vector<double> > > >
+class vector<vector<vector<vector<float> > > >
+class vector<vector<vector<vector<vector<double> > > > >
+class vector<vector<vector<vector<vector<float> > > > >
+class vector<vector<vector<vector<vector<vector<double> > > > > >
+class vector<vector<vector<vector<vector<vector<float> > > > > >
+header HiggsAnalysis/CombinedLimit/interface/AsymPow.h
+header HiggsAnalysis/CombinedLimit/interface/AsymQuad.h
+header HiggsAnalysis/CombinedLimit/interface/CMSHggFormula.h
+header HiggsAnalysis/CombinedLimit/interface/CMSHistErrorPropagator.h
+header HiggsAnalysis/CombinedLimit/interface/CMSHistFunc.h
+header HiggsAnalysis/CombinedLimit/interface/CMSHistFuncWrapper.h
+header HiggsAnalysis/CombinedLimit/interface/CMSHistSum.h
+header HiggsAnalysis/CombinedLimit/interface/CombDataSetFactory.h
+header HiggsAnalysis/CombinedLimit/interface/DebugProposal.h
+header HiggsAnalysis/CombinedLimit/interface/FastTemplate_Old.h
+header HiggsAnalysis/CombinedLimit/interface/VerticalInterpHistPdf.h
+header HiggsAnalysis/CombinedLimit/interface/GaussExp.h
+header HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooCTauPdf_1D.h
+header HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooCTauPdf_1D_Expanded.h
+header HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooCTauPdf_2D.h
+header HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooSpinZeroPdf.h
+header HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooSpinZeroPdf_1D.h
+header HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooSpinZeroPdf_1D_fast.h
+header HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooSpinZeroPdf_2D.h
+header HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooSpinZeroPdf_2D_fast.h
+header HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooSpinZeroPdf_phase.h
+header HiggsAnalysis/CombinedLimit/interface/HZZ4L_RooSpinZeroPdf_phase_fast.h
+header HiggsAnalysis/CombinedLimit/interface/ProcessNormalization.h
+header HiggsAnalysis/CombinedLimit/interface/HWWLVJRooPdfs.h
+header HiggsAnalysis/CombinedLimit/interface/HZZ4LRooPdfs.h
+header HiggsAnalysis/CombinedLimit/interface/HZZ2L2QRooPdfs.h
+header HiggsAnalysis/CombinedLimit/interface/RooCheapProduct.h
+header HiggsAnalysis/CombinedLimit/interface/HWWLVJJRooPdfs.h
+header HiggsAnalysis/CombinedLimit/interface/RooDoubleCBFast.h
+header HiggsAnalysis/CombinedLimit/interface/RooFuncPdf.h
+header HiggsAnalysis/CombinedLimit/interface/HZGRooPdfs.h
+header HiggsAnalysis/CombinedLimit/interface/RooMorphingPdf.h
+header HiggsAnalysis/CombinedLimit/interface/RooMultiPdf.h
+header HiggsAnalysis/CombinedLimit/interface/RooNCSplineCore.h
+header HiggsAnalysis/CombinedLimit/interface/RooNCSpline_1D_fast.h
+header HiggsAnalysis/CombinedLimit/interface/RooNCSpline_2D_fast.h
+header HiggsAnalysis/CombinedLimit/interface/RooNCSpline_3D_fast.h
+header HiggsAnalysis/CombinedLimit/interface/AtlasPdfs.h
+header HiggsAnalysis/CombinedLimit/interface/RooParametricHist.h
+header HiggsAnalysis/CombinedLimit/interface/RooParametricHist2D.h
+header HiggsAnalysis/CombinedLimit/interface/RooParametricShapeBinPdf.h
+header HiggsAnalysis/CombinedLimit/interface/RooPiecewisePolynomial.h
+header HiggsAnalysis/CombinedLimit/interface/HGGRooPdfs.h
+header HiggsAnalysis/CombinedLimit/interface/RooRealFlooredSumPdf.h
+header HiggsAnalysis/CombinedLimit/interface/RooScaleLOSM.h
+header HiggsAnalysis/CombinedLimit/interface/RooSimultaneousOpt.h
+header HiggsAnalysis/CombinedLimit/interface/RooSpline1D.h
+header HiggsAnalysis/CombinedLimit/interface/RooSplineND.h
+header HiggsAnalysis/CombinedLimit/interface/RooTaylorExpansion.h
+header HiggsAnalysis/CombinedLimit/interface/SimpleCacheSentry.h
+header HiggsAnalysis/CombinedLimit/interface/SimpleConstraintGroup.h
+header HiggsAnalysis/CombinedLimit/interface/SimpleGaussianConstraint.h
+header HiggsAnalysis/CombinedLimit/interface/SimplePoissonConstraint.h
+header HiggsAnalysis/CombinedLimit/interface/SimpleProdPdf.h
+header HiggsAnalysis/CombinedLimit/interface/SimpleTaylorExpansion1D.h
+header HiggsAnalysis/CombinedLimit/interface/TH1Keys.h
+header HiggsAnalysis/CombinedLimit/interface/TestProposal.h
+header HiggsAnalysis/CombinedLimit/interface/VBFHZZ4L_RooSpinZeroPdf.h
+header HiggsAnalysis/CombinedLimit/interface/VBFHZZ4L_RooSpinZeroPdf_fast.h
+header HiggsAnalysis/CombinedLimit/interface/VVHZZ4L_RooSpinZeroPdf_1D_fast.h
+header HiggsAnalysis/CombinedLimit/interface/VerticalInterpPdf.h
+header HiggsAnalysis/CombinedLimit/interface/SequentialMinimizer.h
+# List of selected typedefs and outer classes

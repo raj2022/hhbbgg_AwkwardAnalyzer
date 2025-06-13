@@ -1,0 +1,11 @@
+<tool name="tfaot-model-test-simple" version="1.0.0" revision="1">
+  <client>
+    <environment name="TFAOT_MODEL_TEST_SIMPLE_BASE" default="/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/tfaot-model-test-simple/1.0.1-27ab7a3d1c5f5ca5ca6ece8080acc5cb"/>
+    <environment name="LIBDIR" default="$TFAOT_MODEL_TEST_SIMPLE_BASE/lib"/>
+    <environment name="INCLUDE" default="$TFAOT_MODEL_TEST_SIMPLE_BASE/include"/>
+  </client>
+  <use name="tensorflow-xla-runtime"/>
+  <flags LDFLAGS="$TFAOT_MODEL_TEST_SIMPLE_BASE/lib/test_simple_bs1.o"/>
+  <flags LDFLAGS="$TFAOT_MODEL_TEST_SIMPLE_BASE/lib/test_simple_bs2.o"/>
+  <flags LDFLAGS="$TFAOT_MODEL_TEST_SIMPLE_BASE/lib/test_simple_bs4.o"/>
+</tool>

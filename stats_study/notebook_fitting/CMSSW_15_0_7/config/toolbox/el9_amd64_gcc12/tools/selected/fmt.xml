@@ -1,0 +1,10 @@
+<tool name="fmt" version="10.2.1-e35fd1db5eb3abc8ac0452e8ee427196" revision="1">
+  <info url="https://github.com/fmtlib/fmt"/>
+  <lib name="fmt"/>
+  <client>
+    <environment name="FMT_BASE" default="/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/fmt/10.2.1-e35fd1db5eb3abc8ac0452e8ee427196"/>
+    <environment name="LIBDIR" default="$FMT_BASE/lib"/>
+    <environment name="INCLUDE" default="$FMT_BASE/include"/>
+  </client>
+  <runtime name="ROOT_INCLUDE_PATH" value="$INCLUDE" type="path"/>
+</tool>

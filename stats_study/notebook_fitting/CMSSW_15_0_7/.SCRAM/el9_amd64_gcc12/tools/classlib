@@ -1,0 +1,35 @@
+{
+  "CLASSLIB_BASE": "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/classlib/3.1.3-2827e9dbeb7dd2aced5a46b8a966dfab",
+  "FLAGS": {
+    "CPPDEFINES": [
+      "__STDC_LIMIT_MACROS",
+      "__STDC_FORMAT_MACROS"
+    ]
+  },
+  "INCLUDE": [
+    "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/classlib/3.1.3-2827e9dbeb7dd2aced5a46b8a966dfab/include"
+  ],
+  "LIB": [
+    "classlib"
+  ],
+  "LIBDIR": [
+    "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/classlib/3.1.3-2827e9dbeb7dd2aced5a46b8a966dfab/lib"
+  ],
+  "RUNTIME": {
+    "PATH:ROOT_INCLUDE_PATH": [
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/classlib/3.1.3-2827e9dbeb7dd2aced5a46b8a966dfab/include"
+    ]
+  },
+  "TOOLNAME": "classlib",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "3.1.3-2827e9dbeb7dd2aced5a46b8a966dfab",
+  "USE": [
+    "pcre",
+    "root_cxxdefaults"
+  ],
+  "VARIABLES": [
+    "CLASSLIB_BASE",
+    "LIBDIR",
+    "INCLUDE"
+  ]
+}

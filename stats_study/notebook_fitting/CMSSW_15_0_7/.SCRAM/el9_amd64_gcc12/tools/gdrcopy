@@ -1,0 +1,20 @@
+{
+  "GDRCOPY_BASE": "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/gdrcopy/2.4.4-173591af4569f51d3f267de11c6f8c19",
+  "INCLUDE": [
+    "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/gdrcopy/2.4.4-173591af4569f51d3f267de11c6f8c19/include"
+  ],
+  "LIB": [
+    "gdrapi"
+  ],
+  "LIBDIR": [
+    "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/gdrcopy/2.4.4-173591af4569f51d3f267de11c6f8c19/lib64"
+  ],
+  "TOOLNAME": "gdrcopy",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "2.4.4-173591af4569f51d3f267de11c6f8c19",
+  "VARIABLES": [
+    "GDRCOPY_BASE",
+    "INCLUDE",
+    "LIBDIR"
+  ]
+}

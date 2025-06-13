@@ -1,0 +1,104 @@
+#!/bin/bash
+[ -e ${LOCALTOP}/.SCRAM/${SCRAM_ARCH}/multi-targets -o -e ${LOCALTOP}/lib/${SCRAM_ARCH}/multi-targets ] || exit 0
+[ $(uname -m) = "x86_64" ] || exit 0
+PGO_ENABLED=false
+[ -e ${LOCALTOP}/.SCRAM/${SCRAM_ARCH}/use-pgo -o -e ${LOCALTOP}/.SCRAM/${SCRAM_ARCH}/generate-pgo ] && PGO_ENABLED=true
+$PGO_ENABLED && echo "RUNTIME:variable:CMSSW_CPU_TYPE=default"
+source ${LOCALTOP}/config/SCRAM/support-psabi-micro-archs.sh
+
+if [ "${USER_SCRAM_TARGET}" != "" ] ; then
+  SCRAM_TARGET=${USER_SCRAM_TARGET}
+  echo "RUNTIME:variable:SCRAM_TARGET=${SCRAM_TARGET}"
+else
+  SCRAM_TARGET="${MULTIARCH_TARGET}"
+fi
+
+#No need to overirde LD_LIBRARY_PATH if SCRAM_TARGET is not set or set to "default"
+if [ "${SCRAM_TARGET}" = "" ] || [ "${SCRAM_TARGET}" = "default" ] ; then exit 0 ; fi
+#No need to overirde LD_LIBRARY_PATH if project is not build with multi-micro-archs
+[ "${SCRAM_TARGETS}" = "" ] && exit 0
+
+#Set min support micro-arch
+MIN_MICROARCH=$(echo ${SCRAM_ALL_MICROARCHS} | tr ' ' '\n' | head -1)
+echo "RUNTIME:variable:SCRAM_MIN_SUPPORTED_MICROARCH=${MIN_MICROARCH}"
+
+#Set build time env _BUILD_TIME_MICROARCH if needed
+if [ "${SCRAM_RUNTIME_TYPE}" = "BUILD" ] ; then
+  if [ $(echo " ${PSABI_ARCHS} " | grep " ${SCRAM_DEFAULT_MICROARCH} " | wc -l) -eq 0 ] ; then
+    echo "RUNTIME:variable:_BUILD_TIME_MICROARCH=scram_${MIN_MICROARCH}"
+  fi
+fi
+
+#Prepare an order list of psABI
+SEL_TARGETS=""
+if [ "${SCRAM_TARGET}" = "auto" ] ; then
+  SEL_TARGETS="${PSABI_ARCHS}"
+elif [ $(echo ${SCRAM_TARGET} | grep "${PSABI_ARCH_PREFIX}[1-9]" | wc -l) -gt 0 ] ; then
+  psABI_NUM=$(echo ${SCRAM_TARGET} | sed "s|${PSABI_ARCH_PREFIX}||")
+  while [ $psABI_NUM -gt 1 ] ; do
+    SEL_TARGETS="${SEL_TARGETS} ${PSABI_ARCH_PREFIX}${psABI_NUM}"
+    let psABI_NUM=${psABI_NUM}-1
+  done
+fi
+
+#find the best match from SEL_TARGETS
+MATCHED_TARGET=""
+for t in ${SEL_TARGETS}; do
+  if [ $(echo " ${SCRAM_ALL_MICROARCHS} " | grep " ${t} " | wc -l) -eq 1 ] ; then
+    if [ "${SCRAM_TARGET}" != "auto" ] ; then
+      if [ "${SCRAM_TARGET}" != "${t}" ] ; then
+        echo "WARNING: Microarch ${SCRAM_TARGET} requested but best match found is ${t}." 1>&2
+      fi
+    fi
+    MATCHED_TARGET=$t
+    break
+  fi
+done
+
+#Exit if MATCHED_TARGET is same as SCRAM_DEFAULT_MICROARCH
+[ "${MATCHED_TARGET}" = "${SCRAM_DEFAULT_MICROARCH}" ] && exit 0
+
+#If no match found then use the default micro-arch
+if [ "${MATCHED_TARGET}" = "" ] ; then
+  if [ "${SCRAM_TARGET}" = "auto" ] ; then
+    echo "WARNING: System micro-arch(s) psABI:'${PSABI_ARCHS}' do not match any of the cmssw supported micro-archs '${SCRAM_DEFAULT_MICROARCH}'. Using default target." 1>&2
+  else
+    echo "WARNING: Requested arch '${SCRAM_TARGET}' does not match any of the cmssw microarchs '${SCRAM_DEFAULT_MICROARCH}'. Using default target." 1>&2
+  fi
+  exit 0
+fi
+
+#Set env for the best matched psABI
+if [ "${SCRAM_RUNTIME_TYPE}" != "BUILD" ] ; then
+  echo "IMPORTANT: Setting CMSSW environment to use '${MATCHED_TARGET}' target." 1>&2
+fi
+echo "RUNTIME:variable:PROJECT_MULTIARCH_TARGET=scram_${MATCHED_TARGET}"
+TOOLS="self python-paths"
+if [ -f ${LOCALTOP}/config/toolbox/${SCRAM_ARCH}/tools/selected/cmssw.xml ] ; then TOOLS="${TOOLS} cmssw" ; fi
+for tool in  $TOOLS ; do
+  for e in LD_LIBRARY_PATH RIVET_ANALYSIS_PATH PATH PYTHON3PATH; do
+    for d in $(${SCRAM} tool info $tool | grep "^$e=" | sed "s|^$e=||" | tr ':' '\n') ; do
+      p="$d"
+      x="scram_${MATCHED_TARGET}"
+      isRivet=false
+      if [ $(echo $d | grep '/lib/Rivet$' | wc -l) -gt 0 ] ; then
+        p=$(echo $d | sed 's|/Rivet$||')
+        x="scram_${MATCHED_TARGET}/Rivet"
+        isRivet=true
+      fi
+      v=""
+      case ${d} in
+        ${LOCALTOP}/* ) v=${d} ;;
+        * ) if [ -d ${p}/${x} ] ; then v=${d} ; fi ;;
+      esac
+      if [ $v ] ; then
+        if $isRivet ; then
+          echo "RUNTIME:path:replace:${e}=${d}=${p}/${x}"
+        else
+          echo "RUNTIME:path:replace:${e}=${d}=${p}/${x}:${d}"
+        fi
+      fi
+    done
+  done
+done
+$PGO_ENABLED && echo "RUNTIME:variable:CMSSW_CPU_TYPE=scram_${MATCHED_TARGET}"

@@ -1,0 +1,14 @@
+{
+  "PY3_TABULATE_BASE": "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-tabulate/0.9.0-7dc3aded4fcf74c213df908355746de2",
+  "RUNTIME": {
+    "PATH:PATH": [
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-tabulate/0.9.0-7dc3aded4fcf74c213df908355746de2/bin"
+    ]
+  },
+  "TOOLNAME": "py3-tabulate",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "0.9.0-7dc3aded4fcf74c213df908355746de2",
+  "VARIABLES": [
+    "PY3_TABULATE_BASE"
+  ]
+}

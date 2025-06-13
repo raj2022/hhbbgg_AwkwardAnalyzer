@@ -1,0 +1,35 @@
+{
+  "BINDIR": [
+    "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/sqlite/3.36.0-6a61dda6b4338fb9b6c26060efd5fd9a/bin"
+  ],
+  "INCLUDE": [
+    "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/sqlite/3.36.0-6a61dda6b4338fb9b6c26060efd5fd9a/include"
+  ],
+  "LIB": [
+    "sqlite3"
+  ],
+  "LIBDIR": [
+    "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/sqlite/3.36.0-6a61dda6b4338fb9b6c26060efd5fd9a/lib"
+  ],
+  "RUNTIME": {
+    "PATH:PATH": [
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/sqlite/3.36.0-6a61dda6b4338fb9b6c26060efd5fd9a/bin"
+    ],
+    "PATH:ROOT_INCLUDE_PATH": [
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/sqlite/3.36.0-6a61dda6b4338fb9b6c26060efd5fd9a/include"
+    ]
+  },
+  "SQLITE_BASE": "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/sqlite/3.36.0-6a61dda6b4338fb9b6c26060efd5fd9a",
+  "TOOLNAME": "sqlite",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "3.36.0-6a61dda6b4338fb9b6c26060efd5fd9a",
+  "USE": [
+    "root_cxxdefaults"
+  ],
+  "VARIABLES": [
+    "SQLITE_BASE",
+    "LIBDIR",
+    "BINDIR",
+    "INCLUDE"
+  ]
+}

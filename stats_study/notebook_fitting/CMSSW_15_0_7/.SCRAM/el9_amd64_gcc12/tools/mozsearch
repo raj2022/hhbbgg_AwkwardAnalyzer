@@ -1,0 +1,37 @@
+{
+  "FLAGS": {
+    "INDEX_FLAGS": [
+      "-Xclang",
+      "-load",
+      "-Xclang",
+      "libclang-index-plugin.so",
+      "-Xclang",
+      "-add-plugin",
+      "-Xclang",
+      "mozsearch-index",
+      "-Xclang",
+      "-plugin-arg-mozsearch-index",
+      "-Xclang",
+      "src/",
+      "-Xclang",
+      "-plugin-arg-mozsearch-index",
+      "-Xclang",
+      "mozsearch/",
+      "-Xclang",
+      "-plugin-arg-mozsearch-index",
+      "-Xclang",
+      "tmp/el9_amd64_gcc12/src/"
+    ]
+  },
+  "LIBDIR": [
+    "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/mozsearch/20240514-085f1d15a6d684d65f20bf74e080b3ee/lib64"
+  ],
+  "MOZSEARCH_BASE": "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/mozsearch/20240514-085f1d15a6d684d65f20bf74e080b3ee",
+  "TOOLNAME": "mozsearch",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "1.0",
+  "VARIABLES": [
+    "MOZSEARCH_BASE",
+    "LIBDIR"
+  ]
+}

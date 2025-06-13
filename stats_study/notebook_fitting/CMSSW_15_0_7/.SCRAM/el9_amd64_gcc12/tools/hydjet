@@ -1,0 +1,21 @@
+{
+  "HYDJET_BASE": "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/hydjet/1.9.3-2e7c4a52eacdfcc667cb649e21190c3f",
+  "LIB": [
+    "hydjet"
+  ],
+  "LIBDIR": [
+    "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/hydjet/1.9.3-2e7c4a52eacdfcc667cb649e21190c3f/lib"
+  ],
+  "TOOLNAME": "hydjet",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "1.9.3-2e7c4a52eacdfcc667cb649e21190c3f",
+  "USE": [
+    "pyquen",
+    "pythia6",
+    "lhapdf"
+  ],
+  "VARIABLES": [
+    "HYDJET_BASE",
+    "LIBDIR"
+  ]
+}

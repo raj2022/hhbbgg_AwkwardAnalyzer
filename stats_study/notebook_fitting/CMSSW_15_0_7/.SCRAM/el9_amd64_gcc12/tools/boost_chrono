@@ -1,0 +1,12 @@
+{
+  "LIB": [
+    "boost_chrono"
+  ],
+  "TOOLNAME": "boost_chrono",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "1.80.0-37bdc3309b0baa2e05e8d12d5a3ece01",
+  "USE": [
+    "boost_system",
+    "boost"
+  ]
+}

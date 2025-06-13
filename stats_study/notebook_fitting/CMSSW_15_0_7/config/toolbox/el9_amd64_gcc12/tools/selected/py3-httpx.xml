@@ -1,0 +1,6 @@
+<tool name="py3-httpx" version="0.27.0-8d372e7a17f35ae8bab87e135395d958" revision="1">
+  <client>
+    <environment name="PY3_HTTPX_BASE" default="/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-httpx/0.27.0-8d372e7a17f35ae8bab87e135395d958"/>
+  </client>
+  <runtime name="PATH" value="$PY3_HTTPX_BASE/bin" type="path"/>
+</tool>

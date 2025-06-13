@@ -1,0 +1,14 @@
+{
+  "RUFF_BASE": "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/ruff/0.5.6-ded00773d3829985d5d6edccf5305b51",
+  "RUNTIME": {
+    "PATH:PATH": [
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/ruff/0.5.6-ded00773d3829985d5d6edccf5305b51/bin"
+    ]
+  },
+  "TOOLNAME": "ruff",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "0.5.6-ded00773d3829985d5d6edccf5305b51",
+  "VARIABLES": [
+    "RUFF_BASE"
+  ]
+}

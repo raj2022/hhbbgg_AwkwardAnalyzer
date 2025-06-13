@@ -1,0 +1,168 @@
+{
+  "FLAGS": {
+    "ALPAKA_BACKENDS": [
+      "cuda",
+      "rocm",
+      "serial"
+    ],
+    "CHECK_PRIVATE_HEADERS": [
+      "1"
+    ],
+    "CODE_CHECK_ALPAKA_BACKEND": [
+      "serial"
+    ],
+    "DEFAULT_COMPILER": [
+      "gcc"
+    ],
+    "ENABLE_LTO": [
+      "1"
+    ],
+    "ENABLE_PGO": [
+      "0"
+    ],
+    "EXTERNAL_SYMLINK": [
+      "PATH",
+      "LIBDIR",
+      "CMSSW_SEARCH_PATH"
+    ],
+    "LLVM_ANALYZER": [
+      "llvm-analyzer"
+    ],
+    "NO_EXTERNAL_RUNTIME": [
+      "LD_LIBRARY_PATH",
+      "PATH",
+      "CMSSW_SEARCH_PATH"
+    ],
+    "OVERRIDABLE_FLAGS": [
+      "CPPDEFINES",
+      "CXXFLAGS",
+      "FFLAGS",
+      "CFLAGS",
+      "CPPFLAGS",
+      "LDFLAGS",
+      "CUDA_FLAGS",
+      "CUDA_LDFLAGS",
+      "LTO_FLAGS",
+      "PGO_FLAGS",
+      "ROCM_FLAGS",
+      "ROCM_LDFLAGS"
+    ],
+    "SCRAM_TARGETS": [
+      "x86-64-v2"
+    ],
+    "SKIP_TOOLS_SYMLINK": [
+      "cxxcompiler",
+      "ccompiler",
+      "f77compiler",
+      "gcc-cxxcompiler",
+      "gcc-ccompiler",
+      "gcc-f77compiler",
+      "llvm-cxxcompiler",
+      "llvm-ccompiler",
+      "llvm-f77compiler",
+      "llvm-analyzer-cxxcompiler",
+      "llvm-analyzer-ccompiler",
+      "icc-cxxcompiler",
+      "icc-ccompiler",
+      "icc-f77compiler",
+      "x11",
+      "dpm"
+    ],
+    "SYMLINK_DEPTH_CMSSW_SEARCH_PATH": [
+      "2"
+    ]
+  },
+  "INCLUDE": [
+    "/eos/home-s/sraj/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/stats_study/notebook_fitting/CMSSW_15_0_7/src",
+    "/eos/home-s/sraj/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/stats_study/notebook_fitting/CMSSW_15_0_7/include/el9_amd64_gcc12/src",
+    "/eos/home-s/sraj/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/stats_study/notebook_fitting/CMSSW_15_0_7/include/LCG",
+    "/cvmfs/cms.cern.ch/el9_amd64_gcc12/cms/cmssw/CMSSW_15_0_7/src"
+  ],
+  "LIBDIR": [
+    "/eos/home-s/sraj/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/stats_study/notebook_fitting/CMSSW_15_0_7/biglib/el9_amd64_gcc12",
+    "/eos/home-s/sraj/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/stats_study/notebook_fitting/CMSSW_15_0_7/lib/el9_amd64_gcc12",
+    "/eos/home-s/sraj/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/stats_study/notebook_fitting/CMSSW_15_0_7/external/el9_amd64_gcc12/lib",
+    "/cvmfs/cms.cern.ch/el9_amd64_gcc12/cms/cmssw/CMSSW_15_0_7/biglib/el9_amd64_gcc12",
+    "/cvmfs/cms.cern.ch/el9_amd64_gcc12/cms/cmssw/CMSSW_15_0_7/lib/el9_amd64_gcc12",
+    "/cvmfs/cms.cern.ch/el9_amd64_gcc12/cms/cmssw/CMSSW_15_0_7/external/el9_amd64_gcc12/lib"
+  ],
+  "RUNTIME": {
+    "CMSSW_BASE": [
+      "/eos/home-s/sraj/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/stats_study/notebook_fitting/CMSSW_15_0_7"
+    ],
+    "CMSSW_GIT_HASH": [
+      "CMSSW_15_0_7"
+    ],
+    "CMSSW_RELEASE_BASE": [
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/cms/cmssw/CMSSW_15_0_7"
+    ],
+    "CMSSW_VERSION": [
+      "CMSSW_15_0_7"
+    ],
+    "LANG": [
+      "C"
+    ],
+    "LOCALRT": [
+      "/eos/home-s/sraj/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/stats_study/notebook_fitting/CMSSW_15_0_7"
+    ],
+    "PATH:CMSSW_SEARCH_PATH": [
+      "/eos/home-s/sraj/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/stats_study/notebook_fitting/CMSSW_15_0_7/poison",
+      "/eos/home-s/sraj/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/stats_study/notebook_fitting/CMSSW_15_0_7/src",
+      "/eos/home-s/sraj/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/stats_study/notebook_fitting/CMSSW_15_0_7/external/el9_amd64_gcc12/data",
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/cms/cmssw/CMSSW_15_0_7/src",
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/cms/cmssw/CMSSW_15_0_7/external/el9_amd64_gcc12/data"
+    ],
+    "PATH:LD_LIBRARY_PATH": [
+      "/eos/home-s/sraj/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/stats_study/notebook_fitting/CMSSW_15_0_7/biglib/el9_amd64_gcc12",
+      "/eos/home-s/sraj/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/stats_study/notebook_fitting/CMSSW_15_0_7/lib/el9_amd64_gcc12",
+      "/eos/home-s/sraj/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/stats_study/notebook_fitting/CMSSW_15_0_7/external/el9_amd64_gcc12/lib",
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/cms/cmssw/CMSSW_15_0_7/biglib/el9_amd64_gcc12",
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/cms/cmssw/CMSSW_15_0_7/lib/el9_amd64_gcc12",
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/cms/cmssw/CMSSW_15_0_7/external/el9_amd64_gcc12/lib"
+    ],
+    "PATH:PATH": [
+      "/eos/home-s/sraj/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/stats_study/notebook_fitting/CMSSW_15_0_7/bin/el9_amd64_gcc12",
+      "/eos/home-s/sraj/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/stats_study/notebook_fitting/CMSSW_15_0_7/external/el9_amd64_gcc12/bin",
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/cms/cmssw/CMSSW_15_0_7/bin/el9_amd64_gcc12",
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/cms/cmssw/CMSSW_15_0_7/external/el9_amd64_gcc12/bin"
+    ],
+    "PATH:PYTHON3PATH": [
+      "/eos/home-s/sraj/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/stats_study/notebook_fitting/CMSSW_15_0_7/python",
+      "/eos/home-s/sraj/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/stats_study/notebook_fitting/CMSSW_15_0_7/lib/el9_amd64_gcc12",
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/cms/cmssw/CMSSW_15_0_7/python",
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/cms/cmssw/CMSSW_15_0_7/lib/el9_amd64_gcc12"
+    ],
+    "PATH:RIVET_ANALYSIS_PATH": [
+      "/eos/home-s/sraj/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/stats_study/notebook_fitting/CMSSW_15_0_7/lib/el9_amd64_gcc12",
+      "/eos/home-s/sraj/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/stats_study/notebook_fitting/CMSSW_15_0_7/external/el9_amd64_gcc12/lib/Rivet",
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/cms/cmssw/CMSSW_15_0_7/lib/el9_amd64_gcc12",
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/cms/cmssw/CMSSW_15_0_7/external/el9_amd64_gcc12/lib/Rivet"
+    ],
+    "PATH:ROOT_INCLUDE_PATH": [
+      "/eos/home-s/sraj/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/stats_study/notebook_fitting/CMSSW_15_0_7/src",
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/cms/cmssw/CMSSW_15_0_7/src"
+    ],
+    "PATH:TEST_SRTOPT_PATH": [
+      "/eos/home-s/sraj/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/stats_study/notebook_fitting/CMSSW_15_0_7/test/el9_amd64_gcc12",
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/cms/cmssw/CMSSW_15_0_7/test/el9_amd64_gcc12"
+    ],
+    "SCRAM_DEFAULT_MICROARCH": [
+      "x86-64-v3"
+    ],
+    "SCRAM_MIN_SUPPORTED_MICROARCH": [
+      "x86-64-v3"
+    ],
+    "SCRAM_TARGET": [
+      "auto"
+    ],
+    "USER_TARGETS_ALL": [
+      "1"
+    ]
+  },
+  "TOOLNAME": "self",
+  "TOOLVERSION": "SELF",
+  "VARIABLES": [
+    "LIBDIR",
+    "INCLUDE"
+  ]
+}

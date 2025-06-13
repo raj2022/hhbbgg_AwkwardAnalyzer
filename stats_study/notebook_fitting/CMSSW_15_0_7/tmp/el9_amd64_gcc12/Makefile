@@ -1,0 +1,3 @@
+-include .SCRAM/el9_amd64_gcc12/MakeData/variables.mk
+-include config/SCRAM/GMake/Makefile
+-include config/SCRAM/GMake/Makefile.rules
