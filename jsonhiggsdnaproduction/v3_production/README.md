@@ -22,9 +22,7 @@ ures --nano-version 12
 
 While having submission on condor:
 ```bash
-python3 /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/parquet_production_v3/HiggsDNA/higgs_dna/scripts/ru
-n_analysis.py --json-analysis My_Json_400.json --dump /afs/cern.ch/user/s/sraj/private/output/ --fiducialCuts store_flag --doDeco --executor vanilla
-_lxplus --queue espresso --nano-version 12
+python3 ~/Analysis/Analysis_HH-bbgg/parquet_production_v3/HiggsDNA/higgs_dna/scripts/run_analysis.py --json-analysis My_Json_300.json --dump output/ --fiducialCuts store_flag --doDeco --executor vanilla_lxplus --queue espresso --nano-version 12
 ```
 
 

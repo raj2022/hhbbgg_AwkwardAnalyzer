@@ -932,12 +932,6 @@ condor_continue <job_id>
 ```
 Resume a suspended job.
 
-### 10. Remove all jobs
-```bash
-condor_q | awk '$6=="R" || $6=="H" {print $1}' | xargs condor_rm
-```
-
-
 ---
 
 ## Job and System Logs
@@ -1037,26 +1031,3 @@ Monitor keyboard and mouse activity for interactive jobs.
 
 For more details, consult the [HTCondor Manual](https://htcondor.org/documentation/).
 
-## More commands
-Commands to look for large file or folder in order:
-```bash
-du -sh ~/* ~/.??* 2>/dev/null | sort -hr | head -n 20
-```
-Find individual large files
-```bash
-find ~ -type f -exec du -h {} + 2>/dev/null | sort -hr | head -n 20
-```
-
-# Running combine:
-* Expected limits:
-```bash
-combine -M AsymptoticLimits -d workspace.root
-```
-* MAx likelihood Fit:
-```bash
-combine -M MaxLikelihoodFit -d workspace.root --saveShapes --saveWithUncertainties
-```
-* Goodness of Fit:
-```bash
-combine -M GoodnessOfFit -d workspace.root --algo=saturated
-```
