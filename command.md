@@ -1031,3 +1031,13 @@ Monitor keyboard and mouse activity for interactive jobs.
 
 For more details, consult the [HTCondor Manual](https://htcondor.org/documentation/).
 
+## More commands
+Commands to look for large file or folder in order:
+```bash
+du -sh ~/* ~/.??* 2>/dev/null | sort -hr | head -n 20
+```
+Find individual large files
+```bash
+find ~ -type f -exec du -h {} + 2>/dev/null | sort -hr | head -n 20
+```
+
