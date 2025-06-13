@@ -1,0 +1,14 @@
+{
+  "PY3_TENSORFLOW_BASE": "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-tensorflow/2.12.0-c7c9c2a4eefe016b534fe162ae0a297f",
+  "RUNTIME": {
+    "PATH:PATH": [
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-tensorflow/2.12.0-c7c9c2a4eefe016b534fe162ae0a297f/bin"
+    ]
+  },
+  "TOOLNAME": "py3-tensorflow",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "2.12.0-c7c9c2a4eefe016b534fe162ae0a297f",
+  "VARIABLES": [
+    "PY3_TENSORFLOW_BASE"
+  ]
+}

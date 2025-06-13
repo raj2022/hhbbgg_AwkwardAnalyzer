@@ -1,0 +1,14 @@
+{
+  "PY3_SEND2TRASH_BASE": "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-Send2Trash/1.8.3-2b3fa3c7451f9561920eee548745ea2d",
+  "RUNTIME": {
+    "PATH:PATH": [
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-Send2Trash/1.8.3-2b3fa3c7451f9561920eee548745ea2d/bin"
+    ]
+  },
+  "TOOLNAME": "py3-send2trash",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "1.8.3-2b3fa3c7451f9561920eee548745ea2d",
+  "VARIABLES": [
+    "PY3_SEND2TRASH_BASE"
+  ]
+}

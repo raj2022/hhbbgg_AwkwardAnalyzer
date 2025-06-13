@@ -1,0 +1,13 @@
+{
+  "RUNTIME": {
+    "PATH:PYTHON3PATH": [
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/cms/cmssw-tools/2.0-329ce71d30f234a06510277adf73104c/lib/python3.9/site-packages"
+    ],
+    "PATH:X86_64_V2_PYTHON3PATH": [
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/cms/cmssw-tools/2.0-329ce71d30f234a06510277adf73104c/lib/python3.9/site-packages/scram_x86-64-v2"
+    ]
+  },
+  "TOOLNAME": "python-paths",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "1.0"
+}

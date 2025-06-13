@@ -10,9 +10,8 @@ observation -1
 bin             bin1        bin1        bin1        bin1        bin1        bin1        bin1
 process         NMSSM_X400_Y125 GGJets  GJetPt40  GJetPt20To40  VBFHToGG  VHToGG  ttHToGG
 process         0            1        2         3         4         5         6
-rate            1.0          100      50        30        10        5         3
+rate            2.47         100      50        30        10        5         3
 
-# Systematic uncertainties (example)
-lumi      lnN    1.025      1.025     1.025     1.025     1.025     1.025     1.025  
-bkg_norm  lnN    -          1.10      1.15      1.20      1.10      1.15      1.20   
-
+# Systematic uncertainties
+lumi      lnN    1.025      1.025     1.025     1.025     1.025     1.025     1.025
+bkg_norm  lnN    -          1.10      1.15      1.20      1.10      1.15      1.20

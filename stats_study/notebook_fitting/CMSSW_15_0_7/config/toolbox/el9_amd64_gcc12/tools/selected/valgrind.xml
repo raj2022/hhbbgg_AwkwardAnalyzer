@@ -1,0 +1,10 @@
+<tool name="valgrind" version="3.24.0-cc012d7fe78884d4e0706577d85bee44" revision="1">
+  <client>
+    <environment name="VALGRIND_BASE" default="/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/valgrind/3.24.0-cc012d7fe78884d4e0706577d85bee44"/>
+    <environment name="INCLUDE" default="$VALGRIND_BASE/include"/>
+  </client>
+  <runtime name="PATH" value="$VALGRIND_BASE/bin" type="path"/>
+  <runtime name="VALGRIND_LIB" value="$VALGRIND_BASE/libexec/valgrind"/>
+  <runtime name="ROOT_INCLUDE_PATH" value="$INCLUDE" type="path"/>
+  <use name="root_cxxdefaults"/>
+</tool>

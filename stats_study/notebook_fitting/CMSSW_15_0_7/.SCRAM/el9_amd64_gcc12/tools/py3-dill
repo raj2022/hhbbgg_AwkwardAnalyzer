@@ -1,0 +1,14 @@
+{
+  "PY3_DILL_BASE": "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-dill/0.3.8-499cade2c3832a99209ed1a76d5ce590",
+  "RUNTIME": {
+    "PATH:PATH": [
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-dill/0.3.8-499cade2c3832a99209ed1a76d5ce590/bin"
+    ]
+  },
+  "TOOLNAME": "py3-dill",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "0.3.8-499cade2c3832a99209ed1a76d5ce590",
+  "VARIABLES": [
+    "PY3_DILL_BASE"
+  ]
+}

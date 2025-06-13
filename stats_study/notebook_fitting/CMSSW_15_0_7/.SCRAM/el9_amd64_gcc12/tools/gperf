@@ -1,0 +1,8 @@
+{
+  "TOOLNAME": "gperf",
+  "TOOLREVISION": "2",
+  "TOOLVERSION": "2.11-fbc5201d6cd1b434ea6f7a6becab597d",
+  "USE": [
+    "gperf_profiler"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "GDB_BASE": "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/gdb/10.2-485b214c481ed1eca3b8fae404906938",
+  "RUNTIME": {
+    "PATH:PATH": [
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/gdb/10.2-485b214c481ed1eca3b8fae404906938/bin"
+    ]
+  },
+  "TOOLNAME": "gdb",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "10.2-485b214c481ed1eca3b8fae404906938",
+  "VARIABLES": [
+    "GDB_BASE"
+  ]
+}

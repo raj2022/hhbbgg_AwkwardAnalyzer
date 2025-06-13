@@ -1,0 +1,6 @@
+<tool name="py3-histoprint" version="2.4.0-90fad18f934d6d291987d8f7b6f3bbdb" revision="1">
+  <client>
+    <environment name="PY3_HISTOPRINT_BASE" default="/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-histoprint/2.4.0-90fad18f934d6d291987d8f7b6f3bbdb"/>
+  </client>
+  <runtime name="PATH" value="$PY3_HISTOPRINT_BASE/bin" type="path"/>
+</tool>

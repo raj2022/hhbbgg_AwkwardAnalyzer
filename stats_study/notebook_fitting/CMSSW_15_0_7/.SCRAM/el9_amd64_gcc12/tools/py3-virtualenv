@@ -1,0 +1,14 @@
+{
+  "PY3_VIRTUALENV_BASE": "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-virtualenv/20.29.1-a1c3f4665e414190b15fe75caa19a4f9",
+  "RUNTIME": {
+    "PATH:PATH": [
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-virtualenv/20.29.1-a1c3f4665e414190b15fe75caa19a4f9/bin"
+    ]
+  },
+  "TOOLNAME": "py3-virtualenv",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "20.29.1-a1c3f4665e414190b15fe75caa19a4f9",
+  "VARIABLES": [
+    "PY3_VIRTUALENV_BASE"
+  ]
+}

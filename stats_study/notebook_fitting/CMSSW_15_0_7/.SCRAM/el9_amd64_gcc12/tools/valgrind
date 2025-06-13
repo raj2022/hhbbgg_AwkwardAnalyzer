@@ -1,0 +1,27 @@
+{
+  "INCLUDE": [
+    "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/valgrind/3.24.0-cc012d7fe78884d4e0706577d85bee44/include"
+  ],
+  "RUNTIME": {
+    "PATH:PATH": [
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/valgrind/3.24.0-cc012d7fe78884d4e0706577d85bee44/bin"
+    ],
+    "PATH:ROOT_INCLUDE_PATH": [
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/valgrind/3.24.0-cc012d7fe78884d4e0706577d85bee44/include"
+    ],
+    "VALGRIND_LIB": [
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/valgrind/3.24.0-cc012d7fe78884d4e0706577d85bee44/libexec/valgrind"
+    ]
+  },
+  "TOOLNAME": "valgrind",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "3.24.0-cc012d7fe78884d4e0706577d85bee44",
+  "USE": [
+    "root_cxxdefaults"
+  ],
+  "VALGRIND_BASE": "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/valgrind/3.24.0-cc012d7fe78884d4e0706577d85bee44",
+  "VARIABLES": [
+    "VALGRIND_BASE",
+    "INCLUDE"
+  ]
+}

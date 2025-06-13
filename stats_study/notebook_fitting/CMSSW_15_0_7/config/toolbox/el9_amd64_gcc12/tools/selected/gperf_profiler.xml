@@ -1,0 +1,4 @@
+<tool name="gperf_profiler" version="2.11-fbc5201d6cd1b434ea6f7a6becab597d" revision="1">
+  <lib name="profiler"/>
+  <use name="gperf_interface"/>
+</tool>

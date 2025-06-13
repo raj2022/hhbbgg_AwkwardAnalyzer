@@ -1,0 +1,11 @@
+{
+  "LIB": [
+    "ibverbs"
+  ],
+  "TOOLNAME": "libibverbs",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "50.0-7f830a17690a1bbee43e16785640eae7",
+  "USE": [
+    "rdma-core"
+  ]
+}

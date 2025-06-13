@@ -1,0 +1,8 @@
+{
+  "TOOLNAME": "x11",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "system",
+  "USE": [
+    "sockets"
+  ]
+}

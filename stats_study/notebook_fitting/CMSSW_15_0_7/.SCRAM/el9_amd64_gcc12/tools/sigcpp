@@ -1,0 +1,28 @@
+{
+  "INCLUDE": [
+    "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/sigcpp/3.2.0-822d85000b677f1f6fbe907af08d7c8c/include/sigc++-3.0"
+  ],
+  "LIB": [
+    "sigc-3.0"
+  ],
+  "LIBDIR": [
+    "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/sigcpp/3.2.0-822d85000b677f1f6fbe907af08d7c8c/lib"
+  ],
+  "RUNTIME": {
+    "PATH:ROOT_INCLUDE_PATH": [
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/sigcpp/3.2.0-822d85000b677f1f6fbe907af08d7c8c/include/sigc++-3.0"
+    ]
+  },
+  "SIGCPP_BASE": "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/sigcpp/3.2.0-822d85000b677f1f6fbe907af08d7c8c",
+  "TOOLNAME": "sigcpp",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "3.2.0-822d85000b677f1f6fbe907af08d7c8c",
+  "USE": [
+    "root_cxxdefaults"
+  ],
+  "VARIABLES": [
+    "SIGCPP_BASE",
+    "LIBDIR",
+    "INCLUDE"
+  ]
+}

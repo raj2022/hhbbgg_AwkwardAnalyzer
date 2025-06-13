@@ -1,0 +1,11 @@
+<tool name="pytorch-scatter" version="2.1.2-78d4b7844a01439eaef057407e2300e7" revision="2">
+  <client>
+    <environment name="PYTORCH_SCATTER_BASE" default="/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/pytorch-scatter/2.1.2-78d4b7844a01439eaef057407e2300e7"/>
+    <environment name="INCLUDE" default="$PYTORCH_SCATTER_BASE/include"/>
+    <environment name="INCLUDE" default="$PYTORCH_SCATTER_BASE/include/torchscatter/"/>
+    <environment name="LIBDIR" default="$PYTORCH_SCATTER_BASE/lib"/>
+  </client>
+  <use name="pytorch"/>
+  <lib name="torchscatter"/>
+  <flags FORCE_LINK="1"/>
+</tool>

@@ -1,0 +1,20 @@
+{
+  "LIB": [
+    "tf_xla_runtime"
+  ],
+  "LIBDIR": [
+    "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/tensorflow-xla-runtime/2.12.0-24944ca58f6c88598938191d748e78b9/lib"
+  ],
+  "TENSORFLOW_XLA_RUNTIME_BASE": "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/tensorflow-xla-runtime/2.12.0-24944ca58f6c88598938191d748e78b9",
+  "TOOLNAME": "tensorflow-xla-runtime",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "2.12.0-24944ca58f6c88598938191d748e78b9",
+  "USE": [
+    "eigen",
+    "tensorflow-includes"
+  ],
+  "VARIABLES": [
+    "TENSORFLOW_XLA_RUNTIME_BASE",
+    "LIBDIR"
+  ]
+}
