@@ -1047,3 +1047,16 @@ Find individual large files
 find ~ -type f -exec du -h {} + 2>/dev/null | sort -hr | head -n 20
 ```
 
+# Running combine:
+* Expected limits:
+```bash
+combine -M AsymptoticLimits -d workspace.root
+```
+* MAx likelihood Fit:
+```bash
+combine -M MaxLikelihoodFit -d workspace.root --saveShapes --saveWithUncertainties
+```
+* Goodness of Fit:
+```bash
+combine -M GoodnessOfFit -d workspace.root --algo=saturated
+```
