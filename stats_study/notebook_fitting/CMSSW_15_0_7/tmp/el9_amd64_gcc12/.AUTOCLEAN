@@ -1,0 +1,4 @@
+
+/usr/bin/rm -f lib/el9_amd64_gcc12/HiggsAnalysisCombinedLimit_xr_rdict.pcm tmp/el9_amd64_gcc12/rootpcms/HiggsAnalysisCombinedLimit
+/usr/bin/rm -rf tmp/el9_amd64_gcc12/edmplugins/poison/HiggsAnalysis/CombinedLimit
+/usr/bin/touch tmp/common/cache/packs/changed

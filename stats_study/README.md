@@ -14,10 +14,10 @@ cd CMSSW_10_2_13/src
 cmsenv
 ```
 # Get combine 
+https://cms-analysis.github.io/HiggsAnalysis-CombinedLimit/latest/ 
 ```bash
 git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
 cd HiggsAnalysis/CombinedLimit
-git checkout tags/V8.2.0
 scram b -j 8
 cd ../../
 cmsenv
