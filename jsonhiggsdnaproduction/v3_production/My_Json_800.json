@@ -279,13 +279,15 @@
             "PNet_bTagShapeSF"
         ],
         "NMSSM_X800_Y300": [
-            "jerc_jet_syst",
-            "Et_dependent_Smearing",
+           "jerc_jet_pnetNu_syst",
+            "Smearing2G_IJazZ",
             "Pileup",
-            "PNet_bTagShapeSF",
+            "FNUF",
+            "Material",
             "ElectronVetoSF",
             "PreselSF",
-            "TriggerSF"
+            "TriggerSF",
+            "PNet_bTagShapeSF" 
         ],
         "NMSSM_X800_Y400": [
             "jerc_jet_pnetNu_syst",
