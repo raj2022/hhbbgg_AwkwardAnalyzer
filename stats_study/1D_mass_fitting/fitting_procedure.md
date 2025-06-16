@@ -27,6 +27,10 @@ root_file.Close()
 print(f"Fitted histogram saved to {root_file_path}")
 ```
 
+Further examples can be found here
+1. https://github.com/raj2022/hhbbgg_AwkwardAnalyzer/blob/parquest_v3/stats_study/notebook_fitting/background_fit_non-resonant.ipynb
+2. https://github.com/raj2022/hhbbgg_AwkwardAnalyzer/blob/parquest_v3/stats_study/notebook_fitting/background_fit_resonant.ipynb
+3. https://github.com/raj2022/hhbbgg_AwkwardAnalyzer/blob/parquest_v3/stats_study/notebook_fitting/signal_mass_fitting_final.ipynb 
 
 On the corresponding saved shapes of signal, backgrounds(resonant and non-resonant background) in the `.root` file, convert to roofit PDF space something like this:
 ```python 
