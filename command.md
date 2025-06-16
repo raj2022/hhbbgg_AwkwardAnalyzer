@@ -1047,6 +1047,31 @@ Find individual large files
 find ~ -type f -exec du -h {} + 2>/dev/null | sort -hr | head -n 20
 ```
 
+
+# Set up for the Combine:
+* Go to your CMSSW `src` directory:
+```bash
+cd ~/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/stats_study/notebook_fitting/CMSSW_15_0_7/src
+cmsenv
+```
+* Clone the Combine package:
+```bash
+git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
+```
+* Build Combine:
+```bash
+scram b -j 8
+```
+* Re-activate your CMSSW environment:
+```bash
+cmsenv
+```
+* Run `text2workspace.py` (now working correctly):
+```bash
+text2workspace.py datacard.txt -o workspace.root
+```
+
+
 # Running combine:
 * Expected limits:
 ```bash

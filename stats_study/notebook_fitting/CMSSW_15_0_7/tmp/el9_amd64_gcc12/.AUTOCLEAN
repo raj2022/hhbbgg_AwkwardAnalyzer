@@ -1,4 +1,11 @@
 
-/usr/bin/rm -f lib/el9_amd64_gcc12/HiggsAnalysisCombinedLimit_xr_rdict.pcm tmp/el9_amd64_gcc12/rootpcms/HiggsAnalysisCombinedLimit
-/usr/bin/rm -rf tmp/el9_amd64_gcc12/edmplugins/poison/HiggsAnalysis/CombinedLimit
+/usr/bin/rm -rf tmp/el9_amd64_gcc12/edmplugins/poison/HiggsAnalysis-CombinedLimit/bin
+/usr/bin/rm -rf tmp/el9_amd64_gcc12/edmplugins/poison/HiggsAnalysis-CombinedLimit/data
+/usr/bin/rm -rf tmp/el9_amd64_gcc12/edmplugins/poison/HiggsAnalysis-CombinedLimit/docs
+/usr/bin/rm -rf tmp/el9_amd64_gcc12/edmplugins/poison/HiggsAnalysis-CombinedLimit/interface
+/usr/bin/rm -rf tmp/el9_amd64_gcc12/edmplugins/poison/HiggsAnalysis-CombinedLimit/macros
+/usr/bin/rm -rf tmp/el9_amd64_gcc12/edmplugins/poison/HiggsAnalysis-CombinedLimit/python
+/usr/bin/rm -rf tmp/el9_amd64_gcc12/edmplugins/poison/HiggsAnalysis-CombinedLimit/scripts
+/usr/bin/rm -rf tmp/el9_amd64_gcc12/edmplugins/poison/HiggsAnalysis-CombinedLimit/src
+/usr/bin/rm -rf tmp/el9_amd64_gcc12/edmplugins/poison/HiggsAnalysis-CombinedLimit/test
 /usr/bin/touch tmp/common/cache/packs/changed

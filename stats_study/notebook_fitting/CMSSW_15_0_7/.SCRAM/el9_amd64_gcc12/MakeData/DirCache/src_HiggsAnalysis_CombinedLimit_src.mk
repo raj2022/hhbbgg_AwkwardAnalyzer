@@ -6,6 +6,7 @@ HiggsAnalysisCombinedLimit := self/HiggsAnalysis/CombinedLimit
 HiggsAnalysis/CombinedLimit := HiggsAnalysisCombinedLimit
 HiggsAnalysisCombinedLimit_files := $(patsubst src/HiggsAnalysis/CombinedLimit/src/%,%,$(wildcard $(foreach dir,src/HiggsAnalysis/CombinedLimit/src ,$(foreach ext,$(SRC_FILES_SUFFIXES),$(dir)/*.$(ext)))))
 HiggsAnalysisCombinedLimit_BuildFile    := $(WORKINGDIR)/cache/bf/src/HiggsAnalysis/CombinedLimit/BuildFile
+HiggsAnalysisCombinedLimit_LOC_FLAGS_CXXFLAGS   := -DBOOST_BIND_GLOBAL_PLACEHOLDERS -Wno-free-nonheap-object
 HiggsAnalysisCombinedLimit_LOC_LIB   := Smatrix
 HiggsAnalysisCombinedLimit_LOC_USE := self   root rootmath roofit roostats histfactory libxml2 vdt eigen boost_program_options boost_filesystem
 HiggsAnalysisCombinedLimit_LCGDICTS  := x 
