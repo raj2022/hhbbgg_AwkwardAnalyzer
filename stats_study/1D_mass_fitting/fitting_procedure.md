@@ -74,3 +74,27 @@ print("Workspace saved as workspace.root")
 It can be further checked in the later cells of this jupyter notebook.
 https://github.com/raj2022/hhbbgg_AwkwardAnalyzer/blob/parquest_v3/stats_study/notebook_fitting/background_fit_resonant.ipynb   
 
+
+
+This recreated `.root` file, `workspace.root`, we can check the keys:
+```bash
+root -l workspace.root
+TFile *_file0 = TFile::Open("workspace.root")
+w->Print()   // or try w->ls()
+```
+Then, we create the datacard something like this and can be check (here)(https://github.com/raj2022/hhbbgg_AwkwardAnalyzer/blob/parquest_v3/stats_study/1D_mass_fitting/README.md#1%EF%B8%8F%E2%83%A3-structure-of-the-datacard), 
+
+
+On the datacard, after setting up the combine,
+
+
+
+
+we convert the datacard to workspace using,
+```bash
+text2workspace.py datacard.txt -o workspace.root
+```
+If everything is alright and goes as expected, run the combine like this:
+```bash
+https://github.com/raj2022/hhbbgg_AwkwardAnalyzer/tree/parquest_v3/stats_study/1D_mass_fitting#running-combine
+```
