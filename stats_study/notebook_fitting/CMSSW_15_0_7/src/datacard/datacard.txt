@@ -3,7 +3,7 @@ jmax 5  number of backgrounds
 kmax *  number of nuisance parameters (systematics)
 
 shapes * * workspace.root w:$PROCESS
-shapes data_obs * workspace.root w:data_obs
+shapes data_obs * fitting_results_data.root w:data_obs
 
 bin        bin1
 observation -1
