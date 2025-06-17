@@ -1087,3 +1087,14 @@ combine -M GoodnessOfFit -d workspace.root --algo=saturated
 ```
 
 # ROOT file reading
+```bash
+root -l workspace.root
+```
+Since w is the saved content:
+```bash
+w->Print();
+```
+Look for something like:(as we are missing this for now)
+```bash
+RooDataHist::data_obs(mgg)
+```
