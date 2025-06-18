@@ -1,0 +1,17 @@
+<tool name="geant4_interface" version="11.2.2-52b9dc70f3ca8efebf82b291217bc6c2" revision="1">
+  <info url="http://geant4.web.cern.ch/geant4/"/>
+  <flags CXXFLAGS="-ftls-model=global-dynamic -pthread"/>
+  <client>
+    <environment name="GEANT4_INTERFACE_BASE" default="/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/geant4/11.2.2-52b9dc70f3ca8efebf82b291217bc6c2"/>
+    <environment name="INCLUDE" default="$GEANT4_INTERFACE_BASE/include/Geant4"/>
+    <environment name="INCLUDE" default="$GEANT4_INTERFACE_BASE/include"/>
+  </client>
+  <runtime name="ROOT_INCLUDE_PATH"  value="$INCLUDE" type="path"/>
+  <flags cppdefines="GNU_GCC G4V9"/>
+  <use name="clhep"/>
+  <use name="vecgeom"/>
+  <use name="zlib"/>
+  <use name="expat"/>
+  <use name="xerces-c"/>
+  <use name="root_cxxdefaults"/>
+</tool>

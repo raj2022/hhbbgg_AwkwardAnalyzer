@@ -1,0 +1,13 @@
+{
+  "INCLUDE": [
+    "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/json/3.11.3-fe8b14080d05d6ff46ded7c91e3977bc/include"
+  ],
+  "JSON_BASE": "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/json/3.11.3-fe8b14080d05d6ff46ded7c91e3977bc",
+  "TOOLNAME": "json",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "3.11.3-fe8b14080d05d6ff46ded7c91e3977bc",
+  "VARIABLES": [
+    "JSON_BASE",
+    "INCLUDE"
+  ]
+}

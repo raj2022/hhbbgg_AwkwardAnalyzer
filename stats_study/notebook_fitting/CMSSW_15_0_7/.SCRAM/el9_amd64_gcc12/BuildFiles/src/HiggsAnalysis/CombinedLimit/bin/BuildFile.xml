@@ -1,0 +1,22 @@
+{
+  "BUILDPRODUCTS": {
+    "BIN": {
+      "PerfTest": {
+        "FILES": "PerfTest.cpp",
+        "TYPE": "bin",
+        "USE": [
+          "HiggsAnalysis/CombinedLimit",
+          "boost_program_options"
+        ]
+      },
+      "combine": {
+        "FILES": "combine.cpp",
+        "TYPE": "bin",
+        "USE": [
+          "HiggsAnalysis/CombinedLimit",
+          "boost_program_options"
+        ]
+      }
+    }
+  }
+}

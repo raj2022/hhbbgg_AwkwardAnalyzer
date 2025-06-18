@@ -932,6 +932,12 @@ condor_continue <job_id>
 ```
 Resume a suspended job.
 
+### 10. Remove all jobs
+```bash
+condor_q | awk '$6=="R" || $6=="H" {print $1}' | xargs condor_rm
+```
+
+
 ---
 
 ## Job and System Logs
@@ -1031,3 +1037,64 @@ Monitor keyboard and mouse activity for interactive jobs.
 
 For more details, consult the [HTCondor Manual](https://htcondor.org/documentation/).
 
+## More commands
+Commands to look for large file or folder in order:
+```bash
+du -sh ~/* ~/.??* 2>/dev/null | sort -hr | head -n 20
+```
+Find individual large files
+```bash
+find ~ -type f -exec du -h {} + 2>/dev/null | sort -hr | head -n 20
+```
+
+
+# Set up for the Combine:
+* Go to your CMSSW `src` directory:
+```bash
+cd ~/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/stats_study/notebook_fitting/CMSSW_15_0_7/src
+cmsenv
+```
+* Clone the Combine package:
+```bash
+git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
+```
+* Build Combine:
+```bash
+scram b -j 8
+```
+* Re-activate your CMSSW environment:
+```bash
+cmsenv
+```
+* Run `text2workspace.py` (now working correctly):
+```bash
+text2workspace.py datacard.txt -o workspace.root
+```
+
+
+# Running combine:
+* Expected limits:
+```bash
+combine -M AsymptoticLimits -d workspace.root
+```
+* MAx likelihood Fit:
+```bash
+combine -M MaxLikelihoodFit -d workspace.root --saveShapes --saveWithUncertainties
+```
+* Goodness of Fit:
+```bash
+combine -M GoodnessOfFit -d workspace.root --algo=saturated
+```
+
+# ROOT file reading
+```bash
+root -l workspace.root
+```
+Since w is the saved content:
+```bash
+w->Print();
+```
+Look for something like:(as we are missing this for now)
+```bash
+RooDataHist::data_obs(mgg)
+```

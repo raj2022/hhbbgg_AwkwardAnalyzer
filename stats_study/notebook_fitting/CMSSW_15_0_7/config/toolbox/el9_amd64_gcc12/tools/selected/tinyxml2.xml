@@ -1,0 +1,10 @@
+<tool name="tinyxml2" version="6.2.0-f99ae2781d074227d47e8a3e7c8ec87e" revision="1">
+  <info url="https://github.com/leethomason/tinyxml2"/>
+  <lib name="tinyxml2"/>
+  <client>
+    <environment name="TINYXML2_BASE" default="/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/tinyxml2/6.2.0-f99ae2781d074227d47e8a3e7c8ec87e"/>
+    <environment name="LIBDIR" default="$TINYXML2_BASE/lib64"/>
+    <environment name="INCLUDE" default="$TINYXML2_BASE/include"/>
+  </client>
+  <runtime name="ROOT_INCLUDE_PATH" value="$INCLUDE" type="path"/> 
+</tool>

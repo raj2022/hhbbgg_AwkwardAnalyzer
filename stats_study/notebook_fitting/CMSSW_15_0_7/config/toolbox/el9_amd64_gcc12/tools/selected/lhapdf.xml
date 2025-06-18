@@ -1,0 +1,12 @@
+<tool name="lhapdf" version="6.4.0-e7c4b9323f96fa15c22775e405ec99ed" revision="1">
+  <lib name="LHAPDF"/>
+  <client>
+    <environment name="LHAPDF_BASE" default="/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/lhapdf/6.4.0-e7c4b9323f96fa15c22775e405ec99ed"/>
+    <environment name="LIBDIR" default="$LHAPDF_BASE/lib"/>
+    <environment name="INCLUDE" default="$LHAPDF_BASE/include"/>
+  </client>
+  <runtime name="LHAPDF_DATA_PATH" value="$LHAPDF_BASE/share/LHAPDF"/>
+  <runtime name="PATH" value="$LHAPDF_BASE/bin" type="path"/>
+  <runtime name="ROOT_INCLUDE_PATH" value="$INCLUDE" type="path"/>
+  <use name="root_cxxdefaults"/>
+</tool>

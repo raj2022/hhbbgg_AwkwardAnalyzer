@@ -11,13 +11,15 @@ def getXsec(samplename):
     #if samplename in nmssm_samples:
     if "NMSSM_X" in samplename:
         xsec = 1.0
+    elif "GluGluToHH" in samplename:
+        xsec = 1.0
     elif "GGJets" in samplename:
         xsec = 88.75
-    elif "GJetPt20to40" in samplename:
+    elif "GJetPt20To40" in samplename:
         xsec = 242.5
     elif "GJetPt40" in samplename:
         xsec = 919.1
-    elif "GluGluHtoGG" in samplename:
+    elif "GluGluHToGG" in samplename:
         xsec = 52.23 * BR_HToGG
     elif "ttHToGG" in samplename:
         xsec = 0.0013
@@ -25,11 +27,11 @@ def getXsec(samplename):
         xsec = 0.00926
     elif "VHToGG" in samplename:
         xsec = 0.00545
-    elif "QCD_PT-30to40" in samplename:
+    elif "QCD_PT-30To40" in samplename:
         xsec = 25950
-    elif "QCD_PT-30toInf"  in samplename:
+    elif "QCD_PT-30ToInf"  in samplename:
         xsec = 252200
-    elif "QCD_PT-40toInf"  in samplename:
+    elif "QCD_PT-40ToInf"  in samplename:
         xsec = 124700
     else:
         raise ValueError("cross-section not found")

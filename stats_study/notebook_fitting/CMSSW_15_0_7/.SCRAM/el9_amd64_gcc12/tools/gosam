@@ -1,0 +1,18 @@
+{
+  "BINDIR": [
+    "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/gosam/2.1.0-ca9caf86055ea84bb70a25c8c8d60ea2/bin"
+  ],
+  "GOSAM_BASE": "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/gosam/2.1.0-ca9caf86055ea84bb70a25c8c8d60ea2",
+  "RUNTIME": {
+    "PATH:PATH": [
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/gosam/2.1.0-ca9caf86055ea84bb70a25c8c8d60ea2/bin"
+    ]
+  },
+  "TOOLNAME": "gosam",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "2.1.0-ca9caf86055ea84bb70a25c8c8d60ea2",
+  "VARIABLES": [
+    "GOSAM_BASE",
+    "BINDIR"
+  ]
+}

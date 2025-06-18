@@ -1,0 +1,9 @@
+{
+  "LIB": [
+    "ssl",
+    "crypto"
+  ],
+  "TOOLNAME": "openssl",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "system"
+}

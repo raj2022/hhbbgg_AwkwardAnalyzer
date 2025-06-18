@@ -1,0 +1,14 @@
+{
+  "PY3_HIST_BASE": "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-hist/2.7.2-70456f3540c0728a97bf8feab470f801",
+  "RUNTIME": {
+    "PATH:PATH": [
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-hist/2.7.2-70456f3540c0728a97bf8feab470f801/bin"
+    ]
+  },
+  "TOOLNAME": "py3-hist",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "2.7.2-70456f3540c0728a97bf8feab470f801",
+  "VARIABLES": [
+    "PY3_HIST_BASE"
+  ]
+}

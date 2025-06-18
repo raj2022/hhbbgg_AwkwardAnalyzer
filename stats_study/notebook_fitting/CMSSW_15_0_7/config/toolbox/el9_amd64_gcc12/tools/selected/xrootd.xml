@@ -1,0 +1,14 @@
+<tool name="xrootd" version="5.7.2-ea80ee0ca8d46f1e87201dd16c9b691f" revision="2">
+  <lib name="XrdUtils"/>
+  <lib name="XrdCl"/>
+  <client>
+    <environment name="XROOTD_BASE" default="/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/xrootd/5.7.2-ea80ee0ca8d46f1e87201dd16c9b691f"/>
+    <environment name="INCLUDE" default="$XROOTD_BASE/include/xrootd"/>
+    <environment name="INCLUDE" default="$XROOTD_BASE/include/xrootd/private"/>
+    <environment name="LIBDIR" default="$XROOTD_BASE/lib64"/>
+  </client>
+  <runtime name="PATH" value="$XROOTD_BASE/bin" type="path"/>
+  <runtime name="ROOT_INCLUDE_PATH" value="$INCLUDE" type="path"/>
+  <use name="root_cxxdefaults"/>
+  <use name="isal"/>
+</tool>

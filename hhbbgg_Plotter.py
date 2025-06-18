@@ -341,7 +341,7 @@ def stack1d_histograms(
 
 def main():
     # Open the ROOT file
-    file_path = "outputfiles/hhbbgg_analyzer_v2-histograms.root"
+    file_path = "outputfiles/hhbbgg_analyzer-v2-histograms.root"
     uproot_loaded_filename = uproot.open(file_path)
 
     # List of data histograms
@@ -350,21 +350,31 @@ def main():
     # List of MC processes
     mc_samples = [
         "GGJets",
-        "GJetPt20to40",
+        "GJetPt20To40",
         "GJetPt40",
-        "GluGluHtoGG",
+        "GluGluHToGG",
         "VBFHToGG",
         "VHToGG",
         "ttHToGG",
-        "QCD_PT-30to40",
-        "QCD_PT-30toInf",
-        "QCD_PT-40toInf",
+        # "QCD_PT-30to40",
+        # "QCD_PT-30toInf",
+        # "QCD_PT-40toInf",
     ]
 
     # List of signal processes
     signal_samples = [
+<<<<<<< HEAD
         #"GluGluToHH",
-        "NMSSM_X300_Y60",
+        "NMSSM_X400_Y100",
+        "NMSSM_X400_Y125",
+        "NMSSM_X400_Y150",
+        "NMSSM_X500_Y100",
+        "NMSSM_X500_Y125",
+        "NMSSM_X500_Y150",
+=======
+       # "GluGluToHH",
+       "NMSSM_X300_Y60",   # updating signal sample
+>>>>>>> bd507347ad70f421fb71e11b9c71e49f25e16926
      ]
 
     #signal_samples = [
@@ -423,19 +433,27 @@ def main():
     # Dictionary for legends
     legend_dict = {
         "GGJets": r"$\gamma\gamma$+jets",
-        "GJetPt20to40": r"$\gamma$+jets ($20< p_T < 40$)",
+        "GJetPt20To40": r"$\gamma$+jets ($20< p_T < 40$)",
         "GJetPt40": r"$\gamma$+jets ($p_T > 40$)",
-        "GluGluHtoGG": r"$gg\rightarrow\,H\rightarrow\gamma\gamma$",
+        "GluGluHToGG": r"$gg\rightarrow\,H\rightarrow\gamma\gamma$",
         "VBFHToGG": r"$VBF\:H\rightarrow\gamma\gamma$",
         "VHToGG": r"$V\:H\rightarrow\gamma\gamma$",
         "ttHToGG": r"$t\bar{t}H\rightarrow\gamma\gamma$",
-        "NMSSM_X300_Y60": "NMSSM_X300_Y60 × 10",
         #"GluGluToHH": r"$gg\rightarrow\,HH$ \times 10",
-        "NMSSM_X300_Y60": r"$NMSSM\_X_{300}\_Y_{60} \times 10$",
+<<<<<<< HEAD
+        "NMSSM_X400_Y100": r"$NMSSM\_X_{400}\_Y_{100} \times 10$",
+        "NMSSM_X400_Y125": r"$NMSSM\_X_{400}\_Y_{125} \times 10$",
+        "NMSSM_X400_Y150": r"$NMSSM\_X_{400}\_Y_{150} \times 10$",
+        "NMSSM_X500_Y100": r"$NMSSM\_X_{500}\_Y_{100} \times 10$",
+        "NMSSM_X500_Y125": r"$NMSSM\_X_{500}\_Y_{125} \times 10$",
+        "NMSSM_X500_Y150": r"$NMSSM\_X_{500}\_Y_{150} \times 10$",
         # QCD sample legends
-        "QCD_PT-30to40": r"$QCD+P_T(30to40)$",
-        "QCD_PT-30toInf": r"$QCD+P_T(30toInf)$",
-        "QCD_PT-40toInf": r"$QCD+P_T(40toInf)$",
+        # "QCD_PT-30to40": r"$QCD+P_T(30to40)$",
+        # "QCD_PT-30toInf": r"$QCD+P_T(30toInf)$",
+        # "QCD_PT-40toInf": r"$QCD+P_T(40toInf)$",
+=======
+        "NMSSM_X300_Y60": r"$NMSSM\_X_{300}\_Y_{60} \times 10$",
+>>>>>>> bd507347ad70f421fb71e11b9c71e49f25e16926
         # NMSSM samples legends
         #"NMSSM_X300_Y60": r"$NMSSM\_X300\_Y60$",
         #"NMSSM_X300_Y70": r"$NMSSM\_X300\_Y70$",

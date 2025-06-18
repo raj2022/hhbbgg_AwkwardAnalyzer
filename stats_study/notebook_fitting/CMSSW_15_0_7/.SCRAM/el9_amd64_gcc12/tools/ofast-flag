@@ -1,0 +1,15 @@
+{
+  "FLAGS": {
+    "CXXFLAGS": [
+      "-Ofast",
+      "-fno-reciprocal-math",
+      "-mrecip=none"
+    ],
+    "NO_RECURSIVE_EXPORT": [
+      "1"
+    ]
+  },
+  "TOOLNAME": "ofast-flag",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "1.0"
+}

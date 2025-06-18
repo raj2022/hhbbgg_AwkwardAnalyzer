@@ -29,6 +29,16 @@ v2_data_sample_EraG  = [("../../output_root/v1_v2_comparison/Data_EraG.root", "D
 #v2_signal_sample_NMSSM_X1000 = [("outputfiles/hhbbgg_analyzer_v2-trees.root", "/NMSSM_X1000_Y60/preselection")]
 #v2_signal_sample_NMSSM_X1200 = [("outputfiles/hhbbgg_analyzer_v2-trees.root", "/NMSSM_X1200_Y60/preselection")]
 # Columns to be loaded
+## Comparison with official and our
+official_GJetPt40 = [("../../output_root/comparison/central_production/GJetPt40.root", "DiphotonTree/data_125_13TeV_NOTAG/")] 
+official_GJetPt20To40 = [("../../output_root/comparison/central_production/GJetPt20To40.root", "DiphotonTree/data_125_13TeV_NOTAG/")] 
+nonofficial_GJetPt40 = [("../../output_root/comparison/GJetPt40.root", "DiphotonTree/data_125_13TeV_NOTAG/")] 
+nonofficial_GJetPt20To40 = [("../../output_root/comparison/GJetPt20To40.root", "DiphotonTree/data_125_13TeV_NOTAG/")] 
+
+official_Data_EraE = [("../../output_root/comparison/central_production/Data_EraE.root", "DiphotonTree/data_125_13TeV_NOTAG/")] 
+official_Data_EraF = [("../../output_root/comparison/central_production/Data_EraF.root", "DiphotonTree/data_125_13TeV_NOTAG/")] 
+official_Data_EraG = [("../../output_root/comparison/central_production/Data_EraG.root", "DiphotonTree/data_125_13TeV_NOTAG/")] 
+
 keys = [
     'pt', 'Res_dijet_pt', 'dijet_pt', 'jet1_pt', 'diphoton_pt', 'bbgg_pt', 'bbgg_eta', 'bbgg_phi',
     'lead_pho_phi', 'sublead_pho_eta', 'sublead_pho_phi', 'diphoton_eta',
@@ -69,29 +79,37 @@ def load_and_plot(file_key_list, variable):
 # Example usage for plotting 'dibjet_pt' for each sample
 
 # Load and plot for v1 signal samples
-load_and_plot(v1_signal_sample_NMSSM_X300, 'pt')
-load_and_plot(v1_signal_sample_NMSSM_X400, 'pt')
-load_and_plot(v1_signal_sample_NMSSM_X500, 'pt')
-load_and_plot(v1_signal_sample_NMSSM_X600, 'pt')
-load_and_plot(v1_signal_sample_NMSSM_X700, 'pt')
-
-# Load and plot for v1 data samples
-load_and_plot(v1_data_sample_EraE, 'pt')
-load_and_plot(v1_data_sample_EraF, 'pt')
-load_and_plot(v1_data_sample_EraG, 'pt')
-
-# Load and plot for v2 signal samples
-
-load_and_plot(v2_signal_sample_NMSSM_X300, 'pt')
-load_and_plot(v2_signal_sample_NMSSM_X400, 'pt')
-load_and_plot(v2_signal_sample_NMSSM_X500, 'pt')
-load_and_plot(v2_signal_sample_NMSSM_X600, 'pt')
-load_and_plot(v2_signal_sample_NMSSM_X700, 'pt')
-## Load and plot for v2 data samples
+#load_and_plot(v1_signal_sample_NMSSM_X300, 'pt')
+#load_and_plot(v1_signal_sample_NMSSM_X400, 'pt')
+#load_and_plot(v1_signal_sample_NMSSM_X500, 'pt')
+#load_and_plot(v1_signal_sample_NMSSM_X600, 'pt')
+#load_and_plot(v1_signal_sample_NMSSM_X700, 'pt')
 #
+## Load and plot for v1 data samples
+#load_and_plot(v1_data_sample_EraE, 'pt')
+#load_and_plot(v1_data_sample_EraF, 'pt')
+#load_and_plot(v1_data_sample_EraG, 'pt')
+#
+## Load and plot for v2 signal samples
+#
+#load_and_plot(v2_signal_sample_NMSSM_X300, 'pt')
+#load_and_plot(v2_signal_sample_NMSSM_X400, 'pt')
+#load_and_plot(v2_signal_sample_NMSSM_X500, 'pt')
+#load_and_plot(v2_signal_sample_NMSSM_X600, 'pt')
+#load_and_plot(v2_signal_sample_NMSSM_X700, 'pt')
+### Load and plot for v2 data samples
+##
 load_and_plot(v2_data_sample_EraE, 'pt')
 load_and_plot(v2_data_sample_EraF, 'pt')
 load_and_plot(v2_data_sample_EraG, 'pt')
 
 
+# load_and_plot(official_GJetPt40, 'pt')
+# load_and_plot(official_GJetPt20To40, 'pt')
+# load_and_plot(nonofficial_GJetPt40, 'pt')
+# load_and_plot(nonofficial_GJetPt20To40, 'pt')
 
+
+load_and_plot(official_Data_EraE, 'pt')
+load_and_plot(official_Data_EraF, 'pt')
+load_and_plot(official_Data_EraG, 'pt')

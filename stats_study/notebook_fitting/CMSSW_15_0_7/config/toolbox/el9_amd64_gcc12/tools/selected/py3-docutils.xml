@@ -1,0 +1,6 @@
+<tool name="py3-docutils" version="0.21.2-ccb7d7f2143d345cc282f68d6cbd38e8" revision="1">
+  <client>
+    <environment name="PY3_DOCUTILS_BASE" default="/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-docutils/0.21.2-ccb7d7f2143d345cc282f68d6cbd38e8"/>
+  </client>
+  <runtime name="PATH" value="$PY3_DOCUTILS_BASE/bin" type="path"/>
+</tool>

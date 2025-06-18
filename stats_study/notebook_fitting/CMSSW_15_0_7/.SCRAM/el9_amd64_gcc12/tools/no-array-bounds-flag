@@ -1,0 +1,11 @@
+{
+  "FLAGS": {
+    "CXXFLAGS": [
+      "-Wno-error=array-bounds",
+      "-Wno-array-bounds"
+    ]
+  },
+  "TOOLNAME": "no-array-bounds-flag",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "1.0"
+}

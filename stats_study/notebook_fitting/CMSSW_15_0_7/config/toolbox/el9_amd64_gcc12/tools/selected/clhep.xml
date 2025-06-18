@@ -1,0 +1,9 @@
+<tool name="clhep" version="2.4.7.1-00d95dad51c51a565a6a059e09321311" revision="1">
+  <info url="http://wwwinfo.cern.ch/asd/lhc++/clhep"/>
+  <lib name="CLHEP"/>
+  <client>
+    <environment name="CLHEP_BASE" default="/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/clhep/2.4.7.1-00d95dad51c51a565a6a059e09321311"/>
+    <environment name="LIBDIR" default="$CLHEP_BASE/lib"/>
+  </client>
+  <use name="clhepheader"/>
+</tool>

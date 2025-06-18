@@ -1,0 +1,532 @@
+{
+  "ADDEDBF": {},
+  "ADDEDDIR": {},
+  "BFCACHE": {
+    "config/BuildFile.xml": 1749159590.0,
+    "src/HiggsAnalysis/CombinedLimit/BuildFile.xml": 1750032553.154591,
+    "src/HiggsAnalysis/CombinedLimit/bin/BuildFile.xml": 1750032554.093418
+  },
+  "CLASSDATA": [
+    [
+      [
+        "",
+        "Project"
+      ],
+      [
+        "BigProducts",
+        "SubSystem"
+      ],
+      [
+        "",
+        "BigProduct"
+      ],
+      [
+        "",
+        "donothing"
+      ]
+    ],
+    [
+      [
+        "",
+        "Project"
+      ],
+      [
+        "",
+        "SubSystem"
+      ],
+      [
+        "",
+        "Package"
+      ],
+      [
+        "scripts",
+        "scripts"
+      ]
+    ],
+    [
+      [
+        "",
+        "Project"
+      ],
+      [
+        "Documentation",
+        "Documentation"
+      ],
+      [
+        "",
+        "doc"
+      ]
+    ],
+    [
+      [
+        "",
+        "Project"
+      ],
+      [
+        "",
+        "SubSystem"
+      ],
+      [
+        "",
+        "Package"
+      ],
+      [
+        "src",
+        "library"
+      ]
+    ],
+    [
+      [
+        "",
+        "Project"
+      ],
+      [
+        "",
+        "SubSystem"
+      ],
+      [
+        "",
+        "Package"
+      ],
+      [
+        "bin",
+        "binary"
+      ]
+    ],
+    [
+      [
+        "",
+        "Project"
+      ],
+      [
+        "",
+        "SubSystem"
+      ],
+      [
+        "",
+        "Package"
+      ],
+      [
+        "test",
+        "test"
+      ]
+    ],
+    [
+      [
+        "",
+        "Project"
+      ],
+      [
+        "",
+        "SubSystem"
+      ],
+      [
+        "",
+        "Package"
+      ],
+      [
+        "plugins",
+        "plugins"
+      ]
+    ],
+    [
+      [
+        "",
+        "Project"
+      ],
+      [
+        "",
+        "SubSystem"
+      ],
+      [
+        "",
+        "Package"
+      ],
+      [
+        "python",
+        "python"
+      ]
+    ],
+    [
+      [
+        "",
+        "Project"
+      ],
+      [
+        "LCG",
+        "SubSystem"
+      ],
+      [
+        "",
+        "Package"
+      ],
+      [
+        "tests",
+        "binary"
+      ]
+    ]
+  ],
+  "CLASSMAP": {
+    "config": [
+      "Project",
+      "config",
+      ""
+    ],
+    "src": [
+      "Project",
+      "src",
+      ""
+    ],
+    "src/HiggsAnalysis": [
+      "SubSystem",
+      "src/HiggsAnalysis",
+      ""
+    ],
+    "src/HiggsAnalysis-CombinedLimit": [
+      "SubSystem",
+      "src/HiggsAnalysis-CombinedLimit",
+      ""
+    ],
+    "src/HiggsAnalysis-CombinedLimit/bin": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/bin",
+      ""
+    ],
+    "src/HiggsAnalysis-CombinedLimit/data": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/data",
+      ""
+    ],
+    "src/HiggsAnalysis-CombinedLimit/data/benchmarks": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/data",
+      "benchmarks"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/data/ci": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/data",
+      "ci"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/data/eft": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/data",
+      "eft"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/data/hbb": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/data",
+      "hbb"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/data/hww": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/data",
+      "hww"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/data/lhc-hcg": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/data",
+      "lhc-hcg"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/data/lhc-hxswg": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/data",
+      "lhc-hxswg"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/data/trilinearHiggsModel": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/data",
+      "trilinearHiggsModel"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/data/tutorials": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/data",
+      "tutorials"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/docs": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/docs",
+      ""
+    ],
+    "src/HiggsAnalysis-CombinedLimit/docs/abcd_rooparametrichist_tutorial": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/docs",
+      "abcd_rooparametrichist_tutorial"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/docs/javascripts": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/docs",
+      "javascripts"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/docs/model_building_tutorial2024": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/docs",
+      "model_building_tutorial2024"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/docs/overrides": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/docs",
+      "overrides"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/docs/part2": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/docs",
+      "part2"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/docs/part3": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/docs",
+      "part3"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/docs/part4": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/docs",
+      "part4"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/docs/part5": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/docs",
+      "part5"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/docs/tutorial2023": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/docs",
+      "tutorial2023"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/docs/tutorial2023_unfolding": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/docs",
+      "tutorial2023_unfolding"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/docs/tutorial_stat_routines": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/docs",
+      "tutorial_stat_routines"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/docs/what_combine_does": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/docs",
+      "what_combine_does"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/interface": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/interface",
+      ""
+    ],
+    "src/HiggsAnalysis-CombinedLimit/macros": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/macros",
+      ""
+    ],
+    "src/HiggsAnalysis-CombinedLimit/python": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/python",
+      ""
+    ],
+    "src/HiggsAnalysis-CombinedLimit/python/HiggsBenchmarkModels": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/python",
+      "HiggsBenchmarkModels"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/python/tool_base": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/python",
+      "tool_base"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/python/util": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/python",
+      "util"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/scripts": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/scripts",
+      ""
+    ],
+    "src/HiggsAnalysis-CombinedLimit/src": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/src",
+      ""
+    ],
+    "src/HiggsAnalysis-CombinedLimit/test": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/test",
+      ""
+    ],
+    "src/HiggsAnalysis-CombinedLimit/test/jobSumission": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/test",
+      "jobSumission"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/test/multiDim": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/test",
+      "multiDim"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/test/plotting": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/test",
+      "plotting"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/test/poc": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/test",
+      "poc"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/test/simplifiedLikelihoods": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/test",
+      "simplifiedLikelihoods"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/test/unit": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/test",
+      "unit"
+    ],
+    "src/HiggsAnalysis-CombinedLimit/test/validation": [
+      "Package",
+      "src/HiggsAnalysis-CombinedLimit/test",
+      "validation"
+    ],
+    "src/HiggsAnalysis/CombinedLimit": [
+      "Package",
+      "src/HiggsAnalysis/CombinedLimit",
+      ""
+    ],
+    "src/HiggsAnalysis/CombinedLimit/bin": [
+      "binary",
+      "src/HiggsAnalysis/CombinedLimit/bin",
+      ""
+    ],
+    "src/HiggsAnalysis/CombinedLimit/data": [
+      "Package",
+      "src/HiggsAnalysis/CombinedLimit",
+      "data"
+    ],
+    "src/HiggsAnalysis/CombinedLimit/docs": [
+      "Package",
+      "src/HiggsAnalysis/CombinedLimit",
+      "docs"
+    ],
+    "src/HiggsAnalysis/CombinedLimit/interface": [
+      "Package",
+      "src/HiggsAnalysis/CombinedLimit",
+      "interface"
+    ],
+    "src/HiggsAnalysis/CombinedLimit/macros": [
+      "Package",
+      "src/HiggsAnalysis/CombinedLimit",
+      "macros"
+    ],
+    "src/HiggsAnalysis/CombinedLimit/python": [
+      "python",
+      "src/HiggsAnalysis/CombinedLimit/python",
+      ""
+    ],
+    "src/HiggsAnalysis/CombinedLimit/python/HiggsBenchmarkModels": [
+      "python",
+      "src/HiggsAnalysis/CombinedLimit/python",
+      "HiggsBenchmarkModels"
+    ],
+    "src/HiggsAnalysis/CombinedLimit/python/tool_base": [
+      "python",
+      "src/HiggsAnalysis/CombinedLimit/python",
+      "tool_base"
+    ],
+    "src/HiggsAnalysis/CombinedLimit/python/util": [
+      "python",
+      "src/HiggsAnalysis/CombinedLimit/python",
+      "util"
+    ],
+    "src/HiggsAnalysis/CombinedLimit/scripts": [
+      "scripts",
+      "src/HiggsAnalysis/CombinedLimit/scripts",
+      ""
+    ],
+    "src/HiggsAnalysis/CombinedLimit/src": [
+      "library",
+      "src/HiggsAnalysis/CombinedLimit/src",
+      ""
+    ],
+    "src/HiggsAnalysis/CombinedLimit/test": [
+      "test",
+      "src/HiggsAnalysis/CombinedLimit/test",
+      ""
+    ],
+    "src/HiggsAnalysis/CombinedLimit/test/jobSumission": [
+      "test",
+      "src/HiggsAnalysis/CombinedLimit/test",
+      "jobSumission"
+    ],
+    "src/HiggsAnalysis/CombinedLimit/test/multiDim": [
+      "test",
+      "src/HiggsAnalysis/CombinedLimit/test",
+      "multiDim"
+    ],
+    "src/HiggsAnalysis/CombinedLimit/test/plotting": [
+      "test",
+      "src/HiggsAnalysis/CombinedLimit/test",
+      "plotting"
+    ],
+    "src/HiggsAnalysis/CombinedLimit/test/poc": [
+      "test",
+      "src/HiggsAnalysis/CombinedLimit/test",
+      "poc"
+    ],
+    "src/HiggsAnalysis/CombinedLimit/test/simplifiedLikelihoods": [
+      "test",
+      "src/HiggsAnalysis/CombinedLimit/test",
+      "simplifiedLikelihoods"
+    ],
+    "src/HiggsAnalysis/CombinedLimit/test/unit": [
+      "test",
+      "src/HiggsAnalysis/CombinedLimit/test",
+      "unit"
+    ],
+    "src/HiggsAnalysis/CombinedLimit/test/validation": [
+      "test",
+      "src/HiggsAnalysis/CombinedLimit/test",
+      "validation"
+    ]
+  },
+  "DIRCACHE": {
+    "config": [
+      1749806985.8869023
+    ],
+    "src": [
+      1750032523.7678497,
+      "src/HiggsAnalysis"
+    ],
+    "src/HiggsAnalysis": [
+      1750032524.0737977,
+      "src/HiggsAnalysis/CombinedLimit"
+    ],
+    "src/HiggsAnalysis/CombinedLimit": [
+      1750032641.731846,
+      "src/HiggsAnalysis/CombinedLimit/bin",
+      "src/HiggsAnalysis/CombinedLimit/python",
+      "src/HiggsAnalysis/CombinedLimit/scripts",
+      "src/HiggsAnalysis/CombinedLimit/src",
+      "src/HiggsAnalysis/CombinedLimit/test"
+    ],
+    "src/HiggsAnalysis/CombinedLimit/bin": [
+      1750032555.1727302
+    ],
+    "src/HiggsAnalysis/CombinedLimit/python": [
+      1750032638.8865669
+    ],
+    "src/HiggsAnalysis/CombinedLimit/scripts": [
+      1750032639.528195
+    ],
+    "src/HiggsAnalysis/CombinedLimit/src": [
+      1750032643.996108
+    ],
+    "src/HiggsAnalysis/CombinedLimit/test": [
+      1750032645.488714
+    ]
+  },
+  "PACKMAP": {
+    "src/HiggsAnalysis/CombinedLimit": "src/HiggsAnalysis/CombinedLimit/src"
+  },
+  "REMOVEDBF": {},
+  "REMOVEDDIR": {}
+}

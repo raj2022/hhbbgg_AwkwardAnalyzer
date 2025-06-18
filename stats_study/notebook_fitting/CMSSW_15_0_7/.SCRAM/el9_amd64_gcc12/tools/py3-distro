@@ -1,0 +1,14 @@
+{
+  "PY3_DISTRO_BASE": "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-distro/1.9.0-55f8384942889c7c86bb19502bc7e216",
+  "RUNTIME": {
+    "PATH:PATH": [
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-distro/1.9.0-55f8384942889c7c86bb19502bc7e216/bin"
+    ]
+  },
+  "TOOLNAME": "py3-distro",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "1.9.0-55f8384942889c7c86bb19502bc7e216",
+  "VARIABLES": [
+    "PY3_DISTRO_BASE"
+  ]
+}

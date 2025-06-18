@@ -1,0 +1,11 @@
+{
+  "LIB": [
+    "tf2xla"
+  ],
+  "TOOLNAME": "tensorflow-tf2xla",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "2.12.0-ce8818179b409c7625f54fe10b43fd64",
+  "USE": [
+    "tensorflow"
+  ]
+}

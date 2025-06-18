@@ -1,0 +1,20 @@
+{
+  "INCLUDE": [
+    "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/yaml-cpp/0.8.0-daa831833cbf55b73029800cc340c2bb/include"
+  ],
+  "LIB": [
+    "yaml-cpp"
+  ],
+  "LIBDIR": [
+    "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/yaml-cpp/0.8.0-daa831833cbf55b73029800cc340c2bb/lib64"
+  ],
+  "TOOLNAME": "yaml-cpp",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "0.8.0-daa831833cbf55b73029800cc340c2bb",
+  "VARIABLES": [
+    "YAML_CPP_BASE",
+    "LIBDIR",
+    "INCLUDE"
+  ],
+  "YAML_CPP_BASE": "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/yaml-cpp/0.8.0-daa831833cbf55b73029800cc340c2bb"
+}

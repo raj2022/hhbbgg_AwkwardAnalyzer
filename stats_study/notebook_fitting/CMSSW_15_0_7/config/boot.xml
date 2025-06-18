@@ -1,0 +1,7 @@
+<project name="CMSSW" version="CMSSW_15_0_7">
+  <config dir="config"/>
+  <toolbox dir="file:/cvmfs/cms.cern.ch/el9_amd64_gcc12/cms/cmssw-tool-conf/100.0-96b8b660cb676023ce4569f6e73c1f24"/>
+  <base url="file:/cvmfs/cms.cern.ch/BUILD/el9_amd64_gcc12/cms/cmssw/CMSSW_15_0_7/">
+    <download url="file:config" name="config"/>
+  </base>
+</project>

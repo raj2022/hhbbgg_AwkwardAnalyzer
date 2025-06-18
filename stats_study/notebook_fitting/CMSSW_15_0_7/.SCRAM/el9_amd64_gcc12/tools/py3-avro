@@ -1,0 +1,14 @@
+{
+  "PY3_AVRO_BASE": "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-avro/1.11.3-5922fb498550251d3becdb09d630a5a3",
+  "RUNTIME": {
+    "PATH:PATH": [
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-avro/1.11.3-5922fb498550251d3becdb09d630a5a3/bin"
+    ]
+  },
+  "TOOLNAME": "py3-avro",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "1.11.3-5922fb498550251d3becdb09d630a5a3",
+  "VARIABLES": [
+    "PY3_AVRO_BASE"
+  ]
+}

@@ -1,0 +1,6 @@
+<tool name="py3-nbclient" version="0.10.0-2105f000f9c461c1d7f5d4a9e5b70a68" revision="1">
+  <client>
+    <environment name="PY3_NBCLIENT_BASE" default="/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-nbclient/0.10.0-2105f000f9c461c1d7f5d4a9e5b70a68"/>
+  </client>
+  <runtime name="PATH" value="$PY3_NBCLIENT_BASE/bin" type="path"/>
+</tool>

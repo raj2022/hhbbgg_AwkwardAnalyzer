@@ -1,0 +1,14 @@
+{
+  "PY3_NOTEBOOK_BASE": "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-notebook/7.2.2-c4cc2a24f902d8446231b4c1bf465cc0",
+  "RUNTIME": {
+    "PATH:PATH": [
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-notebook/7.2.2-c4cc2a24f902d8446231b4c1bf465cc0/bin"
+    ]
+  },
+  "TOOLNAME": "py3-notebook",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "7.2.2-c4cc2a24f902d8446231b4c1bf465cc0",
+  "VARIABLES": [
+    "PY3_NOTEBOOK_BASE"
+  ]
+}

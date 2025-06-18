@@ -1,0 +1,14 @@
+{
+  "PY3_FLAWFINDER_BASE": "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-flawfinder/2.0.19-df2f9355015f5fccdeb731adfd3b6056",
+  "RUNTIME": {
+    "PATH:PATH": [
+      "/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-flawfinder/2.0.19-df2f9355015f5fccdeb731adfd3b6056/bin"
+    ]
+  },
+  "TOOLNAME": "py3-flawfinder",
+  "TOOLREVISION": "1",
+  "TOOLVERSION": "2.0.19-df2f9355015f5fccdeb731adfd3b6056",
+  "VARIABLES": [
+    "PY3_FLAWFINDER_BASE"
+  ]
+}

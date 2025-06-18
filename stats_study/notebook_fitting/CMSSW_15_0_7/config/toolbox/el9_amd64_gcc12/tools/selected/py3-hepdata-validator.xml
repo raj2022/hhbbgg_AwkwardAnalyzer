@@ -1,0 +1,6 @@
+<tool name="py3-hepdata-validator" version="0.3.5-a11edfe2207c69f605ebafc72a63b060" revision="1">
+  <client>
+    <environment name="PY3_HEPDATA_VALIDATOR_BASE" default="/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-hepdata-validator/0.3.5-a11edfe2207c69f605ebafc72a63b060"/>
+  </client>
+  <runtime name="PATH" value="$PY3_HEPDATA_VALIDATOR_BASE/bin" type="path"/>
+</tool>
