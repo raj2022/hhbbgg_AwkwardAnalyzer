@@ -1,0 +1,499 @@
+{
+    "samplejson": "sample_v1_test_3500.json",
+    "workflow": "HHbbgg",
+    "metaconditions": "Era2022_v1",
+    "year": {
+        "NMSSM_X3500_Y60": [
+            "2022postEE"
+        ],
+        "NMSSM_X3500_Y70": [
+            "2022postEE"
+        ],
+        "NMSSM_X3500_Y80": [
+            "2022postEE"
+        ],
+        "NMSSM_X3500_Y90": [
+            "2022postEE"
+        ],
+        "NMSSM_X3500_Y95": [
+            "2022postEE"
+        ],
+        "NMSSM_X3500_Y100": [
+            "2022postEE"
+        ],
+        "NMSSM_X3500_Y125": [
+            "2022postEE"
+        ],
+        "NMSSM_X3500_Y150": [
+            "2022postEE"
+        ],
+        "NMSSM_X3500_Y200": [
+            "2022postEE"
+        ],
+        "NMSSM_X3500_Y300": [
+            "2022postEE"
+        ],
+        "NMSSM_X3500_Y400": [
+            "2022postEE"
+        ],
+        "NMSSM_X3500_Y500": [
+            "2022postEE"
+        ],
+        "NMSSM_X3500_Y600": [
+            "2022postEE"
+        ],
+        "NMSSM_X3500_Y800": [
+            "2022postEE"
+        ],
+        "NMSSM_X3500_Y1000": [
+            "2022postEE"
+        ],
+        "NMSSM_X3500_Y1200": [
+            "2022postEE"
+        ],
+        "NMSSM_X3500_Y1400": [
+            "2022postEE"
+        ],
+        "NMSSM_X3500_Y1600": [
+            "2022postEE"
+        ],
+        "NMSSM_X3500_Y1800": [
+            "2022postEE"
+        ],
+        "NMSSM_X3500_Y2000": [
+            "2022postEE"
+        ],
+        "NMSSM_X3500_Y2600": [
+            "2022postEE"
+        ],
+        "NMSSM_X3500_Y3000": [
+            "2022postEE"
+        ]
+    },
+    "taggers": [],
+    "systematics": {
+        "NMSSM_X3500_Y60": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF",
+            "Et_dependent_ScaleEB",
+            "Et_dependent_ScaleEE"
+
+        ],
+        "NMSSM_X3500_Y70": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF",
+            "Et_dependent_ScaleEB",
+            "Et_dependent_ScaleEE"
+        ],
+        "NMSSM_X3500_Y80": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF",
+            "Et_dependent_ScaleEB",
+            "Et_dependent_ScaleEE"
+        ],
+        "NMSSM_X3500_Y90": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF",
+            "Et_dependent_ScaleEB",
+            "Et_dependent_ScaleEE"
+        ],
+        "NMSSM_X3500_Y95": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF",
+            "Et_dependent_ScaleEB",
+            "Et_dependent_ScaleEE"
+        ],
+        "NMSSM_X3500_Y100": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF",
+            "Et_dependent_ScaleEB",
+            "Et_dependent_ScaleEE"
+        ],
+        "NMSSM_X3500_Y125": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF",
+            "Et_dependent_ScaleEB",
+            "Et_dependent_ScaleEE"
+        ],
+        "NMSSM_X3500_Y150": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF",
+            "Et_dependent_ScaleEB",
+            "Et_dependent_ScaleEE"
+        ],
+        "NMSSM_X3500_Y200": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF",
+            "Et_dependent_ScaleEB",
+            "Et_dependent_ScaleEE"
+        ],
+        "NMSSM_X3500_Y300": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF",
+            "Et_dependent_ScaleEB",
+            "Et_dependent_ScaleEE"
+        ],
+        "NMSSM_X3500_Y400": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF",
+            "Et_dependent_ScaleEB",
+            "Et_dependent_ScaleEE"
+        ],
+        "NMSSM_X3500_Y500": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF",
+            "Et_dependent_ScaleEB",
+            "Et_dependent_ScaleEE"
+        ],
+        "NMSSM_X3500_Y600": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF",
+            "Et_dependent_ScaleEB",
+            "Et_dependent_ScaleEE"
+        ],
+        "NMSSM_X3500_Y800": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF",
+            "Et_dependent_ScaleEB",
+            "Et_dependent_ScaleEE"
+        ],
+        "NMSSM_X3500_Y1000": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF",
+            "Et_dependent_ScaleEB",
+            "Et_dependent_ScaleEE"
+        ],
+        "NMSSM_X3500_Y1200": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF",
+            "Et_dependent_ScaleEB",
+            "Et_dependent_ScaleEE"
+        ],
+        "NMSSM_X3500_Y1400": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF",
+            "Et_dependent_ScaleEB",
+            "Et_dependent_ScaleEE"
+        ],
+        "NMSSM_X3500_Y1600": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF",
+            "Et_dependent_ScaleEB",
+            "Et_dependent_ScaleEE"
+        ],
+        "NMSSM_X3500_Y1800": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF",
+            "Et_dependent_ScaleEB",
+            "Et_dependent_ScaleEE"
+        ],
+        "NMSSM_X3500_Y2000": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF",
+            "Et_dependent_ScaleEB",
+            "Et_dependent_ScaleEE"
+        ],
+        "NMSSM_X3500_Y2600": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF",
+            "Et_dependent_ScaleEB",
+            "Et_dependent_ScaleEE"
+        ],
+        "NMSSM_X3500_Y3000": [
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF",
+            "Et_dependent_ScaleEB",
+            "Et_dependent_ScaleEE"
+        ]
+
+    },
+    "corrections": {
+        "NMSSM_X3500_Y60": [
+            "jerc_jet_syst",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "NMSSM_X3500_Y70": [
+            "jerc_jet_syst",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "NMSSM_X3500_Y80": [
+            "jerc_jet_syst",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "NMSSM_X3500_Y90": [
+            "jerc_jet_syst",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "NMSSM_X3500_Y95": [
+            "jerc_jet_syst",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "NMSSM_X3500_Y100": [
+            "jerc_jet_syst",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "NMSSM_X3500_Y125": [
+            "jerc_jet_syst",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "NMSSM_X3500_Y150": [
+            "jerc_jet_syst",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "NMSSM_X3500_Y200": [
+            "jerc_jet_syst",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "NMSSM_X3500_Y300": [
+            "jerc_jet_syst",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "NMSSM_X3500_Y400": [
+            "jerc_jet_syst",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "NMSSM_X3500_Y500": [
+            "jerc_jet_syst",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "NMSSM_X3500_Y600": [
+            "jerc_jet_syst",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "NMSSM_X3500_Y800": [
+            "jerc_jet_syst",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "NMSSM_X3500_Y1000": [
+            "jerc_jet_syst",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "NMSSM_X3500_Y1200": [
+            "jerc_jet_syst",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "NMSSM_X3500_Y1400": [
+            "jerc_jet_syst",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "NMSSM_X3500_Y1600": [
+            "jerc_jet_syst",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "NMSSM_X3500_Y1800": [
+            "jerc_jet_syst",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "NMSSM_X3500_Y2000": [
+            "jerc_jet_syst",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "NMSSM_X3500_Y2600": [
+            "jerc_jet_syst",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ],
+        "NMSSM_X3500_Y3000": [
+            "jerc_jet_syst",
+            "Et_dependent_Smearing",
+            "Pileup",
+            "PNet_bTagShapeSF",
+            "ElectronVetoSF",
+            "PreselSF",
+            "TriggerSF"
+        ]
+    },
+    "analysis": "mainAnalysis"
+}

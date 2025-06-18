@@ -122,7 +122,7 @@ def stack1d_histograms(
 ):
     for hist_name in histogram_names:
         # Determine size based on number of MC samples or histogram width
-        dynamic_width = max(8, len(mc_samples) * 1.5)  # Adjust width based on MC samples
+        dynamic_width = max(11, len(mc_samples) * 1.5)  # Adjust width based on MC samples
         dynamic_height = 12  # Default height
         fig, (ax, ax_ratio) = plt.subplots(
             2, 1,
@@ -356,6 +356,9 @@ def main():
         "VBFHToGG",
         "VHToGG",
         "ttHToGG",
+        "QCD_PT-30to40",
+        "QCD_PT-30toInf",
+        "QCD_PT-40toInf",
     ]
 
     # List of signal processes
@@ -429,6 +432,10 @@ def main():
         "NMSSM_X300_Y60": "NMSSM_X300_Y60 × 10",
         #"GluGluToHH": r"$gg\rightarrow\,HH$ \times 10",
         "NMSSM_X300_Y60": r"$NMSSM\_X_{300}\_Y_{60} \times 10$",
+        # QCD sample legends
+        "QCD_PT-30to40": r"$QCD+P_T(30to40)$",
+        "QCD_PT-30toInf": r"$QCD+P_T(30toInf)$",
+        "QCD_PT-40toInf": r"$QCD+P_T(40toInf)$",
         # NMSSM samples legends
         #"NMSSM_X300_Y60": r"$NMSSM\_X300\_Y60$",
         #"NMSSM_X300_Y70": r"$NMSSM\_X300\_Y70$",
