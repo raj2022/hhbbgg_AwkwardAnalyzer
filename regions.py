@@ -125,3 +125,17 @@ def get_mask_crbbantigg(cms_events):    # pass medium Btag, pass loose photonID,
         & (cms_events.sublead_isScEtaEB == 1)
     )
     return mask_crbbantigg
+
+# Defining another control region
+def get_mask_crantibbantigg(cms_events):
+    mask_crantibbantigg = (
+        (cms_events.lead_pho_mvaID_WP80 == 0)
+        & (cms_events.sublead_pho_mvaID_WP80 == 0)
+        & (cms_events.lead_pho_mvaID_WP90 == 1)
+        & (cms_events.sublead_pho_mvaID_WP90 == 1)
+        & (cms_events.lead_bjet_PNetB < 0.2605)
+        & (cms_events.sublead_bjet_PNetB < 0.2605)
+        & (cms_events.lead_isScEtaEB == 1)
+        & (cms_events.sublead_isScEtaEB == 1)
+    )
+    return mask_crantibbantigg
