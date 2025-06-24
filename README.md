@@ -27,11 +27,22 @@ To use the framework, the environment created by conda has to be activated every
 conda activate hhbbgg-awk
 ```
 For now the analyzer can be run normally using python
+
+#### with `.root` file
 ```
 python hhbbgg_Analyzer.py -i <Input root file directory OR single root file>
 ```
 provided that the input directory having one root file for each background is defined with the variable name `inputfilesDir` in `hhbbgg_Analyzer.py`.
 This saves a root file in `outputfiles` which contains sample names as directory and all the histograms are saved inside those directories.
+
+#### with `.parquet` file
+```
+python hhbbgg_Analyzer_parquet.py -i <Input root file directory OR single root file>
+```
+e.g. with all file moved in this `NMSSM_v2`
+```
+python hhbbgg_Analyzer_parquet.py -i ../../output_root/NMSSM_v2/
+```
 
 To plot the histograms `hhbbgg_Plotter.py` can be used as:
 ```
