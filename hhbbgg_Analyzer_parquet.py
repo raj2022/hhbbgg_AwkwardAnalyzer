@@ -274,7 +274,7 @@ def process_parquet_file(inputfile, outputrootfile):
         cms_events["mask_srbbggMET"] = get_mask_srbbggMET(cms_events)
         cms_events["mask_crbbantigg"] = get_mask_crbbantigg(cms_events)
         cms_events["mask_crantibbgg"] = get_mask_crantibbgg(cms_events)
-        cms_events["get_mask_crantibbantigg"] = get_mask_crantibbantigg(cms_events)
+        cms_events["mask_crantibbantigg"] = get_mask_crantibbantigg(cms_events)
 
         # Adding puppi MET and associated variables
         out_events["puppiMET_pt"] = cms_events["puppiMET_pt"]
