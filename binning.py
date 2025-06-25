@@ -84,3 +84,4 @@ met_variables = {"puppiMET_pt": [20, 100, 200],
 binning["srbbggMET"].update(met_variables)
 binning["crantibbgg"] = copy.deepcopy(binning["preselection"])
 binning["crbbantigg"] = copy.deepcopy(binning["preselection"])
+binning["crantibbantigg"] = copy.deepcopy(binning["preselection"])
