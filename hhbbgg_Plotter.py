@@ -245,6 +245,9 @@ def stack1d_histograms(
         elif "crbbantigg" in hist_name:
             region_name = r"cr: $b\bar{b}anti\gamma\gamma$"
             additional_text = text_crbbantigg
+        elif "crantibbantigg" in hist_name:
+            region_name = r"cr: $b\bar{b}anti\gamma\gamma$"
+            additional_text = text_crantibbantigg
         else:
             region_name = None
             additional_text = None
@@ -514,6 +517,7 @@ def main():
         "srbbggMET",
         "crantibbgg",
         "crbbantigg",
+        "crantibbantigg",
     ]
     # List of variable names
     variable_names = [
