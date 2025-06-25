@@ -341,7 +341,7 @@ def process_parquet_file(inputfile, outputrootfile):
         out_events["weight_crantibbgg"] = (
             cms_events["weight"] * xsec_ * lumi_ / out_events.weight_central
         )
-        out_events["crantibbantigg"] = (
+        out_events["weight_crantibbantigg"] = (
             cms_events["weight"] * xsec_ * lumi_ / out_events.weight_central
         )
         # Adding new variable
