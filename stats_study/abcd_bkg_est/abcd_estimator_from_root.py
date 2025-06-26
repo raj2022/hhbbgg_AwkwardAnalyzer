@@ -8,7 +8,7 @@ import numpy as np
 from abcd_estimator import compute_abcd_yields
 from abcd_plotter import plot_abcd_yields, plot_closure_test
 
-# Update with your ROOT path and tree name
+# Update with ROOT path and tree name
 ROOT_FILE = "../../outputfiles/hhbbgg_analyzer-v2-trees.root"
 TREE_PATH = "Data_EraF/preselection"  # directory/tree path inside ROOT file
 
