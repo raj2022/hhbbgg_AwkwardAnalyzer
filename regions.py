@@ -139,3 +139,23 @@ def get_mask_crantibbantigg(cms_events):
         & (cms_events.sublead_isScEtaEB == 1)
     )
     return mask_crantibbantigg
+
+## Side band inclusion based on HIG-2019_186
+
+def get_mask_lowPhoID_sideband(cms_events):
+    mask_sideband = (
+        # Require both photons to fail WP80 but pass WP90 (i.e., "loose ID")
+        (cms_events.lead_pho_mvaID_WP80 == 0)
+        & (cms_events.sublead_pho_mvaID_WP80 == 0)
+        & (cms_events.lead_pho_mvaID_WP90 == 1)
+        & (cms_events.sublead_pho_mvaID_WP90 == 1)
+
+        # Select events that pass the other standard criteria for photons
+        & (cms_events.lead_isScEtaEB == 1)
+        & (cms_events.sublead_isScEtaEB == 1)
+
+        # Keep b-tagging open here, or adjust based on what you want to study
+        & (cms_events.lead_bjet_PNetB > 0.2605)
+        & (cms_events.sublead_bjet_PNetB > 0.2605)
+    )
+    return mask_sideband

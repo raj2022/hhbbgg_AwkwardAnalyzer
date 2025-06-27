@@ -276,6 +276,7 @@ def process_parquet_file(inputfile, outputrootfile):
             get_mask_crantibbgg,
             get_mask_crbbantigg,
             get_mask_crantibbantigg,  
+            get_mask_lowPhoID_sideband,
         )
 
         cms_events["mask_preselection"] = get_mask_preselection(cms_events)
@@ -285,6 +286,7 @@ def process_parquet_file(inputfile, outputrootfile):
         cms_events["mask_crbbantigg"] = get_mask_crbbantigg(cms_events)
         cms_events["mask_crantibbgg"] = get_mask_crantibbgg(cms_events)
         cms_events["mask_crantibbantigg"] = get_mask_crantibbantigg(cms_events)
+        cms_events["mask_lowPhoID_sideband"] = get_mask_lowPhoID_sideband(cms_events) 
 
         # Adding puppi MET and associated variables
         out_events["puppiMET_pt"] = cms_events["puppiMET_pt"]
@@ -354,6 +356,9 @@ def process_parquet_file(inputfile, outputrootfile):
         out_events["weight_crantibbantigg"] = (
             cms_events["weight"] * xsec_ * lumi_ / out_events.weight_central
         )
+        out_events["weight_lowPhoID_sideband"] = (
+            cms_events["weight"] * xsec_ * lumi_ / out_events.weight_central
+        ) 
         # Adding new variable
         out_events["dibjet_eta"] = cms_events["dibjet_eta"]
         out_events["dibjet_phi"] = cms_events["dibjet_phi"]
