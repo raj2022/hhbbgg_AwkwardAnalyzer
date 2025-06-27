@@ -11,6 +11,16 @@ from pyarrow import Table
 import pyarrow
 import gc  # For memory cleanup
 
+#########
+
+from abcd_estimator import compute_abcd_yields
+
+
+#######
+
+
+
+
 usage = "usage: %prog [options] arg1 arg2"
 parser = optparse.OptionParser(usage)
 parser.add_option(
