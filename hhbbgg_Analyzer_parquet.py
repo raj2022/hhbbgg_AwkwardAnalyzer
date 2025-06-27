@@ -393,6 +393,7 @@ def process_parquet_file(inputfile, outputrootfile):
 
         #--------------------------------------------------
         #--------------------------------------------------
+        
         out_events["preselection"] = cms_events["mask_preselection"]
         out_events["selection"] = cms_events["mask_selection"]
         out_events["srbbgg"] = cms_events["mask_srbbgg"]
@@ -400,7 +401,10 @@ def process_parquet_file(inputfile, outputrootfile):
         out_events["crantibbgg"] = cms_events["mask_crantibbgg"]
         out_events["crbbantigg"] = cms_events["mask_crbbantigg"]
         out_events["crantibbantigg"] = cms_events["mask_crantibbantigg"]
-## Adding deltaR(j,g)
+        out_events["sideband"] = cms_events["mask_sideband"] 
+        
+        
+        ## Adding deltaR(j,g)
 
         out_events["DeltaR_j1g1"] = cms_events["DeltaR_j1g1"]
         out_events["DeltaR_j2g1"] = cms_events["DeltaR_j2g1"]
