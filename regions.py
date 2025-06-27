@@ -142,7 +142,7 @@ def get_mask_crantibbantigg(cms_events):
 
 ## Side band inclusion based on HIG-2019_186
 
-def get_mask_lowPhoID_sideband(cms_events):
+def get_mask_sideband(cms_events):   # low PhotonID
     mask_sideband = (
         # Require both photons to fail WP80 but pass WP90 (i.e., "loose ID")
         (cms_events.lead_pho_mvaID_WP80 == 0)

@@ -267,7 +267,7 @@ def process_parquet_file(inputfile, outputrootfile):
             get_mask_crantibbgg,
             get_mask_crbbantigg,
             get_mask_crantibbantigg,  
-            get_mask_lowPhoID_sideband,
+            get_mask_sideband,
         )
 
         cms_events["mask_preselection"] = get_mask_preselection(cms_events)
@@ -277,7 +277,7 @@ def process_parquet_file(inputfile, outputrootfile):
         cms_events["mask_crbbantigg"] = get_mask_crbbantigg(cms_events)
         cms_events["mask_crantibbgg"] = get_mask_crantibbgg(cms_events)
         cms_events["mask_crantibbantigg"] = get_mask_crantibbantigg(cms_events)
-        cms_events["mask_sideband"] = get_mask_lowPhoID_sideband(cms_events) 
+        cms_events["mask_sideband"] = get_mask_sideband(cms_events) 
 
         # Adding puppi MET and associated variables
         out_events["puppiMET_pt"] = cms_events["puppiMET_pt"]
