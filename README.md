@@ -41,7 +41,7 @@ python hhbbgg_Analyzer_parquet.py -i <Input root file directory OR single root f
 ```
 e.g. with all file moved in this `NMSSM_v2`
 ```
-python hhbbgg_Analyzer_parquet.py -i ../../output_root/NMSSM_v2/
+python hhbbgg_Analyzer_parquet.py -i ../../output_root/v2_production_central/
 ```
 
 To plot the histograms `hhbbgg_Plotter.py` can be used as:
