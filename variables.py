@@ -1,6 +1,6 @@
 import copy
 
-regions = ["preselection", "selection", "srbbgg", "srbbggMET", "crantibbgg", "crbbantigg", "crantibbantigg", "lowPhoID_sideband"]
+regions = ["preselection", "selection", "srbbgg", "srbbggMET", "crantibbgg", "crbbantigg", "crantibbantigg", "sideband"]
 vardict = {
     "dibjet_mass": "dibjet_mass",
     "diphoton_mass": "diphoton_mass",

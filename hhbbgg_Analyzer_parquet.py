@@ -11,15 +11,6 @@ from pyarrow import Table
 import pyarrow
 import gc  # For memory cleanup
 
-#########
-
-from abcd_estimator import compute_abcd_yields
-
-
-#######
-
-
-
 
 usage = "usage: %prog [options] arg1 arg2"
 parser = optparse.OptionParser(usage)
@@ -286,7 +277,7 @@ def process_parquet_file(inputfile, outputrootfile):
         cms_events["mask_crbbantigg"] = get_mask_crbbantigg(cms_events)
         cms_events["mask_crantibbgg"] = get_mask_crantibbgg(cms_events)
         cms_events["mask_crantibbantigg"] = get_mask_crantibbantigg(cms_events)
-        cms_events["mask_lowPhoID_sideband"] = get_mask_lowPhoID_sideband(cms_events) 
+        cms_events["mask_sideband"] = get_mask_lowPhoID_sideband(cms_events) 
 
         # Adding puppi MET and associated variables
         out_events["puppiMET_pt"] = cms_events["puppiMET_pt"]
@@ -356,7 +347,7 @@ def process_parquet_file(inputfile, outputrootfile):
         out_events["weight_crantibbantigg"] = (
             cms_events["weight"] * xsec_ * lumi_ / out_events.weight_central
         )
-        out_events["weight_lowPhoID_sideband"] = (
+        out_events["weight_sideband"] = (
             cms_events["weight"] * xsec_ * lumi_ / out_events.weight_central
         ) 
         # Adding new variable
