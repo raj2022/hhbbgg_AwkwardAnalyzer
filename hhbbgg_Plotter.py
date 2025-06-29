@@ -233,7 +233,9 @@ def stack1d_histograms(
         text_crantibbgg = "Fail Medium Btag\nPass tight photonID"
         text_crbbantigg = "Pass Medium Btag\nPass loose photonID\nfail tight photonID "
         text_crantibbantigg = "Fail Medium Btag\nFail loose photonID\nfail tight photonID " 
-
+        text_sideband = "Fail Medium Btag\nFail loose photonID\nfail tight photonID " 
+        
+        
         if "srbbgg" in hist_name:
             region_name = r"sr: $b\bar{b}\gamma\gamma$"
             additional_text = text_srbbgg
@@ -249,6 +251,9 @@ def stack1d_histograms(
         elif "crantibbantigg" in hist_name:
             region_name = r"cr: anti$b\bar{b}anti\gamma\gamma$"
             additional_text = text_crantibbantigg
+        elif "sideband" in hist_name:
+            region_name = r"cr: anti$b\bar{b}anti\gamma\gamma$"
+            additional_text = text_sideband
         else:
             region_name = None
             additional_text = None
@@ -510,6 +515,7 @@ def main():
         "crantibbgg",
         "crbbantigg",
         "crantibbantigg",
+        "sideband",
     ]
     # List of variable names
     variable_names = [
