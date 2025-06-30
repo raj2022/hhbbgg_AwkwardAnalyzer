@@ -12,6 +12,7 @@ from regions import (
     get_mask_crantibbgg,
     get_mask_crbbantigg,
     get_mask_crantibbantigg,
+    get_mask_sideband
 )
 
 def compute_abcd_yields(cms_events, use_signal_mask=False):
@@ -31,6 +32,7 @@ def compute_abcd_yields(cms_events, use_signal_mask=False):
     mask_B = get_mask_crantibbgg(cms_events)
     mask_C = get_mask_crbbantigg(cms_events)
     mask_D = get_mask_crantibbantigg(cms_events)
+    mask_E = get_mask_sideband(cms_events)
 
     if use_signal_mask:
         signal_mask = (cms_events.signal == 0)
@@ -38,12 +40,14 @@ def compute_abcd_yields(cms_events, use_signal_mask=False):
         mask_B = mask_B & signal_mask
         mask_C = mask_C & signal_mask
         mask_D = mask_D & signal_mask
+        mask_E = mask_E & signal_mask
 
     # Event counts
     n_A = ak.sum(mask_A)
     n_B = ak.sum(mask_B)
     n_C = ak.sum(mask_C)
     n_D = ak.sum(mask_D)
+    n_E = ak.sum(mask_E)
 
     # ABCD Estimate
     if n_D != 0:

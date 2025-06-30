@@ -159,3 +159,33 @@ def get_mask_sideband(cms_events):   # low PhotonID
         & (cms_events.sublead_bjet_PNetB > 0.2605)
     )
     return mask_sideband
+
+
+# Traingular ABCD 
+# Raw Photon MVA ID Regions (numerical cut-based)
+
+def get_mask_idmva_presel(cms_events):
+    """
+    Events with both photons having raw MVA > -0.7 (tight region)
+    """
+    mask_idmva_presel = (
+        (cms_events.lead_phoID_mva > -0.7)
+        & (cms_events.sublead_phoID_mva > -0.7)
+        & (cms_events.lead_isScEtaEB == 1)
+        & (cms_events.sublead_isScEtaEB == 1)
+    )
+    return mask_idmva_presel
+
+
+def get_mask_idmva_sideband(cms_events):
+    """
+    Events with both photons > -0.9, but at least one fails > -0.7 (loose region)
+    """
+    mask_idmva_sideband =  (
+        (cms_events.lead_phoID_mva > -0.9)
+        & (cms_events.sublead_phoID_mva > -0.9)
+        & ((cms_events.lead_phoID_mva < -0.7) | (cms_events.sublead_phoID_mva < -0.7))
+        & (cms_events.lead_isScEtaEB == 1)
+        & (cms_events.sublead_isScEtaEB == 1)
+    )
+    return mask_idmva_sideband 
