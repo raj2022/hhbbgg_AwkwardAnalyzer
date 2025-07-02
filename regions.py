@@ -169,8 +169,8 @@ def get_mask_idmva_presel(cms_events):
     Events with both photons having raw MVA > -0.7 (tight region)
     """
     mask_idmva_presel = (
-        (cms_events.lead_phoID_mva > -0.7)
-        & (cms_events.sublead_phoID_mva > -0.7)
+        (cms_events.lead_pho_mvaID > -0.7)
+        & (cms_events.sublead_pho_mvaID > -0.7)
         & (cms_events.lead_isScEtaEB == 1)
         & (cms_events.sublead_isScEtaEB == 1)
     )
@@ -182,9 +182,9 @@ def get_mask_idmva_sideband(cms_events):
     Events with both photons > -0.9, but at least one fails > -0.7 (loose region)
     """
     mask_idmva_sideband =  (
-        (cms_events.lead_phoID_mva > -0.9)
-        & (cms_events.sublead_phoID_mva > -0.9)
-        & ((cms_events.lead_phoID_mva < -0.7) | (cms_events.sublead_phoID_mva < -0.7))
+        (cms_events.lead_pho_mvaID > -0.9)
+        & (cms_events.sublead_pho_mvaID > -0.9)
+        & ((cms_events.lead_pho_mvaID < -0.7) | (cms_events.sublead_pho_mvaID < -0.7))
         & (cms_events.lead_isScEtaEB == 1)
         & (cms_events.sublead_isScEtaEB == 1)
     )

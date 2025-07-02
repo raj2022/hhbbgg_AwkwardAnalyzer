@@ -356,6 +356,12 @@ def process_parquet_file(inputfile, outputrootfile):
         out_events["weight_sideband"] = (
             cms_events["weight"] * xsec_ * lumi_ / out_events.weight_central
         ) 
+        out_events["weight_idmva_presel"] = (
+            cms_events["weight"] * xsec_ * lumi_ / out_events.weight_central
+        ) 
+        out_events["weight_idmva_sideband"] = (
+            cms_events["weight"] * xsec_ * lumi_ / out_events.weight_central
+        ) 
         # Adding new variable
         out_events["dibjet_eta"] = cms_events["dibjet_eta"]
         out_events["dibjet_phi"] = cms_events["dibjet_phi"]
