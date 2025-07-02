@@ -268,6 +268,9 @@ def process_parquet_file(inputfile, outputrootfile):
             get_mask_crbbantigg,
             get_mask_crantibbantigg,  
             get_mask_sideband,
+            get_mask_idmva_presel,
+            get_mask_idmva_sideband,
+            
         )
 
         cms_events["mask_preselection"] = get_mask_preselection(cms_events)
@@ -277,7 +280,10 @@ def process_parquet_file(inputfile, outputrootfile):
         cms_events["mask_crbbantigg"] = get_mask_crbbantigg(cms_events)
         cms_events["mask_crantibbgg"] = get_mask_crantibbgg(cms_events)
         cms_events["mask_crantibbantigg"] = get_mask_crantibbantigg(cms_events)
-        cms_events["mask_sideband"] = get_mask_sideband(cms_events) 
+        cms_events["mask_sideband"] = get_mask_sideband(cms_events)
+        cms_events["mask_idmva_presel"] = get_mask_idmva_presel(cms_events)
+        cms_events["mask_idmva_sideband"] = get_mask_idmva_sideband(cms_events)
+        
 
         # Adding puppi MET and associated variables
         out_events["puppiMET_pt"] = cms_events["puppiMET_pt"]
@@ -391,6 +397,7 @@ def process_parquet_file(inputfile, outputrootfile):
         out_events["lead_pho_mvaID"] = cms_events["lead_pho_mvaID"]
         out_events["sublead_pho_mvaID"] = cms_events["sublead_pho_mvaID"]
 
+
         #--------------------------------------------------
         #--------------------------------------------------
         
@@ -402,6 +409,10 @@ def process_parquet_file(inputfile, outputrootfile):
         out_events["crbbantigg"] = cms_events["mask_crbbantigg"]
         out_events["crantibbantigg"] = cms_events["mask_crantibbantigg"]
         out_events["sideband"] = cms_events["mask_sideband"] 
+        out_events["idmva_presel"] = cms_events["mask_idmva_presel"] 
+        out_events["idmva_sideband"] = cms_events["mask_idmva_sideband"]
+
+        
         
         
         ## Adding deltaR(j,g)
