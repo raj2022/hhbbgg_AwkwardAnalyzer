@@ -516,6 +516,8 @@ def main():
         "crbbantigg",
         "crantibbantigg",
         "sideband",
+        "idmva_sideband",
+        "idmva_presel",
     ]
     # List of variable names
     variable_names = [
