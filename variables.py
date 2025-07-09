@@ -61,6 +61,16 @@ vardict = {
     "sublead_pho_mvaID_WP80":"sublead_pho_mvaID_WP80",
     "lead_pho_mvaID":"lead_pho_mvaID",
     "sublead_pho_mvaID":"sublead_pho_mvaID",
+    "DeltaPhi_j1MET":"DeltaPhi_j1MET",
+    "DeltaPhi_j2MET":"DeltaPhi_j2MET",
+    "Res_chi_t0":"Res_chi_t0",
+    "Res_chi_t1":"Res_chi_t1",
+    "lepton1_mvaID":"lepton1_mvaID",
+    "lepton1_pt":"lepton1_pt",
+    "lepton1_pfIsoId":"lepton1_pfIsoId",
+    "n_jets":"n_jets",
+    
+
     
 }
 
@@ -123,7 +133,15 @@ variables_common = {
         "puppiMET_ptJERDown", 
         "puppiMET_ptJERUp", 
         "puppiMET_ptJESDown", 
-        "puppiMET_ptJESUp"
+        "puppiMET_ptJESUp",
+        "DeltaPhi_j1MET",
+        "DeltaPhi_j2MET",
+        "Res_chi_t0",
+        "Res_chi_t1",
+        "lepton1_mvaID",
+        "lepton1_pt",
+        "lepton1_pfIsoId",
+        "n_jets"
     ]
 }
 
