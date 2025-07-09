@@ -62,6 +62,14 @@ binning["preselection"] = {
     "puppiMET_ptJERUp":[100, 0, 100],
     "puppiMET_ptJESDown":[100, 0, 100],
     "puppiMET_ptJESUp":[100, 0, 100],
+    "DeltaPhi_j1MET":[100,-3.14,3,14],
+    "DeltaPhi_j2MET":[100,-3.14,3,14],
+    "Res_chi_t0":[100,0,100],
+    "Res_chi_t1":[100,0,100],
+    "lepton1_mvaID":[100,0,100],
+    "lepton1_pt":[100,0,100],
+    "lepton1_pfIsoId":[100,0,100],
+    "n_jets":[100,0,100],
 }
 
 binning["selection"] = copy.deepcopy(binning["preselection"])
