@@ -117,7 +117,8 @@ def process_parquet_file(inputfile, outputrootfile):
             "Res_chi_t1",
             "lepton1_mvaID",
             "lepton1_pt",
-            "lepton1_pfIsoId"
+            "lepton1_pfIsoId",
+            "n_jets",
             
             
     ]
@@ -214,6 +215,7 @@ def process_parquet_file(inputfile, outputrootfile):
                 "lepton1_mvaID": tree_["lepton1_mvaID"],
                 "lepton1_pt": tree_["lepton1_pt"],
                 "lepton1_pfIsoId": tree_["lepton1_pfIsoId"],
+                "n_jets": tree_["n_jets"],
                 },
             depth_limit=1,
         )
@@ -355,6 +357,7 @@ def process_parquet_file(inputfile, outputrootfile):
         out_events["lepton1_mvaID"] = cms_events["lepton1_mvaID"]
         out_events["lepton1_pt"] = cms_events["lepton1_pt"]
         out_events["lepton1_pfIsoId"] = cms_events["lepton1_pfIsoId"]
+        out_events["n_jets"] = cms_events["n_jets"]
         #--------
         out_events["weight_central"] = cms_events["weight_central"]
         out_events["weight_preselection"] = (
