@@ -2,24 +2,28 @@ import copy
 
 regions = ["preselection", "selection", "srbbgg", "srbbggMET", "crantibbgg", "crbbantigg", "crantibbantigg", "sideband", "idmva_sideband","idmva_presel"]
 vardict = {
+    # dibjet 
     "dibjet_mass": "dibjet_mass",
-    "diphoton_mass": "diphoton_mass",
-    "bbgg_mass": "bbgg_mass",
     "dibjet_pt": "dibjet_pt",
+    "dibjet_eta": "dibjet_eta",
+    "dibjet_phi": "dibjet_phi",
+    # diphoton 
+    "diphoton_mass": "diphoton_mass",
     "diphoton_pt": "diphoton_pt",
+    "diphoton_eta": "diphoton_eta",
+    "diphoton_phi": "diphoton_phi",
+    # bbgg 
+    "bbgg_mass": "bbgg_mass",
     "bbgg_pt": "bbgg_pt",
     "bbgg_eta": "bbgg_eta",
     "bbgg_phi": "bbgg_phi",
+    # photon kinemtics
     "lead_pho_pt": "lead_pho_pt",
     "sublead_pho_pt": "sublead_pho_pt",
     "lead_pho_eta": "lead_pho_eta",
     "lead_pho_phi": "lead_pho_phi",
     "sublead_pho_eta": "sublead_pho_eta",
     "sublead_pho_phi": "sublead_pho_phi",
-    "diphoton_eta": "diphoton_eta",
-    "diphoton_phi": "diphoton_phi",
-    "dibjet_eta": "dibjet_eta",
-    "dibjet_phi": "dibjet_phi",
     # ----bjet-----
     "lead_bjet_pt": "lead_bjet_pt",
     "sublead_bjet_pt": "sublead_bjet_pt",
@@ -29,10 +33,13 @@ vardict = {
     "sublead_bjet_phi": "sublead_bjet_phi",
     "sublead_bjet_PNetB": "sublead_bjet_PNetB",
     "lead_bjet_PNetB": "lead_bjet_PNetB",
+    # Collion soper frame variables (Helicity angles)
     "CosThetaStar_gg": "CosThetaStar_gg",
     "CosThetaStar_jj": "CosThetaStar_jj",
     "CosThetaStar_CS": "CosThetaStar_CS",
+    # Minumum angular distance 
     "DeltaR_jg_min": "DeltaR_jg_min",
+    # Leading and subleading jets resolution variables
     "pholead_PtOverM": "pholead_PtOverM",
     "phosublead_PtOverM": "phosublead_PtOverM",
     "FirstJet_PtOverM": "FirstJet_PtOverM",
@@ -41,8 +48,10 @@ vardict = {
     "sublead_pt_over_diphoton_mass": "sublead_pt_over_diphoton_mass",
     "lead_pt_over_dibjet_mass": "lead_pt_over_dibjet_mass",
     "sublead_pt_over_dibjet_mass": "sublead_pt_over_dibjet_mass",
+    # bbgg mass
     "diphoton_bbgg_mass": "diphoton_bbgg_mass",
     "dibjet_bbgg_mass": "dibjet_bbgg_mass",
+    # puppi 
     "puppiMET_pt": "puppiMET_pt",
     "puppiMET_phi": "puppiMET_phi",
     "puppiMET_phiJERDown": "puppiMET_phiJERDown",
@@ -55,12 +64,15 @@ vardict = {
     "puppiMET_ptJERUp":"puppiMET_ptJERUp",
     "puppiMET_ptJESDown":"puppiMET_ptJESDown",
     "puppiMET_ptJESUp":"puppiMET_ptJESUp",
+    # WP
     "lead_pho_mvaID_WP90":"lead_pho_mvaID_WP90",
     "lead_pho_mvaID_WP80":"lead_pho_mvaID_WP80",
     "sublead_pho_mvaID_WP90":"sublead_pho_mvaID_WP90",
     "sublead_pho_mvaID_WP80":"sublead_pho_mvaID_WP80",
+    # mvaID
     "lead_pho_mvaID":"lead_pho_mvaID",
     "sublead_pho_mvaID":"sublead_pho_mvaID",
+    # other variables added from Non-Resonant(Explain these?)
     "DeltaPhi_j1MET":"DeltaPhi_j1MET",
     "DeltaPhi_j2MET":"DeltaPhi_j2MET",
     "Res_chi_t0":"Res_chi_t0",
@@ -68,10 +80,7 @@ vardict = {
     "lepton1_mvaID":"lepton1_mvaID",
     "lepton1_pt":"lepton1_pt",
     "lepton1_pfIsoId":"lepton1_pfIsoId",
-    "n_jets":"n_jets",
-    
-
-    
+    "n_jets":"n_jets",  
 }
 
 variables_common = {
