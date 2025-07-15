@@ -1,0 +1,61 @@
+Data_EraE: 
+    path: "/eos/cms/store/group/phys_b2g/HHbbgg/HiggsDNA_parquet/v1/Run3_2022postEE_merged/Data_EraE.parquet"
+    lumi: 5672 # /pb
+
+Data_EraF: 
+    path: "/eos/cms/store/group/phys_b2g/HHbbgg/HiggsDNA_parquet/v1/Run3_2022postEE_merged/Data_EraF.parquet"
+    lumi: 17610 # /pb
+
+Data_EraG: 
+    path: "/eos/cms/store/group/phys_b2g/HHbbgg/HiggsDNA_parquet/v1/Run3_2022postEE_merged/Data_EraG.parquet"
+    lumi: 3055 # /pb
+
+#signal
+#ggF HH xs = 0.03413 pb (@13.6 TeV) https://twiki.cern.ch/twiki/bin/view/LHCPhysics/LHCHWGHH?redirectedfrom=LHCPhysics.LHCHXSWGHH#Latest_recommendations_for_gluon
+#H -> gg BR = 2.270E-03 https://twiki.cern.ch/twiki/bin/view/LHCPhysics/CERNYellowReportPageBR
+#H -> bb BR = 5.824E-01
+#Sample xs = 2*(ggF HH xs)(H -> gg BR)((H -> bb BR))
+GluGluToHH: 
+    path: "/eos/cms/store/group/phys_b2g/HHbbgg/HiggsDNA_parquet/v1/Run3_2022postEE_merged/GluGluToHH.parquet"
+    xs: 0.00009
+    
+#resonant background
+#H prod XS: https://twiki.cern.ch/twiki/bin/view/LHCPhysics/LHCHWG136TeVxsec_extrap#ggF_N3LO_QCD_NLO_EW
+#H -> gg BR = 2.270E-03: https://twiki.cern.ch/twiki/bin/view/LHCPhysics/CERNYellowReportPageBR#Higgs_2_gauge_bosons
+GluGluHToGG: 
+    path: "/eos/cms/store/group/phys_b2g/HHbbgg/HiggsDNA_parquet/v1/Run3_2022postEE_merged/GluGluHToGG.parquet"
+    xs: 0.1186 #XS = 52.23
+
+ttHToGG: 
+    path: "/eos/cms/store/group/phys_b2g/HHbbgg/HiggsDNA_parquet/v1/Run3_2022postEE_merged/ttHToGG.parquet"
+    xs: 0.0013 #XS = 0.57
+
+VBFHToGG: 
+    path: "/eos/cms/store/group/phys_b2g/HHbbgg/HiggsDNA_parquet/v1/Run3_2022postEE_merged/VBFHToGG.parquet"
+    xs: 0.00926 #XS = 4.078
+
+VHToGG: 
+    path: "/eos/cms/store/group/phys_b2g/HHbbgg/HiggsDNA_parquet/v1/Run3_2022postEE_merged/VHToGG.parquet"
+    xs: 0.00545 #XS = 1.457 + 0.9439 = 2.401
+
+#continuous background
+GGJets: 
+    path: "/eos/cms/store/group/phys_b2g/HHbbgg/HiggsDNA_parquet/v1/Run3_2022postEE_merged/GGJets.parquet"
+    xs: 88.75 #https://xsdb-temp.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS=%20%20GG-Box-3Jets_MGG-80_13p6TeV_sherpa
+
+GJetPt20To40: 
+    path: "/eos/cms/store/group/phys_b2g/HHbbgg/HiggsDNA_parquet/v1/Run3_2022postEE_merged/GJetPt20To40.parquet"
+    xs: 242.5 #https://xsdb-temp.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS=%20%20GJet_PT-20to40_DoubleEMEnriched_MGG-80_TuneCP5_13p6TeV_pythia8
+
+GJetPt40: 
+    path: "/eos/cms/store/group/phys_b2g/HHbbgg/HiggsDNA_parquet/v1/Run3_2022postEE_merged/GJetPt40.parquet"
+    xs: 919.1 #https://xsdb-temp.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS=%20%20%20GJet_PT-40_DoubleEMEnriched_MGG-80_TuneCP5_13p6TeV_pythia8
+
+QCD:
+    #merging of: QCD_PT-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13p6TeV_pythia8
+    #QCD_PT-30to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13p6TeV_pythia8
+    #QCD_PT-30toInf_DoubleEMEnriched_MGG-40to80_TuneCP5_13p6TeV_pythia8
+    path: "/eos/cms/store/group/phys_b2g/HHbbgg/HiggsDNA_parquet/v1/Run3_2022postEE_merged/QCD.parquet"
+    xs: 402850 #124700.0 + 25950.0 + 252200.0
+
+
