@@ -368,6 +368,7 @@ def main():
         # "QCD_PT-30to40",
         # "QCD_PT-30toInf",
         # "QCD_PT-40toInf",
+        "DDQCDGJET",
     ]
 
     # List of signal processes
@@ -454,6 +455,7 @@ def main():
         # "QCD_PT-30to40": r"$QCD+P_T(30to40)$",
         # "QCD_PT-30toInf": r"$QCD+P_T(30toInf)$",
         # "QCD_PT-40toInf": r"$QCD+P_T(40toInf)$",
+        "DDQCDGJET": r"DD QCD",
         # NMSSM samples legends
         #"NMSSM_X300_Y60": r"$NMSSM\_X300\_Y60$",
         #"NMSSM_X300_Y70": r"$NMSSM\_X300\_Y70$",
@@ -680,3 +682,4 @@ if __name__ == "__main__":
     main()
 
 # %%
+
