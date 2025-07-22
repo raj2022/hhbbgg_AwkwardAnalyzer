@@ -73,6 +73,8 @@ for file_path, tree_name in background_files:
 
 df_background = pd.concat(background_data, ignore_index=True) if background_data else pd.DataFrame()
 
+print("total backgrounds", df_background)
+
 # Define features and labels
 features = [
     'bbgg_eta', 'bbgg_phi', 'lead_pho_phi', 'sublead_pho_eta',
@@ -89,6 +91,7 @@ df_background = df_background.sample(frac=background_fraction, random_state=42)
 
 # Combine signal and background
 df_combined = pd.concat([signal_df, df_background], ignore_index=True)
+print("Combined shape with signal and background", df_combined)
 
 # Ensure df_combined is not empty
 if df_combined.empty:
