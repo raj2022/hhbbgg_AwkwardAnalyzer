@@ -83,6 +83,17 @@ fout.Write()
 fout.Close()
 ```
 
+Before running ```text2workspace.py```, ensure you have CMS Combine installed.
+```bash
+cmsrel CMSSW_10_2_13  # Example CMSSW release
+cd CMSSW_10_2_13/src
+cmsenv
+git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
+scramv1 b -j 4  # Compile
+```
+
+
+
 # Convert the Datacard to a Workspace
 ```bash
 text2workspace.py datacard.txt -o workspace.root

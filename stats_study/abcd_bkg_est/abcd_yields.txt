@@ -1,0 +1,184 @@
+
+=== ABCD Yield Report for Data_EraE ===
+N_A_obs: 130.00
+N_B: 10688.00
+N_C: 1.00
+N_D: 402.00
+N_A_est: 26.59
+N_A_est_err: 26.62
+
+=== ABCD Yield Report for Data_EraF ===
+N_A_obs: 195.00
+N_B: 15307.00
+N_C: 3.00
+N_D: 678.00
+N_A_est: 67.73
+N_A_est_err: 39.19
+
+=== ABCD Yield Report for Data_EraG ===
+N_A_obs: 49.00
+N_B: 5472.00
+N_C: 2.00
+N_D: 212.00
+N_A_est: 51.62
+N_A_est_err: 36.68
+
+=== ABCD Yield Report for GGJets ===
+N_A_obs: 13144.00
+N_B: 1192952.00
+N_C: 120.00
+N_D: 10198.00
+N_A_est: 14037.48
+N_A_est_err: 1289.02
+
+=== ABCD Yield Report for GJetPt20To40 ===
+N_A_obs: 11.00
+N_B: 2848.00
+N_C: 0.00
+N_D: 74.00
+N_A_est: 0.00
+N_A_est_err: nan
+
+=== ABCD Yield Report for GJetPt40 ===
+N_A_obs: 85.00
+N_B: 16780.00
+N_C: 1.00
+N_D: 337.00
+N_A_est: 49.79
+N_A_est_err: 49.87
+
+=== ABCD Yield Report for GluGluHToGG ===
+N_A_obs: 1177.00
+N_B: 165557.00
+N_C: 7.00
+N_D: 1264.00
+N_A_est: 916.85
+N_A_est_err: 347.50
+
+=== ABCD Yield Report for GluGluToHH ===
+N_A_obs: 41711.00
+N_B: 6412.00
+N_C: 207.00
+N_D: 37.00
+N_A_est: 35872.54
+N_A_est_err: 6418.47
+
+=== ABCD Yield Report for NMSSM_X300_Y100 ===
+N_A_obs: 128.00
+N_B: 49.00
+N_C: 1.00
+N_D: 0.00
+N_A_est: 0.00
+N_A_est_err: 0.00
+
+=== ABCD Yield Report for NMSSM_X300_Y125 ===
+N_A_obs: 207.00
+N_B: 44.00
+N_C: 3.00
+N_D: 0.00
+N_A_est: 0.00
+N_A_est_err: 0.00
+
+=== ABCD Yield Report for NMSSM_X300_Y150 ===
+N_A_obs: 65.00
+N_B: 11.00
+N_C: 1.00
+N_D: 0.00
+N_A_est: 0.00
+N_A_est_err: 0.00
+
+=== ABCD Yield Report for NMSSM_X400_Y100 ===
+N_A_obs: 200.00
+N_B: 44.00
+N_C: 2.00
+N_D: 0.00
+N_A_est: 0.00
+N_A_est_err: 0.00
+
+=== ABCD Yield Report for NMSSM_X400_Y125 ===
+N_A_obs: 137.00
+N_B: 18.00
+N_C: 0.00
+N_D: 0.00
+N_A_est: 0.00
+N_A_est_err: 0.00
+
+=== ABCD Yield Report for NMSSM_X400_Y150 ===
+N_A_obs: 192.00
+N_B: 26.00
+N_C: 1.00
+N_D: 0.00
+N_A_est: 0.00
+N_A_est_err: 0.00
+
+=== ABCD Yield Report for NMSSM_X500_Y100 ===
+N_A_obs: 256.00
+N_B: 31.00
+N_C: 0.00
+N_D: 1.00
+N_A_est: 0.00
+N_A_est_err: nan
+
+=== ABCD Yield Report for NMSSM_X500_Y125 ===
+N_A_obs: 420.00
+N_B: 63.00
+N_C: 0.00
+N_D: 0.00
+N_A_est: 0.00
+N_A_est_err: 0.00
+
+=== ABCD Yield Report for NMSSM_X500_Y150 ===
+N_A_obs: 880.00
+N_B: 116.00
+N_C: 3.00
+N_D: 0.00
+N_A_est: 0.00
+N_A_est_err: 0.00
+
+=== ABCD Yield Report for QCD_PT-30To40 ===
+N_A_obs: 0.00
+N_B: 2.00
+N_C: 0.00
+N_D: 0.00
+N_A_est: 0.00
+N_A_est_err: 0.00
+
+=== ABCD Yield Report for QCD_PT-30ToInf ===
+N_A_obs: 0.00
+N_B: 5.00
+N_C: 0.00
+N_D: 0.00
+N_A_est: 0.00
+N_A_est_err: 0.00
+
+=== ABCD Yield Report for QCD_PT-40ToInf ===
+N_A_obs: 2.00
+N_B: 82.00
+N_C: 0.00
+N_D: 4.00
+N_A_est: 0.00
+N_A_est_err: nan
+
+=== ABCD Yield Report for ttHToGG ===
+N_A_obs: 64901.00
+N_B: 16000.00
+N_C: 661.00
+N_D: 181.00
+N_A_est: 58430.94
+N_A_est_err: 4923.56
+
+=== ABCD Yield Report for VBFHToGG ===
+N_A_obs: 664.00
+N_B: 120078.00
+N_C: 2.00
+N_D: 891.00
+N_A_est: 269.54
+N_A_est_err: 190.81
+
+=== ABCD Yield Report for VHToGG ===
+N_A_obs: 2142.00
+N_B: 61288.00
+N_C: 13.00
+N_D: 486.00
+N_A_est: 1639.39
+N_A_est_err: 460.77

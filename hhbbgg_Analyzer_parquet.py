@@ -11,6 +11,7 @@ from pyarrow import Table
 import pyarrow
 import gc  # For memory cleanup
 
+
 usage = "usage: %prog [options] arg1 arg2"
 parser = optparse.OptionParser(usage)
 parser.add_option(
@@ -109,6 +110,17 @@ def process_parquet_file(inputfile, outputrootfile):
             # "DeltaR_j1g2",
             # "DeltaR_j2g2",
             # "DeltaR_j2g2",
+            # Adding left variables from Non-Resonant analysis
+            "Res_DeltaPhi_j1MET",
+            "Res_DeltaPhi_j2MET",
+            "Res_chi_t0",
+            "Res_chi_t1",
+            "lepton1_mvaID",
+            "lepton1_pt",
+            "lepton1_pfIsoId",
+            "n_jets",
+            
+            
     ]
 
     parquet_file = pq.ParquetFile(inputfile)  # Read the parquet file into a Pandas DataFrame
@@ -196,8 +208,15 @@ def process_parquet_file(inputfile, outputrootfile):
                 "bbgg_eta": tree_["Res_HHbbggCandidate_eta"],
                 "bbgg_phi": tree_["Res_HHbbggCandidate_phi"],
                 "MX": tree_["Res_M_X"],
-
-            },
+                "DeltaPhi_j1MET": tree_["Res_DeltaPhi_j1MET"],
+                "DeltaPhi_j2MET": tree_["Res_DeltaPhi_j2MET"],
+                "Res_chi_t0": tree_["Res_chi_t0"],
+                "Res_chi_t1": tree_["Res_chi_t1"],
+                "lepton1_mvaID": tree_["lepton1_mvaID"],
+                "lepton1_pt": tree_["lepton1_pt"],
+                "lepton1_pfIsoId": tree_["lepton1_pfIsoId"],
+                "n_jets": tree_["n_jets"],
+                },
             depth_limit=1,
         )
         out_events = ak.zip(
@@ -265,6 +284,11 @@ def process_parquet_file(inputfile, outputrootfile):
             get_mask_srbbggMET,
             get_mask_crantibbgg,
             get_mask_crbbantigg,
+            get_mask_crantibbantigg,  
+            get_mask_sideband,
+            get_mask_idmva_presel,
+            get_mask_idmva_sideband,
+            
         )
 
         cms_events["mask_preselection"] = get_mask_preselection(cms_events)
@@ -273,6 +297,11 @@ def process_parquet_file(inputfile, outputrootfile):
         cms_events["mask_srbbggMET"] = get_mask_srbbggMET(cms_events)
         cms_events["mask_crbbantigg"] = get_mask_crbbantigg(cms_events)
         cms_events["mask_crantibbgg"] = get_mask_crantibbgg(cms_events)
+        cms_events["mask_crantibbantigg"] = get_mask_crantibbantigg(cms_events)
+        cms_events["mask_sideband"] = get_mask_sideband(cms_events)
+        cms_events["mask_idmva_presel"] = get_mask_idmva_presel(cms_events)
+        cms_events["mask_idmva_sideband"] = get_mask_idmva_sideband(cms_events)
+        
 
         # Adding puppi MET and associated variables
         out_events["puppiMET_pt"] = cms_events["puppiMET_pt"]
@@ -320,6 +349,16 @@ def process_parquet_file(inputfile, outputrootfile):
         out_events["bbgg_pt"] = cms_events["bbgg_pt"]
         out_events["bbgg_eta"] = cms_events["bbgg_eta"]
         out_events["bbgg_phi"] = cms_events["bbgg_phi"]
+        # Adding variables from Non-Resonant    
+        out_events["DeltaPhi_j1MET"] = cms_events["DeltaPhi_j1MET"]
+        out_events["DeltaPhi_j2MET"] = cms_events["DeltaPhi_j2MET"]
+        out_events["Res_chi_t0"] = cms_events["Res_chi_t0"]
+        out_events["Res_chi_t1"] = cms_events["Res_chi_t1"]
+        out_events["lepton1_mvaID"] = cms_events["lepton1_mvaID"]
+        out_events["lepton1_pt"] = cms_events["lepton1_pt"]
+        out_events["lepton1_pfIsoId"] = cms_events["lepton1_pfIsoId"]
+        out_events["n_jets"] = cms_events["n_jets"]
+        #--------
         out_events["weight_central"] = cms_events["weight_central"]
         out_events["weight_preselection"] = (
             cms_events["weight"] * xsec_ * lumi_ / out_events.weight_central
@@ -339,6 +378,19 @@ def process_parquet_file(inputfile, outputrootfile):
         out_events["weight_crantibbgg"] = (
             cms_events["weight"] * xsec_ * lumi_ / out_events.weight_central
         )
+        out_events["weight_crantibbantigg"] = (
+            cms_events["weight"] * xsec_ * lumi_ / out_events.weight_central
+        )
+        out_events["weight_sideband"] = (
+            cms_events["weight"] * xsec_ * lumi_ / out_events.weight_central
+        ) 
+        out_events["weight_idmva_sideband"] = (
+            cms_events["weight"] * xsec_ * lumi_ / out_events.weight_central
+        )
+        out_events["weight_idmva_presel"] = (
+            cms_events["weight"] * xsec_ * lumi_ / out_events.weight_central
+        ) 
+         
         # Adding new variable
         out_events["dibjet_eta"] = cms_events["dibjet_eta"]
         out_events["dibjet_phi"] = cms_events["dibjet_phi"]
@@ -380,15 +432,26 @@ def process_parquet_file(inputfile, outputrootfile):
         out_events["lead_pho_mvaID"] = cms_events["lead_pho_mvaID"]
         out_events["sublead_pho_mvaID"] = cms_events["sublead_pho_mvaID"]
 
+
         #--------------------------------------------------
         #--------------------------------------------------
+        
         out_events["preselection"] = cms_events["mask_preselection"]
         out_events["selection"] = cms_events["mask_selection"]
         out_events["srbbgg"] = cms_events["mask_srbbgg"]
         out_events["srbbggMET"] = cms_events["mask_srbbggMET"]
         out_events["crantibbgg"] = cms_events["mask_crantibbgg"]
         out_events["crbbantigg"] = cms_events["mask_crbbantigg"]
-## Adding deltaR(j,g)
+        out_events["crantibbantigg"] = cms_events["mask_crantibbantigg"]
+        out_events["sideband"] = cms_events["mask_sideband"] 
+        out_events["idmva_sideband"] = cms_events["mask_idmva_sideband"]
+        out_events["idmva_presel"] = cms_events["mask_idmva_presel"] 
+
+
+        
+        
+        
+        ## Adding deltaR(j,g)
 
         out_events["DeltaR_j1g1"] = cms_events["DeltaR_j1g1"]
         out_events["DeltaR_j2g1"] = cms_events["DeltaR_j2g1"]

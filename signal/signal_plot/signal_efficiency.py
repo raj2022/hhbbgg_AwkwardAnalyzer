@@ -138,8 +138,8 @@ def plot_combined_signal_efficiency(histograms, X_values, Y_values):
     plt.close()
 
 # Define the X and Y values
-X_values = [300, 400, 500, 550, 600, 700, 1000]
-Y_values = [60, 70, 95, 100, 125, 150]
+X_values = [300, 400, 500, 550, 600, 650, 700, 800, 900, 1000]
+Y_values = [60, 70, 95, 100, 125, 150, 200, 300, 400, 500, 600, 800]
 
 # Ensure the output directory exists
 output_dir = "stack_plots/"

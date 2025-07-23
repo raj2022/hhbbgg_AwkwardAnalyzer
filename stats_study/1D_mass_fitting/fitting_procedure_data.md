@@ -4,7 +4,7 @@ On the fitting with the data instead of Asimov data,
 The data fitted as rooworkspace after filling the histogram in `ROOT` has been described in here, 
 https://github.com/raj2022/hhbbgg_AwkwardAnalyzer/blob/parquest_v3/stats_study/notebook_fitting/data_fit.ipynb
 
-further, we created this datacard, https://github.com/raj2022/hhbbgg_AwkwardAnalyzer/blob/parquest_v3/stats_study/1D_mass_fitting/Datacards/datacard_data.txt
+further, we created the datacard(included the data shape after fitting), https://github.com/raj2022/hhbbgg_AwkwardAnalyzer/blob/parquest_v3/stats_study/1D_mass_fitting/Datacards/datacard_data.txt
 ```bash
 imax 1  number of channels
 jmax 5  number of backgrounds

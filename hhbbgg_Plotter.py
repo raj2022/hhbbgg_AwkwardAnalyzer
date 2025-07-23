@@ -232,7 +232,10 @@ def stack1d_histograms(
         text_srbbggMET = "Pass medium Btag\nPass tight photonID"
         text_crantibbgg = "Fail Medium Btag\nPass tight photonID"
         text_crbbantigg = "Pass Medium Btag\nPass loose photonID\nfail tight photonID "
-
+        text_crantibbantigg = "Fail Medium Btag\nFail loose photonID\nfail tight photonID " 
+        text_sideband = "Fail Medium Btag\nFail loose photonID\nfail tight photonID " 
+        
+        
         if "srbbgg" in hist_name:
             region_name = r"sr: $b\bar{b}\gamma\gamma$"
             additional_text = text_srbbgg
@@ -245,6 +248,12 @@ def stack1d_histograms(
         elif "crbbantigg" in hist_name:
             region_name = r"cr: $b\bar{b}anti\gamma\gamma$"
             additional_text = text_crbbantigg
+        elif "crantibbantigg" in hist_name:
+            region_name = r"cr: anti$b\bar{b}anti\gamma\gamma$"
+            additional_text = text_crantibbantigg
+        elif "sideband" in hist_name:
+            region_name = r"cr: anti$b\bar{b}anti\gamma\gamma$"
+            additional_text = text_sideband
         else:
             region_name = None
             additional_text = None
@@ -359,11 +368,11 @@ def main():
         # "QCD_PT-30to40",
         # "QCD_PT-30toInf",
         # "QCD_PT-40toInf",
+        "DDQCDGJET",
     ]
 
     # List of signal processes
     signal_samples = [
-<<<<<<< HEAD
         #"GluGluToHH",
         "NMSSM_X400_Y100",
         "NMSSM_X400_Y125",
@@ -371,10 +380,6 @@ def main():
         "NMSSM_X500_Y100",
         "NMSSM_X500_Y125",
         "NMSSM_X500_Y150",
-=======
-       # "GluGluToHH",
-       "NMSSM_X300_Y60",   # updating signal sample
->>>>>>> bd507347ad70f421fb71e11b9c71e49f25e16926
      ]
 
     #signal_samples = [
@@ -440,7 +445,6 @@ def main():
         "VHToGG": r"$V\:H\rightarrow\gamma\gamma$",
         "ttHToGG": r"$t\bar{t}H\rightarrow\gamma\gamma$",
         #"GluGluToHH": r"$gg\rightarrow\,HH$ \times 10",
-<<<<<<< HEAD
         "NMSSM_X400_Y100": r"$NMSSM\_X_{400}\_Y_{100} \times 10$",
         "NMSSM_X400_Y125": r"$NMSSM\_X_{400}\_Y_{125} \times 10$",
         "NMSSM_X400_Y150": r"$NMSSM\_X_{400}\_Y_{150} \times 10$",
@@ -451,9 +455,7 @@ def main():
         # "QCD_PT-30to40": r"$QCD+P_T(30to40)$",
         # "QCD_PT-30toInf": r"$QCD+P_T(30toInf)$",
         # "QCD_PT-40toInf": r"$QCD+P_T(40toInf)$",
-=======
-        "NMSSM_X300_Y60": r"$NMSSM\_X_{300}\_Y_{60} \times 10$",
->>>>>>> bd507347ad70f421fb71e11b9c71e49f25e16926
+        "DDQCDGJET": r"DD QCD",
         # NMSSM samples legends
         #"NMSSM_X300_Y60": r"$NMSSM\_X300\_Y60$",
         #"NMSSM_X300_Y70": r"$NMSSM\_X300\_Y70$",
@@ -514,6 +516,10 @@ def main():
         "srbbggMET",
         "crantibbgg",
         "crbbantigg",
+        "crantibbantigg",
+        "sideband",
+        "idmva_sideband",
+        "idmva_presel",
     ]
     # List of variable names
     variable_names = [
@@ -676,3 +682,4 @@ if __name__ == "__main__":
     main()
 
 # %%
+

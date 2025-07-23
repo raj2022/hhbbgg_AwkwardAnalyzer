@@ -18,6 +18,14 @@ f^2(\vec{x}) & \text{if } m = m_2 \\
 $$
 for the above taken from this preentation, [here](https://indico.cern.ch/event/1507349/contributions/6364202/attachments/3009726/5317821/preapproval.pdf)
 
+# Loading saved model
+```python
+model = ParameterizedDNN(input_dim)
+model.load_state_dict(torch.load("best_parametric_model.pt"))
+model.to(device)
+model.eval()
+```
+
 
 ## Ref
 1. https://link.springer.com/article/10.1140/epjc/s10052-016-4099-4
