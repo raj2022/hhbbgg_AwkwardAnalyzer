@@ -8,31 +8,16 @@ from torch.optim import Adam
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.utils import resample
-import matplotlib.pyplot as plt
 from sklearn.metrics import roc_auc_score, accuracy_score
+import uproot
+import matplotlib.pyplot as plt
 
-# mass and Y points
-mass_points = [300, 400]
+# -------------------------------
+# 1. Load Signal Data
+# -------------------------------
+mass_points = [300, 400, 500, 550, 600, 650, 700, 800, 900, 1000]
 y_values = [60, 70, 80, 90, 95, 100, 125, 150, 200]
 
-# Features used in training
-features = [
-    'bbgg_eta', 'bbgg_phi',
-    'lead_pho_phi', 'sublead_pho_eta', 'sublead_pho_phi',
-    'diphoton_eta', 'diphoton_phi',
-    'dibjet_eta', 'dibjet_phi',
-    'lead_bjet_pt', 'sublead_bjet_pt',
-    'lead_bjet_eta', 'lead_bjet_phi',
-    'sublead_bjet_eta', 'sublead_bjet_phi',
-    'sublead_bjet_PNetB', 'lead_bjet_PNetB',
-    'CosThetaStar_gg', 'CosThetaStar_jj', 'CosThetaStar_CS',
-    'DeltaR_jg_min',
-    'pholead_PtOverM', 'phosublead_PtOverM',
-    'lead_pho_mvaID', 'sublead_pho_mvaID',
-    'mass', 'y_value'
-]
-
-# Load signal data
 signal_data = []
 for mass in mass_points:
     for y in y_values:
@@ -40,27 +25,21 @@ for mass in mass_points:
         if os.path.exists(file_path):
             try:
                 df = pd.read_parquet(file_path)
-                missing = [col for col in features if col not in df.columns]
-                if missing:
-                    print(f"Skipping {file_path}, missing columns: {missing}")
-                    continue
-                df = df[[col for col in features if col not in ['mass', 'y_value']]]
-                df['mass'] = mass
-                df['y_value'] = y
-                df['label'] = 1
+                df["mass"] = mass
+                df["y_value"] = y
+                df["label"] = 1
+                if "weight_preselection" not in df:
+                    df["weight_preselection"] = 1.0
                 signal_data.append(df)
             except Exception as e:
-                print(f"Error reading {file_path}: {e}")
-        else:
-            print(f"Missing signal file: {file_path}")
+                print(f"Warning: Could not read {file_path}. Error: {e}")
 
 signal_df = pd.concat(signal_data, ignore_index=True) if signal_data else pd.DataFrame()
-print("Loaded signal:", signal_df.shape)
+print("[INFO] Signal shape:", signal_df.shape)
 
-if signal_df.empty:
-    raise RuntimeError("Signal dataset is empty. Check your input files.")
-
-# Load background data
+# -------------------------------
+# 2. Load Background Data
+# -------------------------------
 background_files = [
     ("../../outputfiles/hhbbgg_analyzer-v2-trees.root", "/GGJets/preselection"),
     ("../../outputfiles/hhbbgg_analyzer-v2-trees.root", "/GJetPt20To40/preselection"),
@@ -68,58 +47,95 @@ background_files = [
 ]
 
 background_data = []
-for path, tree in background_files:
+for file_path, tree_name in background_files:
     try:
-        with uproot.open(path) as file:
-            df = file[tree].arrays(library="pd")
-            df = df[[col for col in features if col not in ['mass', 'y_value']]]
+        with uproot.open(file_path) as file:
+            tree = file[tree_name]
+            df = tree.arrays(library="pd")
             df["label"] = 0
+            if "weight_preselection" not in df:
+                df["weight_preselection"] = 1.0
             background_data.append(df)
     except Exception as e:
-        print(f"Error reading background {path}:{tree} — {e}")
+        print(f"Warning: Could not read {file_path}. Error: {e}")
 
 df_background = pd.concat(background_data, ignore_index=True) if background_data else pd.DataFrame()
-print("Loaded background:", df_background.shape)
+print("[INFO] Background shape:", df_background.shape)
 
-if df_background.empty:
-    raise RuntimeError("Background dataset is empty. Check your input files.")
-
-# Assign signal-distributed mass and y_value to background
-value_counts = signal_df[["mass", "y_value"]].value_counts(normalize=True).reset_index()
+# -------------------------------
+# 3. Match mass/y_value to background
+# -------------------------------
+signal_mass_y = signal_df[["mass", "y_value"]]
+value_counts = signal_mass_y.value_counts(normalize=True).reset_index()
 value_counts.columns = ["mass", "y_value", "weight"]
-sampled = value_counts.sample(n=len(df_background), replace=True, weights="weight", random_state=42)
-df_background["mass"] = sampled["mass"].values
-df_background["y_value"] = sampled["y_value"].values
 
-# Downsample background, upsample signal
-df_background = df_background.sample(frac=0.6, random_state=42)
+sampled_mass_y = value_counts.sample(
+    n=len(df_background),
+    replace=True,
+    weights="weight",
+    random_state=42
+).reset_index(drop=True)
+
+df_background["mass"] = sampled_mass_y["mass"]
+df_background["y_value"] = sampled_mass_y["y_value"]
+
+df_background = df_background.sample(frac=0.2, random_state=42)
+
+# -------------------------------
+# 4. Combine & Feature Processing
+# -------------------------------
 signal_upsampled = resample(signal_df, replace=True, n_samples=len(df_background), random_state=42)
-
-# Combine
 df_combined = pd.concat([signal_upsampled, df_background], ignore_index=True)
-df_combined = df_combined.fillna(df_combined.mean())
 
-X = df_combined[features].values
+features = [
+    'bbgg_eta', 'bbgg_phi', 'lead_pho_phi', 'sublead_pho_eta', 'sublead_pho_phi',
+    'diphoton_eta', 'diphoton_phi', 'dibjet_eta', 'dibjet_phi',
+    'lead_bjet_pt', 'sublead_bjet_pt', 'lead_bjet_eta', 'lead_bjet_phi',
+    'sublead_bjet_eta', 'sublead_bjet_phi', 'sublead_bjet_PNetB', 'lead_bjet_PNetB',
+    'CosThetaStar_gg', 'CosThetaStar_jj', 'CosThetaStar_CS',
+    'DeltaR_jg_min', 'pholead_PtOverM', 'phosublead_PtOverM',
+    'lead_pho_mvaID', 'sublead_pho_mvaID', 'mass', 'y_value'
+]
+
+df_features = df_combined[features].fillna(df_combined[features].mean())
+
+X = df_features.values
 y = df_combined["label"].values
+w_pre = df_combined["weight_preselection"].values
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, test_size=0.2, random_state=42)
+# -------------------------------
+# 5. Train/Test Split
+# -------------------------------
+X_train, X_test, y_train, y_test, w_pre_train, w_pre_test = train_test_split(
+    X, y, w_pre, test_size=0.2, random_state=42, stratify=y
+)
 
-# Normalize
+# -------------------------------
+# 6. Compute Total Weights
+# -------------------------------
+def compute_total_weights(y, w_pre):
+    w_class = np.zeros_like(w_pre, dtype=np.float32)
+    n_signal = np.sum(y == 1)
+    n_background = np.sum(y == 0)
+    w_class[y == 1] = 0.5 / n_signal
+    w_class[y == 0] = 0.5 / n_background
+    w_total = w_class * w_pre
+    w_total *= len(w_total)
+    return w_total
+
+w_train = compute_total_weights(y_train, w_pre_train)
+w_test = compute_total_weights(y_test, w_pre_test)
+
+# -------------------------------
+# 7. Standardize
+# -------------------------------
 scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
-# Class weight helper
-def compute_class_normalized_weights(y):
-    n_signal = np.sum(y == 1)
-    n_background = np.sum(y == 0)
-    weights = np.zeros_like(y, dtype=np.float32)
-    weights[y == 1] = 0.5 / n_signal
-    weights[y == 0] = 0.5 / n_background
-    return weights * len(y)
-
-# Tensors
-w_train = compute_class_normalized_weights(y_train)
+# -------------------------------
+# 8. Convert to Tensors
+# -------------------------------
 X_train_tensor = torch.tensor(X_train, dtype=torch.float32)
 y_train_tensor = torch.tensor(y_train, dtype=torch.float32)
 w_train_tensor = torch.tensor(w_train, dtype=torch.float32)
@@ -127,10 +143,25 @@ w_train_tensor = torch.tensor(w_train, dtype=torch.float32)
 X_test_tensor = torch.tensor(X_test, dtype=torch.float32)
 y_test_tensor = torch.tensor(y_test, dtype=torch.float32)
 
-# Model
+# Sanity check: NaNs/Infs
+assert not torch.isnan(X_train_tensor).any(), "NaNs in X_train"
+assert not torch.isinf(X_train_tensor).any(), "Infs in X_train"
+
+# -------------------------------
+# 9. Device and Loader
+# -------------------------------
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"[INFO] Using device: {device}")
+
+train_dataset = TensorDataset(X_train_tensor, y_train_tensor, w_train_tensor)
+train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)  # safer batch size
+
+# -------------------------------
+# 10. Define PDNN
+# -------------------------------
 class ParameterizedDNN(nn.Module):
     def __init__(self, input_dim):
-        super().__init__()
+        super(ParameterizedDNN, self).__init__()
         self.model = nn.Sequential(
             nn.Linear(input_dim, 16),
             nn.ReLU(),
@@ -146,45 +177,48 @@ class ParameterizedDNN(nn.Module):
     def forward(self, x):
         return self.model(x)
 
-# Training
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# -------------------------------
+# 11. Train Loop
+# -------------------------------
 model = ParameterizedDNN(X_train.shape[1]).to(device)
-optimizer = Adam(model.parameters(), lr=0.001)
 criterion = nn.BCEWithLogitsLoss(reduction='none')
+optimizer = Adam(model.parameters(), lr=0.001)
 
-train_dataset = TensorDataset(X_train_tensor, y_train_tensor, w_train_tensor)
-train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
-
-# Loop
 for epoch in range(10):
     model.train()
-    y_pred_train, y_true_train, loss_epoch = [], [], 0
+    epoch_loss, y_pred_train, y_true_train = 0, [], []
+
     for xb, yb, wb in train_loader:
         xb, yb, wb = xb.to(device), yb.to(device), wb.to(device)
-        optimizer.zero_grad()
-        logits = model(xb).squeeze()
-        loss = (criterion(logits, yb) * wb).mean()
-        loss.backward()
-        optimizer.step()
-        y_pred_train.extend(torch.sigmoid(logits).cpu().numpy())
-        y_true_train.extend(yb.cpu().numpy())
-        loss_epoch += loss.item()
-    auc = roc_auc_score(y_true_train, y_pred_train)
-    acc = accuracy_score(y_true_train, [p > 0.5 for p in y_pred_train])
-    print(f"Epoch {epoch+1} | Loss: {loss_epoch:.4f} | AUC: {auc:.4f} | Acc: {acc:.4f}")
 
-# Eval plot
+        optimizer.zero_grad()
+        outputs = model(xb).view(-1)  # <-- SAFER THAN squeeze()
+        loss = criterion(outputs, yb)
+        weighted_loss = (loss * wb).mean()
+        weighted_loss.backward()
+        optimizer.step()
+
+        probs = torch.sigmoid(outputs).detach().cpu().numpy()
+        y_pred_train.extend(probs)
+        y_true_train.extend(yb.cpu().numpy())
+        epoch_loss += weighted_loss.item()
+
+    auc = roc_auc_score(y_true_train, y_pred_train)
+    acc = accuracy_score(y_true_train, [1 if p > 0.5 else 0 for p in y_pred_train])
+    print(f"Epoch {epoch+1:02d} | Loss: {epoch_loss:.4f} | AUC: {auc:.4f} | Acc: {acc:.4f}", flush=True)
+
+# -------------------------------
+# 12. Evaluation
+# -------------------------------
 model.eval()
 with torch.no_grad():
-    probs = torch.sigmoid(model(X_test_tensor.to(device)).squeeze()).cpu().numpy()
+    test_probs = torch.sigmoid(model(X_test_tensor.to(device)).view(-1)).cpu().numpy()
 
-plt.hist(probs[y_test == 1], bins=50, alpha=0.5, label='Signal')
-plt.hist(probs[y_test == 0], bins=50, alpha=0.5, label='Background')
+plt.hist(test_probs[y_test == 1], bins=50, alpha=0.5, label="Signal")
+plt.hist(test_probs[y_test == 0], bins=50, alpha=0.5, label="Background")
 plt.xlabel("Model Output")
-plt.ylabel("Count")
-plt.title("Output Distribution")
+plt.ylabel("Frequency")
+plt.title("Output Distribution on Test Set")
 plt.legend()
-plt.grid()
-plt.tight_layout()
-plt.savefig("output_distribution.png")
+plt.grid(True)
 plt.show()
