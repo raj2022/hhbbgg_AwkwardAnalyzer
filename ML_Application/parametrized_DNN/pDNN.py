@@ -153,8 +153,12 @@ assert not torch.isinf(X_train_tensor).any(), "Infs in X_train"
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"[INFO] Using device: {device}")
 
-train_dataset = TensorDataset(X_train_tensor, y_train_tensor, w_train_tensor)
-train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)  # safer batch size
+# Move tensors to GPU
+X_train_tensor = X_train_tensor.to(device)
+y_train_tensor = y_train_tensor.to(device)
+w_train_tensor = w_train_tensor.to(device)
+X_test_tensor = X_test_tensor.to(device)
+y_test_tensor = y_test_tensor.to(device)
 
 # -------------------------------
 # 10. Define PDNN
@@ -178,41 +182,69 @@ class ParameterizedDNN(nn.Module):
         return self.model(x)
 
 # -------------------------------
-# 11. Train Loop
+# 11. Optimized Train Loop (GPU + AMP + Batch + Compile)
 # -------------------------------
+use_amp = torch.cuda.is_available()
+scaler = torch.cuda.amp.GradScaler(enabled=use_amp)
+
 model = ParameterizedDNN(X_train.shape[1]).to(device)
+
+# Optional: compile model for speed (PyTorch ≥ 2.0)
+if hasattr(torch, "compile"):
+    model = torch.compile(model)
+
 criterion = nn.BCEWithLogitsLoss(reduction='none')
 optimizer = Adam(model.parameters(), lr=0.001)
 
+train_dataset = TensorDataset(X_train_tensor, y_train_tensor, w_train_tensor)
+train_loader = DataLoader(
+    train_dataset, 
+    batch_size=1024, 
+    shuffle=True, 
+    pin_memory=(device.type == "cuda")
+)
+
 for epoch in range(10):
     model.train()
-    epoch_loss, y_pred_train, y_true_train = 0, [], []
+    epoch_loss = 0
+    y_pred_train, y_true_train = [], []
 
     for xb, yb, wb in train_loader:
-        xb, yb, wb = xb.to(device), yb.to(device), wb.to(device)
+        # Use non_blocking transfers for speed with pinned memory
+        xb = xb.to(device, non_blocking=True)
+        yb = yb.to(device, non_blocking=True)
+        wb = wb.to(device, non_blocking=True)
 
         optimizer.zero_grad()
-        outputs = model(xb).view(-1)  # <-- SAFER THAN squeeze()
-        loss = criterion(outputs, yb)
-        weighted_loss = (loss * wb).mean()
-        weighted_loss.backward()
-        optimizer.step()
 
-        probs = torch.sigmoid(outputs).detach().cpu().numpy()
-        y_pred_train.extend(probs)
-        y_true_train.extend(yb.cpu().numpy())
+        with torch.cuda.amp.autocast(enabled=use_amp):
+            outputs = model(xb).view(-1)
+            loss = criterion(outputs, yb)
+            weighted_loss = (loss * wb).mean()
+
+        scaler.scale(weighted_loss).backward()
+        scaler.step(optimizer)
+        scaler.update()
+
+        y_pred_train.append(torch.sigmoid(outputs).detach())
+        y_true_train.append(yb)
+
         epoch_loss += weighted_loss.item()
 
+    y_pred_train = torch.cat(y_pred_train).cpu().numpy()
+    y_true_train = torch.cat(y_true_train).cpu().numpy()
+
     auc = roc_auc_score(y_true_train, y_pred_train)
-    acc = accuracy_score(y_true_train, [1 if p > 0.5 else 0 for p in y_pred_train])
+    acc = accuracy_score(y_true_train, (y_pred_train > 0.5).astype(int))
     print(f"Epoch {epoch+1:02d} | Loss: {epoch_loss:.4f} | AUC: {auc:.4f} | Acc: {acc:.4f}", flush=True)
 
 # -------------------------------
-# 12. Evaluation
+# 12. Evaluation (GPU)
 # -------------------------------
 model.eval()
 with torch.no_grad():
-    test_probs = torch.sigmoid(model(X_test_tensor.to(device)).view(-1)).cpu().numpy()
+    test_outputs = model(X_test_tensor).view(-1)
+    test_probs = torch.sigmoid(test_outputs).cpu().numpy()
 
 plt.hist(test_probs[y_test == 1], bins=50, alpha=0.5, label="Signal")
 plt.hist(test_probs[y_test == 0], bins=50, alpha=0.5, label="Background")
