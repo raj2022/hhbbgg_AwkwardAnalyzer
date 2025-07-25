@@ -98,6 +98,7 @@ features = [
 ]
 
 df_features = df_combined[features].fillna(df_combined[features].mean())
+print("total shape", df_features)
 
 X = df_features.values
 y = df_combined["label"].values
@@ -160,6 +161,7 @@ w_train_tensor = w_train_tensor.to(device)
 X_test_tensor = X_test_tensor.to(device)
 y_test_tensor = y_test_tensor.to(device)
 
+
 # -------------------------------
 # 10. Define PDNN
 # -------------------------------
@@ -204,20 +206,152 @@ train_loader = DataLoader(
     pin_memory=(device.type == "cuda")
 )
 
-for epoch in range(10):
+# from sklearn.metrics import roc_curve, auc
+# #--------------------------------
+# losses, aucs, accs = [], [], []
+
+# for epoch in range(10):
+#     model.train()
+#     epoch_loss = 0
+#     y_pred_train, y_true_train = [], []
+
+#     for xb, yb, wb in train_loader:
+#         # Use non_blocking transfers for speed with pinned memory
+#         xb = xb.to(device, non_blocking=True)
+#         yb = yb.to(device, non_blocking=True)
+#         wb = wb.to(device, non_blocking=True)
+
+#         optimizer.zero_grad()
+
+#         with torch.amp.autocast(device_type='cuda', enabled=use_amp):
+#             outputs = model(xb).view(-1)
+#             loss = criterion(outputs, yb)
+#             weighted_loss = (loss * wb).mean()
+
+
+#         scaler.scale(weighted_loss).backward()
+#         scaler.step(optimizer)
+#         scaler.update()
+
+#         y_pred_train.append(torch.sigmoid(outputs).detach())
+#         y_true_train.append(yb)
+
+#         epoch_loss += weighted_loss.item()
+
+#     y_pred_train = torch.cat(y_pred_train).cpu().numpy()
+#     y_true_train = torch.cat(y_true_train).cpu().numpy()
+    
+
+    
+#     auc = roc_auc_score(y_true_train, y_pred_train)
+#     acc = accuracy_score(y_true_train, (y_pred_train > 0.5).astype(int))
+    
+#     losses.append(epoch_loss)
+#     aucs.append(auc)
+#     accs.append(acc)
+#     print(f"Epoch {epoch+1:02d} | Loss: {epoch_loss:.4f} | AUC: {auc:.4f} | Acc: {acc:.4f}", flush=True)
+    
+# # Save model
+# torch.save(model.state_dict(), "trained_pdnn.pt")
+# print("[INFO] Model saved to 'trained_pdnn.pt'")
+
+
+# # -------------------------------
+# # 12. Evaluation (GPU)
+# # -------------------------------
+# model.eval()
+# with torch.no_grad():
+#     test_outputs = model(X_test_tensor).view(-1)
+#     test_probs = torch.sigmoid(test_outputs).cpu().numpy()
+
+# plt.hist(test_probs[y_test == 1], bins=50, alpha=0.5, label="Signal")
+# plt.hist(test_probs[y_test == 0], bins=50, alpha=0.5, label="Background")
+# plt.xlabel("Model Output")
+# plt.ylabel("Frequency")
+# plt.title("Output Distribution on Test Set")
+# plt.legend()
+# plt.grid(True)
+# plt.show()
+
+
+# # === Plot Metrics ===
+# plt.figure()
+# plt.plot(losses, marker='o')
+# plt.title("Training Loss")
+# plt.xlabel("Epoch")
+# plt.ylabel("Loss")
+# plt.grid(True)
+# plt.tight_layout()
+# plt.show()
+
+# plt.figure()
+# plt.plot(accs, marker='o')
+# plt.title("Training Accuracy")
+# plt.xlabel("Epoch")
+# plt.ylabel("Accuracy")
+# plt.grid(True)
+# plt.tight_layout()
+# plt.show()
+
+# plt.figure()
+# plt.plot(aucs, marker='o')
+# plt.title("Training AUC")
+# plt.xlabel("Epoch")
+# plt.ylabel("AUC")
+# plt.grid(True)
+# plt.tight_layout()
+# plt.show()
+
+
+
+
+# # === ROC Curve on Test Set ===
+# from sklearn.metrics import roc_curve, auc
+
+# fpr, tpr, _ = roc_curve(y_test.cpu().numpy(), test_probs)
+# roc_auc = auc(fpr, tpr)
+
+# plt.figure()
+# plt.plot(fpr, tpr, label=f"ROC Curve (AUC = {roc_auc:.4f})")
+# plt.plot([0, 1], [0, 1], 'k--', lw=1)
+# plt.xlabel("False Positive Rate")
+# plt.ylabel("True Positive Rate")
+# plt.title("ROC Curve (Test Set)")
+# plt.legend()
+# plt.grid(True)
+# plt.tight_layout()
+# plt.show()
+
+from sklearn.metrics import roc_auc_score, accuracy_score, roc_curve, auc
+import matplotlib.pyplot as plt
+
+# -------------------------------
+# Training with Early Stopping
+# -------------------------------
+losses, aucs, accs = [], [], []
+
+best_auc = 0
+best_epoch = 0
+patience = 3
+early_stop = False
+max_epochs = 50  # you can raise this, early stopping will prevent overfitting
+
+for epoch in range(max_epochs):
+    if early_stop:
+        print(f"[INFO] Early stopping triggered at epoch {epoch}")
+        break
+
     model.train()
     epoch_loss = 0
     y_pred_train, y_true_train = [], []
 
     for xb, yb, wb in train_loader:
-        # Use non_blocking transfers for speed with pinned memory
         xb = xb.to(device, non_blocking=True)
         yb = yb.to(device, non_blocking=True)
         wb = wb.to(device, non_blocking=True)
 
         optimizer.zero_grad()
-
-        with torch.cuda.amp.autocast(enabled=use_amp):
+        with torch.amp.autocast(device_type='cuda', enabled=use_amp):
             outputs = model(xb).view(-1)
             loss = criterion(outputs, yb)
             weighted_loss = (loss * wb).mean()
@@ -228,29 +362,97 @@ for epoch in range(10):
 
         y_pred_train.append(torch.sigmoid(outputs).detach())
         y_true_train.append(yb)
-
         epoch_loss += weighted_loss.item()
 
+    # Evaluate training epoch
     y_pred_train = torch.cat(y_pred_train).cpu().numpy()
     y_true_train = torch.cat(y_true_train).cpu().numpy()
 
-    auc = roc_auc_score(y_true_train, y_pred_train)
-    acc = accuracy_score(y_true_train, (y_pred_train > 0.5).astype(int))
-    print(f"Epoch {epoch+1:02d} | Loss: {epoch_loss:.4f} | AUC: {auc:.4f} | Acc: {acc:.4f}", flush=True)
+    auc_score = roc_auc_score(y_true_train, y_pred_train)
+    acc_score = accuracy_score(y_true_train, (y_pred_train > 0.5).astype(int))
+
+    losses.append(epoch_loss)
+    aucs.append(auc_score)
+    accs.append(acc_score)
+
+    print(f"Epoch {epoch+1:02d} | Loss: {epoch_loss:.4f} | AUC: {auc_score:.4f} | Acc: {acc_score:.4f}", flush=True)
+
+    # Early stopping check
+    if auc_score > best_auc:
+        best_auc = auc_score
+        best_epoch = epoch
+        torch.save(model.state_dict(), "best_pdnn.pt")
+        print(f"[INFO] New best AUC: {best_auc:.4f} — model saved")
+    elif epoch - best_epoch >= patience:
+        early_stop = True
+
 
 # -------------------------------
-# 12. Evaluation (GPU)
+# Evaluation
 # -------------------------------
+model.load_state_dict(torch.load("best_pdnn.pt"))
 model.eval()
+
 with torch.no_grad():
     test_outputs = model(X_test_tensor).view(-1)
     test_probs = torch.sigmoid(test_outputs).cpu().numpy()
 
-plt.hist(test_probs[y_test == 1], bins=50, alpha=0.5, label="Signal")
-plt.hist(test_probs[y_test == 0], bins=50, alpha=0.5, label="Background")
+# Histogram output distribution
+plt.hist(test_probs[y_test.cpu().numpy() == 1], bins=50, alpha=0.5, label="Signal")
+plt.hist(test_probs[y_test.cpu().numpy() == 0], bins=50, alpha=0.5, label="Background")
 plt.xlabel("Model Output")
 plt.ylabel("Frequency")
 plt.title("Output Distribution on Test Set")
 plt.legend()
 plt.grid(True)
+plt.tight_layout()
 plt.show()
+
+# ROC Curve on test set
+fpr, tpr, _ = roc_curve(y_test.numpy(), test_probs)
+roc_auc = auc(fpr, tpr)
+
+plt.figure()
+plt.plot(fpr, tpr, label=f"ROC Curve (AUC = {roc_auc:.4f})")
+plt.plot([0, 1], [0, 1], 'k--', lw=1)
+plt.xlabel("False Positive Rate")
+plt.ylabel("True Positive Rate")
+plt.title("ROC Curve (Test Set)")
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+# Plot Loss
+plt.figure()
+plt.plot(losses, marker='o')
+plt.title("Training Loss")
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+# Plot Accuracy
+plt.figure()
+plt.plot(accs, marker='o')
+plt.title("Training Accuracy")
+plt.xlabel("Epoch")
+plt.ylabel("Accuracy")
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+# Plot AUC
+plt.figure()
+plt.plot(aucs, marker='o')
+plt.title("Training AUC")
+plt.xlabel("Epoch")
+plt.ylabel("AUC")
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+
+
+
