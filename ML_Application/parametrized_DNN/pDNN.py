@@ -397,9 +397,12 @@ with torch.no_grad():
     test_outputs = model(X_test_tensor).view(-1)
     test_probs = torch.sigmoid(test_outputs).cpu().numpy()
 
+# Convert y_test to NumPy array if needed
+y_test_np = y_test.numpy() if isinstance(y_test, torch.Tensor) else y_test
+
 # Histogram output distribution
-plt.hist(test_probs[y_test.cpu().numpy() == 1], bins=50, alpha=0.5, label="Signal")
-plt.hist(test_probs[y_test.cpu().numpy() == 0], bins=50, alpha=0.5, label="Background")
+plt.hist(test_probs[y_test_np == 1], bins=50, alpha=0.5, label="Signal")
+plt.hist(test_probs[y_test_np == 0], bins=50, alpha=0.5, label="Background")
 plt.xlabel("Model Output")
 plt.ylabel("Frequency")
 plt.title("Output Distribution on Test Set")
@@ -407,6 +410,7 @@ plt.legend()
 plt.grid(True)
 plt.tight_layout()
 plt.show()
+
 
 # ROC Curve on test set
 fpr, tpr, _ = roc_curve(y_test.numpy(), test_probs)
