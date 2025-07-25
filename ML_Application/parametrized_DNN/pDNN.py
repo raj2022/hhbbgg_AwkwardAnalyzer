@@ -79,7 +79,7 @@ sampled_mass_y = value_counts.sample(
 df_background["mass"] = sampled_mass_y["mass"]
 df_background["y_value"] = sampled_mass_y["y_value"]
 
-df_background = df_background.sample(frac=0.5, random_state=42)
+df_background = df_background.sample(frac=0.3, random_state=42)
 
 # -------------------------------
 # 4. Combine & Feature Processing
@@ -170,7 +170,7 @@ class LazyDataset(Dataset):
 train_dataset = LazyDataset(X_train, y_train, w_train)
 train_loader = DataLoader(
     train_dataset, 
-    batch_size=512,         # Tune down if memory is still an issue
+    batch_size=256,         # Tune down if memory is still an issue
     shuffle=True,
     pin_memory=torch.cuda.is_available(),
     num_workers=2           # You can increase if you have more CPUs
@@ -236,12 +236,20 @@ if hasattr(torch, "compile"):
 criterion = nn.BCEWithLogitsLoss(reduction='none')
 optimizer = Adam(model.parameters(), lr=0.001)
 
-train_dataset = TensorDataset(X_train_tensor, y_train_tensor, w_train_tensor)
+# train_dataset = TensorDataset(X_train_tensor, y_train_tensor, w_train_tensor)
+# train_loader = DataLoader(
+#     train_dataset, 
+#     batch_size=256, 
+#     shuffle=True, 
+#     pin_memory=(device.type == "cuda")
+# )
+
 train_loader = DataLoader(
     train_dataset, 
     batch_size=256, 
-    shuffle=True, 
-    pin_memory=(device.type == "cuda")
+    shuffle=True,
+    pin_memory=torch.cuda.is_available(),
+    num_workers=2  # Increase if CPU resources allow
 )
 
 # from sklearn.metrics import roc_curve, auc
