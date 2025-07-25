@@ -276,6 +276,13 @@ def process_parquet_file(inputfile, outputrootfile):
         cms_events["dibjet_bbgg_mass"] = (
             cms_events["dibjet_pt"] / cms_events["bbgg_mass"]
         )
+        # Adding max gamma MVA ID
+        cms_events["max_gamma_MVA_ID"] = ak.where(
+            cms_events["lead_pho_mvaID"] > cms_events["sublead_pho_mvaID"],
+            cms_events["lead_pho_mvaID"],
+            cms_events["sublead_pho_mvaID"]
+        )
+
 
         from regions import (
             get_mask_preselection,
@@ -431,6 +438,8 @@ def process_parquet_file(inputfile, outputrootfile):
         out_events["sublead_pho_mvaID_WP80"] = cms_events["sublead_pho_mvaID_WP80"]
         out_events["lead_pho_mvaID"] = cms_events["lead_pho_mvaID"]
         out_events["sublead_pho_mvaID"] = cms_events["sublead_pho_mvaID"]
+        out_events["max_gamma_MVA_ID"] = cms_events["max_gamma_MVA_ID"]     #--> Adding MaxMVAID
+ 
 
 
         #--------------------------------------------------
