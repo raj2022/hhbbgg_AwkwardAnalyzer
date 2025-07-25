@@ -1,22 +1,13 @@
-import torch
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.metrics import roc_curve, auc
-
-
 import os
 import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
-from torch.utils.data import TensorDataset, DataLoader
-from torch.optim import Adam
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.utils import resample
-from sklearn.metrics import roc_auc_score, accuracy_score
-import uproot
+from sklearn.metrics import roc_curve, auc
 import matplotlib.pyplot as plt
+import uproot
 
 # -------------------------------
 # 1. Load Signal Data
@@ -84,11 +75,16 @@ sampled_mass_y = value_counts.sample(
 
 df_background["mass"] = sampled_mass_y["mass"]
 df_background["y_value"] = sampled_mass_y["y_value"]
-
 df_background = df_background.sample(frac=0.2, random_state=42)
 
+# -------------------------------
+# 4. Combine and Prepare Features
+# -------------------------------
+df_combined = pd.concat([
+    signal_df,
+    df_background
+], ignore_index=True)
 
-df_combined = pd.read_parquet("processed_combined.parquet")  # Or regenerate the features
 features = [
     'bbgg_eta', 'bbgg_phi', 'lead_pho_phi', 'sublead_pho_eta', 'sublead_pho_phi',
     'diphoton_eta', 'diphoton_phi', 'dibjet_eta', 'dibjet_phi',
@@ -99,10 +95,13 @@ features = [
     'lead_pho_mvaID', 'sublead_pho_mvaID', 'mass', 'y_value'
 ]
 
-X = df_combined[features].fillna(df_combined[features].mean()).values
+df_features = df_combined[features].fillna(df_combined[features].mean())
+X = df_features.values
 y = df_combined["label"].values
 
-# ---- 2. Preprocess
+# -------------------------------
+# 5. Preprocess and Split
+# -------------------------------
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
@@ -112,7 +111,9 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 X_test_tensor = torch.tensor(X_test, dtype=torch.float32)
 
-# ---- 3. Define Model
+# -------------------------------
+# 6. Define Model Class
+# -------------------------------
 class ParameterizedDNN(nn.Module):
     def __init__(self, input_dim):
         super(ParameterizedDNN, self).__init__()
@@ -131,24 +132,31 @@ class ParameterizedDNN(nn.Module):
     def forward(self, x):
         return self.model(x)
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# -------------------------------
+# 7. Load Model and Run Inference
+# -------------------------------
+device = torch.device("cpu")  # <<-- FORCE CPU to avoid NCCL error
 model = ParameterizedDNN(X_test.shape[1]).to(device)
-model.load_state_dict(torch.load("best_pdnn.pt"))
+# Load and remap keys if they have `_orig_mod.` prefix from torch.compile
+state_dict = torch.load("best_pdnn.pt", map_location=device)
+if any(k.startswith("_orig_mod.") for k in state_dict):
+    new_state_dict = {k.replace("_orig_mod.", ""): v for k, v in state_dict.items()}
+    model.load_state_dict(new_state_dict)
+else:
+    model.load_state_dict(state_dict)
+
 model.eval()
 
-# ---- 4. Inference
 X_test_tensor = X_test_tensor.to(device)
-
 with torch.no_grad():
     outputs = model(X_test_tensor).view(-1)
     probs = torch.sigmoid(outputs).cpu().numpy()
 
-# ---- 5. Plot
-y_test_np = y_test if isinstance(y_test, np.ndarray) else y_test.numpy()
-
-# Output distribution
-plt.hist(probs[y_test_np == 1], bins=50, alpha=0.5, label="Signal")
-plt.hist(probs[y_test_np == 0], bins=50, alpha=0.5, label="Background")
+# -------------------------------
+# 8. Plot Output Distribution
+# -------------------------------
+plt.hist(probs[y_test == 1], bins=50, alpha=0.5, label="Signal")
+plt.hist(probs[y_test == 0], bins=50, alpha=0.5, label="Background")
 plt.xlabel("Model Output")
 plt.ylabel("Frequency")
 plt.title("Output Distribution on Test Set")
@@ -157,8 +165,10 @@ plt.grid(True)
 plt.tight_layout()
 plt.show()
 
-# ROC Curve
-fpr, tpr, _ = roc_curve(y_test_np, probs)
+# -------------------------------
+# 9. ROC Curve
+# -------------------------------
+fpr, tpr, _ = roc_curve(y_test, probs)
 roc_auc = auc(fpr, tpr)
 
 plt.figure()

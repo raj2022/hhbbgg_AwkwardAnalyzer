@@ -79,7 +79,7 @@ sampled_mass_y = value_counts.sample(
 df_background["mass"] = sampled_mass_y["mass"]
 df_background["y_value"] = sampled_mass_y["y_value"]
 
-df_background = df_background.sample(frac=0.2, random_state=42)
+df_background = df_background.sample(frac=0.5, random_state=42)
 
 # -------------------------------
 # 4. Combine & Feature Processing
@@ -137,29 +137,67 @@ X_test = scaler.transform(X_test)
 # -------------------------------
 # 8. Convert to Tensors
 # -------------------------------
-X_train_tensor = torch.tensor(X_train, dtype=torch.float32)
-y_train_tensor = torch.tensor(y_train, dtype=torch.float32)
-w_train_tensor = torch.tensor(w_train, dtype=torch.float32)
+# X_train_tensor = torch.tensor(X_train, dtype=torch.float32)
+# y_train_tensor = torch.tensor(y_train, dtype=torch.float32)
+# w_train_tensor = torch.tensor(w_train, dtype=torch.float32)
 
-X_test_tensor = torch.tensor(X_test, dtype=torch.float32)
-y_test_tensor = torch.tensor(y_test, dtype=torch.float32)
+# X_test_tensor = torch.tensor(X_test, dtype=torch.float32)
+# y_test_tensor = torch.tensor(y_test, dtype=torch.float32)
 
-# Sanity check: NaNs/Infs
-assert not torch.isnan(X_train_tensor).any(), "NaNs in X_train"
-assert not torch.isinf(X_train_tensor).any(), "Infs in X_train"
+# # Sanity check: NaNs/Infs
+# assert not torch.isnan(X_train_tensor).any(), "NaNs in X_train"
+# assert not torch.isinf(X_train_tensor).any(), "Infs in X_train"
+# -------------------------------
+# 8. Lazy Dataset and DataLoader
+# -------------------------------
+from torch.utils.data import Dataset, DataLoader
+
+class LazyDataset(Dataset):
+    def __init__(self, X, y, w):
+        self.X = X
+        self.y = y
+        self.w = w
+
+    def __len__(self):
+        return len(self.X)
+
+    def __getitem__(self, idx):
+        x = torch.tensor(self.X[idx], dtype=torch.float32)
+        y = torch.tensor(self.y[idx], dtype=torch.float32)
+        w = torch.tensor(self.w[idx], dtype=torch.float32)
+        return x, y, w
+
+train_dataset = LazyDataset(X_train, y_train, w_train)
+train_loader = DataLoader(
+    train_dataset, 
+    batch_size=512,         # Tune down if memory is still an issue
+    shuffle=True,
+    pin_memory=torch.cuda.is_available(),
+    num_workers=2           # You can increase if you have more CPUs
+)
 
 # -------------------------------
 # 9. Device and Loader
 # -------------------------------
+# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# print(f"[INFO] Using device: {device}")
+
+# # Move tensors to GPU
+# X_train_tensor = X_train_tensor.to(device)
+# y_train_tensor = y_train_tensor.to(device)
+# w_train_tensor = w_train_tensor.to(device)
+# X_test_tensor = X_test_tensor.to(device)
+# y_test_tensor = y_test_tensor.to(device)
+# -------------------------------
+# 9. Device & Test Tensor Setup
+# -------------------------------
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"[INFO] Using device: {device}")
 
-# Move tensors to GPU
-X_train_tensor = X_train_tensor.to(device)
-y_train_tensor = y_train_tensor.to(device)
-w_train_tensor = w_train_tensor.to(device)
-X_test_tensor = X_test_tensor.to(device)
-y_test_tensor = y_test_tensor.to(device)
+# Keep test set in memory for fast evaluation
+X_test_tensor = torch.tensor(X_test, dtype=torch.float32).to(device)
+y_test_tensor = torch.tensor(y_test, dtype=torch.float32).to(device)
+w_test_tensor = torch.tensor(w_test, dtype=torch.float32).to(device)
 
 
 # -------------------------------
@@ -201,7 +239,7 @@ optimizer = Adam(model.parameters(), lr=0.001)
 train_dataset = TensorDataset(X_train_tensor, y_train_tensor, w_train_tensor)
 train_loader = DataLoader(
     train_dataset, 
-    batch_size=1024, 
+    batch_size=256, 
     shuffle=True, 
     pin_memory=(device.type == "cuda")
 )
