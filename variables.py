@@ -72,6 +72,7 @@ vardict = {
     # mvaID
     "lead_pho_mvaID":"lead_pho_mvaID",
     "sublead_pho_mvaID":"sublead_pho_mvaID",
+    "max_gamma_MVA_ID":"max_gamma_MVA_ID",     # Max MvaID
     # other variables added from Non-Resonant(Explain these?)
     "DeltaPhi_j1MET":"DeltaPhi_j1MET",
     "DeltaPhi_j2MET":"DeltaPhi_j2MET",
@@ -131,6 +132,7 @@ variables_common = {
         "sublead_pho_mvaID_WP80",
         "lead_pho_mvaID",
         "sublead_pho_mvaID",
+        "max_gamma_MVA_ID",
         "puppiMET_pt", 
         "puppiMET_phi", 
         "puppiMET_phiJERDown",
