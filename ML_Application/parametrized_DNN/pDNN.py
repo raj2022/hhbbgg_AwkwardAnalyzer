@@ -18,6 +18,9 @@ import matplotlib.pyplot as plt
 mass_points = [300, 400, 500, 550, 600, 650, 700, 800, 900, 1000]
 y_values = [60, 70, 80, 90, 95, 100, 125, 150, 200]
 
+print("Mass points are:", mass_points)
+print("\n mass of Y values are", y_values)
+
 signal_data = []
 for mass in mass_points:
     for y in y_values:
@@ -54,7 +57,7 @@ for file_path, tree_name in background_files:
             df = tree.arrays(library="pd")
             df["label"] = 0
             if "weight_preselection" not in df:
-                df["weight_preselection"] = 1.0
+                df["weight_preselection"] = 1.0  # changes this one
             background_data.append(df)
     except Exception as e:
         print(f"Warning: Could not read {file_path}. Error: {e}")
@@ -380,7 +383,7 @@ best_auc = 0
 best_epoch = 0
 patience = 3
 early_stop = False
-max_epochs = 50  # you can raise this, early stopping will prevent overfitting
+max_epochs = 10 # you can raise this, early stopping will prevent overfitting
 
 for epoch in range(max_epochs):
     if early_stop:
