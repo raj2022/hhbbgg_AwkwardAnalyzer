@@ -709,23 +709,50 @@ w_te_tensor = torch.tensor(w_te_pre, dtype=torch.float32).to(device)
 # -------------------------------
 # PDNN
 # -------------------------------
+# class ParameterizedDNN(nn.Module):
+#     def __init__(self, input_dim):
+#         super().__init__()
+#         self.model = nn.Sequential(
+#             nn.Linear(input_dim, 16),
+#             nn.ReLU(),
+#             nn.BatchNorm1d(16),
+#             nn.Dropout(0.3),
+#             nn.Linear(16, 8),
+#             nn.ReLU(),
+#             nn.BatchNorm1d(8),
+#             nn.Dropout(0.3),
+#             nn.Linear(8, 1)
+#         )
+
+#     def forward(self, x):
+#         return self.model(x)
+
+import torch
+import torch.nn as nn
+
 class ParameterizedDNN(nn.Module):
-    def __init__(self, input_dim):
+    def __init__(self, input_dim, hidden_units=50, p_drop=0.3):
         super().__init__()
         self.model = nn.Sequential(
-            nn.Linear(input_dim, 16),
-            nn.ReLU(),
-            nn.BatchNorm1d(16),
-            nn.Dropout(0.3),
-            nn.Linear(16, 8),
-            nn.ReLU(),
-            nn.BatchNorm1d(8),
-            nn.Dropout(0.3),
-            nn.Linear(8, 1)
+            nn.Linear(input_dim, hidden_units),
+            nn.Dropout(p_drop),
+            nn.ELU(),
+
+            nn.Linear(hidden_units, hidden_units),
+            nn.Dropout(p_drop),
+            nn.ELU(),
+
+            nn.Linear(hidden_units, hidden_units),
+            nn.Dropout(p_drop),
+            nn.ELU(),
+
+            nn.Linear(hidden_units, 1),
+            nn.Sigmoid()
         )
 
     def forward(self, x):
         return self.model(x)
+
 
 # -------------------------------
 # Train (AMP + early stopping on VAL AUC)
@@ -750,53 +777,53 @@ best_epoch = 0
 patience = 5
 max_epochs = 50
 
-for epoch in range(max_epochs):
-    model.train()
-    epoch_loss = 0.0
+# for epoch in range(max_epochs):
+#     model.train()
+#     epoch_loss = 0.0
 
-    for xb, yb, wb in train_loader:
-        xb = xb.to(device, non_blocking=True)
-        yb = yb.to(device, non_blocking=True)
-        wb = wb.to(device, non_blocking=True)
+#     for xb, yb, wb in train_loader:
+#         xb = xb.to(device, non_blocking=True)
+#         yb = yb.to(device, non_blocking=True)
+#         wb = wb.to(device, non_blocking=True)
 
-        # ---- FIX: normalize and optionally clip event weights to stabilize training
-        wb = wb / (wb.mean() + 1e-8)
-        wb = torch.clamp(wb, max=10.0)
+#         # ---- FIX: normalize and optionally clip event weights to stabilize training
+#         wb = wb / (wb.mean() + 1e-8)
+#         wb = torch.clamp(wb, max=10.0)
 
-        optimizer.zero_grad(set_to_none=True)
-        with torch.amp.autocast(device_type=device.type, enabled=use_amp):
-            logits = model(xb).view(-1)
-            per_event_loss = criterion(logits, yb)          # [B]
-            weighted_loss = (per_event_loss * wb).mean()    # scalar
+#         optimizer.zero_grad(set_to_none=True)
+#         with torch.amp.autocast(device_type=device.type, enabled=use_amp):
+#             logits = model(xb).view(-1)
+#             per_event_loss = criterion(logits, yb)          # [B]
+#             weighted_loss = (per_event_loss * wb).mean()    # scalar
 
-        scaler_amp.scale(weighted_loss).backward()
-        scaler_amp.step(optimizer)
-        scaler_amp.update()
+#         scaler_amp.scale(weighted_loss).backward()
+#         scaler_amp.step(optimizer)
+#         scaler_amp.update()
 
-        epoch_loss += float(weighted_loss.item())
+#         epoch_loss += float(weighted_loss.item())
 
-    # ---- Validation metrics
-    model.eval()
-    with torch.no_grad():
-        val_logits = model(X_va_tensor).view(-1)
-        val_probs  = torch.sigmoid(val_logits).cpu().numpy()
-    val_auc = roc_auc_score(y_va, val_probs)
-    val_acc = accuracy_score(y_va, (val_probs > 0.5).astype(int))
+#     # ---- Validation metrics
+#     model.eval()
+#     with torch.no_grad():
+#         val_logits = model(X_va_tensor).view(-1)
+#         val_probs  = torch.sigmoid(val_logits).cpu().numpy()
+#     val_auc = roc_auc_score(y_va, val_probs)
+#     val_acc = accuracy_score(y_va, (val_probs > 0.5).astype(int))
 
-    history["train_loss"].append(epoch_loss)
-    history["val_auc"].append(val_auc)
-    history["val_acc"].append(val_acc)
+#     history["train_loss"].append(epoch_loss)
+#     history["val_auc"].append(val_auc)
+#     history["val_acc"].append(val_acc)
 
-    print(f"Epoch {epoch+1:02d} | TrainLoss: {epoch_loss:.4f} | ValAUC: {val_auc:.4f} | ValAcc: {val_acc:.4f}", flush=True)
+#     print(f"Epoch {epoch+1:02d} | TrainLoss: {epoch_loss:.4f} | ValAUC: {val_auc:.4f} | ValAcc: {val_acc:.4f}", flush=True)
 
-    if val_auc > best_auc + 1e-4:
-        best_auc = val_auc
-        best_epoch = epoch
-        torch.save(model.state_dict(), "best_pdnn.pt")
-        print(f"[INFO] New best ValAUC: {best_auc:.4f} — model saved")
-    elif epoch - best_epoch >= patience:
-        print(f"[INFO] Early stopping at epoch {epoch+1} (no ValAUC improvement for {patience} epochs).")
-        break
+#     if val_auc > best_auc + 1e-4:
+#         best_auc = val_auc
+#         best_epoch = epoch
+#         torch.save(model.state_dict(), "best_pdnn.pt")
+#         print(f"[INFO] New best ValAUC: {best_auc:.4f} — model saved")
+#     elif epoch - best_epoch >= patience:
+#         print(f"[INFO] Early stopping at epoch {epoch+1} (no ValAUC improvement for {patience} epochs).")
+#         break
 
 # -------------------------------
 # Evaluation on TEST
@@ -926,4 +953,123 @@ plt.title("Signal vs Background — Test (WEIGHTED, SHAPE‑NORMALIZED)")
 plt.legend(); plt.grid(True, alpha=0.3); plt.tight_layout(); plt.show()
 
 
+# ---------------------------------------------
+# ---------------------------------------------
+# ---------------------------------------------
+# ---------------------------------------------
+# ---------------------------------------------
+# ---------------------------------------------
+# ---------------------------------------------
+# ---------------------------------------------
+# ---------------------------------------------
+# ---------------------------------------------
+# ---- CMS style helpers (matplotlib only) ----
+from matplotlib.ticker import AutoMinorLocator
 
+CMS_TEXT  = "Preliminary"          # or "Internal", "" for none
+CMS_LUMI  = r"26.7 fb$^{-1}$"
+CMS_SQRTS = r"13.6 TeV"
+
+def set_cms_style():
+    import matplotlib as mpl
+    mpl.rcParams.update({
+        "font.family": "sans-serif",
+        "font.sans-serif": ["DejaVu Sans", "Helvetica", "Arial"],
+        "axes.labelsize": 14,
+        "axes.titlesize": 16,
+        "xtick.labelsize": 12,
+        "ytick.labelsize": 12,
+        "legend.fontsize": 12,
+        "axes.linewidth": 1.2,
+        "xtick.direction": "in",
+        "ytick.direction": "in",
+        "xtick.minor.visible": True,
+        "ytick.minor.visible": True,
+        "grid.alpha": 0.15,
+        "figure.figsize": (6.4, 4.8),
+    })
+
+def cms_label(ax, text=CMS_TEXT, lumi=CMS_LUMI, sqrt_s=CMS_SQRTS):
+    # Left: CMS [text]
+    ax.text(0.02, 0.98, "CMS", transform=ax.transAxes,
+            fontsize=18, fontweight="bold", va="top", ha="left")
+    if text:
+        ax.text(0.12, 0.98, text, transform=ax.transAxes,
+                fontsize=14, style="italic", va="top", ha="left")
+    # Right: lumi and sqrt(s)
+    ax.text(0.98, 0.98, rf"{lumi}  ($\sqrt{{s}}$ = {sqrt_s})", transform=ax.transAxes,
+            fontsize=12, va="top", ha="right")
+
+def _finish_axes(ax, xlabel, ylabel, title=None, logy=False, square=False, legend_loc="best"):
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    if title:
+        ax.set_title(title)
+    if logy:
+        ax.set_yscale("log")
+    if square:
+        ax.set_aspect("equal", adjustable="box")
+    ax.grid(True)
+    ax.xaxis.set_minor_locator(AutoMinorLocator())
+    ax.yaxis.set_minor_locator(AutoMinorLocator())
+    ax.legend(frameon=False, loc=legend_loc)
+    cms_label(ax)
+set_cms_style()
+
+bins = np.linspace(0.0, 1.0, 51)
+w_sig = w_te_pre[sig_mask] if 'w_te_pre' in globals() else None
+w_bkg = w_te_pre[bkg_mask] if 'w_te_pre' in globals() else None
+
+# 1) UNWEIGHTED (shape only)
+fig, ax = plt.subplots()
+ax.hist(test_probs[sig_mask], bins=bins, histtype="step", linewidth=1.6, label="Signal")
+ax.hist(test_probs[bkg_mask], bins=bins, histtype="step", linewidth=1.6, label="Background")
+_finish_axes(ax,
+             xlabel="DNN output",
+             ylabel="Events",
+             title="Signal vs Background — Test (Unweighted)")
+fig.tight_layout()
+plt.show()
+# fig.savefig("dnn_sep_unweighted_cms.pdf")
+
+# 2) WEIGHTED yields (log‑y)
+fig, ax = plt.subplots()
+ax.hist(test_probs[sig_mask], bins=bins, weights=w_sig, histtype="step", linewidth=1.6, label="Signal")
+ax.hist(test_probs[bkg_mask], bins=bins, weights=w_bkg, histtype="step", linewidth=1.6, label="Background")
+_finish_axes(ax,
+             xlabel="DNN output",
+             ylabel="Weighted events",
+             title="Signal vs Background — Test (Weighted)",
+             logy=True)
+fig.tight_layout()
+plt.show()
+# fig.savefig("dnn_sep_weighted_logy_cms.pdf")
+
+# 3) WEIGHTED & SHAPE‑NORMALIZED (densities integrate to 1)
+fig, ax = plt.subplots()
+ax.hist(test_probs[sig_mask], bins=bins, weights=w_sig, density=True, histtype="step", linewidth=1.6, label="Signal")
+ax.hist(test_probs[bkg_mask], bins=bins, weights=w_bkg, density=True, histtype="step", linewidth=1.6, label="Background")
+_finish_axes(ax,
+             xlabel="DNN output",
+             ylabel="Density",
+             title="Signal vs Background — Test (Weighted, normalized)")
+fig.tight_layout()
+plt.show()
+# fig.savefig("dnn_sep_weighted_density_cms.pdf")
+fpr, tpr, _ = roc_curve(y_test_np, test_probs)
+roc_auc = auc(fpr, tpr)
+print(f"Test AUC: {roc_auc:.6f}")
+
+set_cms_style()
+fig, ax = plt.subplots()
+ax.plot(fpr, tpr, linewidth=2.0, label=rf"AUC = {roc_auc:.4f}")
+ax.plot([0, 1], [0, 1], linestyle="--", linewidth=1.0)
+_finish_axes(ax,
+             xlabel="False positive rate",
+             ylabel="True positive rate",
+             title="ROC — Test set",
+             square=True,
+             legend_loc="lower right")
+fig.tight_layout()
+plt.show()
+# fig.savefig("roc_test_cms.pdf")
