@@ -748,7 +748,7 @@ history = {"train_loss": [], "val_auc": [], "val_acc": []}
 best_auc = -np.inf
 best_epoch = 0
 patience = 5
-max_epochs = 30
+max_epochs = 50
 
 for epoch in range(max_epochs):
     model.train()
