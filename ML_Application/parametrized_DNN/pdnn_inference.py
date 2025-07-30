@@ -709,50 +709,23 @@ w_te_tensor = torch.tensor(w_te_pre, dtype=torch.float32).to(device)
 # -------------------------------
 # PDNN
 # -------------------------------
-# class ParameterizedDNN(nn.Module):
-#     def __init__(self, input_dim):
-#         super().__init__()
-#         self.model = nn.Sequential(
-#             nn.Linear(input_dim, 16),
-#             nn.ReLU(),
-#             nn.BatchNorm1d(16),
-#             nn.Dropout(0.3),
-#             nn.Linear(16, 8),
-#             nn.ReLU(),
-#             nn.BatchNorm1d(8),
-#             nn.Dropout(0.3),
-#             nn.Linear(8, 1)
-#         )
-
-#     def forward(self, x):
-#         return self.model(x)
-
-import torch
-import torch.nn as nn
-
 class ParameterizedDNN(nn.Module):
-    def __init__(self, input_dim, hidden_units=50, p_drop=0.3):
+    def __init__(self, input_dim):
         super().__init__()
         self.model = nn.Sequential(
-            nn.Linear(input_dim, hidden_units),
-            nn.Dropout(p_drop),
-            nn.ELU(),
-
-            nn.Linear(hidden_units, hidden_units),
-            nn.Dropout(p_drop),
-            nn.ELU(),
-
-            nn.Linear(hidden_units, hidden_units),
-            nn.Dropout(p_drop),
-            nn.ELU(),
-
-            nn.Linear(hidden_units, 1),
-            nn.Sigmoid()
+            nn.Linear(input_dim, 16),
+            nn.ReLU(),
+            nn.BatchNorm1d(16),
+            nn.Dropout(0.3),
+            nn.Linear(16, 8),
+            nn.ReLU(),
+            nn.BatchNorm1d(8),
+            nn.Dropout(0.3),
+            nn.Linear(8, 1)
         )
 
     def forward(self, x):
         return self.model(x)
-
 
 # -------------------------------
 # Train (AMP + early stopping on VAL AUC)
