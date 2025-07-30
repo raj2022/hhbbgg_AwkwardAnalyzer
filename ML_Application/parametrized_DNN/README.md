@@ -27,6 +27,48 @@ model.eval()
 ```
 
 
+
+## For running the inference
+- Fit on inference sample (recommended fallback)
+
+bash
+Copy code
+
+```bash
+python inference_PDnn.py \
+  --points 400:125 500:95 \
+  --model best_pdnn.pt \
+  --signal-root ../../../output_parquet/final_production_Syst/merged \
+  --bkg "../../outputfiles/hhbbgg_analyzer-v2-trees.root::/GGJets/preselection" \
+       "../../outputfiles/hhbbgg_analyzer-v2-trees.root::/GJetPt20To40/preselection" \
+       "../../outputfiles/hhbbgg_analyzer-v2-trees.root::/GJetPt40/preselection" \
+  --background-frac 0.3 \
+  --fit-scaler-on-inference \
+  --outdir inference_outputs
+
+```
+
+- inference_outputs/inference_scores.csv
+    - per‑point plots:
+        - sep_unweighted_X400_Y125.png
+        - sep_weighted_logy_X400_Y125.png
+        - sep_weighted_density_X400_Y125.png
+        - roc_X400_Y125.png (if both S and B present)
+- No scaling at all
+
+```bash
+python inference_PDnn.py \
+  --points 400:125 500:95 \
+  --model best_pdnn.pt \
+  --signal-root ../../../output_parquet/final_production_Syst/merged \
+  --bkg "../../outputfiles/hhbbgg_analyzer-v2-trees.root::/GGJets/preselection" \
+       "../../outputfiles/hhbbgg_analyzer-v2-trees.root::/GJetPt20To40/preselection" \
+       "../../outputfiles/hhbbgg_analyzer-v2-trees.root::/GJetPt40/preselection" \
+  --background-frac 0.3 \
+  --no-scaler \
+  --outdir inference_outputs
+```
+
 ## Ref
 1. https://link.springer.com/article/10.1140/epjc/s10052-016-4099-4
 2. https://arxiv.org/pdf/2202.00424
