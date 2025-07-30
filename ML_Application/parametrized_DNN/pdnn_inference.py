@@ -721,7 +721,11 @@ class ParameterizedDNN(nn.Module):
             nn.ReLU(),
             nn.BatchNorm1d(8),
             nn.Dropout(0.3),
-            nn.Linear(8, 1)
+            nn.Linear(8, 4),
+            nn.ReLU(),
+            nn.BatchNorm1d(4),
+            nn.Dropout(0.3),
+            nn.Linear(4, 1)
         )
 
     def forward(self, x):
@@ -748,55 +752,55 @@ history = {"train_loss": [], "val_auc": [], "val_acc": []}
 best_auc = -np.inf
 best_epoch = 0
 patience = 5
-max_epochs = 50
+max_epochs = 100
 
-# for epoch in range(max_epochs):
-#     model.train()
-#     epoch_loss = 0.0
+for epoch in range(max_epochs):
+    model.train()
+    epoch_loss = 0.0
 
-#     for xb, yb, wb in train_loader:
-#         xb = xb.to(device, non_blocking=True)
-#         yb = yb.to(device, non_blocking=True)
-#         wb = wb.to(device, non_blocking=True)
+    for xb, yb, wb in train_loader:
+        xb = xb.to(device, non_blocking=True)
+        yb = yb.to(device, non_blocking=True)
+        wb = wb.to(device, non_blocking=True)
 
-#         # ---- FIX: normalize and optionally clip event weights to stabilize training
-#         wb = wb / (wb.mean() + 1e-8)
-#         wb = torch.clamp(wb, max=10.0)
+        # ---- FIX: normalize and optionally clip event weights to stabilize training
+        wb = wb / (wb.mean() + 1e-8)
+        wb = torch.clamp(wb, max=10.0)
 
-#         optimizer.zero_grad(set_to_none=True)
-#         with torch.amp.autocast(device_type=device.type, enabled=use_amp):
-#             logits = model(xb).view(-1)
-#             per_event_loss = criterion(logits, yb)          # [B]
-#             weighted_loss = (per_event_loss * wb).mean()    # scalar
+        optimizer.zero_grad(set_to_none=True)
+        with torch.amp.autocast(device_type=device.type, enabled=use_amp):
+            logits = model(xb).view(-1)
+            per_event_loss = criterion(logits, yb)          # [B]
+            weighted_loss = (per_event_loss * wb).mean()    # scalar
 
-#         scaler_amp.scale(weighted_loss).backward()
-#         scaler_amp.step(optimizer)
-#         scaler_amp.update()
+        scaler_amp.scale(weighted_loss).backward()
+        scaler_amp.step(optimizer)
+        scaler_amp.update()
 
-#         epoch_loss += float(weighted_loss.item())
+        epoch_loss += float(weighted_loss.item())
 
-#     # ---- Validation metrics
-#     model.eval()
-#     with torch.no_grad():
-#         val_logits = model(X_va_tensor).view(-1)
-#         val_probs  = torch.sigmoid(val_logits).cpu().numpy()
-#     val_auc = roc_auc_score(y_va, val_probs)
-#     val_acc = accuracy_score(y_va, (val_probs > 0.5).astype(int))
+    # ---- Validation metrics
+    model.eval()
+    with torch.no_grad():
+        val_logits = model(X_va_tensor).view(-1)
+        val_probs  = torch.sigmoid(val_logits).cpu().numpy()
+    val_auc = roc_auc_score(y_va, val_probs)
+    val_acc = accuracy_score(y_va, (val_probs > 0.5).astype(int))
 
-#     history["train_loss"].append(epoch_loss)
-#     history["val_auc"].append(val_auc)
-#     history["val_acc"].append(val_acc)
+    history["train_loss"].append(epoch_loss)
+    history["val_auc"].append(val_auc)
+    history["val_acc"].append(val_acc)
 
-#     print(f"Epoch {epoch+1:02d} | TrainLoss: {epoch_loss:.4f} | ValAUC: {val_auc:.4f} | ValAcc: {val_acc:.4f}", flush=True)
+    print(f"Epoch {epoch+1:02d} | TrainLoss: {epoch_loss:.4f} | ValAUC: {val_auc:.4f} | ValAcc: {val_acc:.4f}", flush=True)
 
-#     if val_auc > best_auc + 1e-4:
-#         best_auc = val_auc
-#         best_epoch = epoch
-#         torch.save(model.state_dict(), "best_pdnn.pt")
-#         print(f"[INFO] New best ValAUC: {best_auc:.4f} — model saved")
-#     elif epoch - best_epoch >= patience:
-#         print(f"[INFO] Early stopping at epoch {epoch+1} (no ValAUC improvement for {patience} epochs).")
-#         break
+    if val_auc > best_auc + 1e-4:
+        best_auc = val_auc
+        best_epoch = epoch
+        torch.save(model.state_dict(), "best_pdnn.pt")
+        print(f"[INFO] New best ValAUC: {best_auc:.4f} — model saved")
+    elif epoch - best_epoch >= patience:
+        print(f"[INFO] Early stopping at epoch {epoch+1} (no ValAUC improvement for {patience} epochs).")
+        break
 
 # -------------------------------
 # Evaluation on TEST
