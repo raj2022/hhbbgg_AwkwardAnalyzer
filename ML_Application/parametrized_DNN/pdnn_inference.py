@@ -721,11 +721,7 @@ class ParameterizedDNN(nn.Module):
             nn.ReLU(),
             nn.BatchNorm1d(8),
             nn.Dropout(0.3),
-            nn.Linear(8, 4),
-            nn.ReLU(),
-            nn.BatchNorm1d(4),
-            nn.Dropout(0.3),
-            nn.Linear(4, 1)
+            nn.Linear(8, 1)
         )
 
     def forward(self, x):
