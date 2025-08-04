@@ -311,7 +311,7 @@ optimizer = Adam(model.parameters(), lr=0.001)
 history = {"train_loss": [], "val_auc": [], "val_acc": []}
 best_auc = -np.inf
 best_epoch = 0
-patience = 10
+patience = 20
 max_epochs = 100
 
 for epoch in range(max_epochs):
