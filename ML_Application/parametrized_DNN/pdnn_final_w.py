@@ -280,11 +280,11 @@ class ParameterizedDNN(nn.Module):
             nn.Linear(input_dim, 12),
             nn.ReLU(),
             nn.BatchNorm1d(12),
-            nn.Dropout(0.5),
+            nn.Dropout(0.3),
             nn.Linear(12, 8),
             nn.ReLU(),
             nn.BatchNorm1d(8),
-            nn.Dropout(0.5),
+            nn.Dropout(0.3),
             nn.Linear(8, 1)
         )
 
