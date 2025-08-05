@@ -10,9 +10,7 @@ outputfiles/*.ipynb
 **.vscode
 bdt/notebook/**/*.pt
 bdt/notebook/**/*.pth
-<<<<<<< HEAD
 stats_study/CMSSW_*/
 stats_study/datacards/CMSSW*
-=======
 stats_study/CMSSW*
->>>>>>> bd507347ad70f421fb71e11b9c71e49f25e16926
+/ML_Application/parametrized_DNN/inference_outputs/*

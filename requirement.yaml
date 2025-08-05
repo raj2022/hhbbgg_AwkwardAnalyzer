@@ -10,6 +10,8 @@ dependencies:
   - vector==1.4.0
   - awkward==2.6.3
   - pandas==2.2.2
+  - pyarrow  # Added
+  - root  # Added (ROOT may be provided as 'root' or 'root_base' in conda-forge)
   # ML
   - scikit-learn
   - scipy
@@ -29,4 +31,3 @@ dependencies:
     - torchaudio  # Match the torchaudio version with torch
     - torch-summary
     - tensorflow
-

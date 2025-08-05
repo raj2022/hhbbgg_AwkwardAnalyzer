@@ -49,6 +49,7 @@ binning["preselection"] = {
     "sublead_pho_mvaID_WP80": [2, 0, 1],
     "lead_pho_mvaID": [20, -1, 1],
     "sublead_pho_mvaID": [20, -1, 1],
+    "max_gamma_MVA_ID":[20, -1, 1],
     "puppiMET_pt": [20, 100, 200],
     "puppiMET_phi":[10, -3.14, 3.14],
     "puppiMET_phiJERDown":[10, -3.14, 100],
