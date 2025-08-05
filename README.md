@@ -13,6 +13,7 @@ vector
 root
 awkward
 pandas
+pyarrow
 ```
 A virtual environment can be created for this using the following command
 ```
