@@ -1107,3 +1107,46 @@ RooDataHist::data_obs(mgg)
 2. Add in the variable
 3. Add binning
 4. Further plot it using plotter.
+
+
+# Setup finalfit with `Gitlab`
+
+## Access Tokens
+
+### Create Token
+- Used to authenticate Gitlab over HTTP
+- Only accepted password when you have Two-Factor Authentication (2FA) enabled
+  - 2FA is enabled for [CERN](https://cern.ch) accounts
+1. Go to [https://gitlab.cern.ch/$username](https://gitlab.cern.ch/($username))
+2. Click on **Edit profile**
+3. Click on **Access Tokens**
+4. Click on **Add new token**
+
+---
+
+## Using Tokens
+
+### Step 0
+- If not already done, enable store credentials:
+```sh
+git config --global credential.helper store
+```
+* You can check the current status of the git global config by running:
+ ```sh
+ git config --global --list
+```
+or alternatively change `--list` to `--edit` for interactivity.
+
+
+### Step 1
+
+- Git clone a private repository using HTTP
+
+### Step 2
+
+- Enter account username (blawrenc) when prompted for username
+
+### Step 3
+
+- Enter access token when prompted for password
+
