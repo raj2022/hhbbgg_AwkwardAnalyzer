@@ -1,3 +1,6 @@
+# Setup for the background
+- will be working mostly inside the CMSSW env
+
 
 We need to setup backgrounds seperately. To setup, The background modelling package still needs to be built with it's own makefiles. Please note that there will be verbose warnings from BOOST etc, which can be ignored. So long as the  `make` commands finish without error, then the compilation happened fine.
 ```bash
@@ -6,8 +9,7 @@ cmsenv
 make
 ```
 
-
-
+# Backgorund f-test
 
 
 
