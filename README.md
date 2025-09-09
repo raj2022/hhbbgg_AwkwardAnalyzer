@@ -61,3 +61,24 @@ with files `hhbbgg_analyzer_lxplus_par.py`, it fixes the seg fault.
 ```bash
 python hhbbgg_analyzer_lxplus_par.py -i ~/public/samples/VBFHToGG.parquet
 ```
+
+
+# Quickstart
+```bash
+# 1. Clone the repository
+git clone https://github.com/<your-org>/hhbbgg-AwkwardAnalyzer.git
+cd hhbbgg-AwkwardAnalyzer
+
+# 2. Install micromamba (lightweight, recommended)
+curl -Ls https://micro.mamba.pm/install.sh | bash
+export PATH="$HOME/.local/bin:$PATH"
+
+# 3. Create the environment
+micromamba create -f environment.yml
+
+# 4. Activate the environment
+micromamba activate hhbbgg-awk
+
+# 5. Run the analyzer (example with .root file)
+python hhbbgg_Analyzer.py -i <input_root_file_or_dir>
+```
