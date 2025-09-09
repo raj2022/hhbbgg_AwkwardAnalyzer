@@ -9,7 +9,11 @@ cmsenv
 make
 ```
 
+If it fails, first try `make clean` and then `make` again.
+
+
 # Backgorund f-test
+https://gitlab.cern.ch/hhtobbgg_nu/flashggFinalFit/-/tree/higgsdnafinalfit/Background?ref_type=heads#background-f-test
 
 
 
