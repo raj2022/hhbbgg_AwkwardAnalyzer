@@ -54,3 +54,10 @@ The plots will be saved in `stack_plots` directory
 To add the variable, changes are to be done in `hhbbgg_Analyzer.py`, `binning.py` and `variables.py` file
 
 To plot the histogram of the variable, it has to be added in `histogram_names` list and `xtitle_dict` dictionary in `hhbbgg_Plotter.py` file
+
+
+### Fixing issues of seg fault on lxplus
+with files `hhbbgg_analyzer_lxplus_par.py`, it fixes the seg fault.  
+```bash
+python hhbbgg_analyzer_lxplus_par.py -i ~/public/samples/VBFHToGG.parquet
+```
