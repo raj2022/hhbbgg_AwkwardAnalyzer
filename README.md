@@ -66,7 +66,7 @@ python hhbbgg_analyzer_lxplus_par.py -i ~/public/samples/VBFHToGG.parquet
 # Quickstart
 ```bash
 # 1. Clone the repository
-git clone https://github.com/<your-org>/hhbbgg-AwkwardAnalyzer.git
+git clone https://github.com/raj2022/hhbbgg_AwkwardAnalyzer.git
 cd hhbbgg-AwkwardAnalyzer
 
 # 2. Install micromamba (lightweight, recommended)
