@@ -1086,19 +1086,6 @@ combine -M MaxLikelihoodFit -d workspace.root --saveShapes --saveWithUncertainti
 combine -M GoodnessOfFit -d workspace.root --algo=saturated
 ```
 
-# ROOT file reading
-```bash
-root -l workspace.root
-```
-Since w is the saved content:
-```bash
-w->Print();
-```
-Look for something like:(as we are missing this for now)
-```bash
-RooDataHist::data_obs(mgg)
-```
-
 # Adding variables in `hhbbgg_Analyzer_parquet.py`
 
 (https://github.com/raj2022/hhbbgg_AwkwardAnalyzer/blob/2a008a9d0087b6ee83e9e1250185d5f245d74482/hhbbgg_Analyzer_parquet.py#L114)
@@ -1149,4 +1136,30 @@ or alternatively change `--list` to `--edit` for interactivity.
 ### Step 3
 
 - Enter access token when prompted for password
+
+
+# ROOT file reading
+```bash
+root -l workspace.root
+```
+Since w is the saved content:
+```bash
+w->Print();
+```
+Look for something like:(as we are missing this for now)
+```bash
+RooDataHist::data_obs(mgg)
+```
+
+Example to open `hhbbgg_analyzer-v2-trees.root` 
+```bash
+root -l hhbbgg_analyzer-v2-trees.root
+```
+in the root
+```bash
+TFile *_file0 = TFile::Open("hhbbgg_analyzer-v2-trees.root");
+TTree *t = (TTree*)_file0->Get("processed_events");
+t->Print();   // shows branches/leaves with types
+t->Scan();    // prints first few rows of data
+```
 
