@@ -2,6 +2,18 @@
 
 To produce .parquet files, follow the instructions provided in the [manual](https://higgs-dna.readthedocs.io/en/latest/index.html) and the tutorial available [here](https://indico.cern.ch/event/1360961/contributions/5777678/attachments/2788218/4861762/HiggsDNA_tutorial.pdf).
 
+
+# location of samples 
+| Samples(Year/Era)| Location  | NanoAOD        |
+|--------------|---------------|----------------|
+| 2022PreEE    | `/eos/cms/store/group/phys_b2g/HHbbgg/HiggsDNA_parquet/v3/Run3_2022`  | 12   |
+| 2022PostEE   | `/eos/cms/store/group/phys_b2g/HHbbgg/HiggsDNA_parquet/v3/Run3_2022`  | 12   |
+| 2023preBPix  |  `/eos/cms/store/group/phys_b2g/HHbbgg/HiggsDNA_parquet/v3/Run3_2023` | -- |
+| 2023postBPix | `/eos/cms/store/group/phys_b2g/HHbbgg/HiggsDNA_parquet/v3/Run3_2023`  | -- |
+| 2024_temp_v14|  `/eos/cms/store/group/phys_b2g/HHbbgg/HiggsDNA_parquet/v3/Run3_2024_temp_v14` | 14 |
+|2024_v14_JECs_vetomaps| `/eos/cms/store/group/phys_b2g/HHbbgg/HiggsDNA_parquet/v3/Run3_2024_v14_JECs_vetomaps` | 14 |
+
+
 ## Instructions to Produce .parquet File
 
 ### 1. Higgs DNA Installation

@@ -234,6 +234,8 @@ python3 scripts/postprocessing/prepare_output_file.py --input ../../../output_pa
 ```
 For the root file conversion,we can add word "NOTAG" and further use the commandas we used earlier. 
 
+centrally produced samples are saved at, `/eos/cms/store/group/phys_b2g/HHbbgg/HiggsDNA_parquet/v3`
+
 # References:
 1. https://gitlab.cern.ch/hhbbgg/HiggsDNA#worfklow
 2. https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookStartingGrid#BasicGrid
