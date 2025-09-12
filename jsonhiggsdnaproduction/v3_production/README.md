@@ -230,11 +230,21 @@ python /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/parquet_production/Hig
 After sample production,
 for merging the folder, running the script from the higgsDNA folder
 ```bash
-python3 scripts/postprocessing/prepare_output_file.py --input ../../../output_parquet/final_v2_production/  --merge --root --ws --syst --cats --args "--do_syst"
+python3 higgs_dna/scripts/postprocessing/prepare_output_file.py --input ../../../output_parquet/final_v2_production/  --merge --root --ws --syst --cats --args "--do_syst"
 ```
 For the root file conversion,we can add word "NOTAG" and further use the commandas we used earlier. 
 
 centrally produced samples are saved at, `/eos/cms/store/group/phys_b2g/HHbbgg/HiggsDNA_parquet/v3`
+
+### Working on 2022Pre_EE, 2023 sample
+- copying files to eos 
+
+and then merge it
+```bash
+python3 higgs_dna/scripts/postprocessing/prepare_output_file.py --input ..
+/../../output_root/v3_production/backgrounds_2022_preEE/preEE/  --merge --root --ws --syst --cats --args "--do_syst"
+```
+
 
 # References:
 1. https://gitlab.cern.ch/hhbbgg/HiggsDNA#worfklow
