@@ -1,18 +1,18 @@
 {
   "var_dict": {
-    "NOMINAL": "nominal",
-    "name_of_systematic_folder1": "jec_syst_Total_down",
-    "name_of_systematic_folder2": "jec_syst_Total_up",
-    "name_of_systematic_folder3": "jer_syst_down",
-    "name_of_systematic_folder4": "jer_syst_up",
-    "name_of_systematic_folder5": "Material_down",
-    "name_of_systematic_folder6": "Material_up",
-    "name_of_systematic_folder7": "ScaleEB2G_IJazZ_down",
-    "name_of_systematic_folder8": "ScaleEB2G_IJazZ_up",
-    "name_of_systematic_folder9": "ScaleEE2G_IJazZ_down",
-    "name_of_systematic_folder10": "ScaleEE2G_IJazZ_up",
-    "name_of_systematic_folder11": "Smearing2G_IJazZ_down",
-    "name_of_systematic_folder12": "Smearing2G_IJazZ_up"
+    "nominal": "nominal",
+    "jec_syst_Total_down": "jec_syst_Total_down",
+    "jec_syst_Total_up": "jec_syst_Total_up",
+    "jer_syst_down": "jer_syst_down",
+    "jer_syst_up": "jer_syst_up",
+    "Material_down": "Material_down",
+    "Material_up": "Material_up",
+    "ScaleEB2G_IJazZ_down": "ScaleEB2G_IJazZ_down",
+    "ScaleEB2G_IJazZ_up": "ScaleEB2G_IJazZ_up",
+    "ScaleEE2G_IJazZ_down": "ScaleEE2G_IJazZ_down",
+    "ScaleEE2G_IJazZ_up": "ScaleEE2G_IJazZ_up",
+    "Smearing2G_IJazZ_down": "Smearing2G_IJazZ_down",
+    "Smearing2G_IJazZ_up": "Smearing2G_IJazZ_up"
   }
 }
 
