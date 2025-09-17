@@ -512,7 +512,15 @@ git checkout --track origin/v2_higgsdna
 
 ### Cleaning Up
 - `git clean -f`: Removes untracked files.
-- `git clean -fd`: Removes untracked files and directories.
+- `git clean -fd`: Removes untracked files and directories. 
+
+### Git branch deletion
+If you have a Git repository cloned:
+- `git branch -d branch_name`  # Safe delete (won’t delete if unmerged)
+- `git branch -D branch_name`   # Force delete (deletes even if unmerged)
+
+and to delete a branch on GitHub (remote), use:
+- `git push origin --delete branch_name` 
 
 ### Miscellaneous
 - `git blame <file>`: Shows who modified each line of a file and when.
