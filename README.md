@@ -13,6 +13,7 @@ vector
 root
 awkward
 pandas
+pyarrow
 ```
 A virtual environment can be created for this using the following command
 ```
@@ -53,3 +54,31 @@ The plots will be saved in `stack_plots` directory
 To add the variable, changes are to be done in `hhbbgg_Analyzer.py`, `binning.py` and `variables.py` file
 
 To plot the histogram of the variable, it has to be added in `histogram_names` list and `xtitle_dict` dictionary in `hhbbgg_Plotter.py` file
+
+
+### Fixing issues of seg fault on lxplus
+with files `hhbbgg_analyzer_lxplus_par.py`, it fixes the seg fault.  
+```bash
+python hhbbgg_analyzer_lxplus_par.py -i ~/public/samples/VBFHToGG.parquet
+```
+
+
+# Quickstart
+```bash
+# 1. Clone the repository
+git clone https://github.com/raj2022/hhbbgg_AwkwardAnalyzer.git
+cd hhbbgg-AwkwardAnalyzer
+
+# 2. Install micromamba (lightweight, recommended)
+curl -Ls https://micro.mamba.pm/install.sh | bash
+export PATH="$HOME/.local/bin:$PATH"
+
+# 3. Create the environment
+micromamba create -f environment.yml
+
+# 4. Activate the environment
+micromamba activate hhbbgg-awk
+
+# 5. Run the analyzer (example with .root file)
+python hhbbgg_Analyzer.py -i <input_root_file_or_dir>
+```

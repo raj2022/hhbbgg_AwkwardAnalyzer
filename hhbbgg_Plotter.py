@@ -665,6 +665,7 @@ def main():
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
+# plotting  the histograms
     stack1d_histograms(
         uproot_loaded_filename,
         data_samples,

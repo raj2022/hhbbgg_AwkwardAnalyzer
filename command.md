@@ -512,7 +512,15 @@ git checkout --track origin/v2_higgsdna
 
 ### Cleaning Up
 - `git clean -f`: Removes untracked files.
-- `git clean -fd`: Removes untracked files and directories.
+- `git clean -fd`: Removes untracked files and directories. 
+
+### Git branch deletion
+If you have a Git repository cloned:
+- `git branch -d branch_name`  # Safe delete (won’t delete if unmerged)
+- `git branch -D branch_name`   # Force delete (deletes even if unmerged)
+
+and to delete a branch on GitHub (remote), use:
+- `git push origin --delete branch_name` 
 
 ### Miscellaneous
 - `git blame <file>`: Shows who modified each line of a file and when.
@@ -1086,6 +1094,58 @@ combine -M MaxLikelihoodFit -d workspace.root --saveShapes --saveWithUncertainti
 combine -M GoodnessOfFit -d workspace.root --algo=saturated
 ```
 
+# Adding variables in `hhbbgg_Analyzer_parquet.py`
+
+(https://github.com/raj2022/hhbbgg_AwkwardAnalyzer/blob/2a008a9d0087b6ee83e9e1250185d5f245d74482/hhbbgg_Analyzer_parquet.py#L114)
+
+1. Add varibles in the `Analyzer` file.
+2. Add in the variable
+3. Add binning
+4. Further plot it using plotter.
+
+
+# Setup finalfit with `Gitlab`
+
+## Access Tokens
+
+### Create Token
+- Used to authenticate Gitlab over HTTP
+- Only accepted password when you have Two-Factor Authentication (2FA) enabled
+  - 2FA is enabled for [CERN](https://cern.ch) accounts
+1. Go to [https://gitlab.cern.ch/$username](https://gitlab.cern.ch/($username))
+2. Click on **Edit profile**
+3. Click on **Access Tokens**
+4. Click on **Add new token**
+
+---
+
+## Using Tokens
+
+### Step 0
+- If not already done, enable store credentials:
+```sh
+git config --global credential.helper store
+```
+* You can check the current status of the git global config by running:
+ ```sh
+ git config --global --list
+```
+or alternatively change `--list` to `--edit` for interactivity.
+
+
+### Step 1
+
+- Git clone a private repository using HTTP
+
+### Step 2
+
+- Enter account username (blawrenc) when prompted for username
+
+### Step 3
+
+- Enter access token when prompted for password
+
+
 # ROOT file reading
 ```bash
 root -l workspace.root
@@ -1099,11 +1159,15 @@ Look for something like:(as we are missing this for now)
 RooDataHist::data_obs(mgg)
 ```
 
-# Adding variables in `hhbbgg_Analyzer_parquet.py`
+Example to open `hhbbgg_analyzer-v2-trees.root` 
+```bash
+root -l hhbbgg_analyzer-v2-trees.root
+```
+in the root
+```bash
+TFile *_file0 = TFile::Open("hhbbgg_analyzer-v2-trees.root");
+TTree *t = (TTree*)_file0->Get("processed_events");
+t->Print();   // shows branches/leaves with types
+t->Scan();    // prints first few rows of data
+```
 
-(https://github.com/raj2022/hhbbgg_AwkwardAnalyzer/blob/2a008a9d0087b6ee83e9e1250185d5f245d74482/hhbbgg_Analyzer_parquet.py#L114)
-
-1. Add varibles in the `Analyzer` file.
-2. Add in the variable
-3. Add binning
-4. Further plot it using plotter.
