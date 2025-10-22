@@ -1,0 +1,21 @@
+datasets:
+  "2022":
+    PreEE:
+      raw_path: "/afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preEE"
+      schema: "schema_v1"
+    PostEE:
+      raw_path: "/afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postEE"
+      schema: "schema_v1"
+
+  "2023":
+    preBPix:
+      raw_path: "/afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preBPix"
+      schema: "schema_v2"
+    postBPix:
+      raw_path: "/afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postBPix"
+      schema: "schema_v2"
+
+defaults:
+  processed_root: "data/processed"
+  outputs_root: "outputfiles"
+  plots_root: "stack_plots"

@@ -1,12 +1,56 @@
 # NanoAOD to Parquet Production
 
+- On the installed higgs-dna, for the installation, checkout the [instructions](https://indico.cern.ch/event/1499924/contributions/6478750/attachments/3053886/5398744/For_Hgg_v3_production-2.pdf),
 
+- Clone the Repository (Specific Tag)
+
+```bash
+git clone --branch HHbbgg_v3_parquet ssh://git@gitlab.cern.ch:7999/cms-analysis/general/HiggsDNA.git
+cd HiggsDNA
+```
+- Create and Activate the Environment. we can use conda, mamba, or micromamba(Micromamba is much faster and recommended).
+* Using micromamba:
+```bash
+micromamba create -y -n higgs-dna python=3.10
+micromamba activate higgs-dna
+```
+* Using conda
+```bash
+conda create -y -n higgs-dna python=3.10
+conda activate higgs-dna
+```
+- Install the Package. Install HiggsDNA in editable developer mode: `pip install -e .[dev]`
+- ```bash python higgs_dna/scripts/pull_files.py --all ```
+- Grid certificate: 
+```bash
+voms-proxy-init --rfc --voms cms --valid 192:00
+```
+- Fetch the xrootd links for sample
+```bash
+python higgs_dna/scripts/samples/fetch_dataset.py -i samples.txt -w Yolo
+```
+The input file `samples.txt` should contain the dataset name and DAS name for each sample.
+Example content of `samples.txt`:
+
+```bash
+GluGluToHHto2B2G_k1_1p00_kt_1p00_c2_0p00 /GluGluToHHto2B2G_k1-1p00_kt-1p00_c2-0p00_TuneCP5_13p6TeV_powheg-pythia8/Run3Summer22NanoAODv12-130X_mcRun3_2022_realistic_v5-v2/NANOAODSIM
+GluGluToHHto2B2G_k1_5p00_kt_1p00_c2_0p00 /GluGluToHHto2B2G_k1-5p00_kt-1p00_c2-0p00_TuneCP5_13p6TeV_powheg-pythia8/Run3Summer22NanoAODv13-133X_mcRun3_2022_realistic_v5-v2/NANOAODSIM
+VBFHHto2B2G_CV_1_C2V_1_C3_1 /VBFHHto2B2G_CV_1_C2V_1_C3_1_TuneCP5_13p6TeV_madgraph-pythia8/Run3Summer22NanoAODv12-130X_mcRun3_2022_realistic_v5-v2/NANOAODSIM
+```
+
+Commmands to sumbit job on condor: 
+```bash
+python /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/parquet_production_v3/HiggsDNA/higgs_dna/scripts/run_analysis.py --json-analysis My_Json_300.json --dump /afs/cern.ch/user/s/sraj/private/output/  --fiducialCuts store_flag --Smear-sigma-m --applyCQR  --nano-version 12 --executor vanilla_lxplus --queue espresso
+```
+
+
+<!-- 
 The error of `--nano-version 12` fixed by updating the HiggsDNA.
 before running the command, we had to run,
 ```bash
  pip install -e .[dev]
 ```
-`mamba activate higgs-dna`
+
 
 Working command 
 ```bash
@@ -260,4 +304,4 @@ python3 higgs_dna/scripts/postprocessing/prepare_output_file.py --input ..
 11. * V1 proudction instruction: https://higgs-dna.readthedocs.io/en/latest/index.html 
 12. V1 Production tutorial:(https://indico.cern.ch/event/1360961/contributions/5777678/attachments/2788218/4861762/HiggsDNA_tutorial.pdf) 
 13. v2 production: https://indico.cern.ch/event/1451222/contributions/6208287/attachments/2959259/5210616/HHtobbgg_meeting_20241101.pdf
-14. v3 Production: https://indico.cern.ch/event/1499924/contributions/6478750/attachments/3053886/5398744/For_Hgg_v3_production-2.pdf
+14. v3 Production: https://indico.cern.ch/event/1499924/contributions/6478750/attachments/3053886/5398744/For_Hgg_v3_production-2.pdf -->

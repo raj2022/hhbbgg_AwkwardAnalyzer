@@ -1,6 +1,6 @@
 {
   "var_dict": {
-    "nominal": "nominal",
+    "NOMINAL": "nominal",
     "FNUF_down":"FNUF_down",
     "FNUF_up":"FNUF_up",
     "jec_syst_Total_down": "jec_syst_Total_down",

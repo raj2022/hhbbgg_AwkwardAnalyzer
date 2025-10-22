@@ -3,7 +3,7 @@ import copy
 binning = {}
 binning["preselection"] = {
     "dibjet_mass": [33, 0, 180],
-    "diphoton_mass": [25, 50, 180],
+    "diphoton_mass": [25, 95, 180],    # avoiding the turn-on issues for the mass below MX<95GeV
     "bbgg_mass": [45, 150, 800],
     "dibjet_pt": [25, 30, 500],
     "diphoton_pt": [25, 30, 500],
@@ -63,14 +63,15 @@ binning["preselection"] = {
     "puppiMET_ptJERUp":[100, 0, 100],
     "puppiMET_ptJESDown":[100, 0, 100],
     "puppiMET_ptJESUp":[100, 0, 100],
-    "DeltaPhi_j1MET":[100,-3.14,3,14],
-    "DeltaPhi_j2MET":[100,-3.14,3,14],
+    "DeltaPhi_j1MET":[10,100,110],
+    "DeltaPhi_j2MET":[10,100,110],
     "Res_chi_t0":[100,0,100],
     "Res_chi_t1":[100,0,100],
     "lepton1_mvaID":[100,0,100],
     "lepton1_pt":[100,0,100],
     "lepton1_pfIsoId":[100,0,100],
-    "n_jets":[100,0,100],
+    "n_jets":[10,0,15], # changed binning from 100 to 15.
+    "pDNN_score":[20,0,1],
 }
 
 binning["selection"] = copy.deepcopy(binning["preselection"])

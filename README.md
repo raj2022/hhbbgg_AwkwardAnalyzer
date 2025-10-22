@@ -82,3 +82,143 @@ micromamba activate hhbbgg-awk
 # 5. Run the analyzer (example with .root file)
 python hhbbgg_Analyzer.py -i <input_root_file_or_dir>
 ```
+
+## Changes according to `Era`
+
+### Single era/year (use config)
+```bash
+python hhbbgg_analyzer_lxplus_par.py --year 2022 --era PostEE
+```
+
+This will:
+* Read Parquet files from the path defined in datasets.yaml
+* Write outputs to:
+```bash
+outputfiles/2022/PostEE/
+  ├─ hhbbgg_analyzer-v2-histograms.root
+  └─ hhbbgg_analyzer-v2-trees.root
+```
+
+### Override input path manually
+```bash
+python hhbbgg_analyzer_lxplus_par.py --year 2022 --era PostEE \
+  -i /afs/cern.ch/user/s/sraj/public/samples
+```
+### combine everything (2022 + 2023, all eras)
+Provide `-i` multiple times:
+```bash
+python hhbbgg_analyzer_lxplus_par.py --year 2023 --era All \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preEE \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postEE \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preBPix \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postBPix \
+  --tag CombinedAll
+```
+### For individual eras
+#### 2022 only
+```bash
+# 2022 PreEE (C+D)
+python hhbbgg_analyzer_lxplus_par.py \
+  --year 2022 --era PreEE \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preEE \
+  --tag Y2022_PreEE
+
+# 2022 PostEE (E+F+G)
+python hhbbgg_analyzer_lxplus_par.py \
+  --year 2022 --era PostEE \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postEE \
+  --tag Y2022_PostEE
+```
+#### 2023 only
+
+```bash
+# 2023 preBPix (Era C)
+python hhbbgg_analyzer_lxplus_par.py \
+  --year 2023 --era preBPix \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preBPix \
+  --tag Y2023_preBPix
+
+# 2023 postBPix (Era D)
+python hhbbgg_analyzer_lxplus_par.py \
+  --year 2023 --era postBPix \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postBPix \
+  --tag Y2023_postBPix
+```
+
+### drive from `datasets.yaml` (no `-i`)
+If you wired `RunConfig` to use `cfg.raw_paths` when `-i` isn’t given, you can run:
+```bash
+# From YAML: 2022 (PreEE+PostEE)
+python hhbbgg_analyzer_lxplus_par.py --year 2022 --era All --tag Combined2022
+
+# From YAML: 2023 (preBPix+postBPix)
+python hhbbgg_analyzer_lxplus_par.py --year 2023 --era All --tag Combined2023
+```
+
+
+
+
+### With DD sample:
+
+#### Combine DD (2022 + 2023, all eras)
+with only a file
+```bash
+python hhbbgg_analyzer_lxplus_par.py --year 2023 --era All \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preEE/DDQCDGJET_Rescaled.parquet \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postEE/DDQCDGJET_Rescaled.parquet \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preBPix/DDQCDGJET_Rescaled.parquet \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postBPix/DDQCDGJET_Rescaled.parquet \
+  --tag DD_CombinedAll
+```
+with whole folder
+```bash
+python hhbbgg_analyzer_lxplus_par.py --year 2023 --era All \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preEE/ \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postEE/ \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preBPix/ \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postBPix/ \
+  --tag DD_CombinedAll
+```
+
+For individual eras
+
+#### 2022 only
+```bash
+# 2022 PreEE
+python hhbbgg_analyzer_lxplus_par.py \
+  --year 2022 --era PreEE \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preEE/DDQCDGJET_Rescaled.parquet \
+  --tag DD_Y2022_PreEE
+
+# 2022 PostEE
+python hhbbgg_analyzer_lxplus_par.py \
+  --year 2022 --era PostEE \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postEE/DDQCDGJET_Rescaled.parquet \
+  --tag DD_Y2022_PostEE
+```
+#### 2023 only 
+```bash
+# 2023 preBPix
+python hhbbgg_analyzer_lxplus_par.py \
+  --year 2023 --era preBPix \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preBPix/DDQCDGJET_Rescaled.parquet \
+  --tag DD_Y2023_preBPix
+
+# 2023 postBPix
+python hhbbgg_analyzer_lxplus_par.py \
+  --year 2023 --era postBPix \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postBPix/DDQCDGJET_Rescaled.parquet \
+  --tag DD_Y2023_postBPix
+```
+
+
+
+
+## For Changing variables
+- Change variables in these variables.
+* `binning.py`
+* `hhbbgg_analyzer_lxplus_par.py`
+* `variables.py`
+
+## For including file name:
+

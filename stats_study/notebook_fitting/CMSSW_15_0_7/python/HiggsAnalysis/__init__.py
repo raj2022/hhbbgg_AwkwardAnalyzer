@@ -1,1 +1,0 @@
-__path__.append('/cvmfs/cms.cern.ch/el9_amd64_gcc12/cms/cmssw/CMSSW_15_0_7/python/HiggsAnalysis')

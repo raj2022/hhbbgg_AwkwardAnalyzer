@@ -82,6 +82,7 @@ vardict = {
     "lepton1_pt":"lepton1_pt",
     "lepton1_pfIsoId":"lepton1_pfIsoId",
     "n_jets":"n_jets",  
+    "pDNN_score":"pDNN_score",
 }
 
 variables_common = {
@@ -152,7 +153,8 @@ variables_common = {
         "lepton1_mvaID",
         "lepton1_pt",
         "lepton1_pfIsoId",
-        "n_jets"
+        "n_jets",
+        "pDNN_score"
     ]
 }
 

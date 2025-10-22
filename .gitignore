@@ -4,8 +4,10 @@
 analysis.sh
 stack_plots/**/*.pdf
 stack_plots/**/*.png
-outputfiles/*.root
-outputfiles/*.ipynb
+# Removing this for outputfiles
+# outputfiles/
+outputfiles/*
+!outputfiles/.keep
 **.ipynb_checkpoints
 **.vscode
 bdt/notebook/**/*.pt
@@ -15,3 +17,14 @@ stats_study/datacards/CMSSW*
 stats_study/CMSSW*
 /ML_Application/parametrized_DNN/inference_outputs/*
 finalfits/CMSSW*
+version_check.py
+#parametrized DNN
+ML_Application/parametrized_DNN/best_pdnn.pt
+ML_Application/parametrized_DNN/gate_abort_snapshot.pt
+ML_Application/parametrized_DNN/GATE_ABORTED
+ML_Application/parametrized_DNN/*.root
+
+.gitattributes
+stats_study/notebook_fitting/CMSSW_15_0_7/
+data_driven_bkg_est/fit_mvaid*
+outputs/*

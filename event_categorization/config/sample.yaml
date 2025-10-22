@@ -1,0 +1,50 @@
+# --- where to read events from (your four eras) ---
+inputs:
+  - "/afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preEE/"
+  - "/afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postEE/"
+  - "/afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preBPix/"
+  - "/afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postBPix/"
+
+# pick up files recursively; supports ROOT or Parquet
+file_globs:
+  - "**/*.parquet"
+  - "**/*.root"
+
+# ROOT tree name (ignored for parquet)
+tree: "Events"
+
+# how to tell signal vs background (by filename substring)
+signal_keys:
+  - "NMSSM"          # <-- edit to match your signal naming
+  - "XtoYYHbb"       # or similar
+background_keys_exclude:
+  - "Data"           # everything not matching signal_keys and not "Data" is BKG
+
+# columns in your files (rename to match your branches)
+columns:
+  score:    "pDNN_score"     # pDNN output
+  mgg:      "mgg"            # diphoton mass (GeV)
+  weight:   "weight"         # nominal event weight
+  isData:   "isData"         # 1=data, 0=MC (if absent we infer from filename)
+  massHyp:  "massHyp"        # only if you used parametrized DNN; else leave ""
+
+# which mass points to optimize (if parametrized use actual values; if not, these are just tags)
+mass_points:
+  - "mX500_mY150"
+  - "mX600_mY70"
+
+# mgg windows (GeV) for SR and CR
+windows:
+  sr_sigma: 2.0          # |mgg-125| < 2
+  cr_sidebands: [4.0, 10.0]
+
+# bin-building knobs
+algo:
+  nmin: 20               # min events per candidate SR
+  min_gain: 0.05         # ≥5% improvement to accept new SR
+  max_bins: 10
+  sigma_b: 0.0           # optional fractional bkg syst in Asimov Z (0 = none)
+
+# outputs
+outdir: "outputs/pdnn_categories/2023_All"
+write_categorized_parquet: false   # set true to also save files with cat/region columns

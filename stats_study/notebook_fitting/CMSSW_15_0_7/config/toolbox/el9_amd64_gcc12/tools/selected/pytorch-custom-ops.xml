@@ -1,6 +1,0 @@
-<tool name="pytorch-custom-ops" version="1.0" revision="1">
-    <use name="pytorch"/>
-    <use name="pytorch-scatter"/>
-    <use name="pytorch-cluster"/>
-    <use name="pytorch-sparse"/>
-</tool>

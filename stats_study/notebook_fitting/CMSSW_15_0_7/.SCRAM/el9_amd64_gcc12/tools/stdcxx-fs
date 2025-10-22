@@ -1,8 +1,0 @@
-{
-  "LIB": [
-    "stdc++fs"
-  ],
-  "TOOLNAME": "stdcxx-fs",
-  "TOOLREVISION": "1",
-  "TOOLVERSION": "12.3.1"
-}

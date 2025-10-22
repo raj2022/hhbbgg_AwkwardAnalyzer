@@ -1,6 +1,0 @@
-<tool name="rocm-rocrand" version="6.3.2-dd4ace0770f12ddb6078527b081d5a79" revision="1">
-  <info url="https://rocm.docs.amd.com/projects/rocRAND/en/docs-6.3.2-dd4ace0770f12ddb6078527b081d5a79/"/>
-  <use name="rocm"/>
-  <lib name="hiprand"/>
-  <lib name="rocrand"/>
-</tool>
