@@ -221,4 +221,7 @@ python hhbbgg_analyzer_lxplus_par.py \
 * `variables.py`
 
 ## For including file name:
+ - Inlcude the file name or similar structure in the `normalisation.py`
+ - further include it the Plotter, `hhbbgg_Plotter.py`
+ 
 
