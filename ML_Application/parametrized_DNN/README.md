@@ -106,4 +106,8 @@ python inference_PDnn.py -i /path/to/folder --recursive --pattern "*_skim.parque
  Example to run on the folder:
  `python inference_PDnn.py -i ~/Analysis/output_root/v3_production/samples/postBPix/`
  - this would create a new folder with  `scored`, just to not mess with the original one.
+ to run with the `pDNN_scored` variable:
+ ```bash
+ python hhbbgg_analyzer_lxplus_par.py --year 2023 --era All   -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preEE/scored/   -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postEE/scored/   -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preBPix/scored/   -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postBPix/scored/   --tag DD_CombinedAll
+```
 
