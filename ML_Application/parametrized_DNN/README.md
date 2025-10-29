@@ -101,3 +101,9 @@ python inference_PDnn.py -i /path/to/folder -o /path/to/output
 python inference_PDnn.py -i /path/to/folder --recursive --pattern "*_skim.parquet"
 
  ```
+
+
+ Example to run on the folder:
+ `python inference_PDnn.py -i ~/Analysis/output_root/v3_production/samples/postBPix/`
+ - this would create a new folder with  `scored`, just to not mess with the original one.
+

@@ -1,3 +1,10 @@
+# ++++++++++++++++++++++++++++
+# Working pDNN with all plots (10/27/2025)
+# Shivam Raj
+# ---------------------
+
+
+
 # ================================================================
 # Parameterized DNN (PDNN) with group-safe splits, diagnostics,
 # OOM-safe batched eval, small-normal init, and consistency gate.

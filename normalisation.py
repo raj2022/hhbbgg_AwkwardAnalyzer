@@ -89,6 +89,7 @@ XSEC_PATTERNS = [
     ("vbfhtogg",        0.00926),  # matches VBFHtoGG / VBFHToGG
     ("vhtogg",          0.00545),  # matches VHtoGG / VHToGG
     ("ttgg",           1.0), 
+    ("ttg",           1.0),
 
     # QCD (match your files: QCDPt30To40, QCDPt40ToInf)
     ("qcdpt30to40",    25950.0),
