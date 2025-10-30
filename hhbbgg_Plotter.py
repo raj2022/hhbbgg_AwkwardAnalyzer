@@ -778,6 +778,7 @@ def dir_to_base(name: str) -> str | None:
         "VHToGG",
         "ttHToGG",
         "TTGG",
+        "TTG",
     }
     for base in mc_bases:
         if n.lower() == base.lower():
@@ -793,6 +794,7 @@ def dir_to_base(name: str) -> str | None:
         "gjetpt40": "GJetPt40",
         "gjetpt40toinf": "GJetPt40",
         "ttgg":"TTGG",
+        "ttg":"TTG"
     }
     if n.lower() in aliases:
         return aliases[n.lower()]
@@ -869,6 +871,7 @@ legend = {
     "ttHToGG": r"$t\bar t H\to\gamma\gamma$",
     "DDQCDGJET": r"DDQCDGJET",
     "TTGG": r"$t\bar t \to \gamma\gamma$",
+    "TTG": r"$t\bar t \to \gamma",
     # signals
     "NMSSM_X400_Y100": r"$NMSSM\_X_{400}\_Y_{100}\times 10$",
     "NMSSM_X400_Y125": r"$NMSSM\_X_{400}\_Y_{125}\times 10$",
@@ -897,7 +900,7 @@ def stack1d_histograms(up, output_dir, blind=True):
     mc_bases = ["GGJets",
                 "GJetPt20To40",
                 "GJetPt40",
-                "GluGluHToGG","VBFHToGG","VHToGG","ttHToGG","DDQCDGJET","TTGG"]
+                "GluGluHToGG","VBFHToGG","VHToGG","ttHToGG","DDQCDGJET","TTGG", "TTG"]
     signal_bases = [
                     # "NMSSM_X400_Y100",
                     # "NMSSM_X400_Y125",
