@@ -2085,7 +2085,8 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
         else:
             wc = ak.to_numpy(out_events["weight_central"])
             wc = np.where(np.isfinite(wc) & (wc != 0.0), wc, 1.0)
-            base_w = ak.to_numpy(cms_events["weight"]) * float(xsec_) * float(lumi_) / wc
+            # base_w = ak.to_numpy(cms_events["weight"]) * float(xsec_) * float(lumi_) / wc 
+            base_w = ak.to_numpy(cms_events["weight"]) * float(xsec_) * float(lumi_)
             base_w = np.where(np.isfinite(base_w), base_w, 0.0)
 
         # attach per-region weights
