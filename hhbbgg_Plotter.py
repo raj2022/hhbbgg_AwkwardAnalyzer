@@ -771,8 +771,8 @@ def dir_to_base(name: str) -> str | None:
     # Common MC bases
     mc_bases = {
         "GGJets",
-        "GJetPt20To40",
-        "GJetPt40",
+        # "GJetPt20To40",
+        # "GJetPt40",
         "GluGluHToGG",
         "VBFHToGG",
         "VHToGG",
@@ -790,8 +790,8 @@ def dir_to_base(name: str) -> str | None:
         "tthtogg": "ttHToGG",
         "vbfhtogg": "VBFHToGG",
         "vhtogg": "VHToGG",
-        "gjetpt20to40": "GJetPt20To40",
-        "gjetpt40": "GJetPt40",
+        # "gjetpt20to40": "GJetPt20To40",
+        # "gjetpt40": "GJetPt40",
         "gjetpt40toinf": "GJetPt40",
         "ttgg":"TTGG",
         "ttg":"TTG"
@@ -863,8 +863,8 @@ blind_vars = ["dibjet_mass", "diphoton_mass"]
 legend = {
     "Data": "Data",
     "GGJets": r"$\gamma\gamma$+jets",
-    "GJetPt20To40": r"$\gamma$+jets ($20< p_T < 40$)",
-    "GJetPt40": r"$\gamma$+jets ($p_T > 40$)",
+    # "GJetPt20To40": r"$\gamma$+jets ($20< p_T < 40$)",
+    # "GJetPt40": r"$\gamma$+jets ($p_T > 40$)",
     "GluGluHToGG": r"$gg\to H\to\gamma\gamma$",
     "VBFHToGG": r"$VBF\,H\to\gamma\gamma$",
     "VHToGG": r"$V\,H\to\gamma\gamma$",
