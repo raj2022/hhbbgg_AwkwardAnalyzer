@@ -124,14 +124,13 @@ def getXsec(path_or_name) -> float:
 # 2023: your provided numbers: Era C = 17.794, Era D = 9.451
 # ---------------------------------------------------------------------
 LUMI_2022 = {
-    "C": 5.0104,
+    "C": 5.0104,   #https://indico.cern.ch/event/1598014/contributions/6735183/attachments/3155746/5605187/25-10-16_News_PPD.pdf
     "D": 2.9700,
     "E": 5.8070,
     "F": 17.7819,
     "G": 3.0828,
 }
 LUMI_2023 = {
-    # From your message
     "C": 17.794,   # preBPix
     "D": 9.451,    # postBPix
 }
