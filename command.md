@@ -1171,3 +1171,17 @@ t->Print();   // shows branches/leaves with types
 t->Scan();    // prints first few rows of data
 ```
 
+
+### to check the listing of   `.root` file:
+```bash
+python3 - <<'PY'
+import uproot, json
+fn = "../../../outputfiles/merged/DD_CombinedAll/hhbbgg_analyzer-v2-trees.root"
+print("Opening:", fn)
+f = uproot.open(fn)
+dirs = [k.split(';')[0] for k in f.keys() if isinstance(f[k], uproot.reading.ReadOnlyDirectory)]
+print("Found", len(dirs), "directories. First 50:")
+for d in dirs[:50]:
+    print(d)
+PY
+```

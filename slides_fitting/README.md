@@ -43,3 +43,15 @@ python slides_fitting/non_resonant_bkg_mjj.py \
   --wgt-branch '' \
   --outdir outputs/nonres_fits
   ```
+
+
+
+
+## setup
+CMSSW release set up:
+```bash
+cmsrel CMSSW_15_0_16
+cd CMSSW_15_0_16/src
+cmsenv
+```
+

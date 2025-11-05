@@ -28,3 +28,7 @@ ML_Application/parametrized_DNN/*.root
 stats_study/notebook_fitting/CMSSW_15_0_7/
 data_driven_bkg_est/fit_mvaid*
 outputs/*
+
+
+# removing the CMSSW
+slides_fitting/CMSSW_*
