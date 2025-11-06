@@ -297,9 +297,45 @@ def main():
 
             # Helper to write a tree (dict[str, np.ndarray]) into a directory
             def write_tree(out_dir, tname: str, arrays_np: dict):
-                branch_types = {k: v.dtype for k, v in arrays_np.items()}
+                clean = {}
+                for k, v in arrays_np.items():
+                    arr = np.asarray(v)
+                    
+                    if arr.dtype == np.dtype("O"):
+                        raise RuntimeError(f"Branch '{tname}:{k}' has object dtype — convert jagged arrays to fixed numpy arrays first.")
+                    
+                    if arr.ndim != 1:
+                        raise RuntimeError(f"Branch '{tname}:{k}' is not 1-D (ndim={arr.ndim}).")
+
+                    if np.issubdtype(arr.dtype, np.integer):
+                        # if values fit int32, cast; otherwise keep int64 but warn
+                        amin = arr.min() if arr.size else 0
+                        amax = arr.max() if arr.size else 0
+                        if amin < np.iinfo(np.int32).min or amax > np.iinfo(np.int32).max:
+                            # if you truly need int64, keep it (uproot supports int64), but warn
+                            print(f"[warn] Branch '{tname}:{k}' requires int64 range ({amin}..{amax}). Keeping int64.")
+                            clean[k] = arr.astype(np.int64)
+                        else:
+                            clean[k] = arr.astype(np.int32)
+                        continue
+
+                    # floats: downcast to float32 to reduce surprises (but keep float64 if you must)
+                    if np.issubdtype(arr.dtype, np.floating):
+                        # you can choose to keep float64; float32 is usually fine for weights etc.
+                        clean[k] = arr.astype(np.float32)
+                        continue
+
+                    # bool -> uint8
+                    if arr.dtype == np.bool_:
+                        clean[k] = arr.astype(np.uint8)
+                        continue
+
+                    # other numeric dtypes (like fixed-width) pass through
+                    clean[k] = arr  
+                    
+                branch_types = {k: v.dtype for k, v in clean.items()}
                 out_tree = out_dir.mktree(tname, branch_types)
-                out_tree.extend(arrays_np)
+                out_tree.extend(clean)
 
             # 2) Loop directories/trees and write
             for dkey in fin.keys():

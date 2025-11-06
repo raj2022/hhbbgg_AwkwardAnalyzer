@@ -49,7 +49,7 @@ python event_categorization/build_pdnn_categories.py \
   --sr-sigma 2.0 --cr-sidebands 4 10 \
   --nmin 50 --min-gain 0.005 --max-bins 2 \
   --alpha-bins 60 \
-  --outdir outputs/categories_alpha_3cats \
+  --outdir slides_fitting/CMSSW_14_1_0_pre4/src/outputs/categories_alpha_3cats \
   --write-categorized --sigmoid-score
 ```
 
@@ -58,28 +58,30 @@ python event_categorization/build_pdnn_categories.py \
 # Working on the fitting 
 
 - STEP 1 — Fit Signal mgg
+from `src` directory inside the CMSSW_14_1_0_pre4
 ```bash
-python3 Signal/fit_signal_mgg.py \
-  --root ../../../outputfiles/merged/DD_CombinedAll/hhbbgg_analyzer-v2-trees.root \
-  --edges 0.8002240580158556 0.8574103025311034 \
-  --cats 0 1 2 \
-  --mgg-min 115 --mgg-max 135 \
-  --outdir outputs/signal_fits \
-  --max-events 100000
+python3 Signal/fit_signal_shapes_for_slides.py \
+    --root ../../../outputfiles/merged/DD_CombinedAll/hhbbgg_analyzer-v2-trees.root \
+    --edges 0.6488002028418868 0.6622506022306672 \
+    --cats 0 1 2 \
+    --mgg-min 115 \
+    --mgg-max 135 \
+    --outdir outputs/signal_fits \
+    --only-signal X1000_Y125
 ```
 Produces: `outputs/signal_fits/signal_shape_params.json`
 
 
 - Step 2 - Fit Signal mjj (per mass point)
 ```bash
-python3 Signal/fit_signal_mjj_for_slides.py \
-  --root ../../../outputfiles/merged/DD_CombinedAll/hhbbgg_analyzer-v2-trees.root \
-  --edges-json outputs/categories/event_categories.json \     # Can use only the values too --edges 
-  --mjj-min 115 --mjj-max 135 \
-  --bins 120 --kmax 3 \
-  --outdir outputs/signal_fits_mjj_by_mass \
-  --max-events 100000 \
-  --only-signal NMSSM
+python Signal/fit_signal_mjj_for_slides.py \
+    --root ../../../outputfiles/merged/DD_CombinedAll/hhbbgg_analyzer-v2-trees.root \
+    --edges-json outputs/categories_alpha_3cats/event_categories.json \   # Can also use the edge number like above
+    --mjj-min 50 \
+    --mjj-max 180 \
+    --outdir outputs/signal_fits_mjj \
+    --only-signal X1000_Y125
+
   ```
 Produces:
 
@@ -257,6 +259,7 @@ PY
 ```
 
 - STEP 10 — Troubleshooting Summary
+------------------------------------------------------------------------------------------------------------
 | Issue                          | Likely Fix                                                            |
 | ------------------------------ | --------------------------------------------------------------------- |
 | `MISSING FILE` error           | Copy or regenerate the missing signal/background WS                   |
