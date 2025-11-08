@@ -73,13 +73,14 @@ Produces: `outputs/signal_fits/signal_shape_params.json`
 
 
 - Step 2 - Fit Signal mjj (per mass point)
+--- Can also use the edge number like above
 ```bash
-python Signal/fit_signal_mjj_for_slides.py \
-    --root ../../../outputfiles/merged/DD_CombinedAll/hhbbgg_analyzer-v2-trees.root \
-    --edges-json outputs/categories_alpha_3cats/event_categories.json \   # Can also use the edge number like above
-    --mjj-min 50 \
-    --mjj-max 180 \
-    --outdir outputs/signal_fits_mjj \
+python Signal/fit_signal_mjj_for_slides.py\
+    --root ../../../outputfiles/merged/DD_CombinedAll/hhbbgg_analyzer-v2-trees.root\
+    --edges-json outputs/categories_alpha_3cats/event_categories.json\   
+    --mjj-min 50\
+    --mjj-max 180\
+    --outdir outputs/signal_fits_mjj\
     --only-signal X1000_Y125
 
   ```
@@ -199,6 +200,9 @@ Produces:
 `datacard/comb_mass1000.root`
 
 - STEP 8 — Run Combine
+```bash
+combine -M AsymptoticLimits datacard/comb_mass1000.root -n _asymp
+```
 
 8a. Observed limit (no toys → less crash-prone)
 ```bash
@@ -259,7 +263,6 @@ PY
 ```
 
 - STEP 10 — Troubleshooting Summary
-------------------------------------------------------------------------------------------------------------
 | Issue                          | Likely Fix                                                            |
 | ------------------------------ | --------------------------------------------------------------------- |
 | `MISSING FILE` error           | Copy or regenerate the missing signal/background WS                   |
