@@ -277,3 +277,8 @@ PY
 | `Invalid literal in datacard`  | Check formatting — same number of columns in `bin`, `process`, `rate` |
 | `RooAbsPdf generate crash`     | Fix WS variable ranges or small sigma values                          |
 
+
+# Run the executable signal 
+```bash
+./run_signal_fit.sh X1000_Y90
+```
