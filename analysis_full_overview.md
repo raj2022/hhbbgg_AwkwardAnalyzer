@@ -281,4 +281,27 @@ PY
 # Run the executable signal 
 ```bash
 ./run_signal_fit.sh X1000_Y90
+
 ```
+
+
+
+
+
+
+# To plot the Brazil plot
+convert the `comb` to `higgsCombinecomb`
+```bash
+# create output folder for combine results
+mkdir -p datacard/combine_outputs
+
+# run combine for each workspace file and collect the outputs
+for ws in datacard/comb_mass1000_*.root; do
+  base=$(basename "$ws" .root)
+  echo "▶ Running combine on $base ..."
+  combine -M AsymptoticLimits "$ws" -n ${base} --run blind
+  mv higgsCombine${base}.AsymptoticLimits*.root datacard/combine_outputs/ 2>/dev/null || true
+done
+
+# now make the Brazil plot directly from those outputs
+python brazil_plot.py   --files     datacard/combine_outputs/higgsCombinecomb_mass1000_90.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_95.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_100.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_125.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_150.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_200.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_300.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_400.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_500.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_600.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_800.AsymptoticLimits.mH120.root   --masses 90 95 100 125 150 200 300 400 500 600 800   --output brazil_mass1000.png   --xlabel "m_{Y} [GeV]"   --ylabel "95% CL limit on #sigma #times BR [pb]"   --title "m_{X} = 1000 GeV"   --logy
