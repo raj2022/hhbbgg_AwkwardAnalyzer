@@ -206,11 +206,24 @@ Produces:
 `datacard/comb_mass1000.root`
 
 - STEP 8 — Run Combine
+
+8a. Observed limit without data obs, blinded:
+```bash
+# single workspace example (expected-only / blind)
+combine -M AsymptoticLimits datacard/1000/comb_mass1000_125.root --run blind -n comb_mass1000_125_blind
+```
+to generate Asimov toys so the Observed value in the output equals the Asimov expected (useful sometimes), you can run:
+```bash
+# this produces expected limits by using the Asimov dataset (seeded, use -t -1)
+combine -M AsymptoticLimits datacard/comb_mass1000_125.root -t -1 --expectSignal 0 -n comb_mass1000_125_asimov
+```
+
+8b. Observed limit with data(unbliniding)
 ```bash
 combine -M AsymptoticLimits datacard/comb_mass1000.root -n _asymp
 ```
 
-8a. Observed limit (no toys → less crash-prone)
+8c. Observed limit (no toys → less crash-prone)
 ```bash
 combine -M AsymptoticLimits datacard/comb_mass1000.root -m 1000 -n mass1000_obs --verbose 2
 ```
@@ -219,7 +232,7 @@ Output:
 `higgsCombine_mass1000_obs.AsymptoticLimits.mH1000.root`
 
 
-8b. Expected (Asimov, if stable)
+8d. Expected (Asimov, if stable)
 ```bash
 combine -M AsymptoticLimits datacard/comb_mass1000.root -m 1000 -n mass1000_exp -t -1 --expectSignal 0 --verbose 2
 ```
@@ -228,6 +241,7 @@ Output:
 
 If this segfaults → one of your PDFs can’t generate toys.
 → Fix by checking ranges or missing WS (see below).
+
 
 
 STEP 9 — Inspect Combine Results

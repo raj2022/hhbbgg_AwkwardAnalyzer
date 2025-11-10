@@ -11,3 +11,11 @@ git clone --branch HHbbgg_NanoAODv15 ssh://git@gitlab.cern.ch:7999/cms-analysis/
 - Fetch the xrootd links for the samples: `python higgs_dna/scripts/samples/fetch_dataset.py -i samples.txt -w Yolo`
 * `samples_2024.txt` contains dataset name and DAS name
 * This will produce a samples.json file specifying the dataset name and the xrootd link for the samples
+
+
+
+
+
+## References:
+1. Instructions: https://indico.cern.ch/event/1499924/contributions/6478750/attachments/3053886/5398744/For_Hgg_v3_production-2.pdf
+2. 
