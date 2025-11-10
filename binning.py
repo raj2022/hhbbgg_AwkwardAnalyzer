@@ -29,6 +29,8 @@ binning["preselection"] = {
     "sublead_bjet_phi": [10, -3.14, 3.14],
     "lead_bjet_PNetB": [10, 0, 1],
     "sublead_bjet_PNetB": [10, 0, 1],
+    "sublead_bjet_PNetRegPtRawRes":[10, 0, 1],
+    "lead_bjet_PNetRegPtRawRes":[10, 0, 1],
     "CosThetaStar_gg": [10, 0, 1],
     "CosThetaStar_CS": [10, 0, 1],
     "CosThetaStar_jj": [10, 0, 1],

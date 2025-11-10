@@ -33,6 +33,9 @@ vardict = {
     "sublead_bjet_phi": "sublead_bjet_phi",
     "sublead_bjet_PNetB": "sublead_bjet_PNetB",
     "lead_bjet_PNetB": "lead_bjet_PNetB",
+    # Particle net regressed mass
+    "lead_bjet_PNetRegPtRawRes": "lead_bjet_PNetRegPtRawRes",
+    "sublead_bjet_PNetRegPtRawRes": "sublead_bjet_PNetRegPtRawRes",
     # Collion soper frame variables (Helicity angles)
     "CosThetaStar_gg": "CosThetaStar_gg",
     "CosThetaStar_jj": "CosThetaStar_jj",
@@ -113,6 +116,8 @@ variables_common = {
         "sublead_bjet_phi",
         "sublead_bjet_PNetB",
         "lead_bjet_PNetB",
+        "sublead_bjet_PNetRegPtRawRes",
+        "lead_bjet_PNetRegPtRawRes",
         "CosThetaStar_gg",
         "CosThetaStar_jj",
         "CosThetaStar_CS",

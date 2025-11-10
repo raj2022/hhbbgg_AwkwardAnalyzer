@@ -1825,6 +1825,8 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
         "weight_central",
         "Res_lead_bjet_btagPNetB",
         "Res_sublead_bjet_btagPNetB",
+        "Res_lead_bjet_PNetRegPtRawRes",     # Adding particle net regressed varaible
+        "Res_sublead_bjet_PNetRegPtRawRes",   # Adding particle net regressed varaible
         "lead_isScEtaEB",
         "sublead_isScEtaEB",
         "Res_HHbbggCandidate_pt",
@@ -1943,6 +1945,8 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
                 "weight": tree_["weight"],
                 "lead_bjet_PNetB": tree_["Res_lead_bjet_btagPNetB"], 
                 "sublead_bjet_PNetB": tree_["Res_sublead_bjet_btagPNetB"],
+                "lead_bjet_PNetRegPtRawRes": tree_["Res_lead_bjet_PNetRegPtRawRes"],    # Adding particle net regressed varaible 
+                "sublead_bjet_PNetRegPtRawRes":tree_["Res_sublead_bjet_PNetRegPtRawRes"], # Adding particle net regressed varaible
                 "lead_isScEtaEB": tree_["lead_isScEtaEB"],
                 "sublead_isScEtaEB": tree_["sublead_isScEtaEB"],
                 "CosThetaStar_CS": tree_["Res_CosThetaStar_CS"], 
@@ -2055,7 +2059,7 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
             "lepton1_mvaID","lepton1_pt","lepton1_pfIsoId","n_jets",
             "weight_central",
             "dibjet_eta","dibjet_phi","diphoton_eta","diphoton_phi",
-            "lead_bjet_PNetB","sublead_bjet_PNetB",
+            "lead_bjet_PNetB","sublead_bjet_PNetB","lead_bjet_PNetRegPtRawRes","sublead_bjet_PNetRegPtRawRes",
             "pholead_PtOverM","phosublead_PtOverM","FirstJet_PtOverM","SecondJet_PtOverM",
             "CosThetaStar_CS","CosThetaStar_jj","CosThetaStar_gg","DeltaR_jg_min",
             "lead_pt_over_diphoton_mass","sublead_pt_over_diphoton_mass",
