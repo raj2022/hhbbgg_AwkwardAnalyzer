@@ -46,6 +46,16 @@ python /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/parquet_production_v3/
 
 
 centrally produced samples are saved at, `/eos/cms/store/group/phys_b2g/HHbbgg/HiggsDNA_parquet/v3`
+Other options for the saved files could be here,  `/eos/cms/store/group/phys_higgs/nonresonant_HH/bbgg`. 
+
+
+
+
+and then merge it
+```bash
+python3 higgs_dna/scripts/postprocessing/prepare_output_file.py --input ..
+/../../output_root/v3_production/backgrounds_2022_preEE/preEE/  --merge --root --ws --syst --cats --args "--do_syst"
+```
 
 <!-- 
 The error of `--nano-version 12` fixed by updating the HiggsDNA.

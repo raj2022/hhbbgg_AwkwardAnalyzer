@@ -790,8 +790,8 @@ def dir_to_base(name: str) -> str | None:
         "tthtogg": "ttHToGG",
         "vbfhtogg": "VBFHToGG",
         "vhtogg": "VHToGG",
-        # "gjetpt20to40": "GJetPt20To40",
-        # "gjetpt40": "GJetPt40",
+        "gjetpt20to40": "GJetPt20To40",
+        "gjetpt40": "GJetPt40",
         "gjetpt40toinf": "GJetPt40",
         "ttgg":"TTGG",
         "ttg":"TTG"
