@@ -55,8 +55,17 @@ mass_points = {
     1000: [90, 95, 100, 125, 150, 170, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 800],
 }
 
-suffix = "Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v6-v2/NANOAODSIM"
-template = "NMSSM_X{mx}_Y{my}  /NMSSM_XtoYHto2B2G_MX-{mx}_MY-{my}_TuneCP5_13p6TeV_madgraph-pythia8/{suffix}"
+# suffix = "Run3Summer23BPixNanoAODv12-130X_mcRun3_2023_realistic_postBPix_v6-v2/NANOAODSIM"
+# template = "NMSSM_X{mx}_Y{my}  /NMSSM_XtoYHto2B2G_MX-{mx}_MY-{my}_TuneCP5_13p6TeV_madgraph-pythia8/{suffix}"
+
+# suffix = "RunIII2024Summer24MiniAODv6-150X_mcRun3_2024_realistic_v2-v2/MINIAODSIM"
+# template = "NMSSM_X{mx}_Y{my} /NMSSM-XtoYH-Yto2B-Hto2G_Par-MX-{mx}-MY-{my}_TuneCP5_13p6TeV_madgraph-pythia8/{suffix}"
+
+# preBPix
+suffix = "Run3Summer23NanoAODv12-130X_mcRun3_2023_realistic_v15-v2/NANOAODSIM"
+# template = "NMSSM_X{mx}_Y{my}  /NMSSM_XtoYHto2B2G_MX-{mx}-MY-{my}_TuneCP5_13p6TeV_madgraph-pythia8/{suffix}"
+template = "NMSSM_X{mx}_Y{my} /NMSSM_XtoYHto2B2G_MX-{mx}_MY-{my}_TuneCP5_13p6TeV_madgraph-pythia8/{suffix}"
+
 
 for mx in sorted(mass_points.keys()):
     for my in mass_points[mx]:
