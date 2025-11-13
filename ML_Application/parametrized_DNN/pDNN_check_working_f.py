@@ -112,7 +112,7 @@ y_values    = [90, 95, 100, 125, 150, 200, 300, 400, 500, 600, 800]
 # Inputs
 # -----------------------------
 # SIGNAL parquet pattern (per mass,y set)
-SIG_TPL = "../../../output_parquet/final_production_Syst/merged/NMSSM_X{m}_Y{y}/nominal/NOTAG_merged.parquet"
+SIG_TPL = "../../../output_parquet/v3_production/production_v3/2022_postEE_102425/merged/NMSSM_X{m}_Y{y}/NOTAG_merged.parquet"
 
 # BACKGROUND is parquet
 background_files = [
@@ -1514,3 +1514,125 @@ with open(json_path, "w") as f:
 
 print(f"[Saved] {csv_path}")
 print(f"[Saved] {json_path}")
+
+
+
+
+
+# -----------------------------
+# Extra: Signal eff vs Background eff (ROC) — overall + per-(mass,y)
+# -----------------------------
+from sklearn.metrics import roc_curve, auc
+
+def plot_eff_vs_eff(
+    scores, labels, weights=None, df_groups=None,
+    title_prefix="ROC — Test", out_prefix="ROC_eff_vs_eff",
+    cms_color_main=CMS_BLUE, cms_color_bg=CMS_GRAY,
+    save_dir=OUTDIR, overlay_per_group=True, max_legend=10
+):
+    """
+    scores: 1-D array of model probabilities (float)
+    labels: 1-D array of 0/1 labels
+    weights: optional 1-D array of event weights (same length) or None
+    df_groups: optional DataFrame with columns ['mass','y_value'] aligned with scores/labels.
+               If provided and overlay_per_group True, per-(mass,y) ROCs will be drawn.
+    """
+
+    # overall ROC (both weighted & unweighted)
+    # unweighted
+    fpr_unw, tpr_unw, thr_unw = roc_curve(labels, scores)
+    auc_unw = auc(fpr_unw, tpr_unw)
+
+    # weighted (if weights present)
+    if weights is not None:
+        try:
+            fpr_w, tpr_w, thr_w = roc_curve(labels, scores, sample_weight=weights)
+            auc_w = auc(fpr_w, tpr_w)
+            have_weighted = True
+        except Exception as e:
+            print("[WARN] weighted ROC failed:", e)
+            fpr_w, tpr_w, auc_w = None, None, None
+            have_weighted = False
+    else:
+        fpr_w, tpr_w, auc_w = None, None, None
+        have_weighted = False
+
+    # Start figure
+    plt.figure(figsize=(7.2,5.0), dpi=110)
+    # plot main (choose weighted curve if available as primary)
+    if have_weighted:
+        plt.plot(fpr_w, tpr_w, label=f"All (weighted) AUC={auc_w:.3f}", color=cms_color_main, lw=2.6)
+        plt.plot(fpr_unw, tpr_unw, linestyle='--', label=f"All (unweighted) AUC={auc_unw:.3f}", color=cms_color_main, alpha=0.6, lw=1.6)
+    else:
+        plt.plot(fpr_unw, tpr_unw, label=f"All AUC={auc_unw:.3f}", color=cms_color_main, lw=2.6)
+
+    # diagonal
+    plt.plot([0,1],[0,1], linestyle='--', color=cms_color_bg, lw=1)
+
+    # per-(mass,y) overlay
+    legend_handles = []
+    if overlay_per_group and (df_groups is not None):
+        # compact group key
+        group_key = (df_groups['mass'].astype(int).astype(str) + "_" + df_groups['y_value'].astype(int).astype(str)).values
+        uniq = np.unique(group_key)
+        for g in uniq:
+            idx = (group_key == g)
+            if np.unique(labels[idx]).size < 2:
+                continue
+            try:
+                if weights is not None:
+                    fpr_g, tpr_g, _ = roc_curve(labels[idx], scores[idx], sample_weight=weights[idx])
+                else:
+                    fpr_g, tpr_g, _ = roc_curve(labels[idx], scores[idx])
+            except Exception:
+                continue
+            auc_g = auc(fpr_g, tpr_g)
+            h, = plt.plot(fpr_g, tpr_g, alpha=0.30, lw=1.2, label=f"{g} (AUC {auc_g:.3f})")
+            legend_handles.append((auc_g, h))
+
+        # keep only top-N groups in legend to avoid clutter
+        legend_handles.sort(key=lambda t: t[0], reverse=True)
+        handles_to_show = [h for _, h in legend_handles[:max_legend]]
+        labels_to_show = [h.get_label() for h in handles_to_show]
+        if handles_to_show:
+            leg1 = plt.legend(handles_to_show, labels_to_show, title="Top groups", loc="lower right", frameon=True, fontsize=8)
+            plt.gca().add_artist(leg1)
+
+    plt.xlabel("Background efficiency (FPR)")
+    plt.ylabel("Signal efficiency (TPR)")
+    plt.title(f"{title_prefix} — eff(S) vs eff(B)")
+    plt.grid(True, alpha=0.25)
+    # overall legend
+    plt.legend(loc="lower left", fontsize=9)
+    plt.tight_layout()
+
+    # save both versions (weighted/unweighted filenames)
+    base = os.path.join(save_dir, out_prefix)
+    png = base + ".png"
+    pdf = base + ".pdf"
+    plt.savefig(png, dpi=600)
+    plt.savefig(pdf)
+    print(f"[Saved] {png}\n[Saved] {pdf}")
+    plt.show()
+
+# -----------------------------
+# Call the function for TEST split
+# -----------------------------
+# Ensure OUTDIR exists (OUTDIR used elsewhere in your script; if not, adjust)
+os.makedirs(OUTDIR, exist_ok=True)
+
+# scores = test_probs (already computed)
+# labels = y_te
+# weights = w_te (may be None)
+# df_groups = df_te (the DataFrame holding mass,y for test)
+
+plot_eff_vs_eff(
+    scores=test_probs,
+    labels=y_te,
+    weights=w_te if (w_te is not None and len(w_te)==len(y_te)) else None,
+    df_groups=df_te,
+    title_prefix="ROC — Test (group-disjoint)",
+    out_prefix="ROC_eff_vs_eff_test",
+    overlay_per_group=True,
+    max_legend=10
+)

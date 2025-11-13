@@ -199,7 +199,7 @@ lumi lnN 1.025 1.025 1.025 1.025 1.025 1.025 1.025 1.025 1.025
 
 - STEP 7 — Convert Datacard → Workspace
 ```bash
-text2workspace.py datacard/comb_mass1000.txt -o datacard/comb_mass1000.root
+text2workspace.py datacard/1000/comb_mass1000.txt -o datacard/1000/comb_mass1000.root
 ```
 
 Produces:
