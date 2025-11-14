@@ -310,19 +310,39 @@ convert the `comb` to `higgsCombinecomb`
 mkdir -p datacard/combine_outputs
 
 # run combine for each workspace file and collect the outputs
-for ws in datacard/comb_mass1000_*.root; do
+for ws in datacard/1000/comb_mass1000_*.root; do
   base=$(basename "$ws" .root)
   echo "▶ Running combine on $base ..."
   combine -M AsymptoticLimits "$ws" -n ${base} --run blind
-  mv higgsCombine${base}.AsymptoticLimits*.root datacard/combine_outputs/ 2>/dev/null || true
+  mv higgsCombine${base}.AsymptoticLimits*.root datacard/1000/combine_outputs/ 2>/dev/null || true
 done
 
-# now make the Brazil plot directly from those outputs
-python brazil_plot.py   --files     datacard/combine_outputs/higgsCombinecomb_mass1000_90.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_95.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_100.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_125.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_150.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_200.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_300.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_400.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_500.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_600.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_800.AsymptoticLimits.mH120.root   --masses 90 95 100 125 150 200 300 400 500 600 800   --output brazil_mass1000.png   --xlabel "m_{Y} [GeV]"   --ylabel "95% CL limit on #sigma #times BR [pb]"   --title "m_{X} = 1000 GeV"   --logyo
-
+# now make the Brazil plot directly from those outputs(for unblind plots)
+python brazil_plot.py   --files     datacard/combine_outputs/higgsCombinecomb_mass1000_90.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_95.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_100.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_125.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_150.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_200.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_300.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_400.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_500.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_600.AsymptoticLimits.mH120.root     datacard/combine_outputs/higgsCombinecomb_mass1000_800.AsymptoticLimits.mH120.root   --masses 90 95 100 125 150 200 300 400 500 600 800   --output brazil_mass1000.png   --xlabel "m_{Y} [GeV]"   --ylabel "95% CL limit on #sigma #times BR [pb]"   --title "m_{X} = 1000 GeV"   --logy
 
 ```
-
+- To plot for the blind plots
+```bash
+python brazil_plot.py \
+  --files \
+datacard/1000/higgsCombinecomb_mass1000_90_blind.AsymptoticLimits.mH120.root \
+datacard/1000/higgsCombinecomb_mass1000_95_blind.AsymptoticLimits.mH120.root \
+datacard/1000/higgsCombinecomb_mass1000_100_blind.AsymptoticLimits.mH120.root \
+datacard/1000/higgsCombinecomb_mass1000_125_blind.AsymptoticLimits.mH120.root \
+datacard/1000/higgsCombinecomb_mass1000_150_blind.AsymptoticLimits.mH120.root \
+datacard/1000/higgsCombinecomb_mass1000_200_blind.AsymptoticLimits.mH120.root \
+datacard/1000/higgsCombinecomb_mass1000_300_blind.AsymptoticLimits.mH120.root \
+datacard/1000/higgsCombinecomb_mass1000_400_blind.AsymptoticLimits.mH120.root \
+datacard/1000/higgsCombinecomb_mass1000_500_blind.AsymptoticLimits.mH120.root \
+datacard/1000/higgsCombinecomb_mass1000_600_blind.AsymptoticLimits.mH120.root \
+datacard/1000/higgsCombinecomb_mass1000_800_blind.AsymptoticLimits.mH120.root \
+  --masses 90 95 100 125 150 200 300 400 500 600 800 \
+  --output brazil_mass1000.png \
+  --xlabel "m_{Y} [GeV]" \
+  --ylabel "95% CL limit on #sigma #times BR [pb]" \
+  --title "m_{X} = 1000 GeV" \
+  --logy
+```
 
 # When changed a MX
 - Change the datacard.

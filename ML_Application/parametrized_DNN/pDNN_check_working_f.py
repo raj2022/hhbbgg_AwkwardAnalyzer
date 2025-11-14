@@ -86,7 +86,7 @@ USE_BATCHNORM       = False  # BN off for stability
 BATCH_SIZE_TRAIN    = 128
 LR                  = 1e-3
 WEIGHT_CLIP         = 10.0
-PATIENCE            = 500
+PATIENCE            = 5
 MAX_EPOCHS          = 500   # Changing the training from 100 epochs to 500 
 WEIGHT_DECAY        = 1e-4
 SAVE_MODEL_PATH     = "best_pdnn.pt"
@@ -112,7 +112,8 @@ y_values    = [90, 95, 100, 125, 150, 200, 300, 400, 500, 600, 800]
 # Inputs
 # -----------------------------
 # SIGNAL parquet pattern (per mass,y set)
-SIG_TPL = "../../../output_parquet/v3_production/production_v3/2022_postEE_102425/merged/NMSSM_X{m}_Y{y}/NOTAG_merged.parquet"
+# SIG_TPL = "../../../output_parquet/v3_production/production_v3/2022_postEE_102425/merged/NMSSM_X{m}_Y{y}/NOTAG_merged.parquet"
+SIG_TPL = "../../../output_parquet/final_production_Syst/merged/NMSSM_X{m}_Y{y}/nominal/NOTAG_merged.parquet"
 
 # BACKGROUND is parquet
 background_files = [
