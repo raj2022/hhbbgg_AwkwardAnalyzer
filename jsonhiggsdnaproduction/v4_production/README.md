@@ -15,6 +15,12 @@ git clone --branch HHbbgg_NanoAODv15 ssh://git@gitlab.cern.ch:7999/cms-analysis/
 
 
 
+```bash
+mamba activate higgs-dna
+voms-proxy-init --rfc --voms cms -valid 192:00
+python /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/2024_parquet_production/tag15/HiggsDNA/higgs_dna/scripts/run_analysis.py --json-analysis My_Json_400.json --dump /afs/cern.ch/user/s/sraj/private/output/  --fiducialCuts store_flag --Smear-sigma-m --applyCQR  --nano-version 12 --executor vanilla_lxplus --queue espresso
+```
+
 
 
 
