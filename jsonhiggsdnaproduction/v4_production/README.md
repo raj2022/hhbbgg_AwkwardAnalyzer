@@ -22,7 +22,9 @@ python /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/2024_parquet_productio
 ```
 
 
-
+## File storage
+* Backgrounds and data: `/eos/cms/store/group/phys_b2g/HHbbgg/HiggsDNA_parquet/v4/Run3_2024`
+* Signal: `/eos/user/b/bsahu/HiggsDNA_v4PrelimProd/2024/merged/`
 
 
 ## References:

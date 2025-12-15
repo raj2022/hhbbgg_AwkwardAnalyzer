@@ -218,7 +218,10 @@ FEATURES_CORE = FEATURES_CORE + [
                                 "ptHH_over_mHH",
                                 #  "DeltaR_gg"
                                  ]
-FEATURES_FINAL = FEATURES_CORE + ["mass", "y_value"]
+FEATURES_FINAL = FEATURES_CORE 
+                    # +
+                    # ["mass",
+                    #  "y_value"]
 
 # -----------------------------
 # Helpers
