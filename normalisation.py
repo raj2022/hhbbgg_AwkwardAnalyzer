@@ -71,7 +71,7 @@ BR_HTobb = 5.824e-01
 # ---------------------------------------------------------------------
 XSEC_PATTERNS = [
     # NMSSM / signals
-    ("nmssm_x",               1.0),
+    ("nmssm",               1.0), # changes with respect to the 2024 signal samples
     ("gluglutohh",            1.0),
 
     # Prompt photon backgrounds (from your file list)
