@@ -135,6 +135,19 @@ LUMI_2023 = {
     "D": 9.451,    # postBPix
 }
 
+# ---------------------------------------------------------------------
+# For 2024
+LUMI_2024 = {
+    "C": 7.24,
+    "D": 7.96,
+    "E": 11.32,
+    "F": 27.76,
+    "G": 37.77,
+    "H": 5.44,
+    "I": 11.47,
+}
+    
+
 def getLumi(year=None, era=None) -> float:
     """
     Return luminosity in fb^-1 for the given year/era.
@@ -161,5 +174,11 @@ def getLumi(year=None, era=None) -> float:
             return LUMI_2023["D"]
         return sum(LUMI_2023.values())
 
+    if y == "2024":
+        if e is not None:
+            e_upper = e.upper()
+            if e_upper in LUMI_2024:
+                return LUMI_2024[e_upper]
+        return sum(LUMI_2024.values())
     # Fallback if unknown
     return 1.0
