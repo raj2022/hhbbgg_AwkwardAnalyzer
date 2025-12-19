@@ -227,3 +227,8 @@ python hhbbgg_analyzer_lxplus_par.py \
  - further include it the Plotter, `hhbbgg_Plotter.py`
  
 
+## 2024
+- To run only the 2024 signal samples
+```bash
+python hhbbgg_analyzer_lxplus_par.py --year 2024 -i /eos/user/b/bsahu/HiggsDNA_v4PrelimProd/2024/merged/NMSSM-XtoYH-MX-300-MY-100/NOTAG_merged.parquet
+``` 
