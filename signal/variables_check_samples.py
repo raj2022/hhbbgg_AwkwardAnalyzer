@@ -103,11 +103,11 @@ def main():
         print("None")
 
     # Optional: write to files
-    with open("available_vars.txt", "w") as f:
+    with open("signal/available_vars.txt", "w") as f:
         f.write("\n".join(available))
-    with open("missing_vars.txt", "w") as f:
+    with open("signal/missing_vars.txt", "w") as f:
         f.write("\n".join(missing))
-    with open("extra_vars.txt", "w") as f:
+    with open("signal/extra_vars.txt", "w") as f:
         f.write("\n".join(extra))
 
     print("\n📁 Written:")

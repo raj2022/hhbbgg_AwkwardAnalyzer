@@ -15,6 +15,11 @@ datasets:
       raw_path: "/afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postBPix"
       schema: "schema_v2"
 
+  "2024":
+    All:
+      raw_path: "/eos/user/b/bsahu/HiggsDNA_v4PrelimProd/2024/merged"
+      schema: "schema_v2"
+
 defaults:
   processed_root: "data/processed"
   outputs_root: "outputfiles"

@@ -55,18 +55,18 @@ vardict = {
     "diphoton_bbgg_mass": "diphoton_bbgg_mass",
     "dibjet_bbgg_mass": "dibjet_bbgg_mass",
     # puppi 
-    "puppiMET_pt": "puppiMET_pt",
-    "puppiMET_phi": "puppiMET_phi",
-    "puppiMET_phiJERDown": "puppiMET_phiJERDown",
-    "puppiMET_phiJERUp": "puppiMET_phiJERUp",
-    "puppiMET_phiJESDown": "puppiMET_phiJESDown",
-    "puppiMET_phiJESUp": "puppiMET_phiJESUp",
-    "puppiMET_phiUnclusteredDown": "puppiMET_phiUnclusteredDown",
-    "puppiMET_phiUnclusteredUp": "puppiMET_phiUnclusteredUp",
-    "puppiMET_ptJERDown":"puppiMET_ptJERDown",
-    "puppiMET_ptJERUp":"puppiMET_ptJERUp",
-    "puppiMET_ptJESDown":"puppiMET_ptJESDown",
-    "puppiMET_ptJESUp":"puppiMET_ptJESUp",
+    # "puppiMET_pt": "puppiMET_pt",
+    # "puppiMET_phi": "puppiMET_phi",
+    # "puppiMET_phiJERDown": "puppiMET_phiJERDown",
+    # "puppiMET_phiJERUp": "puppiMET_phiJERUp",
+    # "puppiMET_phiJESDown": "puppiMET_phiJESDown",
+    # "puppiMET_phiJESUp": "puppiMET_phiJESUp",
+    # "puppiMET_phiUnclusteredDown": "puppiMET_phiUnclusteredDown",
+    # "puppiMET_phiUnclusteredUp": "puppiMET_phiUnclusteredUp",
+    # "puppiMET_ptJERDown":"puppiMET_ptJERDown",
+    # "puppiMET_ptJERUp":"puppiMET_ptJERUp",
+    # "puppiMET_ptJESDown":"puppiMET_ptJESDown",
+    # "puppiMET_ptJESUp":"puppiMET_ptJESUp",
     # WP
     "lead_pho_mvaID_WP90":"lead_pho_mvaID_WP90",
     "lead_pho_mvaID_WP80":"lead_pho_mvaID_WP80",
@@ -85,7 +85,7 @@ vardict = {
     "lepton1_pt":"lepton1_pt",
     "lepton1_pfIsoId":"lepton1_pfIsoId",
     "n_jets":"n_jets",  
-    "pDNN_score":"pDNN_score",
+    # "pDNN_score":"pDNN_score",
 }
 
 variables_common = {
@@ -139,18 +139,18 @@ variables_common = {
         "lead_pho_mvaID",
         "sublead_pho_mvaID",
         "max_gamma_MVA_ID",
-        "puppiMET_pt", 
-        "puppiMET_phi", 
-        "puppiMET_phiJERDown",
-        "puppiMET_phiJERUp",
-        "puppiMET_phiJESDown", 
-        "puppiMET_phiJESUp", 
-        "puppiMET_phiUnclusteredDown", 
-        "puppiMET_phiUnclusteredUp",
-        "puppiMET_ptJERDown", 
-        "puppiMET_ptJERUp", 
-        "puppiMET_ptJESDown", 
-        "puppiMET_ptJESUp",
+        # "puppiMET_pt", 
+        # "puppiMET_phi", 
+        # "puppiMET_phiJERDown",
+        # "puppiMET_phiJERUp",
+        # "puppiMET_phiJESDown", 
+        # "puppiMET_phiJESUp", 
+        # "puppiMET_phiUnclusteredDown", 
+        # "puppiMET_phiUnclusteredUp",
+        # "puppiMET_ptJERDown", 
+        # "puppiMET_ptJERUp", 
+        # "puppiMET_ptJESDown", 
+        # "puppiMET_ptJESUp",
         "DeltaPhi_j1MET",
         "DeltaPhi_j2MET",
         "Res_chi_t0",
@@ -159,7 +159,7 @@ variables_common = {
         "lepton1_pt",
         "lepton1_pfIsoId",
         "n_jets",
-        "pDNN_score"
+        # "pDNN_score"
     ]
 }
 
@@ -167,5 +167,18 @@ for ireg in regions:
     print(ireg)
     variables_common[ireg] = copy.deepcopy(variables_common["preselection"])
 
-srbbggMET = ["puppiMET_pt", "puppiMET_phi", "puppiMET_phiJERDown", "puppiMET_phiJERUp","puppiMET_phiJESDown", "puppiMET_phiJESUp", "puppiMET_phiUnclusteredDown", "puppiMET_phiUnclusteredUp", "puppiMET_ptJERDown", "puppiMET_ptJERUp", "puppiMET_ptJESDown", "puppiMET_ptJESUp"]
+srbbggMET = [
+    # "puppiMET_pt", 
+    # "puppiMET_phi", 
+    # "puppiMET_phiJERDown",
+    # "puppiMET_phiJERUp",
+    # "puppiMET_phiJESDown",
+    # "puppiMET_phiJESUp", 
+    # "puppiMET_phiUnclusteredDown", 
+    # "puppiMET_phiUnclusteredUp", 
+    # "puppiMET_ptJERDown", 
+    # "puppiMET_ptJERUp", 
+    # "puppiMET_ptJESDown", 
+    # "puppiMET_ptJESUp"
+    ]
 variables_common["srbbggMET"] = variables_common["srbbggMET"] + srbbggMET

@@ -1661,17 +1661,48 @@ def make_th1_pyroot(values, weights, name, title, binning):
     return h
 
 
+# def detect_year_era_from_name(path: str):
+#     name = os.path.basename(path).lower()
+#     year = "2022" if "2022" in name else ("2023" if "2023" in name else None)
+#     era = None
+#     if year == "2022":
+#         if "preee" in name:  era = "PreEE"
+#         if "postee" in name: era = "PostEE"
+#     elif year == "2023":
+#         if "prebpix" in name:  era = "preBPix"
+#         if "postbpix" in name: era = "postBPix"
+#     elif year == "2024":
+        
+#     return year, era
+
 def detect_year_era_from_name(path: str):
     name = os.path.basename(path).lower()
-    year = "2022" if "2022" in name else ("2023" if "2023" in name else None)
+
+    if "2022" in name:
+        year = "2022"
+    elif "2023" in name:
+        year = "2023"
+    elif "2024" in name:
+        year = "2024"
+    else:
+        year = None
+
     era = None
     if year == "2022":
-        if "preee" in name:  era = "PreEE"
-        if "postee" in name: era = "PostEE"
+        if "preee" in name:
+            era = "PreEE"
+        elif "postee" in name:
+            era = "PostEE"
     elif year == "2023":
-        if "prebpix" in name:  era = "preBPix"
-        if "postbpix" in name: era = "postBPix"
+        if "prebpix" in name:
+            era = "preBPix"
+        elif "postbpix" in name:
+            era = "postBPix"
+    # 2024 → no era
+
     return year, era
+
+
 
 
 def ensure_dir_in_tfile(tfile, path):
@@ -1687,7 +1718,7 @@ def normalize_sample_name(name: str) -> str:
     base = os.path.basename(name)
     base = re.sub(r"\.(parquet|root)$", "", base, flags=re.IGNORECASE)
     base = re.sub(r"(_part\d+|_chunk\d+|_\d+of\d+)$", "", base, flags=re.IGNORECASE)
-    base = re.sub(r"[_-]?(2022|2023)(PreEE|PostEE|All|preBPix|postBPix)?", "", base, flags=re.IGNORECASE)
+    base = re.sub(r"[_-]?(2022|2023|2024)(PreEE|PostEE|All|preBPix|postBPix)?", "", base, flags=re.IGNORECASE)
     return base
 
 def ak_to_numpy_dict(arr: ak.Array) -> dict:
@@ -1788,21 +1819,21 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
         "lumi",
         "event",
         # puppi variable
-        "puppiMET_pt",
-        "puppiMET_phi",
-        "puppiMET_phiJERDown",
-        "puppiMET_phiJERUp",
-        "puppiMET_phiJESDown",
-        "puppiMET_phiJESUp",
-        "puppiMET_phiUnclusteredDown",
-        "puppiMET_phiUnclusteredUp",
-        "puppiMET_ptJERDown",
-        "puppiMET_ptJERUp",
-        "puppiMET_ptJESDown",
-        "puppiMET_ptJESUp",
-        "puppiMET_ptUnclusteredDown",
-        "puppiMET_ptUnclusteredUp",
-        "puppiMET_sumEt",
+        # "puppiMET_pt",
+        # "puppiMET_phi",
+        # "puppiMET_phiJERDown",
+        # "puppiMET_phiJERUp",
+        # "puppiMET_phiJESDown",
+        # "puppiMET_phiJESUp",
+        # "puppiMET_phiUnclusteredDown",
+        # "puppiMET_phiUnclusteredUp",
+        # "puppiMET_ptJERDown",
+        # "puppiMET_ptJERUp",
+        # "puppiMET_ptJESDown",
+        # "puppiMET_ptJESUp",
+        # "puppiMET_ptUnclusteredDown",
+        # "puppiMET_ptUnclusteredUp",
+        # "puppiMET_sumEt",
         "Res_lead_bjet_pt",
         "Res_lead_bjet_eta",
         "Res_lead_bjet_phi",
@@ -1857,7 +1888,7 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
         "lepton1_pfIsoId",
         "n_jets",
         #pDNN Score
-        "pDNN_score",
+        # "pDNN_score",
     ]
 
     parquet_file = pq.ParquetFile(inputfile)
@@ -1871,8 +1902,10 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
     isdd   = is_dd_template(base)
 
     det_year, det_era = detect_year_era_from_name(inputfile)
-    use_year = det_year or str(cli_year)
-    use_era  = det_era  or str(cli_era)
+    # use_year = det_year or str(cli_year)
+    # use_era  = det_era  or str(cli_era)
+    use_year = det_year if det_year is not None else str(cli_year)
+    use_era  = det_era  if det_era is not None else cli_era
 
     if xsec_lumi_cache is None:
         xsec_lumi_cache = {}
@@ -1908,21 +1941,21 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
                 "run": tree_["run"], 
                 "lumi": tree_["lumi"],
                 "event": tree_["event"],
-                "puppiMET_pt": tree_["puppiMET_pt"],
-                "puppiMET_phi": tree_["puppiMET_phi"],
-                "puppiMET_phiJERDown": tree_["puppiMET_phiJERDown"], 
-                "puppiMET_phiJERUp": tree_["puppiMET_phiJERUp"],
-                "puppiMET_phiJESDown": tree_["puppiMET_phiJESDown"], 
-                "puppiMET_phiJESUp": tree_["puppiMET_phiJESUp"],
-                "puppiMET_phiUnclusteredDown": tree_["puppiMET_phiUnclusteredDown"],
-                "puppiMET_phiUnclusteredUp": tree_["puppiMET_phiUnclusteredUp"],
-                "puppiMET_ptJERDown": tree_["puppiMET_ptJERDown"],
-                "puppiMET_ptJERUp": tree_["puppiMET_ptJERUp"],
-                "puppiMET_ptJESDown": tree_["puppiMET_ptJESDown"],
-                "puppiMET_ptJESUp": tree_["puppiMET_ptJESUp"],
-                "puppiMET_ptUnclusteredDown": tree_["puppiMET_ptUnclusteredDown"],
-                "puppiMET_ptUnclusteredUp": tree_["puppiMET_ptUnclusteredUp"],
-                "puppiMET_sumEt": tree_["puppiMET_sumEt"],
+                # "puppiMET_pt": tree_["puppiMET_pt"],
+                # "puppiMET_phi": tree_["puppiMET_phi"],
+                # "puppiMET_phiJERDown": tree_["puppiMET_phiJERDown"], 
+                # "puppiMET_phiJERUp": tree_["puppiMET_phiJERUp"],
+                # "puppiMET_phiJESDown": tree_["puppiMET_phiJESDown"], 
+                # "puppiMET_phiJESUp": tree_["puppiMET_phiJESUp"],
+                # "puppiMET_phiUnclusteredDown": tree_["puppiMET_phiUnclusteredDown"],
+                # "puppiMET_phiUnclusteredUp": tree_["puppiMET_phiUnclusteredUp"],
+                # "puppiMET_ptJERDown": tree_["puppiMET_ptJERDown"],
+                # "puppiMET_ptJERUp": tree_["puppiMET_ptJERUp"],
+                # "puppiMET_ptJESDown": tree_["puppiMET_ptJESDown"],
+                # "puppiMET_ptJESUp": tree_["puppiMET_ptJESUp"],
+                # "puppiMET_ptUnclusteredDown": tree_["puppiMET_ptUnclusteredDown"],
+                # "puppiMET_ptUnclusteredUp": tree_["puppiMET_ptUnclusteredUp"],
+                # "puppiMET_sumEt": tree_["puppiMET_sumEt"],
                 "lead_bjet_pt": tree_["Res_lead_bjet_pt"],
                 "lead_bjet_eta": tree_["Res_lead_bjet_eta"],
                 "lead_bjet_phi": tree_["Res_lead_bjet_phi"], 
@@ -1976,7 +2009,7 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
                 "lepton1_pt": tree_["lepton1_pt"],
                 "lepton1_pfIsoId": tree_["lepton1_pfIsoId"], 
                 "n_jets": tree_["n_jets"],
-                "pDNN_score":tree_["pDNN_score"],
+                # "pDNN_score":tree_["pDNN_score"],
             },
             depth_limit=1,
         )
@@ -2046,10 +2079,10 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
 
         # build out_events record with all needed fields
         keys_to_copy = [
-            "puppiMET_pt","puppiMET_phi","puppiMET_phiJERDown","puppiMET_phiJERUp",
-            "puppiMET_phiJESDown","puppiMET_phiJESUp","puppiMET_phiUnclusteredDown","puppiMET_phiUnclusteredUp",
-            "puppiMET_ptJERDown","puppiMET_ptJERUp","puppiMET_ptJESDown","puppiMET_ptJESUp",
-            "puppiMET_ptUnclusteredDown","puppiMET_ptUnclusteredUp","puppiMET_sumEt",
+            # "puppiMET_pt","puppiMET_phi","puppiMET_phiJERDown","puppiMET_phiJERUp",
+            # "puppiMET_phiJESDown","puppiMET_phiJESUp","puppiMET_phiUnclusteredDown","puppiMET_phiUnclusteredUp",
+            # "puppiMET_ptJERDown","puppiMET_ptJERUp","puppiMET_ptJESDown","puppiMET_ptJESUp",
+            # "puppiMET_ptUnclusteredDown","puppiMET_ptUnclusteredUp","puppiMET_sumEt",
             "lead_pho_pt","lead_pho_eta","lead_pho_phi",
             "sublead_pho_pt","sublead_pho_eta","sublead_pho_phi",
             "lead_bjet_pt","lead_bjet_eta","lead_bjet_phi",
@@ -2071,7 +2104,7 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
             "idmva_sideband","idmva_presel",
             "DeltaR_j1g1","DeltaR_j2g1","DeltaR_j1g2","DeltaR_j2g2",
             "signal","isdata","isdd",
-            "pDNN_score",
+            # "pDNN_score",
         ]
         out_events = ak.zip(
             {k: cms_events[k] for k in keys_to_copy} |
@@ -2158,10 +2191,14 @@ def main():
     ap.add_argument("-i","--inFile", action="append",
                     help="Single parquet file or a directory. Can be given multiple times to merge across folders/eras.")
     ap.add_argument("--year", required=True, help="e.g. 2022 or 2023")
-    ap.add_argument("--era",  required=True, help="e.g. PreEE, PostEE, All")
+    ap.add_argument("--era", default="All", help="Era (ignored for 2024)")
     ap.add_argument("--tag", default=None, help="If multiple -i are given, outputs go to outputfiles/merged/<tag>")
     args = ap.parse_args()
 
+    era = args.era 
+    if args.year == "2024":
+        era = "All"
+        
     cfg = RunConfig(args.year, args.era)
 
     # discover inputs
@@ -2188,7 +2225,7 @@ def main():
             else:
                 print(f"[WARN] Non-parquet file skipped: {path}")
         else:
-            inputfiles.extend([str(p) for p in sorted(path.glob("*.parquet"))])
+            inputfiles.extend([str(p) for p in sorted(path.rglob("*.parquet"))])  # Add all parquet files recursively--change to rglob for recursive search
 
     if not inputfiles:
         raise FileNotFoundError(f"No .parquet files found in: {', '.join(str(p) for p in in_paths)}")
