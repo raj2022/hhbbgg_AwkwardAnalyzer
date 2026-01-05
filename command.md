@@ -139,7 +139,13 @@ echo $CMSSW_BASE
      ```
 
 
+# Eos sapce (lxplus)
 
+```bash
+ssh yourCERNusername@lxplus.cern.ch
+export EOS_MGM_URL=root://eosuser.cern.ch
+eos quota
+```
 
 
 
