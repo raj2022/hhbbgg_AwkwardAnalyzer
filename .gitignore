@@ -31,7 +31,7 @@ outputs/*
 
 
 # removing the CMSSW
-slides_fitting/CMSSW_*# ROOT files
+slides_fitting/CMSSW_* # ROOT files
 *.root
 
 # Analysis outputs
