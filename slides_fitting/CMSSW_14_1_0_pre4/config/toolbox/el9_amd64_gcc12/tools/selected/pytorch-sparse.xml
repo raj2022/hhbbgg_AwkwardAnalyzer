@@ -1,0 +1,10 @@
+<tool name="pytorch-sparse" version="0.6.18-b31d071602817a93e8e6ab6c8656957b">
+  <client>
+    <environment name="PYTORCH_SPARSE_BASE" default="/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/pytorch-sparse/0.6.18-b31d071602817a93e8e6ab6c8656957b"/>
+    <environment name="INCLUDE" default="$PYTORCH_SPARSE_BASE/include"/>
+    <environment name="INCLUDE" default="$PYTORCH_SPARSE_BASE/include/torchsparse/"/>
+    <environment name="LIBDIR" default="$PYTORCH_SPARSE_BASE/lib"/>
+  </client>
+  <use name="pytorch"/>
+  <lib name="torchsparse"/>
+</tool>

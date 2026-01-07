@@ -1,0 +1,11 @@
+<tool name="tfaot-model-test-multi" version="1.0.0">
+  <client>
+    <environment name="TFAOT_MODEL_TEST_MULTI_BASE" default="/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/tfaot-model-test-multi/1.0.1-cc0367984c8b9ba39db9b8fb2aee2ff6"/>
+    <environment name="LIBDIR" default="$TFAOT_MODEL_TEST_MULTI_BASE/lib"/>
+    <environment name="INCLUDE" default="$TFAOT_MODEL_TEST_MULTI_BASE/include"/>
+  </client>
+  <use name="tensorflow-xla-runtime"/>
+  <flags LDFLAGS="$TFAOT_MODEL_TEST_MULTI_BASE/lib/test_multi_bs1.o"/>
+  <flags LDFLAGS="$TFAOT_MODEL_TEST_MULTI_BASE/lib/test_multi_bs2.o"/>
+  <flags LDFLAGS="$TFAOT_MODEL_TEST_MULTI_BASE/lib/test_multi_bs4.o"/>
+</tool>

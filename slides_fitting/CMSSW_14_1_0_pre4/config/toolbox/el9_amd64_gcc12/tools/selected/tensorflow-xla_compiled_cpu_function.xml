@@ -1,0 +1,4 @@
+<tool name="tensorflow-xla_compiled_cpu_function" version="2.12.0-d43c187db3b5d7f2fb1b49d0e3cc6d3d">
+  <lib name="xla_compiled_cpu_function"/>
+  <use name="tensorflow"/>
+</tool>

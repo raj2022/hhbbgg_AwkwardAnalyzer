@@ -1,0 +1,7 @@
+<tool name="roothistpainter" version="6.30.07-8b1a11e1ef0e074fdfd44e162b27e71c">
+  <info url="http://root.cern.ch/root/"/>
+  <lib name="HistPainter"/>
+  <use name="roothistmatrix"/>
+  <use name="rootgpad"/>
+  <use name="rootimt"/>
+</tool>

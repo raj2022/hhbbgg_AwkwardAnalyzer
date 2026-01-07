@@ -1,0 +1,6 @@
+<tool name="py3-tabulate" version="0.9.0-b53b3be7bd0ad0922382d70e440c06ce">
+  <client>
+    <environment name="PY3_TABULATE_BASE" default="/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/py3-tabulate/0.9.0-b53b3be7bd0ad0922382d70e440c06ce"/>
+  </client>
+  <runtime name="PATH" value="$PY3_TABULATE_BASE/bin" type="path"/>
+</tool>

@@ -1,0 +1,7 @@
+<tool name="xtl" version="0.7.4-ff8993f8412f3b6695988f2dd3b24012">
+  <info url="https://github.com/QuantStack/xtl"/>
+  <client>
+    <environment name="XTL_BASE" default="/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/xtl/0.7.4-ff8993f8412f3b6695988f2dd3b24012"/>
+    <environment name="INCLUDE" default="$XTL_BASE/include"/>
+  </client>
+</tool>

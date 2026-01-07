@@ -1,0 +1,25 @@
+imax 2
+jmax 1
+kmax *
+
+# shapes: ch0
+shapes sig    ch0  Signal/SignalWS_2D/2018/ws_signal2D_NMSSM_2018_c0.root wsig2d_NMSSM_2018_c0:sig_NMSSM_c0
+shapes bkg    ch0  Background/WS_bkg_2D/2018/ws_bkg_2018_c0.root ws_bkg_2018_c0:pdf_bkg_c0
+shapes data_obs ch0  data/data_obs_mass1000_rdh.root hist_data_ch0
+
+
+# shapes: ch1
+shapes sig    ch1  Signal/SignalWS_2D/2018/ws_signal2D_NMSSM_2018_c1.root wsig2d_NMSSM_2018_c1:sig_NMSSM_c1
+shapes bkg    ch1  Background/WS_bkg_2D/2018/ws_bkg_2018_c1.root ws_bkg_2018_c1:pdf_bkg_c1
+shapes data_obs ch1  data/data_obs_mass1000_rdh.root hist_data_ch1
+
+bin          ch0    ch1
+observation  -1     -1
+
+# one signal + one background per channel → 4 columns (sig,bkg) x 2 channels = 4 columns
+bin             ch0   ch0   ch1   ch1
+process         sig   bkg   sig   bkg
+process         0     1     0     1
+rate            1.0   1.0   1.0   1.0
+
+lumi lnN 1.025 1.025 1.025 1.025

@@ -1,0 +1,13 @@
+{
+  "boundaries": {
+    "combined": [
+      0.6488002028418868,
+      0.6622506022306672
+    ]
+  },
+  "sr_mgg_window_GeV": 2.0,
+  "cr_mgg_sidebands_GeV": [
+    4.0,
+    10.0
+  ]
+}

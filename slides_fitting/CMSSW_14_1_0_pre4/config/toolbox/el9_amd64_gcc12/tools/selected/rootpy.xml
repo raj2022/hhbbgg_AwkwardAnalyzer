@@ -1,0 +1,4 @@
+<tool name="rootpy" version="6.30.07-8b1a11e1ef0e074fdfd44e162b27e71c">
+  <info url="http://root.cern.ch/root/"/>
+  <use name="rootgraphics"/>
+</tool>

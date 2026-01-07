@@ -1,0 +1,5 @@
+ <<< Combine >>> 
+ <<< v10.3.0 >>>
+>>> Random number generator seed is 123456
+>>> Method used is AsymptoticLimits
+Caught exception ERROR: channel ch0 factorized to zero.

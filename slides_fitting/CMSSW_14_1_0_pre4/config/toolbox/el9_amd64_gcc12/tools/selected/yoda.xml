@@ -1,0 +1,10 @@
+<tool name="yoda" version="1.9.10-48e81cb14beb586f9567666c8ebd23ae">
+  <lib name="YODA"/>
+  <client>
+    <environment name="YODA_BASE" default="/cvmfs/cms.cern.ch/el9_amd64_gcc12/external/yoda/1.9.10-48e81cb14beb586f9567666c8ebd23ae"/>
+    <environment name="LIBDIR" default="$YODA_BASE/lib"/>
+    <environment name="INCLUDE" default="$YODA_BASE/include"/>
+  </client>
+  <use name="root_cxxdefaults"/>
+  <runtime name="PATH"       value="$YODA_BASE/bin" type="path"/>
+</tool>
