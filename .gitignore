@@ -31,4 +31,16 @@ outputs/*
 
 
 # removing the CMSSW
-slides_fitting/CMSSW_*
+slides_fitting/CMSSW_*# ROOT files
+*.root
+
+# Analysis outputs
+finalfits/outputs/
+
+# CMSSW build junk
+stats_study/**/tmp/
+stats_study/**/*.o
+stats_study/**/*.so
+
+# Notebooks data
+**/notebook/dataset/rootFile/
