@@ -232,3 +232,15 @@ python hhbbgg_analyzer_lxplus_par.py \
 ```bash
 python hhbbgg_analyzer_lxplus_par.py --year 2024 -i /eos/user/b/bsahu/HiggsDNA_v4PrelimProd/2024/merged/NMSSM-XtoYH-MX-300-MY-100/NOTAG_merged.parquet
 ``` 
+
+- To run on the complete dataset for three years:
+```bash
+python hhbbgg_analyzer_lxplus_par.py \
+  --year 2024 \
+  -i /eos/user/s/sraj/Work_/CUA_20--/Analysis/output_root/v4_production/ \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preEE/ \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postEE/ \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preBPix/ \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postBPix/ \
+  --tag DD_CombinedAll
+```
