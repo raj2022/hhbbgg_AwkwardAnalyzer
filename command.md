@@ -1218,3 +1218,79 @@ for d in dirs[:50]:
     print(d)
 PY
 ```
+
+
+
+
+# Commands for submission job without intruptions
+```bash
+# lxplus Long-Running Jobs: Do’s and Don’ts
+
+## ❌ Do NOT use `Ctrl+Z`
+`Ctrl+Z` sends **SIGTSTP** (suspend signal).  
+This is dangerous on lxplus, especially if your job:
+
+- Runs for a long time
+- Uses multiprocessing / joblib / concurrent.futures
+- Reads data from EOS or AFS
+
+### Why it’s bad
+- Parent process stops, child processes may hang or keep running
+- EOS network connections can time out or break
+- AFS tokens may expire while the job is suspended
+- Can lead to:
+  - zombie processes
+  - stuck file handles
+  - random crashes hours later
+
+---
+
+## ✅ Preferred ways to run long jobs
+
+### 🥇 Use `tmux` (BEST PRACTICE)
+Safest and most reliable option on lxplus.
+
+```bash
+tmux new -s hhbbgg
+python hhbbgg_analyzer_lxplus_par.py ...
+```
+Detach safely:
+```bash
+Ctrl+b d
+```
+
+Reattach later:
+```bash
+tmux attach -t hhbbgg
+```
+
+
+Advantages:
+* Survives SSH disconnects
+* No signal issues
+* Works well with EOS + multiprocessing
+
+## Use `nohup` (simple & safe)
+```bash
+nohup python hhbbgg_analyzer_lxplus_par.py ... > log.txt 2>&1 &
+```
+Check progress:
+```bash
+tail -f log.txt
+```
+
+Advantages:
+* Continues after logout
+* Clean signal handling
+* Easy to use
+
+- Less recommended methods
+`bg / disown`
+```bash
+Ctrl+Z
+bg
+disown
+```
+* Can still break EOS/AFS I/O
+* Risky with multiprocessing
+* Not recommended for analysis jobs
