@@ -1732,10 +1732,6 @@ def detect_year_era_from_path(path: str):
 
     return year, era
 
-print(
-    f"[YEAR] {os.path.basename(inputfile)} → "
-    f"detected year={det_year}, era={det_era if det_era else 'All'}"
-)
 
 def ensure_dir_in_tfile(tfile, path):
     curr = tfile
@@ -1761,9 +1757,6 @@ def normalize_sample_name(name: str) -> str:
     base = re.sub(r"(_part\d+|_chunk\d+|_\d+of\d+)$", "", base, flags=re.IGNORECASE)
     return base
 
-print(
-    f"[SAMPLE] raw='{sample_name_raw}' → output='{sample_name_norm}'"
-)
 
 def ak_to_numpy_dict(arr: ak.Array) -> dict:
     out = {}
@@ -1815,8 +1808,8 @@ def is_dd_template(path: str) -> bool:
     b = os.path.basename(path).lower()
     return any(k in b for k in (
         "ddqcdgjet_rescaled",
-        "ggjets_low_rescaled",
-        "ggjets_high_rescaled",
+        # "ggjets_low_rescaled",
+        # "ggjets_high_rescaled",
         "ddqcdgjet",
     ))
 
@@ -1851,6 +1844,11 @@ def _ensure_tree(upfile, treedir, treename, first_piece):
 
     types = {k: _btype(v) for k, v in first_piece.items()}
     return curr.mktree(treename, types)
+
+    
+# Cache for warnings about year/era detection
+WARNED_YEAR_FALLBACK = set()
+
 
 # ---------------- Core processing ----------------
 def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out_files=None):
@@ -1955,13 +1953,19 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
     # use_year = det_year if det_year is not None else str(cli_year)
     # use_era  = det_era  if det_era is not None else cli_era
     if det_year is None:
-        raise RuntimeError(
-        f"[FATAL] Cannot determine year from filename: {inputfile}\n"
-        "Mixed-year running requires year encoded in filename."
-        )
-        
-    use_year = det_year
-    use_era  = det_era if det_era is not None else "All"
+        key = (cli_year, cli_era)
+        if key not in WARNED_YEAR_FALLBACK:
+            print(
+                f"\033[91m[WARN]\033[0m Could not infer year from filename:\n"
+                f"       {inputfile}\n"
+                f"       → Falling back to CLI config: year={cli_year}, era={cli_era}"
+            )
+            WARNED_YEAR_FALLBACK.add(key)
+    
+        use_year = det_year
+        use_era  = det_era if det_era is not None else (cli_era)
+    #-----------------------------------
+    #-------------------
         
 
     if xsec_lumi_cache is None:
