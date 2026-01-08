@@ -1675,35 +1675,67 @@ def make_th1_pyroot(values, weights, name, title, binning):
         
 #     return year, era
 
-def detect_year_era_from_name(path: str):
-    name = os.path.basename(path).lower()
+# def detect_year_era_from_name(path: str):
+#     name = os.path.basename(path).lower()
 
-    if "2022" in name:
+#     if "2022" in name:
+#         year = "2022"
+#     elif "2023" in name:
+#         year = "2023"
+#     elif "2024" in name:
+#         year = "2024"
+#     else:
+#         year = None
+
+#     era = None
+#     if year == "2022":
+#         if "preee" in name:
+#             era = "PreEE"
+#         elif "postee" in name:
+#             era = "PostEE"
+#     elif year == "2023":
+#         if "prebpix" in name:
+#             era = "preBPix"
+#         elif "postbpix" in name:
+#             era = "postBPix"
+#     # 2024 → no era
+
+#     return year, era
+
+# Changing from reading name to path for year/era detection
+def detect_year_era_from_path(path: str):
+    p = path.lower()
+
+    # ---- Year detection ----
+    if "2022" in p:
         year = "2022"
-    elif "2023" in name:
+    elif "2023" in p:
         year = "2023"
-    elif "2024" in name:
+    elif "2024" in p or "v4_production" in p:
         year = "2024"
     else:
         year = None
 
+    # ---- Era detection ----
     era = None
     if year == "2022":
-        if "preee" in name:
+        if "preee" in p:
             era = "PreEE"
-        elif "postee" in name:
+        elif "postee" in p:
             era = "PostEE"
     elif year == "2023":
-        if "prebpix" in name:
+        if "prebpix" in p:
             era = "preBPix"
-        elif "postbpix" in name:
+        elif "postbpix" in p:
             era = "postBPix"
-    # 2024 → no era
+    # 2024 → era=None (All)
 
     return year, era
 
-
-
+print(
+    f"[YEAR] {os.path.basename(inputfile)} → "
+    f"detected year={det_year}, era={det_era if det_era else 'All'}"
+)
 
 def ensure_dir_in_tfile(tfile, path):
     curr = tfile
@@ -1714,12 +1746,24 @@ def ensure_dir_in_tfile(tfile, path):
         curr = d if d else curr.mkdir(part)
     return curr
 
+# def normalize_sample_name(name: str) -> str:
+#     base = os.path.basename(name)
+#     base = re.sub(r"\.(parquet|root)$", "", base, flags=re.IGNORECASE)
+#     base = re.sub(r"(_part\d+|_chunk\d+|_\d+of\d+)$", "", base, flags=re.IGNORECASE)
+#     base = re.sub(r"[_-]?(2022|2023|2024)(PreEE|PostEE|All|preBPix|postBPix)?", "", base, flags=re.IGNORECASE)
+#     return base
+
+# Do NOT strip year or era in the analyzer. Ever.
+
 def normalize_sample_name(name: str) -> str:
     base = os.path.basename(name)
     base = re.sub(r"\.(parquet|root)$", "", base, flags=re.IGNORECASE)
     base = re.sub(r"(_part\d+|_chunk\d+|_\d+of\d+)$", "", base, flags=re.IGNORECASE)
-    base = re.sub(r"[_-]?(2022|2023|2024)(PreEE|PostEE|All|preBPix|postBPix)?", "", base, flags=re.IGNORECASE)
     return base
+
+print(
+    f"[SAMPLE] raw='{sample_name_raw}' → output='{sample_name_norm}'"
+)
 
 def ak_to_numpy_dict(arr: ak.Array) -> dict:
     out = {}
@@ -1901,11 +1945,24 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
     sigflag = is_signal_from_name(base)
     isdd   = is_dd_template(base)
 
-    det_year, det_era = detect_year_era_from_name(inputfile)
+    det_year, det_era = detect_year_era_from_path(inputfile)
     # use_year = det_year or str(cli_year)
     # use_era  = det_era  or str(cli_era)
-    use_year = det_year if det_year is not None else str(cli_year)
-    use_era  = det_era  if det_era is not None else cli_era
+    #-------------------
+    #-------------------
+    # Enforce year/era detection from filename ONLY
+    
+    # use_year = det_year if det_year is not None else str(cli_year)
+    # use_era  = det_era  if det_era is not None else cli_era
+    if det_year is None:
+        raise RuntimeError(
+        f"[FATAL] Cannot determine year from filename: {inputfile}\n"
+        "Mixed-year running requires year encoded in filename."
+        )
+        
+    use_year = det_year
+    use_era  = det_era if det_era is not None else "All"
+        
 
     if xsec_lumi_cache is None:
         xsec_lumi_cache = {}
@@ -1921,6 +1978,12 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
     print(f"[NORM] sample={os.path.basename(inputfile)} xsec={xsec_} pb, "
           f"lumi={lumi_/1000.0:.3f} fb^-1 ({use_year} {use_era}) "
           f"[flags: data={isdata} dd={isdd}]")
+
+    if not isdata and not isdd:
+        print(
+            f"[MC-NORM] {sample_name_norm}:"
+            f"xsec*lumi = {(xsec_ * lumi_):.3e}"
+        )
 
     # region utils & plotting config
     from regions import (
@@ -2190,17 +2253,30 @@ def main():
     ap = argparse.ArgumentParser(description="hhbbgg analyzer (parquet) with multi-era support + per-sample merge")
     ap.add_argument("-i","--inFile", action="append",
                     help="Single parquet file or a directory. Can be given multiple times to merge across folders/eras.")
-    ap.add_argument("--year", required=True, help="e.g. 2022 or 2023")
+    # ap.add_argument("--year", required=True, help="e.g. 2022 or 2023")
+    ap.add_argument("--config-year", required=True, help="Year used ONLY for config paths and output directory naming")
     ap.add_argument("--era", default="All", help="Era (ignored for 2024)")
     ap.add_argument("--tag", default=None, help="If multiple -i are given, outputs go to outputfiles/merged/<tag>")
     args = ap.parse_args()
 
-    era = args.era 
-    if args.year == "2024":
+    # era = args.era 
+    # if args.year == "2024":
+    #     era = "All"
+    
+    config_year = args.config_year
+    era = args.era
+    
+    if config_year == "2024":
         era = "All"
-        
-    cfg = RunConfig(args.year, args.era)
 
+    cfg = RunConfig(config_year, era)
+    print(f"[INFO] Using config for year={cfg.year}, era={cfg.era}")
+    print(f"[INFO] Raw input path: {cfg.raw_path}")
+    print(f"[INFO] Outputs root:   {cfg.outputs_root}")
+    print(f"[INFO] Outputs path:   {cfg.outputs_path}")
+    # -------------------- discover inputs ---------------- 
+    
+    
     # discover inputs
     in_paths = []
     if args.inFile:

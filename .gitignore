@@ -6,8 +6,12 @@ stack_plots/**/*.pdf
 stack_plots/**/*.png
 # Removing this for outputfiles
 # outputfiles/
-outputfiles/*
+outputfiles/**/*.root
+outputfiles/*.root
 !outputfiles/.keep
+outputfiles/**/
+
+
 **.ipynb_checkpoints
 **.vscode
 bdt/notebook/**/*.pt
