@@ -1856,6 +1856,10 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
         raise RuntimeError("out_files must be provided to stream trees.")
     print(f"[INFO] Processing Parquet file: {inputfile}")
 
+    # Defined here to avoid global state
+    use_year = str(cli_year)
+    use_era  = cli_era
+
     required_columns = [
         "run",
         "lumi",
@@ -1961,9 +1965,11 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
                 f"       → Falling back to CLI config: year={cli_year}, era={cli_era}"
             )
             WARNED_YEAR_FALLBACK.add(key)
-    
+    else:
         use_year = det_year
-        use_era  = det_era if det_era is not None else (cli_era)
+        if det_era is not None:
+            use_era = det_era
+
     #-----------------------------------
     #-------------------
         
