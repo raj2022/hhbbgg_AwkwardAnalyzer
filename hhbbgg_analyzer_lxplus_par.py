@@ -1956,22 +1956,49 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
     
     # use_year = det_year if det_year is not None else str(cli_year)
     # use_era  = det_era  if det_era is not None else cli_era
-    if det_year is None:
-        key = (cli_year, cli_era)
-        if key not in WARNED_YEAR_FALLBACK:
-            print(
-                f"\033[91m[WARN]\033[0m Could not infer year from filename:\n"
-                f"       {inputfile}\n"
-                f"       → Falling back to CLI config: year={cli_year}, era={cli_era}"
-            )
-            WARNED_YEAR_FALLBACK.add(key)
-    else:
+    
+    use_year = str(cli_year)
+    use_era  = cli_era
+    
+    if det_era in ("PreEE", "PostEE"):
+        use_year = "2022"
+        use_era  = det_era
+        
+    elif det_era in ("preBPix", "postBPix"):
+        use_year = "2023"
+        use_era  = det_era
+        
+    elif det_year is not None:
         use_year = det_year
         if det_era is not None:
             use_era = det_era
+    
+    else:
+        key = (cli_year, cli_era)
+        if key not in WARNED_YEAR_FALLBACK:
+            print(
+                f"\033[93m[WARN]\033[0m Could not detect year/era from path.\n"
+                f"       Falling back to CLI arguments: year={cli_year}, era={cli_era}"
+            )
+            WARNED_YEAR_FALLBACK.add(key)
 
     #-----------------------------------
     #-------------------
+    #------Sanity check --------
+    if use_era in ("PreEE", "PostEE") and use_year != "2022":
+        raise RuntimeError(f"Invalid era/year combination: {use_year} {use_era}")
+
+    if use_era in ("preBPix", "postBPix") and use_year != "2023":
+        raise RuntimeError(f"Invalid era/year combination: {use_year} {use_era}")
+
+    if use_year == "2024" and use_era != "All":
+        raise RuntimeError(f"Invalid era for 2024: {use_era}")
+    
+    
+    
+    
+    #---------------------
+    #--------
         
 
     if xsec_lumi_cache is None:
@@ -2198,6 +2225,11 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
             # base_w = ak.to_numpy(cms_events["weight"]) * float(xsec_) * float(lumi_) / wc 
             base_w = ak.to_numpy(cms_events["weight"]) * float(xsec_) * float(lumi_)
             base_w = np.where(np.isfinite(base_w), base_w, 0.0)
+
+            # NOTE:
+            # cms_events["weight"] is assumed to be ALREADY normalized
+            # (i.e. includes 1/weight_central or equivalent).
+            # DO NOT divide by weight_central again here.
 
         # attach per-region weights
         for r in ["preselection","selection","srbbgg","srbbggMET",
