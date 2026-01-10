@@ -1,4 +1,4 @@
-## Setup `HiggsDNA` 
+<!-- ## Setup `HiggsDNA` 
 - use tag [HHbbgg_NanoAODv15](https://gitlab.cern.ch/cms-analysis/general/HiggsDNA/-/tree/HHbbgg_NanoAODv15?ref_type=heads)
 ```bash
 git clone --branch HHbbgg_NanoAODv15 ssh://git@gitlab.cern.ch:7999/cms-analysis/general/HiggsDNA.git
@@ -13,7 +13,53 @@ git clone --branch HHbbgg_NanoAODv15 ssh://git@gitlab.cern.ch:7999/cms-analysis/
 * This will produce a samples.json file specifying the dataset name and the xrootd link for the samples
 
 
+ -->
 
+
+# V4 Production 
+- Setup HiggsDNA
+```bash
+git clone ssh://git@gitlab.cern.ch:7999/cms-analysis/general/HiggsDNA.git
+cd HiggsDNA
+git fetch origin
+git checkout tags/HHbbgg_v4_parquet -b HHbbgg_v4_parquet
+mamba create -n higgs-dna_hhbbgg_v4 python=3.12 xrootd
+mamba activate higgs-dna_hhbbgg_v4
+pip install -e .[dev,test]
+cd higgs_dna
+python scripts/pull_files.py --all
+```
+
+
+
+
+
+
+## job submission  from private
+- Activate environment
+```bash
+mamba activate higgs-dna
+voms-proxy-init --rfc --voms cms -valid 192:00
+```
+- use script `submit_job.py`
+```bash
+python ./submit_job.py --input.json --ouput_dir
+```
+e.g.
+```bash
+python ./submit_job.py 2023_postBPix/My_Json_950.json /eos/user/s/sraj/Work_/CUA_
+20--/Analysis/output_parquet/systematics_v3/2023_postBPix/
+```
+
+
+
+
+
+
+
+
+
+- 
 
 ```bash
 mamba activate higgs-dna
@@ -29,4 +75,5 @@ python /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/2024_parquet_productio
 
 ## References:
 1. Instructions: https://indico.cern.ch/event/1499924/contributions/6478750/attachments/3053886/5398744/For_Hgg_v3_production-2.pdf
-2. 
+2. v4 Instructions: https://indico.cern.ch/event/1590752/contributions/6805177/attachments/3178875/5654008/InstructionsFor2024HHbbggProduction_20251121.pdf 
+3. 

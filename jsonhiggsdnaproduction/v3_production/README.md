@@ -65,6 +65,12 @@ python higgs_dna/scripts/postprocessing/prepare_output_file.py \
   --varDict variation.json
 ```
 
+- For the file output on the `eos`
+```bash
+python /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/parquet_production_v3/HiggsDNA/higgs_dna/scripts/run_analysis.py --json-analysis My_Json_900.json --dump /eos/user/s/sraj/Work_/CUA_20--/Analysis/output_parquet/systematics_v3/2022_postEE/  --fiducialCuts store_flag --Smear-sigma-m --applyCQR  --nano-version 12 --executor vanilla_lxplus --queue espresso
+```
+
+
 
 <!-- 
 The error of `--nano-version 12` fixed by updating the HiggsDNA.
