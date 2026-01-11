@@ -47,24 +47,22 @@ python ./submit_job.py --input.json --ouput_dir
 ```
 e.g.
 ```bash
-python ./submit_job.py 2023_postBPix/My_Json_950.json /eos/user/s/sraj/Work_/CUA_
-20--/Analysis/output_parquet/systematics_v3/2023_postBPix/
+python ./submit_job.py My_Json_300.json /eos/user/s/sraj/Work_/CUA_20--/Analysis/output_parquet/systematics_v3/2023_postBPix/
+```
+
+
+that would be (when we run from private afs area)
+```bash
+python /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/parquet_production_v3/HiggsDNA/higgs_dna/scripts/run_analysis.py --json-analysis My_Json_300.json --dump /eos/user/s/sraj/Work_/CUA_20--/Analysis/output_parquet/systematics_v3/2023_postBPix/ --doFlow-corrections --fiducialCuts store_flag --Smear-sigma-m --doDeco --executor vanilla_lxplus --queue workday --memory 10000 --timeout 300 --nano-version 12
 ```
 
 
 
 
-
-
-
-
-
-- 
-
 ```bash
 mamba activate higgs-dna
 voms-proxy-init --rfc --voms cms -valid 192:00
-python /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/2024_parquet_production/tag15/HiggsDNA/higgs_dna/scripts/run_analysis.py --json-analysis My_Json_400.json --dump /afs/cern.ch/user/s/sraj/private/output/  --fiducialCuts store_flag --Smear-sigma-m --applyCQR  --nano-version 12 --executor vanilla_lxplus --queue espresso
+python /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/2024_parquet_production/tag15/HiggsDNA/higgs_dna/scripts/run_analysis.py --json-analysis My_Json_400.json --dump /afs/cern.ch/user/s/sraj/private/output/  --fiducialCuts store_flag --Smear-sigma-m --applyCQR  --nano-version 12 --executor vanilla_lxplus --queue espresso # if we want a quick output
 ```
 
 
