@@ -1294,3 +1294,45 @@ disown
 * Can still break EOS/AFS I/O
 * Risky with multiprocessing
 * Not recommended for analysis jobs
+
+
+
+# Setting up CMSSW and combine 
+```bash
+# Create the CMSSW release
+cmsrel CMSSW_14_1_0_pre4
+cd CMSSW_14_1_0_pre4/src/
+
+# Initialize the CMSSW runtime
+cmsenv
+echo $CMSSW_BASE
+
+# Build CMSSW once (important: do this BEFORE cloning Combine)
+scram b -j 8  
+
+# Clone Combine
+git clone https://github.com/cms-analysis/HiggsAnalysis-CombinedLimit.git HiggsAnalysis/CombinedLimit
+
+# (Optional but recommended) Freeze Combine to the current state
+# cd HiggsAnalysis/CombinedLimit
+# git checkout v10.4.2
+# cd ../../
+
+# Build again to compile Combine
+scram b -j 8
+
+# Refresh the environment
+cmsenv
+
+```
+This setup works because:
+* CMSSW is built before cloning Combine
+* Combine is built only once, cleanly
+Changing the order can reintroduce SCRAM conflicts
+
+### To run combine
+```bash
+cd ~/hhbbgg/combine
+cmsenv   # from CMSSW_14_1_0_pre4
+combine -M AsymptoticLimits datacard.txt
+```
