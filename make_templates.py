@@ -1,20 +1,6 @@
 #!/usr/bin/env python3
 # ============================================================
 # make_templates.py
-#ALL fields required by regions.py are present
-
-# ✅ No more missing-field crashes (lead_isScEtaEB, lead_pho_mvaID_WP80, etc.)
-
-# ✅ You never need to “guess” fields again
-# Systematic template production for HH → bbγγ
-# Uses EXACT same column list and event content
-# as hhbbgg_AwkwardAnalyzer
-# ============================================================
-
-
-#!/usr/bin/env python3
-# ============================================================
-# make_templates.py
 #
 # Systematic template production for HH → bbγγ
 # Parquet-based, analyzer-schema-complete version
@@ -67,7 +53,6 @@ def make_th1(values, weights, name, binning):
         h.SetBinContent(i, c[i - 1])
         h.SetBinError(i, np.sqrt(e2[i - 1]))
 
-    h.SetDirectory(0)
     return h
 
 # ---------------- Analysis definitions ----------------
@@ -137,15 +122,17 @@ REQUIRED_COLUMNS = [
 ]
 
 # ---------------- Core processing ----------------
-def process_systematic(base_dir, syst, fout):
+def process_systematic(signal_dir, syst, fout):
 
-    syst_dir = base_dir / syst
+    signal_name = signal_dir.name
+    syst_dir = signal_dir / syst
     files = sorted(syst_dir.rglob("*.parquet"))
+
     if not files:
         print(f"[WARN] No parquet files in {syst_dir}")
         return
 
-    print(f"[INFO] Systematic: {syst} ({len(files)} files)")
+    print(f"[INFO] Systematic: {signal_name}/{syst} ({len(files)} files)")
 
     for pf in files:
         pqf = pq.ParquetFile(pf)
@@ -228,6 +215,7 @@ def process_systematic(base_dir, syst, fout):
             ev["dibjet_pt"]   = dibjet.pt
             ev["dibjet_eta"]  = dibjet.eta
             ev["dibjet_phi"]  = dibjet.phi
+
             ev["diphoton_mass"] = diphoton.mass
             ev["diphoton_pt"]   = diphoton.pt
             ev["diphoton_eta"]  = diphoton.eta
@@ -243,17 +231,18 @@ def process_systematic(base_dir, syst, fout):
                 ev.sublead_pho_mvaID,
             )
 
-            ev["FirstJet_PtOverM"]  = ev.lead_bjet_pt / ev.dibjet_mass
-            ev["SecondJet_PtOverM"] = ev.sublead_bjet_pt / ev.dibjet_mass
-            ev["pholead_PtOverM"]   = ev.lead_pho_pt / ev.diphoton_mass
+            ev["FirstJet_PtOverM"]   = ev.lead_bjet_pt / ev.dibjet_mass
+            ev["SecondJet_PtOverM"]  = ev.sublead_bjet_pt / ev.dibjet_mass
+            ev["pholead_PtOverM"]    = ev.lead_pho_pt / ev.diphoton_mass
             ev["phosublead_PtOverM"] = ev.sublead_pho_pt / ev.diphoton_mass
 
             ev["dibjet_bbgg_mass"]   = ev.dibjet_pt / ev.bbgg_mass
             ev["diphoton_bbgg_mass"] = ev.diphoton_pt / ev.bbgg_mass
-            ev["lead_pt_over_diphoton_mass"] = ev.lead_pho_pt / ev.diphoton_mass
+
+            ev["lead_pt_over_diphoton_mass"]    = ev.lead_pho_pt / ev.diphoton_mass
             ev["sublead_pt_over_diphoton_mass"] = ev.sublead_pho_pt / ev.diphoton_mass
-            ev["lead_pt_over_dibjet_mass"] = ev.lead_pho_pt / ev.dibjet_mass
-            ev["sublead_pt_over_dibjet_mass"] = ev.sublead_pho_pt / ev.dibjet_mass
+            ev["lead_pt_over_dibjet_mass"]      = ev.lead_pho_pt / ev.dibjet_mass
+            ev["sublead_pt_over_dibjet_mass"]   = ev.sublead_pho_pt / ev.dibjet_mass
 
             # -------- regions --------
             ev["preselection"] = get_mask_preselection(ev)
@@ -264,6 +253,10 @@ def process_systematic(base_dir, syst, fout):
                 sel = ev[ev[region]]
                 if len(sel) == 0:
                     continue
+
+                ensure_dir(fout, f"{signal_name}/{region}")
+                gdir = fout.GetDirectory(f"{signal_name}/{region}")
+                gdir.cd()
 
                 for var in variables_common[region]:
                     hname = vardict[var]
@@ -277,7 +270,7 @@ def process_systematic(base_dir, syst, fout):
                         binning[region][var],
                     )
 
-                    ensure_dir(fout, f"{pf.stem}/{region}")
+                    h.SetDirectory(gdir)
                     h.Write(hname, ROOT.TObject.kOverwrite)
                     del h
 
@@ -297,11 +290,23 @@ def main():
 
     fout = ROOT.TFile(str(outdir / "histograms.root"), "RECREATE")
 
-    for syst in SYSTEMATICS:
-        process_systematic(base_dir, syst, fout)
+    signal_dirs = sorted(
+        d for d in base_dir.iterdir()
+        if d.is_dir() and d.name.startswith("NMSSM_")
+    )
+
+    print(f"[INFO] Found {len(signal_dirs)} signal points")
+
+    for sigdir in signal_dirs:
+        print(f"[INFO] Processing signal: {sigdir.name}")
+        for syst in SYSTEMATICS:
+            process_systematic(sigdir, syst, fout)
+
+    if fout.GetListOfKeys().GetSize() == 0:
+        raise RuntimeError("[FATAL] ROOT file is empty — histograms were not written!")
 
     fout.Close()
-    print("[OK] Systematic templates produced successfully")
+    print("[OK] All signal points processed successfully")
 
 if __name__ == "__main__":
     main()

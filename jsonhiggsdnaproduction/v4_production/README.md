@@ -51,11 +51,15 @@ python ./submit_job.py My_Json_300.json /eos/user/s/sraj/Work_/CUA_20--/Analysis
 ```
 
 
-that would be (when we run from private afs area)
+that would be (when we run from private afs area) (NOT Working)
 ```bash
-python /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/parquet_production_v3/HiggsDNA/higgs_dna/scripts/run_analysis.py --json-analysis My_Json_300.json --dump /eos/user/s/sraj/Work_/CUA_20--/Analysis/output_parquet/systematics_v3/2023_postBPix/ --doFlow-corrections --fiducialCuts store_flag --Smear-sigma-m --doDeco --executor vanilla_lxplus --queue workday --memory 10000 --timeout 300 --nano-version 12
+python /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/parquet_production_v3/HiggsDNA/higgs_dna/scripts/run_analysis.py --json-analysis My_Json_300.json --dump /eos/user/s/sraj/Work_/CUA_20--/Analysis/output_parquet/systematics_v3/2023_postBPix/ --doFlow-corrections --fiducialCuts store_flag --Smear-sigma-m --doDeco --executor vanilla_lxplus --queue workday --memory 12000 --timeout 300 --nano-version 12
 ```
 
+Trying tyhis one with the v4:
+```bash
+python /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/2024_parquet_production/tag15/HiggsDNA/higgs_dna/scripts/run_analysis.py --json-analysis My_Json_300.json --dump /eos/user/s/sraj/Work_/CUA_20--/Analysis/output_parquet/systematics_v3/2023_postBPix/ --doFlow-corrections --fiducialCuts store_flag --Smear-sigma-m --doDeco --executor vanilla_lxplus --queue workday --memory 12000 --timeout 300 --nano-version 12
+```
 
 
 

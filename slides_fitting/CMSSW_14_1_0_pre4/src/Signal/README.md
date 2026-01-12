@@ -96,3 +96,24 @@ python3 Signal/make_signal_ws_2D_from_jsons.py \
   --verbose
 ```
 
+## With systematics 
+
+Get the Kappas for the mass point(from `src` directory)
+```bash
+python ./Signal/extract_signal_kappas.py
+```
+
+
+```bash
+python3 Signal/make_signal_ws_2D_from_jsons_syst.py \
+  --mgg_json outputs/signal_fits/signal_shape_params.json \
+  --mjj_json outputs/signal_fits_mjj_by_mass/signal_mjj_params_by_mass.json \
+  --syst_json outputs/systematics/signal_kappas.json \
+  --mass 400 \
+  --year 2018 \
+  --proc NMSSM \
+  --outdir Signal/SignalWS_2D \
+  --mgg 115,135 \
+  --mjj 50,200 \
+  --verbose
+```
