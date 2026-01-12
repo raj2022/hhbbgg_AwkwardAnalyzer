@@ -1,1 +1,0 @@
-combine HiggsAnalysis/CombinedLimit/bin/combine.cpp

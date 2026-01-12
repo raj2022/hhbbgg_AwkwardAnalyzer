@@ -34,11 +34,37 @@ data_driven_bkg_est/fit_mvaid*
 outputs/*
 
 
-# removing the CMSSW
+# ---- slides_fitting CMSSW ----
 slides_fitting/CMSSW_*/
-slides_fitting/CMSSW_*/**
+slides_fitting/backup/CMSSW_*/
+slides_fitting/**/CMSSW_*/
 
-# slides_fitting/CMSSW_*/<*>.root
+
+# Combine (never version)
+slides_fitting/CMSSW_*/src/HiggsAnalysis/CombinedLimit/
+
+# Logs
+*.out
+
+
+# ---- CMSSW (DO NOT VERSION) ----
+slides_fitting/CMSSW_*/
+
+# Explicit CMSSW build outputs
+slides_fitting/CMSSW_*/tmp/
+slides_fitting/CMSSW_*/lib/
+slides_fitting/CMSSW_*/bin/
+slides_fitting/CMSSW_*/objs/
+
+# ROOT / CMSSW artifacts
+*.o
+*.so
+*.pcm
+*.dep
+*.rootmap
+*.log
+*.out
+
 
 # Analysis outputs
 finalfits/outputs/
