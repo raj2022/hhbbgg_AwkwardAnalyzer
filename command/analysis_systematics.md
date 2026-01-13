@@ -3,7 +3,7 @@
 ```bash
 cd slides_fitting/CMSSW_14_1_0_pre4/src
 cmsenv
-mamba activate hhbbgg-awk
+mamba activate hhbbgg-awk   # Do not change the order of cmsenv and env activation. 
 ```
 
 After having nominal processing throught the anlyzer, do not touch it. 
