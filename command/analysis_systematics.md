@@ -115,7 +115,7 @@ python3 Signal/make_signal_ws_2D_from_jsons_syst.py \
   --proc NMSSM \
   --outdir Signal/SignalWS_2D \
   --mgg 115,135 \
-  --mjj 50,200 \
+  --mjj 50,200 
 ```
 
 #### Must do checks
