@@ -99,7 +99,6 @@ python3 Signal/make_signal_ws_2D_from_jsons.py \
   --outdir Signal/SignalWS_2D \
   --mgg 115,135 \
   --mjj 50,200 \
-  --verbose
 ```
 
 #### Must do checks
@@ -163,12 +162,20 @@ CMS_jer       shape   1   -   1   -
 ```
 
 Inside CMSSW 
-```
+```bash
 cmsenv
+```
 from `src` directory
+- Convert datacard to RooWorkspace
 ```bash
 text2workspace.py datacard/400/comb_mass_syst_400.txt -o datacard/400/comb_mass_syst_400.root
 ``` 
+
+* Parses the signal and background RooWorkspaces
+* Registers all nuisance parameters
+* Must be rerun after any datacard change
+
+
 and validate nuisances are seen by combine
 ```bash
 combine -M FitDiagnostics datacard/400/comb_mass400.root \
@@ -193,6 +200,98 @@ CMS_smear_ee
 CMS_jec
 CMS_jer
 ```
+
+- Basic model sanity check (nuisances visible)
+Check that Combine can parse the model and see all parameters.
+
+```bash
+combine -M MultiDimFit \
+  -d datacard/400/comb_mass_syst_400.root \
+  --algo none \
+  -n _checkModel
+```
+
+* No scans or profiling
+* Confirms model builds successfully
+* `r` floating freely (may hit boundary — expected at this stage)
+
+- Nuisance wiring check (floating POI)
+Verify that parametric systematics are connected and do not crash the likelihood.
+```bash
+combine -M MultiDimFit \
+  -d datacard/400/comb_mass_syst_400.root \
+  --algo none \
+  --setParameterRanges r=0,5 \
+  -n _checkNuis
+```
+* Combine runs without underflow or covariance errors
+* `r` may hit the boundary (normal before normalization is fixed)
+
+- Background-only fit validation
+Ensure the analytic background model is well-behaved and positive-definite.
+```bash
+combine -M FitDiagnostics \
+  -d datacard/400/comb_mass_syst_400.root \
+  --expectSignal 0 \
+  -n _fd_bonly
+
+```
+* This is mandatory
+* Must converge before any further statistical inference
+* Failures here indicate a background PDF issue
+
+- Frozen-POI nuisance validation (no robustFit)
+Validate that nuisance parameters are active and constrained when the signal strength is fixed.
+```bash
+combine -M FitDiagnostics \
+  -d datacard/400/comb_mass_syst_400.root \
+  --setParameters r=1 \
+  --freezeParameters r \
+  --saveShapes \
+  -n _fd_r1
+```
+* Do not use `--robustFit` at this stage
+* Check nuisance values and uncertainties in fit_s
+
+- Likelihood scan of an individual nuisance
+Demonstrate that a given nuisance parameter produces a smooth likelihood profile.
+Example (JEC)
+
+```bash
+combine -M MultiDimFit \
+  -d datacard/400/comb_mass_syst_400.root \
+  --redefineSignalPOIs CMS_jec \
+  --freezeParameters r \
+  --setParameters r=1 \
+  --algo grid --points 41 \
+  -n _scanCMSjec
+```
+* Should produce a parabolic likelihood curve
+* Confirms Up/Down propagation via parametric modeling
+
+- Expected limits (final physics result)
+Compute expected 95% CL upper limits under the background-only hypothesis.
+
+```bash
+combine -M AsymptoticLimits \
+  -d datacard/400/comb_mass_syst_400.root \
+  --run blind \
+  -n _exp
+```
+
+- Signal-plus-background FitDiagnostics
+Inspect post-fit shapes and correlations once normalization is fixed.
+```bash
+combine -M AsymptoticLimits \
+  -d datacard/400/comb_mass_syst_400.root \
+  --run blind \
+  -n _exp
+
+```
+* Run only after background and signal models are finalized
+
+* Produces pre-fit and post-fit shapes
+
 
 
 ```bash

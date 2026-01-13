@@ -98,10 +98,24 @@ python3 Signal/make_signal_ws_2D_from_jsons.py \
 
 ## With systematics 
 
-Get the Kappas for the mass point(from `src` directory)
-```bash
+- Get the Kappas for the mass point(from `src` directory)
+<!-- ```bash
 python ./Signal/extract_signal_kappas.py
+``` -->
+for a particular mass points:
+```bash
+python3 make_signal_kappas.py \
+  --mX 1000 \
+  --mY 125
 ```
+If you ever want a per-mass-point file:
+```bash
+python3 make_signal_kappas.py \
+  --mX 1000 \
+  --mY 125 \
+  --outfile outputs/systematics/signal_kappas_X1000_Y125.json
+```
+
 
 
 ```bash
@@ -115,5 +129,4 @@ python3 Signal/make_signal_ws_2D_from_jsons_syst.py \
   --outdir Signal/SignalWS_2D \
   --mgg 115,135 \
   --mjj 50,200 \
-  --verbose
 ```
