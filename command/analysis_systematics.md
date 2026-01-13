@@ -365,5 +365,40 @@ Parquet → Analyzer → ROOT trees
 ```
 
 
+## Summary:
+
+```bash
+python make_templates.py \
+  --year 2022 \
+  /afs/cern.ch/user/s/sraj/Analysis/output_parquet/v3_production/production_v3/2022_postEE/merged/NMSSM_X300_Y100/
+
+python3 Signal/extract_signal_kappas.py \
+  --mX 1000 \
+  --mY 125 \
+  --outfile outputs/systematics/signal_kappas.json
 
 
+  python3 Signal/make_signal_ws_2D_from_jsons_syst.py \
+  --mgg_json outputs/signal_fits/signal_shape_params.json \
+  --mjj_json outputs/signal_fits_mjj_by_mass/signal_mjj_params_by_mass.json \
+  --syst_json outputs/systematics/signal_kappas.json \
+  --mass 1000 \
+  --year 2018 \
+  --proc NMSSM \
+  --outdir Signal/SignalWS_2D \
+  --mgg 115,135 \
+  --mjj 50,200 
+
+text2workspace.py datacard/400/comb_mass_syst_400.txt -o datacard/400/comb_mass_syst_400.root
+
+
+combine -M FitDiagnostics datacard/400/comb_mass_syst_400.root \
+  -t -1 --expectSignal 1 --saveShapes
+
+combine -M AsymptoticLimits \
+  -d datacard/400/comb_mass_syst_400.root \
+  --run blind \
+  -n _exp
+
+
+```

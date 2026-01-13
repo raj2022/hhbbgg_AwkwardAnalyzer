@@ -348,3 +348,6 @@ datacard/1000/higgsCombinecomb_mass1000_800_blind.AsymptoticLimits.mH120.root \
 - Change the datacard.
 - change the data processing
 
+
+
+## For Systematics: check https://github.com/raj2022/hhbbgg_AwkwardAnalyzer/blob/2024_data/command/analysis_systematics.md
