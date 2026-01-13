@@ -84,12 +84,22 @@ Object-level systematic templates are produced only to extract kappas for the pa
 
 Abstract kappas from the root file
 ```bash
-python signal/python extract_signal_kappas.py
+python signal/extract_signal_kappas.py
 ```
 saved at output/systematics/signal_kappas.json
 
+If you ever want a per-mass-point file:
 ```bash
-python3 Signal/make_signal_ws_2D_from_jsons.py \
+python3 Signal/extract_signal_kappas.py \
+  --mX 1000 \
+  --mY 125 \
+  --outfile outputs/systematics/signal_kappas_X1000_Y125.json
+```
+
+for systematics:
+
+```bash
+python3 Signal/make_signal_ws_2D_from_jsons_syst.py \
   --mgg_json outputs/signal_fits/signal_shape_params.json \
   --mjj_json outputs/signal_fits_mjj_by_mass/signal_mjj_params_by_mass.json \
   --syst_json outputs/systematics/signal_kappas.json \
