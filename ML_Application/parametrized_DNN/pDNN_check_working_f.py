@@ -117,10 +117,10 @@ SIG_TPL = "../../../output_parquet/final_production_Syst/merged/NMSSM_X{m}_Y{y}/
 
 # BACKGROUND is parquet
 background_files = [
-    # "../../../output_root/v3_production/samples/postEE/GGJets.parquet",
-    # "../../../output_root/v3_production/samples/postEE/GJetPt20To40.parquet",
-    # "../../../output_root/v3_production/samples/postEE/GJetPt40.parquet",
-    "../../../output_root/v3_production/samples/postEE/DDQCDGJET_Rescaled.parquet
+    "../../../output_root/v3_production/samples/postEE/GGJets.parquet",
+    "../../../output_root/v3_production/samples/postEE/GJetPt20To40.parquet",
+    "../../../output_root/v3_production/samples/postEE/GJetPt40.parquet",
+    # "../../../output_root/v3_production/samples/postEE/DDQCDGJET_Rescaled.parquet    # Can be added later if needed
 ]
 
 # ============================
