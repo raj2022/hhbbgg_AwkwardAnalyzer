@@ -1,4 +1,11 @@
 # Analysis Sytematics
+- setup env
+```bash
+cd slides_fitting/CMSSW_14_1_0_pre4/src
+cmsenv
+mamba activate hhbbgg-awk
+```
+
 After having nominal processing throught the anlyzer, do not touch it. 
 
 
@@ -93,7 +100,7 @@ If you ever want a per-mass-point file:
 python3 Signal/extract_signal_kappas.py \
   --mX 1000 \
   --mY 125 \
-  --outfile outputs/systematics/signal_kappas_X1000_Y125.json
+  --outfile outputs/systematics/signal_kappas.json
 ```
 
 for systematics:
