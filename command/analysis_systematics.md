@@ -121,6 +121,8 @@ python3 Signal/make_signal_ws_2D_from_jsons_syst.py \
 #### Must do checks
 ```bash
 root -l ws_signal2D_NMSSM_2018_c0.root
+```
+```bash
 w->Print("v");
 
 ```
@@ -165,17 +167,26 @@ process         0     1     0     1
 rate            1.0   1.0   1.0   1.0
 
 # ---------------------------------
-# Signal normalization uncertainty
+# Signal shape systematics (2D parametric)
+# ---------------------------------
+# CMS_scale_ee   shape   1   -   1   -
+# CMS_smear_ee  shape   1   -   1   -
+# CMS_jec       shape   1   -   1   -
+# CMS_jer       shape   1   -   1   -
+
+# ---------------------------------
+# Parametric signal shape nuisances
+# ---------------------------------
+CMS_scale_ee  param  0  1
+CMS_smear_ee  param  0  1
+CMS_jec       param  0  1
+CMS_jer       param  0  1
+
+# ---------------------------------
+# Normalization uncertainty
 # ---------------------------------
 lumi lnN 1.025 - 1.025 -
 
-# ---------------------------------
-# Signal shape systematics (2D parametric)
-# ---------------------------------
-CMS_scale_ee   shape   1   -   1   -
-CMS_smear_ee  shape   1   -   1   -
-CMS_jec       shape   1   -   1   -
-CMS_jer       shape   1   -   1   -
 ```
 
 Inside CMSSW 
@@ -195,7 +206,7 @@ text2workspace.py datacard/400/comb_mass_syst_400.txt -o datacard/400/comb_mass_
 
 and validate nuisances are seen by combine
 ```bash
-combine -M FitDiagnostics datacard/400/comb_mass400.root \
+combine -M FitDiagnostics datacard/400/comb_mass_syst_400.root \
   -t -1 --expectSignal 1 --saveShapes
 ```
 then 
