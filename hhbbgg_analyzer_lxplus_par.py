@@ -1706,31 +1706,37 @@ def make_th1_pyroot(values, weights, name, title, binning):
 def detect_year_era_from_path(path: str):
     p = path.lower()
 
+    # ---- Era detection (authoritative for Run 3) ----
+    era = None
+    if "preee" in p:
+        era = "preEE"
+    elif "postee" in p:
+        era = "postEE"
+    elif "prebpix" in p:
+        era = "preBPix"
+    elif "postbpix" in p:
+        era = "postBPix"
+    else:
+        era = "all"
+
     # ---- Year detection ----
+    # Explicit year in path always wins
     if "2022" in p:
         year = "2022"
     elif "2023" in p:
         year = "2023"
     elif "2024" in p or "v4_production" in p:
         year = "2024"
+    # Otherwise infer year from era (CRITICAL for signal)
+    elif era in ("preEE", "postEE"):
+        year = "2022"
+    elif era in ("preBPix", "postBPix"):
+        year = "2023"
     else:
-        year = None
-
-    # ---- Era detection ----
-    era = None
-    if year == "2022":
-        if "preee" in p:
-            era = "PreEE"
-        elif "postee" in p:
-            era = "PostEE"
-    elif year == "2023":
-        if "prebpix" in p:
-            era = "preBPix"
-        elif "postbpix" in p:
-            era = "postBPix"
-    # 2024 → era=None (All)
+        raise RuntimeError(f"Cannot infer year from path: {path}")
 
     return year, era
+
 
 
 def ensure_dir_in_tfile(tfile, path):
@@ -1857,8 +1863,8 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
     print(f"[INFO] Processing Parquet file: {inputfile}")
 
     # Defined here to avoid global state
-    use_year = str(cli_year)
-    use_era  = cli_era
+    # use_year = str(cli_year)
+    # use_era  = cli_era
 
     required_columns = [
         "run",
@@ -1957,8 +1963,10 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
     # use_year = det_year if det_year is not None else str(cli_year)
     # use_era  = det_era  if det_era is not None else cli_era
     
-    use_year = str(cli_year)
-    use_era  = cli_era
+    # use_year = str(cli_year)
+    # use_era  = cli_era
+    use_year, use_era = detect_year_era_from_path(inputfile)
+
     
     if det_era in ("PreEE", "PostEE"):
         use_year = "2022"
@@ -1999,28 +2007,74 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
     
     #---------------------
     #--------
-        
-
-    if xsec_lumi_cache is None:
-        xsec_lumi_cache = {}
-    if inputfile not in xsec_lumi_cache:
+    
+    
+    cache_key = (inputfile, use_year, use_era)
+    
+    if cache_key not in xsec_lumi_cache:
         if isdata or isdd:
-            xsec_lumi_cache[inputfile] = (1.0, 1.0)
+            # Data / DD: no xsec, no lumi
+            xsec_lumi_cache[cache_key] = (None, None)
         else:
-            xsec_lumi_cache[inputfile] = (
+            xsec_lumi_cache[cache_key] = (
                 float(getXsec(inputfile)),
                 float(getLumi(use_year, use_era)) * 1000.0,  # pb^-1
             )
-    xsec_, lumi_ = xsec_lumi_cache[inputfile]
-    print(f"[NORM] sample={os.path.basename(inputfile)} xsec={xsec_} pb, "
-          f"lumi={lumi_/1000.0:.3f} fb^-1 ({use_year} {use_era}) "
-          f"[flags: data={isdata} dd={isdd}]")
+    xsec_, lumi_ = xsec_lumi_cache[cache_key]
+    
+        
 
+    # if xsec_lumi_cache is None:
+    #     xsec_lumi_cache = {}
+    # cache_key = (inputfile, use_year, use_era)
+    # # if inputfile not in xsec_lumi_cache:
+    #     if isdata or isdd:
+    #         xsec_lumi_cache[inputfile] = (1.0, 1.0)
+    #     else:
+    #         xsec_lumi_cache[inputfile] = (
+    #             float(getXsec(inputfile)),
+    #             float(getLumi(use_year, use_era)) * 1000.0,  # pb^-1
+    #         )
+    # xsec_, lumi_ = xsec_lumi_cache[inputfile]
+    
+    # print(f"[NORM] sample={os.path.basename(inputfile)} xsec={xsec_} pb, "
+    #       f"lumi={lumi_/1000.0:.3f} fb^-1 ({use_year} {use_era}) "
+    #       f"[flags: data={isdata} dd={isdd}]")
+
+    # if not isdata and not isdd:
+    #     print(
+    #         f"[MC-NORM] {sample_name_norm}:"
+    #         f"xsec*lumi = {(xsec_ * lumi_):.3e}"
+    #     )
+    
+    if isdata:
+        print(
+            f"[NORM] DATA sample={os.path.basename(inputfile)} "
+            f"({use_year} {use_era})"
+        )
+
+    elif isdd:
+        print(
+            f"[NORM] DD sample={os.path.basename(inputfile)} "
+            f"({use_year} {use_era})"
+        )
+
+    else:
+        print(
+            f"[NORM] MC sample={os.path.basename(inputfile)} "
+            f"xsec={xsec_} pb, "
+            f"lumi={lumi_/1000.0:.3f} fb^-1 "
+            f"({use_year} {use_era})"
+        )
+        
     if not isdata and not isdd:
         print(
             f"[MC-NORM] {sample_name_norm}:"
             f"xsec*lumi = {(xsec_ * lumi_):.3e}"
         )
+
+
+    
 
     # region utils & plotting config
     from regions import (
