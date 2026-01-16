@@ -77,6 +77,7 @@ XSEC_PATTERNS = [
     # Prompt photon backgrounds (from your file list)
     ("ggjetsmgg40to80",      88.75),
     ("ggjetsmgg80",          88.75),   # change if you use a different xsec for MGG-80(need to be confirmed)
+    ("ggjets",              88.75),   # general match if specific not found
     ("gjetpt20to40",        242.5),
     ("gjetpt40",            919.1),
 
