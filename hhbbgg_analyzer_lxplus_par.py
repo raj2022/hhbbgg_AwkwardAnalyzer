@@ -1717,7 +1717,7 @@ def detect_year_era_from_path(path: str):
     elif "postbpix" in p:
         era = "postBPix"
     else:
-        era = "all"
+        era = "All"
 
     # ---- Year detection ----
     # Explicit year in path always wins
@@ -1939,6 +1939,19 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
         "lepton1_pt",
         "lepton1_pfIsoId",
         "n_jets",
+        # Number of jets ration (BTV)
+        "Njets2p5",
+        # Jets for the HT(BTV)
+        "jet10_pt",
+        "jet1_pt",
+        "jet2_pt",
+        "jet3_pt",
+        "jet4_pt",
+        "jet5_pt",
+        "jet6_pt",
+        "jet7_pt",
+        "jet8_pt",
+        "jet9_pt",
         #pDNN Score
         # "pDNN_score",
     ]
@@ -2163,6 +2176,17 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
                 "lepton1_pt": tree_["lepton1_pt"],
                 "lepton1_pfIsoId": tree_["lepton1_pfIsoId"], 
                 "n_jets": tree_["n_jets"],
+                "Njets2p5": tree_["Njets2p5"],
+                "jet10_pt": tree_["jet10_pt"],
+                "jet1_pt": tree_["jet1_pt"],
+                "jet2_pt": tree_["jet2_pt"],
+                "jet3_pt": tree_["jet3_pt"],
+                "jet4_pt": tree_["jet4_pt"],
+                "jet5_pt": tree_["jet5_pt"],
+                "jet6_pt": tree_["jet6_pt"],
+                "jet7_pt": tree_["jet7_pt"],
+                "jet8_pt": tree_["jet8_pt"],
+                "jet9_pt": tree_["jet9_pt"],
                 # "pDNN_score":tree_["pDNN_score"],
             },
             depth_limit=1,
@@ -2203,6 +2227,23 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
             cms_events["lead_pho_mvaID"] > cms_events["sublead_pho_mvaID"],
             cms_events["lead_pho_mvaID"], cms_events["sublead_pho_mvaID"]
         )
+        # Number of jets ration (BTV)
+        cms_events["Njets2p5"] = cms_events["Njets2p5"]
+        # Jets for the HT(BTV)
+        jets_pts = ak.concatenate([
+            cms_events["jet1_pt"].to_numpy().reshape(-1,1),
+            cms_events["jet2_pt"].to_numpy().reshape(-1,1),
+            cms_events["jet3_pt"].to_numpy().reshape(-1,1),
+            cms_events["jet4_pt"].to_numpy().reshape(-1,1),
+            cms_events["jet5_pt"].to_numpy().reshape(-1,1),
+            cms_events["jet6_pt"].to_numpy().reshape(-1,1),
+            cms_events["jet7_pt"].to_numpy().reshape(-1,1),
+            cms_events["jet8_pt"].to_numpy().reshape(-1,1),
+            cms_events["jet9_pt"].to_numpy().reshape(-1,1),
+            cms_events["jet10_pt"].to_numpy().reshape(-1,1),
+        ], axis=1)
+        cms_events["HT"] = ak.Array(np.sum(jets_pts, axis=1))
+        
 
         # region flags
         from regions import (
@@ -2257,7 +2298,7 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
             "preselection","selection","srbbgg","srbbggMET","crbbantigg","crantibbgg","crantibbantigg","sideband",
             "idmva_sideband","idmva_presel",
             "DeltaR_j1g1","DeltaR_j2g1","DeltaR_j1g2","DeltaR_j2g2",
-            "signal","isdata","isdd",
+            "signal","isdata","isdd","HT","Njets2p5",
             # "pDNN_score",
         ]
         out_events = ak.zip(
