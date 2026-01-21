@@ -884,7 +884,7 @@ legend = {
     "VHToGG": r"$V\,H\to\gamma\gamma$",
     "ttHToGG": r"$t\bar t H\to\gamma\gamma$",
     # "DDQCDGJET": r"DDQCDGJET",
-    "TTGG": r"$t\bar t \to \gamma\gamma$",
+    "TTGG": r"$t\bar t + \gamma\gamma$",
     "TTG": r"$t\bar t \to \gamma$",
     # signals
     "NMSSM_X400_Y100": r"$NMSSM\_X_{400}\_Y_{100}\times 10$",
