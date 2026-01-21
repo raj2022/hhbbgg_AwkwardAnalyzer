@@ -75,6 +75,15 @@ python /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/2024_parquet_productio
 * Signal: `/eos/user/b/bsahu/HiggsDNA_v4PrelimProd/2024/merged/`
 
 
+
+
+#### With Systematics 
+* 2022PostEE:
+* 2022PreEE:`/eos/user/b/bsinghal/analysis/output/2022preEE/merged/`
+* 2023PostBPix:`/eos/user/b/bsahu/HiggsDNA_v3/HiggsDNA/output_23PostBPix`
+* 2023PreBPix: `/eos/user/b/bsinghal/analysis/output/2023preBPix`
+
+
 ## References:
 1. Instructions: https://indico.cern.ch/event/1499924/contributions/6478750/attachments/3053886/5398744/For_Hgg_v3_production-2.pdf
 2. v4 Instructions: https://indico.cern.ch/event/1590752/contributions/6805177/attachments/3178875/5654008/InstructionsFor2024HHbbggProduction_20251121.pdf 
