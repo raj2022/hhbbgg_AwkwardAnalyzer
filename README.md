@@ -246,6 +246,18 @@ python hhbbgg_analyzer_lxplus_par.py \
 ```
 
 
+-  To Run only 2022
+```bash
+python hhbbgg_analyzer_lxplus_par.py \
+  --config-year 2022 \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preEE/ \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postEE/
+```
+
+- To run only 2024:
+```bash
+ python hhbbgg_analyzer_lxplus_par.py --config-year 2024 -i /eos/user/s/sraj/Work_/CUA_20--/Analysis/output_root/v4_production/2024 
+ ```
 
 
 
