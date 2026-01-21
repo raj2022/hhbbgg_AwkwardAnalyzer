@@ -705,7 +705,7 @@ from variables import vardict, regions as REGION_LIST, variables_common  # <- ke
 
 # If you have a year/era-aware getLumi, replace this label.
 def lumi_label():
-    return "61.9"
+    return "27.76"  # fb^-1 for 2022 only
 
 # ------------------- Styling -------------------
 hep.style.use("CMS")
@@ -757,7 +757,10 @@ def list_top_dirs(upfile):
 
 def dir_to_base(name: str) -> str | None:
     n = name
-    if n.startswith("Data_") or n.startswith("_Data"):
+    # --- Data samples -------
+    # if n.startswith("Data_") or n.startswith("_Data"):
+    #     return "Data"
+    if re.search(r'(^|_)Data(_|$)', n):
         return "Data"
 
     # drop era tokens & year hints if present
@@ -771,17 +774,25 @@ def dir_to_base(name: str) -> str | None:
     # Common MC bases
     mc_bases = {
         "GGJets",
-        # "GJetPt20To40",
-        # "GJetPt40",
+        "GJetPt20To40",
+        "GJetPt40",
         "GluGluHToGG",
         "VBFHToGG",
         "VHToGG",
         "ttHToGG",
         "TTGG",
         "TTG",
+        "QCD_PT-30to40",
+        "QCD_PT-30toInf",
+        "QCD_PT-40toInf",
+        
+        
     }
+    # for base in mc_bases:
+    #     if n.lower() == base.lower():
+    #         return base
     for base in mc_bases:
-        if n.lower() == base.lower():
+        if re.search(rf'(^|_){re.escape(base)}(_|$)', n, re.IGNORECASE):
             return base
 
     # capitalization variants occasionally appear
@@ -794,7 +805,10 @@ def dir_to_base(name: str) -> str | None:
         "gjetpt40": "GJetPt40",
         "gjetpt40toinf": "GJetPt40",
         "ttgg":"TTGG",
-        "ttg":"TTG"
+        "ttg":"TTG",
+        "qcd_pt-30to40":"QCD_PT-30to40",
+        "qcd_pt-30toinf":"QCD_PT-30toInf",
+        "qcd_pt-40toinf":"QCD_PT-40toInf",
     }
     if n.lower() in aliases:
         return aliases[n.lower()]
@@ -863,15 +877,15 @@ blind_vars = ["dibjet_mass", "diphoton_mass"]
 legend = {
     "Data": "Data",
     "GGJets": r"$\gamma\gamma$+jets",
-    # "GJetPt20To40": r"$\gamma$+jets ($20< p_T < 40$)",
-    # "GJetPt40": r"$\gamma$+jets ($p_T > 40$)",
+    "GJetPt20To40": r"$\gamma$+jets ($20< p_T < 40$)",
+    "GJetPt40": r"$\gamma$+jets ($p_T > 40$)",
     "GluGluHToGG": r"$gg\to H\to\gamma\gamma$",
     "VBFHToGG": r"$VBF\,H\to\gamma\gamma$",
     "VHToGG": r"$V\,H\to\gamma\gamma$",
     "ttHToGG": r"$t\bar t H\to\gamma\gamma$",
-    "DDQCDGJET": r"DDQCDGJET",
+    # "DDQCDGJET": r"DDQCDGJET",
     "TTGG": r"$t\bar t \to \gamma\gamma$",
-    "TTG": r"$t\bar t \to \gamma",
+    "TTG": r"$t\bar t \to \gamma$",
     # signals
     "NMSSM_X400_Y100": r"$NMSSM\_X_{400}\_Y_{100}\times 10$",
     "NMSSM_X400_Y125": r"$NMSSM\_X_{400}\_Y_{125}\times 10$",
@@ -898,9 +912,18 @@ def stack1d_histograms(up, output_dir, blind=True):
 
     data_base = "Data"
     mc_bases = ["GGJets",
-                "GJetPt20To40",
-                "GJetPt40",
-                "GluGluHToGG","VBFHToGG","VHToGG","ttHToGG","DDQCDGJET","TTGG", "TTG"]
+                # "GJetPt20To40",
+                # "GJetPt40",
+                "GluGluHToGG",
+                "VBFHToGG",
+                "VHToGG",
+                "ttHToGG",
+                "DDQCDGJET",
+                # "QCD_PT-30to40",
+                # "QCD_PT-30toInf",
+                # "QCD_PT-40toInf",
+                "TTGG", 
+                "TTG"]
     signal_bases = [
                     # "NMSSM_X400_Y100",
                     # "NMSSM_X400_Y125",
@@ -1001,7 +1024,7 @@ def stack1d_histograms(up, output_dir, blind=True):
         print(f"[OK] {region}/{var}")
 
 def main():
-    root_path = "outputfiles/merged/DD_CombinedAll/hhbbgg_analyzer-v2-histograms.root"
+    root_path = "/afs/cern.ch/user/s/sraj/Analysis/hhbbgg_AwkwardAnalyzer/outputfiles/2024_All/hhbbgg_analyzer-v2-histograms.root" # plotting for 2022 All era
     up = uproot.open(root_path)
     out = "stack_plots"
     os.makedirs(out, exist_ok=True)
