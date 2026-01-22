@@ -268,3 +268,15 @@ python make_templates.py \
   --year 2022 \
   /afs/cern.ch/user/s/sraj/Analysis/output_parquet/v3_production/production_v3/2022_postEE/merged/NMSSM_X300_Y100/
 ```
+
+
+
+
+
+
+# Files storage for year and combined
+Files after processed through `analyzer`
+* 2022 : `/afs/cern.ch/user/s/sraj/Analysis/hhbbgg_AwkwardAnalyzer/outputfiles/merged/2022_All/hhbbgg_analyzer-v2-histograms.root`
+* 2023:`/afs/cern.ch/user/s/sraj/Analysis/hhbbgg_AwkwardAnalyzer/outputfiles/merged/2023_All/hhbbgg_analyzer-v2-histograms.root`
+* 2024: `/afs/cern.ch/user/s/sraj/Analysis/hhbbgg_AwkwardAnalyzer/outputfiles/2024_All`
+* Combined_all = 
