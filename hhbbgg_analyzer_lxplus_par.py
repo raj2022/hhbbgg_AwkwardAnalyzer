@@ -1954,6 +1954,8 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
         "jet9_pt",
         #pDNN Score
         # "pDNN_score",
+        # number of leptons
+        "n_leptons"
     ]
 
     parquet_file = pq.ParquetFile(inputfile)
@@ -2188,6 +2190,7 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
                 "jet8_pt": tree_["jet8_pt"],
                 "jet9_pt": tree_["jet9_pt"],
                 # "pDNN_score":tree_["pDNN_score"],
+                "n_leptons": tree_["n_leptons"],
             },
             depth_limit=1,
         )
@@ -2300,6 +2303,7 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
             "DeltaR_j1g1","DeltaR_j2g1","DeltaR_j1g2","DeltaR_j2g2",
             "signal","isdata","isdd","HT","Njets2p5",
             # "pDNN_score",
+            "n_leptons",
         ]
         out_events = ak.zip(
             {k: cms_events[k] for k in keys_to_copy} |

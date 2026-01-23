@@ -77,6 +77,7 @@ binning["preselection"] = {
     # Additional BTV variables can be added here
     "Njets2p5":[10,0,15],
     "HT":[20,0,1000],
+    "n_leptons":[10,0,10],
 }
 
 binning["selection"] = copy.deepcopy(binning["preselection"])

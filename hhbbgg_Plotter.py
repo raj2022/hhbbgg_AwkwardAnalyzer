@@ -705,7 +705,10 @@ from variables import vardict, regions as REGION_LIST, variables_common  # <- ke
 
 # If you have a year/era-aware getLumi, replace this label.
 def lumi_label():
-    return "27.76"  # fb^-1 for 2022 only
+    # return "34.65"  # fb^-1 for 2022 only
+    return "27.76"  # fb^-1 for 2023 only
+    # return "108.96"  # fb^-1 for 2024 only
+    # return "171.37"  # fb^-1 for 2022-2024
 
 # ------------------- Styling -------------------
 hep.style.use("CMS")
@@ -755,69 +758,128 @@ def list_top_dirs(upfile):
             continue
     return out
 
+# def dir_to_base(name: str) -> str | None:
+#     n = name
+#     # --- Data samples -------
+#     # if n.startswith("Data_") or n.startswith("_Data"):
+#     #     return "Data"
+#     if re.search(r'(^|_)Data(_|$)', n):
+#         return "Data"
+
+#     # drop era tokens & year hints if present
+#     n = re.sub(r"^_(preEE|postEE|preBPix|postBPix)_", "", n, flags=re.IGNORECASE)
+#     n = re.sub(r"(2022|2023)(PreEE|PostEE|preBPix|postBPix)", "", n, flags=re.IGNORECASE)
+
+#     # DD templates
+#     if n.startswith("DDQCDGJET") or re.match(r"GGJets_(high|low)_Rescaled", n, re.IGNORECASE):
+#         return "DDQCDGJET"
+
+#     # Common MC bases
+#     mc_bases = {
+#         "GGJets",
+#         "GJetPt20To40",
+#         "GJetPt40",
+#         "GluGluHToGG",
+#         "VBFHToGG",
+#         "VHToGG",
+#         "ttHToGG",
+#         "TTGG",
+#         "TTG",
+#         "QCD_PT-30to40",
+#         "QCD_PT-30toInf",
+#         "QCD_PT-40toInf",
+        
+        
+#     }
+#     for base in mc_bases:
+#         if n.lower() == base.lower():
+#             return base
+#     # for base in mc_bases:
+#     #     if re.search(rf'(^|_){re.escape(base)}(_|$)', n, re.IGNORECASE):
+#     #         return base
+
+#     # capitalization variants occasionally appear
+#     aliases = {
+#         "glugluhtogg": "GluGluHToGG",
+#         "tthtogg": "ttHToGG",
+#         "vbfhtogg": "VBFHToGG",
+#         "vhtogg": "VHToGG",
+#         "gjetpt20to40": "GJetPt20To40",
+#         "gjetpt40": "GJetPt40",
+#         "gjetpt40toinf": "GJetPt40",
+#         "ttgg":"TTGG",
+#         "ttg":"TTG",
+#         "qcd_pt-30to40":"QCD_PT-30to40",
+#         "qcd_pt-30toinf":"QCD_PT-30toInf",
+#         "qcd_pt-40toinf":"QCD_PT-40toInf",
+#     }
+#     if n.lower() in aliases:
+#         return aliases[n.lower()]
+
+#     # keep each NMSSM as-is
+#     if n.startswith("NMSSM_"):
+#         return n
+
+#     return None
+
+
 def dir_to_base(name: str) -> str | None:
     n = name
-    # --- Data samples -------
-    # if n.startswith("Data_") or n.startswith("_Data"):
-    #     return "Data"
-    if re.search(r'(^|_)Data(_|$)', n):
+
+    # ------------------
+    # DATA (any era / year / merge)
+    # ------------------
+    if re.search(r'(^|_)Data(_|$)', n, re.IGNORECASE):
         return "Data"
 
-    # drop era tokens & year hints if present
-    n = re.sub(r"^_(preEE|postEE|preBPix|postBPix)_", "", n, flags=re.IGNORECASE)
-    n = re.sub(r"(2022|2023)(PreEE|PostEE|preBPix|postBPix)", "", n, flags=re.IGNORECASE)
+    # ------------------
+    # Normalize name (remove era / year / merge noise)
+    # ------------------
+    n_clean = n
+    n_clean = re.sub(r"(2022|2023|2024)", "", n_clean, flags=re.IGNORECASE)
+    n_clean = re.sub(r"(preEE|postEE|preBPix|postBPix)", "", n_clean, flags=re.IGNORECASE)
+    n_clean = re.sub(r"(Era[A-Z])", "", n_clean, flags=re.IGNORECASE)
+    n_clean = re.sub(r"(merged|NOTAG)", "", n_clean, flags=re.IGNORECASE)
+    n_clean = re.sub(r"__+", "_", n_clean).strip("_")
 
-    # DD templates
+    # ------------------
+    # DD QCD (ALL variants)
+    # ------------------
+    # if re.search(r"DDQCDGJ(ET|ets)", n_clean, re.IGNORECASE):
+    #     return "DDQCDGJets"
     if n.startswith("DDQCDGJET") or re.match(r"GGJets_(high|low)_Rescaled", n, re.IGNORECASE):
         return "DDQCDGJET"
 
-    # Common MC bases
-    mc_bases = {
-        "GGJets",
-        "GJetPt20To40",
-        "GJetPt40",
-        "GluGluHToGG",
-        "VBFHToGG",
-        "VHToGG",
-        "ttHToGG",
-        "TTGG",
-        "TTG",
-        "QCD_PT-30to40",
-        "QCD_PT-30toInf",
-        "QCD_PT-40toInf",
-        
-        
+    # ------------------
+    # Common MC bases (regex containment)
+    # ------------------
+    mc_patterns = {
+        "GGJets": r"GGJets",
+        "GJetPt20To40": r"GJet.*20.*40",
+        "GJetPt40": r"GJet.*40",
+        "GluGluHToGG": r"GluGluHToGG",
+        "VBFHToGG": r"VBFHToGG",
+        "VHToGG": r"VHToGG",
+        "ttHToGG": r"ttHToGG",
+        "TTGG": r"TTGG",
+        "TTG": r"TTG",
+        "QCD_PT-30to40": r"QCD.*30.*40",
+        "QCD_PT-30toInf": r"QCD.*30.*Inf",
+        "QCD_PT-40toInf": r"QCD.*40.*Inf",
     }
-    # for base in mc_bases:
-    #     if n.lower() == base.lower():
-    #         return base
-    for base in mc_bases:
-        if re.search(rf'(^|_){re.escape(base)}(_|$)', n, re.IGNORECASE):
+
+    for base, pat in mc_patterns.items():
+        if re.search(pat, n_clean, re.IGNORECASE):
             return base
 
-    # capitalization variants occasionally appear
-    aliases = {
-        "glugluhtogg": "GluGluHToGG",
-        "tthtogg": "ttHToGG",
-        "vbfhtogg": "VBFHToGG",
-        "vhtogg": "VHToGG",
-        "gjetpt20to40": "GJetPt20To40",
-        "gjetpt40": "GJetPt40",
-        "gjetpt40toinf": "GJetPt40",
-        "ttgg":"TTGG",
-        "ttg":"TTG",
-        "qcd_pt-30to40":"QCD_PT-30to40",
-        "qcd_pt-30toinf":"QCD_PT-30toInf",
-        "qcd_pt-40toinf":"QCD_PT-40toInf",
-    }
-    if n.lower() in aliases:
-        return aliases[n.lower()]
-
-    # keep each NMSSM as-is
-    if n.startswith("NMSSM_"):
-        return n
+    # ------------------
+    # NMSSM signals (keep exact)
+    # ------------------
+    if n_clean.startswith("NMSSM_"):
+        return n_clean
 
     return None
+
 
 def group_by_base(upfile):
     groups = {}
@@ -876,14 +938,14 @@ blind_vars = ["dibjet_mass", "diphoton_mass"]
 
 legend = {
     "Data": "Data",
-    "GGJets": r"$\gamma\gamma$+jets",
+    "GGJets": r"$\gamma\gamma$+jets $\times 1.4$",
     "GJetPt20To40": r"$\gamma$+jets ($20< p_T < 40$)",
     "GJetPt40": r"$\gamma$+jets ($p_T > 40$)",
     "GluGluHToGG": r"$gg\to H\to\gamma\gamma$",
     "VBFHToGG": r"$VBF\,H\to\gamma\gamma$",
     "VHToGG": r"$V\,H\to\gamma\gamma$",
     "ttHToGG": r"$t\bar t H\to\gamma\gamma$",
-    # "DDQCDGJET": r"DDQCDGJET",
+    "DDQCDGJET": r"DDQCDGJET",
     "TTGG": r"$t\bar t + \gamma\gamma$",
     "TTG": r"$t\bar t \to \gamma$",
     # signals
@@ -925,12 +987,12 @@ def stack1d_histograms(up, output_dir, blind=True):
                 "TTGG", 
                 "TTG"]
     signal_bases = [
-                    # "NMSSM_X400_Y100",
+                    "NMSSM_X400_Y100",
                     # "NMSSM_X400_Y125",
                     # "NMSSM_X400_Y150",
                     # "NMSSM_X500_Y100",
                     # "NMSSM_X500_Y125",
-                    "NMSSM_X500_Y150"
+                    # "NMSSM_X500_Y150"
                     ]
 
     # Build jobs from the analyzer's truth: region -> list of variables
@@ -1024,7 +1086,7 @@ def stack1d_histograms(up, output_dir, blind=True):
         print(f"[OK] {region}/{var}")
 
 def main():
-    root_path = "/afs/cern.ch/user/s/sraj/Analysis/hhbbgg_AwkwardAnalyzer/outputfiles/2024_All/hhbbgg_analyzer-v2-histograms.root" # plotting for 2022 All era
+    root_path = "/afs/cern.ch/user/s/sraj/Analysis/hhbbgg_AwkwardAnalyzer/outputfiles/merged/2023_All/hhbbgg_analyzer-v2-histograms.root" # plotting for 2022 All era
     up = uproot.open(root_path)
     out = "stack_plots"
     os.makedirs(out, exist_ok=True)
@@ -1032,4 +1094,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
