@@ -263,7 +263,9 @@ python hhbbgg_analyzer_lxplus_par.py \
 
 - To run only 2024:
 ```bash
- python hhbbgg_analyzer_lxplus_par.py --config-year 2024 -i /eos/user/s/sraj/Work_/CUA_20--/Analysis/output_root/v4_production/2024 
+ python hhbbgg_analyzer_lxplus_par.py \
+ --config-year 2024 \
+ -i /eos/user/s/sraj/Work_/CUA_20--/Analysis/output_root/sample_final_nominal/2024 
  ```
 
 
