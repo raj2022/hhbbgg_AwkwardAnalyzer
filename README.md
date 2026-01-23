@@ -250,16 +250,21 @@ python hhbbgg_analyzer_lxplus_par.py \
 ```bash
 python hhbbgg_analyzer_lxplus_par.py \
   --config-year 2022 \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preEE/ \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postEE/
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/sample_final_nominal/preEE/ \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/sample_final_nominal/postEE/
+```
+-  To Run only 2023
+```bash
+python hhbbgg_analyzer_lxplus_par.py \
+  --config-year 2023 \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/sample_final_nominal/preBPix/ \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/sample_final_nominal/postBPix/
 ```
 
 - To run only 2024:
 ```bash
  python hhbbgg_analyzer_lxplus_par.py --config-year 2024 -i /eos/user/s/sraj/Work_/CUA_20--/Analysis/output_root/v4_production/2024 
  ```
-
-
 
 
 # To Run the systematics
