@@ -89,6 +89,7 @@ vardict = {
     # BTV variables can be added here
     "Njets2p5":"Njets2p5",
     "HT":"HT",
+    "n_leptons":"n_leptons",
 }
 
 variables_common = {
@@ -166,6 +167,7 @@ variables_common = {
         # BTV variables can be added here
         "Njets2p5",
         "HT",
+        "n_leptons",
     ]
 }
 
