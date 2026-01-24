@@ -56,10 +56,16 @@ that would be (when we run from private afs area) (NOT Working)
 python /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/parquet_production_v3/HiggsDNA/higgs_dna/scripts/run_analysis.py --json-analysis My_Json_300.json --dump /eos/user/s/sraj/Work_/CUA_20--/Analysis/output_parquet/systematics_v3/2023_postBPix/ --doFlow-corrections --fiducialCuts store_flag --Smear-sigma-m --doDeco --executor vanilla_lxplus --queue workday --memory 12000 --timeout 300 --nano-version 12
 ```
 
-Trying tyhis one with the v4:
+Trying this one with the v4:
 ```bash
-python /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/2024_parquet_production/tag15/HiggsDNA/higgs_dna/scripts/run_analysis.py --json-analysis My_Json_300.json --dump /eos/user/s/sraj/Work_/CUA_20--/Analysis/output_parquet/systematics_v3/2023_postBPix/ --doFlow-corrections --fiducialCuts store_flag --Smear-sigma-m --doDeco --executor vanilla_lxplus --queue workday --memory 12000 --timeout 300 --nano-version 12
+python /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/2024_parquet_production/tag15/HiggsDNA/higgs_dna/scripts/run_analysis.py --json-analysis My_Json_300.json --dump /eos/user/s/sraj/Work_/CUA_20--/Analysis/output_parquet/systematics_v3/2023_postBPix/ --doFlow-corrections --fiducialCuts store_flag --Smear-sigma-m --doDeco --executor vanilla_lxplus --queue workday #--memory 12000 --timeout 300 --nano-version 12
 ```
+
+To merge:
+```bash
+ python higgs_dna/scripts/postprocessing/prepare_output_file.py --input /eos/user/b/bsinghal/analysis/output/2023preBPix/ --merge --syst --varDict variation.json 
+```
+
 
 
 
@@ -78,13 +84,34 @@ python /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/2024_parquet_productio
 
 
 #### With Systematics 
-* 2022PostEE:
+* 2022PostEE: `/eos/user/s/sraj/Work_/CUA_20--/Analysis/output_parquet/systematics_v3/2022_postEE/merged/`
 * 2022PreEE:`/eos/user/b/bsinghal/analysis/output/2022preEE/merged/`
-* 2023PostBPix:`/eos/user/b/bsahu/HiggsDNA_v3/HiggsDNA/output_23PostBPix`
-* 2023PreBPix: `/eos/user/b/bsinghal/analysis/output/2023preBPix`
+* 2023PostBPix:`/eos/user/b/bsahu/HiggsDNA_v3/HiggsDNA/output_23PostBPix/merged/`
+* 2023PreBPix: `/eos/user/b/bsinghal/analysis/output/2023preBPix/merged`
 
 
 ## References:
 1. Instructions: https://indico.cern.ch/event/1499924/contributions/6478750/attachments/3053886/5398744/For_Hgg_v3_production-2.pdf
 2. v4 Instructions: https://indico.cern.ch/event/1590752/contributions/6805177/attachments/3178875/5654008/InstructionsFor2024HHbbggProduction_20251121.pdf 
 3. 
+
+--------------
+--------------
+---------------
+---------------
+---------------
+# Production Final(Jan 22, 2026)
+```bash
+mamba activate higgs-dna
+voms-proxy-init --rfc --voms cms -valid 192:00
+```
+
+```bash
+python /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/parquet_production_v3/HiggsDNA/higgs_dna/scripts/run_analysis.py --json-analysis My_Json_800.json --dump /eos/user/s/sraj/Work_/CUA_20--/Analysis/output_parquet/systematics_v3/2023_postBPix/ --doFlow-corrections --fiducialCuts store_flag --Smear-sigma-m --doDeco --executor vanilla_lxplus --queue workday --memory 12000  --nano-version 12
+```
+
+To merge:
+From the `HiggsDNA` folder:
+```bash
+python higgs_dna/scripts/postprocessing/prepare_output_file.py --input /eos/user/s/sraj/Work_/CUA_20--/Analysis/output_parquet/systematics_v3/2022_postEE/ --merge --syst --varDict variation.json 
+```
