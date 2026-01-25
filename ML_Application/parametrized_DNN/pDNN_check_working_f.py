@@ -113,14 +113,17 @@ y_values    = [90, 95, 100, 125, 150, 200, 300, 400, 500, 600, 800]
 # -----------------------------
 # SIGNAL parquet pattern (per mass,y set)
 # SIG_TPL = "../../../output_parquet/v3_production/production_v3/2022_postEE_102425/merged/NMSSM_X{m}_Y{y}/NOTAG_merged.parquet"
-SIG_TPL = "../../../output_parquet/final_production_Syst/merged/NMSSM_X{m}_Y{y}/nominal/NOTAG_merged.parquet"
+# SIG_TPL = "../../../output_parquet/final_production_Syst/merged/NMSSM_X{m}_Y{y}/nominal/NOTAG_merged.parquet"
+SIG_TPL = "/eos/user/s/sraj/Work_/CUA_20--/Analysis/output_root/sample_final_nominal/postEE/NMSSM_X{m}_Y{y}.parquet"
+
 
 # BACKGROUND is parquet
 background_files = [
-    "../../../output_root/v3_production/samples/postEE/GGJets.parquet",
-    "../../../output_root/v3_production/samples/postEE/GJetPt20To40.parquet",
-    "../../../output_root/v3_production/samples/postEE/GJetPt40.parquet",
-    # "../../../output_root/v3_production/samples/postEE/DDQCDGJET_Rescaled.parquet    # Can be added later if needed
+    "/eos/user/s/sraj/Work_/CUA_20--/Analysis/output_root/sample_final_nominal/postEE/GGJets_MGG-40to80.parquet",
+    "/eos/user/s/sraj/Work_/CUA_20--/Analysis/output_root/sample_final_nominal/postEE/GGJets_MGG-80.parquet",
+    # "/eos/user/s/sraj/Work_/CUA_20--/Analysis/output_root/sample_final_nominal/postEE/GJetPt20To40.parquet",
+    # "/eos/user/s/sraj/Work_/CUA_20--/Analysis/output_root/sample_final_nominal/postEE/GJetPt40.parquet",
+    "/eos/user/s/sraj/Work_/CUA_20--/Analysis/output_root/sample_final_nominal/postEE/DDQCDGJET_Rescaled.parquet",    # Can be added later if needed
 ]
 
 # ============================
@@ -130,26 +133,43 @@ WEIGHT_COL = "weight_central"
 
 FEATURES_CORE = [
     # photons & diphoton
-    "lead_eta","lead_phi","sublead_eta","sublead_phi",
-    "eta","phi",
+    "lead_eta","lead_phi",
+    # "sublead_eta","sublead_phi",
+    # "eta","phi",
 
     # jets, dijet, HH (Res)
-    "Res_lead_bjet_eta","Res_lead_bjet_phi",
-    "Res_sublead_bjet_eta","Res_sublead_bjet_phi",
-    "Res_dijet_eta","Res_dijet_phi",
-    "Res_HHbbggCandidate_eta","Res_HHbbggCandidate_phi",
+    # "Res_lead_bjet_eta",
+    # "Res_lead_bjet_phi",
+    # "Res_sublead_bjet_eta",
+    # "Res_sublead_bjet_phi",
+    "Res_dijet_eta",
+    "Res_dijet_phi",
+    "Res_HHbbggCandidate_eta",
+    "Res_HHbbggCandidate_phi",
+    "Res_HHbbggCandidate_pt",
+    # "jet1_pt","jet2_pt",
+    # "jet3_pt","jet4_pt",
+    
+    # bb system mass
+    "Res_dijet_mass_DNNreg",
 
     # angular distances (Res)
-    "Res_DeltaR_j1g1","Res_DeltaR_j1g2",
-    "Res_DeltaR_j2g1","Res_DeltaR_j2g2",
+    # "Res_DeltaR_j1g1",
+    # "Res_DeltaR_j1g2",
+    # "Res_DeltaR_j2g1",
+    # "Res_DeltaR_j2g2",
     "Res_DeltaR_jg_min",
 
     # helicity / Collins–Soper
-    "Res_CosThetaStar_gg","Res_CosThetaStar_jj","Res_CosThetaStar_CS",
+    "Res_CosThetaStar_gg",
+    "Res_CosThetaStar_jj",
+    "Res_CosThetaStar_CS",
 
     # photon ID + b-tag
-    "lead_mvaID_run3","sublead_mvaID_run3",
-    # "Res_lead_bjet_btagPNetB","Res_sublead_bjet_btagPNetB",
+    "lead_mvaID_run3",
+    # "sublead_mvaID_run3",
+    # "Res_lead_bjet_btagPNetB",
+    # "Res_sublead_bjet_btagPNetB",
 
     # counts & MET
     "n_leptons","n_jets","puppiMET_pt","puppiMET_phi",
@@ -161,12 +181,16 @@ FEATURES_CORE = [
     "Res_chi_t0","Res_chi_t1",
 
     # raw kinematics and masses (for pT/m variables from the paper)
-    "Res_dijet_pt","Res_dijet_mass",
-    "Res_HHbbggCandidate_pt","Res_HHbbggCandidate_mass",
+    "Res_dijet_pt",
+    "Res_dijet_mass",
+    # "Res_HHbbggCandidate_mass",
 
     # scaled pT’s required by the paper
     "Res_pholead_PtOverM","Res_phosublead_PtOverM",
     "Res_FirstJet_PtOverM","Res_SecondJet_PtOverM",
+    
+    # M_X
+    "Res_M_X",
 ]
  
 
