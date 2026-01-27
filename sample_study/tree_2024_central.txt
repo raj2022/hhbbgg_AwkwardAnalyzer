@@ -1,0 +1,83 @@
+[01;34m.[0m
+(0tqq (B[ 4.0K]  [01;34mdata[0m/
+(0x   tqq (B[ 114M]  Data_Run2024C_EG0_NOTAG_merged.parquet
+(0x   tqq (B[ 114M]  Data_Run2024C_EG1_NOTAG_merged.parquet
+(0x   tqq (B[ 123M]  Data_Run2024D_EG0_NOTAG_merged.parquet
+(0x   tqq (B[ 124M]  Data_Run2024D_EG1_NOTAG_merged.parquet
+(0x   tqq (B[ 173M]  Data_Run2024E_EG0_NOTAG_merged.parquet
+(0x   tqq (B[ 174M]  Data_Run2024E_EG1_NOTAG_merged.parquet
+(0x   tqq (B[ 377M]  Data_Run2024F_EG0_NOTAG_merged.parquet
+(0x   tqq (B[ 375M]  Data_Run2024F_EG1_NOTAG_merged.parquet
+(0x   tqq (B[ 487M]  Data_Run2024G_EG0_NOTAG_merged.parquet
+(0x   tqq (B[ 488M]  Data_Run2024G_EG1_NOTAG_merged.parquet
+(0x   tqq (B[  82M]  Data_Run2024H_EG0_NOTAG_merged.parquet
+(0x   tqq (B[  81M]  Data_Run2024H_EG1_NOTAG_merged.parquet
+(0x   tqq (B[  82M]  Data_Run2024Iv1_EG0_NOTAG_merged.parquet
+(0x   tqq (B[  82M]  Data_Run2024Iv1_EG1_NOTAG_merged.parquet
+(0x   tqq (B[  80M]  Data_Run2024Iv2_EG0_NOTAG_merged.parquet
+(0x   mqq (B[  80M]  Data_Run2024Iv2_EG1_NOTAG_merged.parquet
+(0mqq (B[ 4.0K]  [01;34msim[0m/
+(0    tqq (B[ 4.0K]  [01;34mbbHtoGG[0m/
+(0    x   mqq (B[ 187M]  NOTAG_merged.parquet
+(0    tqq (B[ 4.0K]  [01;34mDDQCDGJets[0m/
+(0    x   tqq (B[ 721M]  DDQCDGJets.parquet
+(0    x   tqq (B[ 4.0K]  README_t.swp
+(0    x   mqq (B[   81]  README.txt
+(0    tqq (B[ 4.0K]  [01;34mGGJets_MGG-80[0m/
+(0    x   mqq (B[  12G]  NOTAG_merged.parquet
+(0    tqq (B[ 4.0K]  [01;34mGJet_MGG-40to80-PT-20[0m/
+(0    x   mqq (B[  26M]  NOTAG_merged.parquet
+(0    tqq (B[ 4.0K]  [01;34mGJet_MGG-80-PT-20to40[0m/
+(0    x   mqq (B[ 154M]  NOTAG_merged.parquet
+(0    tqq (B[ 4.0K]  [01;34mGJet_MGG-80-PT-40[0m/
+(0    x   mqq (B[ 303M]  NOTAG_merged.parquet
+(0    tqq (B[ 4.0K]  [01;34mGluGluHtoGG[0m/
+(0    x   mqq (B[ 1.3G]  NOTAG_merged.parquet
+(0    tqq (B[ 4.0K]  [01;34mGluGlutoHH_kl-0p00_kt-1p00_c2-0p00[0m/
+(0    x   mqq (B[ 321M]  NOTAG_merged.parquet
+(0    tqq (B[ 4.0K]  [01;34mGluGlutoHH_kl-1p00_kt-1p00_c2-0p00[0m/
+(0    x   mqq (B[ 327M]  NOTAG_merged.parquet
+(0    tqq (B[ 4.0K]  [01;34mGluGlutoHH_kl-2p45_kt-1p00_c2-0p00[0m/
+(0    x   mqq (B[ 341M]  NOTAG_merged.parquet
+(0    tqq (B[ 4.0K]  [01;34mGluGlutoHH_kl-5p00_kt-1p00_c2-0p00[0m/
+(0    x   mqq (B[ 282M]  NOTAG_merged.parquet
+(0    tqq (B[ 4.0K]  [01;34mQCD_MGG-40to80-PT-30[0m/
+(0    x   mqq (B[ 3.6M]  NOTAG_merged.parquet
+(0    tqq (B[ 4.0K]  [01;34mQCD_MGG-80-PT-30to40[0m/
+(0    x   mqq (B[ 1.9M]  NOTAG_merged.parquet
+(0    tqq (B[ 4.0K]  [01;34mQCD_MGG-80-PT-40[0m/
+(0    x   mqq (B[ 6.2M]  NOTAG_merged.parquet
+(0    tqq (B[ 4.0K]  [01;34mTTGG[0m/
+(0    x   mqq (B[ 399M]  NOTAG_merged.parquet
+(0    tqq (B[ 4.0K]  [01;34mttHtoGG[0m/
+(0    x   mqq (B[ 1.3G]  NOTAG_merged.parquet
+(0    tqq (B[ 4.0K]  [01;34mVBFHH_CV-1p000_C2V-0p000_C3-1p000[0m/
+(0    x   mqq (B[ 371M]  NOTAG_merged.parquet
+(0    tqq (B[ 4.0K]  [01;34mVBFHH_CV-1p000_C2V-1p000_C3-1p000[0m/
+(0    x   mqq (B[ 245M]  NOTAG_merged.parquet
+(0    tqq (B[ 4.0K]  [01;34mVBFHH_CV-1p74_C2V-1p37_C3-14p4[0m/
+(0    x   mqq (B[ 303M]  NOTAG_merged.parquet
+(0    tqq (B[ 4.0K]  [01;34mVBFHH_CV-2p12_C2V-3p87_C3-m5p96[0m/
+(0    x   mqq (B[ 305M]  NOTAG_merged.parquet
+(0    tqq (B[ 4.0K]  [01;34mVBFHH_CV-m0p012_C2V-0p030_C3-10p2[0m/
+(0    x   mqq (B[ 372M]  NOTAG_merged.parquet
+(0    tqq (B[ 4.0K]  [01;34mVBFHH_CV-m0p758_C2V-1p44_C3-m19p3[0m/
+(0    x   mqq (B[ 324M]  NOTAG_merged.parquet
+(0    tqq (B[ 4.0K]  [01;34mVBFHH_CV-m0p962_C2V-0p959_C3-m1p43[0m/
+(0    x   mqq (B[ 241M]  NOTAG_merged.parquet
+(0    tqq (B[ 4.0K]  [01;34mVBFHH_CV-m1p21_C2V-1p94_C3-m0p94[0m/
+(0    x   mqq (B[ 366M]  NOTAG_merged.parquet
+(0    tqq (B[ 4.0K]  [01;34mVBFHH_CV-m1p60_C2V-2p72_C3-m1p36[0m/
+(0    x   mqq (B[ 243M]  NOTAG_merged.parquet
+(0    tqq (B[ 4.0K]  [01;34mVBFHH_CV-m1p83_C2V-3p57_C3-m3p39[0m/
+(0    x   mqq (B[ 276M]  NOTAG_merged.parquet
+(0    tqq (B[ 4.0K]  [01;34mVBFHtoGG[0m/
+(0    x   mqq (B[ 957M]  NOTAG_merged.parquet
+(0    tqq (B[ 4.0K]  [01;34mWmHtoGG[0m/
+(0    x   mqq (B[ 1.0G]  NOTAG_merged.parquet
+(0    tqq (B[ 4.0K]  [01;34mWpHtoGG[0m/
+(0    x   mqq (B[ 941M]  NOTAG_merged.parquet
+(0    mqq (B[ 4.0K]  [01;34mZHtoGG[0m/
+(0        mqq (B[ 1.1G]  NOTAG_merged.parquet
+
+32 directories, 48 files

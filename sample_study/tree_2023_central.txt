@@ -1,0 +1,1744 @@
+[01;34m.[0m
+(0tqq (B[ 4.0K]  [01;34mdata[0m/
+(0x   tqq (B[ 392M]  Data_EraC_NOTAG_merged.parquet
+(0x   mqq (B[ 226M]  Data_EraD_NOTAG_merged.parquet
+(0mqq (B[ 4.0K]  [01;34msim[0m/
+(0    tqq (B[ 4.0K]  [01;34mpostBPix[0m/
+(0    x   tqq (B[ 4.0K]  [01;34mbbHtoGG[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0    x   x   x   mqq (B[  23M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0    x   x   x   mqq (B[  23M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   mqq (B[  22M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   mqq (B[  25M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   mqq (B[  23M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   mqq (B[  23M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0    x   x   x   mqq (B[  23M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0    x   x   x   mqq (B[  23M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   mqq (B[  28M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  23M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[  23M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  23M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[  23M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  23M]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x       mqq (B[  23M]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mDDQCDGJets[0m/
+(0    x   x   tqq (B[  56M]  DDQCDGJET_Rescaled.parquet
+(0    x   x   tqq (B[ 2.2G]  GGJets_high_Rescaled.parquet
+(0    x   x   mqq (B[ 509M]  GGJets_low_Rescaled.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mGGJets_MGG-40to80[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0    x   x   x   mqq (B[ 457M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0    x   x   x   mqq (B[ 457M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   mqq (B[ 447M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   mqq (B[ 467M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   mqq (B[ 457M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   mqq (B[ 458M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0    x   x   x   mqq (B[ 456M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0    x   x   x   mqq (B[ 459M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   mqq (B[ 509M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 456M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 458M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 456M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 457M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 457M]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x       mqq (B[ 457M]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mGGJets_MGG-80[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0    x   x   x   mqq (B[ 2.0G]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0    x   x   x   mqq (B[ 2.0G]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   mqq (B[ 1.9G]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   mqq (B[ 2.0G]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   mqq (B[ 2.0G]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   mqq (B[ 2.0G]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0    x   x   x   mqq (B[ 2.0G]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0    x   x   x   mqq (B[ 2.0G]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   mqq (B[ 2.2G]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 2.0G]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 2.0G]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 2.0G]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 2.0G]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 2.0G]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x       mqq (B[ 2.0G]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mGJet_PT-20to40_DoubleEMEnriched_MGG-80[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0    x   x   x   mqq (B[  16M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0    x   x   x   mqq (B[  16M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   mqq (B[  14M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   mqq (B[  17M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   mqq (B[  16M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   mqq (B[  16M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0    x   x   x   mqq (B[  16M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0    x   x   x   mqq (B[  16M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   mqq (B[  17M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  16M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[  16M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  16M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[  16M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  16M]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x       mqq (B[  16M]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mGJet_PT-40_DoubleEMEnriched_MGG-80[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0    x   x   x   mqq (B[  39M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0    x   x   x   mqq (B[  39M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   mqq (B[  37M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   mqq (B[  42M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   mqq (B[  39M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   mqq (B[  39M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0    x   x   x   mqq (B[  39M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0    x   x   x   mqq (B[  39M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   mqq (B[  44M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  39M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[  39M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  39M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[  39M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  39M]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x       mqq (B[  39M]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mGluGluHtoGG[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0    x   x   x   mqq (B[ 174M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0    x   x   x   mqq (B[ 174M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   mqq (B[ 167M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   mqq (B[ 181M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   mqq (B[ 174M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   mqq (B[ 174M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0    x   x   x   mqq (B[ 174M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0    x   x   x   mqq (B[ 174M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   mqq (B[ 209M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 174M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 174M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 174M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 174M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 174M]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x       mqq (B[ 174M]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mGluGlutoHH_kl-0p00_kt-1p00_c2-0p00[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0    x   x   x   mqq (B[ 138M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0    x   x   x   mqq (B[ 138M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   mqq (B[ 137M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   mqq (B[ 140M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   mqq (B[ 138M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   mqq (B[ 138M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0    x   x   x   mqq (B[ 138M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0    x   x   x   mqq (B[ 138M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   mqq (B[ 161M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 138M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 138M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 138M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 138M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 138M]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x       mqq (B[ 138M]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mGluGlutoHH_kl-1p00_kt-1p00_c2-0p00[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0    x   x   x   mqq (B[ 147M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0    x   x   x   mqq (B[ 147M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   mqq (B[ 146M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   mqq (B[ 149M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   mqq (B[ 147M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   mqq (B[ 147M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0    x   x   x   mqq (B[ 147M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0    x   x   x   mqq (B[ 147M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   mqq (B[ 171M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 147M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 147M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 147M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 147M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 147M]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x       mqq (B[ 147M]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mGluGlutoHH_kl-2p45_kt-1p00_c2-0p00[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0    x   x   x   mqq (B[ 155M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0    x   x   x   mqq (B[ 155M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   mqq (B[ 153M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   mqq (B[ 156M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   mqq (B[ 155M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   mqq (B[ 155M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0    x   x   x   mqq (B[ 155M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0    x   x   x   mqq (B[ 155M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   mqq (B[ 179M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 155M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 155M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 155M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 155M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 155M]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x       mqq (B[ 155M]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mGluGlutoHH_kl-5p00_kt-1p00_c2-0p00[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0    x   x   x   mqq (B[ 123M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0    x   x   x   mqq (B[ 123M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   mqq (B[ 122M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   mqq (B[ 125M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   mqq (B[ 123M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   mqq (B[ 123M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0    x   x   x   mqq (B[ 123M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0    x   x   x   mqq (B[ 123M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   mqq (B[ 143M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 123M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 123M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 123M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 123M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 123M]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x       mqq (B[ 123M]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34moutdated[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mGluGlutoHHto2B2G_kl_0p00_kt_1p00_c2_0p00[0m/
+(0    x   x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   x   mqq (B[  87M]  NOTAG_merged.parquet
+(0    x   x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   x   mqq (B[  89M]  NOTAG_merged.parquet
+(0    x   x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   x   mqq (B[  88M]  NOTAG_merged.parquet
+(0    x   x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   x   mqq (B[  88M]  NOTAG_merged.parquet
+(0    x   x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   x   mqq (B[ 102M]  NOTAG_merged.parquet
+(0    x   x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   x   mqq (B[  88M]  NOTAG_merged.parquet
+(0    x   x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   x   mqq (B[  88M]  NOTAG_merged.parquet
+(0    x   x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   x   mqq (B[  88M]  NOTAG_merged.parquet
+(0    x   x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   x   mqq (B[  88M]  NOTAG_merged.parquet
+(0    x   x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   x   mqq (B[  88M]  NOTAG_merged.parquet
+(0    x   x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x   x       mqq (B[  88M]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mGluGlutoHHto2B2G_kl_5p00_kt_1p00_c2_0p00[0m/
+(0    x   x       tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x       x   mqq (B[  77M]  NOTAG_merged.parquet
+(0    x   x       tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x       x   mqq (B[  79M]  NOTAG_merged.parquet
+(0    x   x       tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x       x   mqq (B[  78M]  NOTAG_merged.parquet
+(0    x   x       tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x       x   mqq (B[  78M]  NOTAG_merged.parquet
+(0    x   x       tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x       x   mqq (B[  90M]  NOTAG_merged.parquet
+(0    x   x       tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x       x   mqq (B[  78M]  NOTAG_merged.parquet
+(0    x   x       tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x       x   mqq (B[  78M]  NOTAG_merged.parquet
+(0    x   x       tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x       x   mqq (B[  78M]  NOTAG_merged.parquet
+(0    x   x       tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x       x   mqq (B[  78M]  NOTAG_merged.parquet
+(0    x   x       tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x       x   mqq (B[  78M]  NOTAG_merged.parquet
+(0    x   x       mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x           mqq (B[  78M]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mQCDPt30To40[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0    x   x   x   mqq (B[ 435K]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0    x   x   x   mqq (B[ 435K]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   mqq (B[ 430K]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   mqq (B[ 434K]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   mqq (B[ 435K]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   mqq (B[ 435K]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0    x   x   x   mqq (B[ 435K]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0    x   x   x   mqq (B[ 435K]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   mqq (B[ 446K]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 437K]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 437K]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 437K]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 437K]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 433K]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x       mqq (B[ 433K]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mQCDPt30ToInf[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0    x   x   x   mqq (B[ 731K]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0    x   x   x   mqq (B[ 732K]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   mqq (B[ 716K]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   mqq (B[ 734K]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   mqq (B[ 735K]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   mqq (B[ 730K]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0    x   x   x   mqq (B[ 729K]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0    x   x   x   mqq (B[ 732K]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   mqq (B[ 772K]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 738K]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 740K]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 738K]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 740K]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 731K]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x       mqq (B[ 733K]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mQCDPt40ToInf[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0    x   x   x   mqq (B[ 1.1M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0    x   x   x   mqq (B[ 1.1M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   mqq (B[ 1.1M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   mqq (B[ 1.1M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   mqq (B[ 1.1M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   mqq (B[ 1.1M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0    x   x   x   mqq (B[ 1.1M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0    x   x   x   mqq (B[ 1.1M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   mqq (B[ 1.2M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 1.1M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 1.1M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 1.1M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 1.1M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 1.1M]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x       mqq (B[ 1.1M]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mTTG-1Jets_PTG-100to200[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0    x   x   x   mqq (B[  11M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0    x   x   x   mqq (B[  11M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   mqq (B[  11M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   mqq (B[  11M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   mqq (B[  11M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   mqq (B[  11M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0    x   x   x   mqq (B[  11M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0    x   x   x   mqq (B[  11M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   mqq (B[ 2.3M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  11M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[  11M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  11M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[  11M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  11M]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x       mqq (B[  11M]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mTTG-1Jets_PTG-200[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0    x   x   x   mqq (B[ 6.4M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0    x   x   x   mqq (B[ 6.4M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   mqq (B[ 6.4M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   mqq (B[ 6.4M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   mqq (B[ 6.4M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   mqq (B[ 6.4M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0    x   x   x   mqq (B[ 6.4M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0    x   x   x   mqq (B[ 6.4M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   mqq (B[ 7.2M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 6.4M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 6.4M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 6.4M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 6.4M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 6.4M]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x       mqq (B[ 6.4M]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mTTGG[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0    x   x   x   mqq (B[ 184M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0    x   x   x   mqq (B[ 185M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   mqq (B[ 184M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   mqq (B[ 185M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   mqq (B[ 185M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   mqq (B[ 184M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0    x   x   x   mqq (B[ 184M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0    x   x   x   mqq (B[ 185M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   mqq (B[ 212M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 184M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 185M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 184M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 185M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 185M]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x       mqq (B[ 185M]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mttHtoGG[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0    x   x   x   mqq (B[ 209M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0    x   x   x   mqq (B[ 209M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   mqq (B[ 208M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   mqq (B[ 210M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   mqq (B[ 209M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   mqq (B[ 209M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0    x   x   x   mqq (B[ 209M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0    x   x   x   mqq (B[ 209M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   mqq (B[ 240M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 209M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 209M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 209M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 209M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 209M]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x       mqq (B[ 209M]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mVBFHHto2B2G_CV_1_C2V_0_C3_1[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   mqq (B[ 103M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   mqq (B[ 105M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   mqq (B[ 104M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   mqq (B[ 104M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   mqq (B[ 119M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 104M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 104M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 104M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 104M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 104M]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x       mqq (B[ 104M]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mVBFHHto2B2G_CV_1_C2V_1_C3_1[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   mqq (B[  67M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   mqq (B[  68M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   mqq (B[  67M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   mqq (B[  67M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   mqq (B[  78M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  67M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[  67M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  67M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[  67M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  67M]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x       mqq (B[  67M]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mVBFHHto2B2G_CV_m0p012_C2V_0p030_C3_10p2[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   mqq (B[ 104M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   mqq (B[ 105M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   mqq (B[ 105M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   mqq (B[ 105M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   mqq (B[ 120M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 105M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 104M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 105M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 105M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 104M]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x       mqq (B[ 104M]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mVBFHHto2B2G_CV_m0p758_C2V_1p44_C3_m19p3[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   mqq (B[  90M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   mqq (B[  92M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   mqq (B[  91M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   mqq (B[  91M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   mqq (B[ 105M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  91M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[  91M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  91M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[  91M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  91M]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x       mqq (B[  91M]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mVBFHHto2B2G_CV_m0p962_C2V_0p959_C3_m1p43[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   mqq (B[  68M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   mqq (B[  69M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   mqq (B[  68M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   mqq (B[  68M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   mqq (B[  79M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  68M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[  68M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  68M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[  68M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  68M]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x       mqq (B[  68M]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mVBFHHto2B2G_CV_m1p21_C2V_1p94_C3_m0p94[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   mqq (B[ 101M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   mqq (B[ 102M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   mqq (B[ 102M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   mqq (B[ 102M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   mqq (B[ 116M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 102M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 102M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 102M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 102M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 102M]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x       mqq (B[ 102M]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mVBFHHto2B2G_CV_m1p60_C2V_2p72_C3_m1p36[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   mqq (B[  64M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   mqq (B[  66M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   mqq (B[  65M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   mqq (B[  65M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   mqq (B[  75M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  65M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[  65M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  65M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[  65M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  65M]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x       mqq (B[  65M]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mVBFHHto2B2G_CV_m1p83_C2V_3p57_C3_m3p39[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   mqq (B[  78M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   mqq (B[  80M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   mqq (B[  79M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   mqq (B[  79M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   mqq (B[  91M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  79M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[  79M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  79M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[  79M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  79M]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x       mqq (B[  79M]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mVBFHHto2B2G_CV_m2p12_C2V_3p87_C3_m5p96[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   mqq (B[  84M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   mqq (B[  86M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   mqq (B[  85M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   mqq (B[  85M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   mqq (B[  98M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  85M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[  85M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  85M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[  85M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  85M]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x       mqq (B[  85M]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mVBFHtoGG[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0    x   x   x   mqq (B[ 123M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0    x   x   x   mqq (B[ 123M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   mqq (B[ 119M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   mqq (B[ 127M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   mqq (B[ 122M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   mqq (B[ 123M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0    x   x   x   mqq (B[ 123M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0    x   x   x   mqq (B[ 123M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   mqq (B[ 150M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 123M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 123M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 123M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[ 123M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[ 123M]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x       mqq (B[ 123M]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mVHtoGG[0m/
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0    x   x   x   mqq (B[  96M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0    x   x   x   mqq (B[  96M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0    x   x   x   mqq (B[  95M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0    x   x   x   mqq (B[  98M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0    x   x   x   mqq (B[  96M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0    x   x   x   mqq (B[  96M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0    x   x   x   mqq (B[  96M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0    x   x   x   mqq (B[  96M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x   x   mqq (B[ 114M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  96M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[  96M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  96M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0    x   x   x   mqq (B[  96M]  NOTAG_merged.parquet
+(0    x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0    x   x   x   mqq (B[  96M]  NOTAG_merged.parquet
+(0    x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0    x   x       mqq (B[  96M]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mWminusH_Hto2G_Wto2Q_M-125[0m/
+(0    x   x   mqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x       mqq (B[  46M]  NOTAG_merged.parquet
+(0    x   tqq (B[ 4.0K]  [01;34mWplusH_Hto2G_Wto2Q_M-125[0m/
+(0    x   x   mqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x   x       mqq (B[  41M]  NOTAG_merged.parquet
+(0    x   mqq (B[ 4.0K]  [01;34mZH_Hto2G_Zto2Q_M-125[0m/
+(0    x       mqq (B[ 4.0K]  [01;34mnominal[0m/
+(0    x           mqq (B[  43M]  NOTAG_merged.parquet
+(0    mqq (B[ 4.0K]  [01;34mpreBPix[0m/
+(0        tqq (B[ 4.0K]  [01;34mbbHtoGG[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0        x   x   mqq (B[  45M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0        x   x   mqq (B[  45M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[  42M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[  47M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[  45M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[  45M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0        x   x   mqq (B[  45M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0        x   x   mqq (B[  45M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[  54M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[  45M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[  45M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[  45M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[  45M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[  45M]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[  45M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mDDQCDGJets[0m/
+(0        x   tqq (B[ 103M]  DDQCDGJET_Rescaled.parquet
+(0        x   tqq (B[ 4.2G]  GGJets_high_Rescaled.parquet
+(0        x   mqq (B[ 509M]  GGJets_low_Rescaled.parquet
+(0        tqq (B[ 4.0K]  [01;34mGGJets_MGG-40to80[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0        x   x   mqq (B[ 849M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0        x   x   mqq (B[ 851M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[ 829M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[ 870M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[ 849M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[ 851M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0        x   x   mqq (B[ 847M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0        x   x   mqq (B[ 853M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[ 946M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 848M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 851M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 848M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 851M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 850M]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[ 850M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mGGJets_MGG-80[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0        x   x   mqq (B[ 4.0G]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0        x   x   mqq (B[ 4.0G]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[ 3.7G]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[ 3.9G]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[ 3.8G]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[ 3.8G]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0        x   x   mqq (B[ 3.9G]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0        x   x   mqq (B[ 3.9G]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[ 4.2G]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 4.0G]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 4.0G]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 4.0G]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 4.0G]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 4.0G]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[ 4.0G]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mGJet_PT-20to40_DoubleEMEnriched_MGG-80[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0        x   x   mqq (B[  30M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0        x   x   mqq (B[  30M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[  27M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[  33M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[  30M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[  30M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0        x   x   mqq (B[  29M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0        x   x   mqq (B[  30M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[  33M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[  30M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[  30M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[  30M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[  30M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[  30M]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[  30M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mGJet_PT-40_DoubleEMEnriched_MGG-80[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0        x   x   mqq (B[  75M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0        x   x   mqq (B[  75M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[  70M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[  80M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[  75M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[  75M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0        x   x   mqq (B[  75M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0        x   x   mqq (B[  75M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[  84M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[  75M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[  75M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[  75M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[  75M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[  75M]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[  75M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mGluGluHtoGG[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0        x   x   mqq (B[ 347M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0        x   x   mqq (B[ 346M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[ 332M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[ 361M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[ 347M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[ 347M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0        x   x   mqq (B[ 346M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0        x   x   mqq (B[ 346M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[ 417M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 347M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 346M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 347M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 346M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 346M]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[ 346M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mGluGlutoHH_kl-0p00_kt-1p00_c2-0p00[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0        x   x   mqq (B[ 277M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0        x   x   mqq (B[ 277M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[ 274M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[ 280M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[ 277M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[ 277M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0        x   x   mqq (B[ 277M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0        x   x   mqq (B[ 277M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[ 323M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 277M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 277M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 277M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 277M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 277M]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[ 277M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mGluGlutoHH_kl-1p00_kt-1p00_c2-0p00[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0        x   x   mqq (B[ 290M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0        x   x   mqq (B[ 290M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[ 287M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[ 293M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[ 290M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[ 290M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0        x   x   mqq (B[ 290M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0        x   x   mqq (B[ 290M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[ 339M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 290M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 290M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 290M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 290M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 290M]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[ 290M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mGluGlutoHH_kl-2p45_kt-1p00_c2-0p00[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0        x   x   mqq (B[ 311M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0        x   x   mqq (B[ 311M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[ 308M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[ 314M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[ 311M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[ 311M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0        x   x   mqq (B[ 311M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0        x   x   mqq (B[ 311M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[ 362M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 311M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 311M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 311M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 311M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 311M]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[ 311M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mGluGlutoHH_kl-5p00_kt-1p00_c2-0p00[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0        x   x   mqq (B[ 243M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0        x   x   mqq (B[ 243M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[ 240M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[ 246M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[ 244M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[ 243M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0        x   x   mqq (B[ 243M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0        x   x   mqq (B[ 243M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[ 283M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 243M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 243M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 243M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 243M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 243M]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[ 243M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34moutdated[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mGluGlutoHHto2B2G_kl_0p00_kt_1p00_c2_0p00[0m/
+(0        x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   x   mqq (B[ 172M]  NOTAG_merged.parquet
+(0        x   x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   x   mqq (B[ 176M]  NOTAG_merged.parquet
+(0        x   x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   x   mqq (B[ 174M]  NOTAG_merged.parquet
+(0        x   x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   x   mqq (B[ 174M]  NOTAG_merged.parquet
+(0        x   x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   x   mqq (B[ 203M]  NOTAG_merged.parquet
+(0        x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   x   mqq (B[ 174M]  NOTAG_merged.parquet
+(0        x   x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   x   mqq (B[ 174M]  NOTAG_merged.parquet
+(0        x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   x   mqq (B[ 174M]  NOTAG_merged.parquet
+(0        x   x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   x   mqq (B[ 174M]  NOTAG_merged.parquet
+(0        x   x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   x   mqq (B[ 174M]  NOTAG_merged.parquet
+(0        x   x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x   x       mqq (B[ 174M]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mGluGlutoHHto2B2G_kl_5p00_kt_1p00_c2_0p00[0m/
+(0        x       tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x       x   mqq (B[ 150M]  NOTAG_merged.parquet
+(0        x       tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x       x   mqq (B[ 155M]  NOTAG_merged.parquet
+(0        x       tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x       x   mqq (B[ 153M]  NOTAG_merged.parquet
+(0        x       tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x       x   mqq (B[ 152M]  NOTAG_merged.parquet
+(0        x       tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x       x   mqq (B[ 178M]  NOTAG_merged.parquet
+(0        x       tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x       x   mqq (B[ 153M]  NOTAG_merged.parquet
+(0        x       tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x       x   mqq (B[ 153M]  NOTAG_merged.parquet
+(0        x       tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x       x   mqq (B[ 153M]  NOTAG_merged.parquet
+(0        x       tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x       x   mqq (B[ 153M]  NOTAG_merged.parquet
+(0        x       tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x       x   mqq (B[ 153M]  NOTAG_merged.parquet
+(0        x       mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x           mqq (B[ 153M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mQCDPt30To40[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0        x   x   mqq (B[ 451K]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0        x   x   mqq (B[ 451K]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[ 448K]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[ 464K]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[ 461K]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[ 450K]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0        x   x   mqq (B[ 451K]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0        x   x   mqq (B[ 451K]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[ 464K]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 451K]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 451K]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 451K]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 451K]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 450K]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[ 450K]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mQCDPt30ToInf[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0        x   x   mqq (B[ 1.0M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0        x   x   mqq (B[ 1.0M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[1020K]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[ 1.0M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[ 1.0M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[ 1.0M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0        x   x   mqq (B[ 1.0M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0        x   x   mqq (B[ 1.0M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[ 1.1M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 1.0M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 1.0M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 1.0M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 1.0M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 1.0M]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[ 1.0M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mQCDPt40ToInf[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0        x   x   mqq (B[ 1.7M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0        x   x   mqq (B[ 1.7M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[ 1.6M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[ 1.7M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[ 1.7M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[ 1.7M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0        x   x   mqq (B[ 1.7M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0        x   x   mqq (B[ 1.7M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[ 1.8M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 1.7M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 1.7M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 1.7M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 1.7M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 1.7M]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[ 1.7M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mTTG-1Jets_PTG-100to200[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0        x   x   mqq (B[  21M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0        x   x   mqq (B[  21M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[  21M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[  21M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[  21M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[  21M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0        x   x   mqq (B[  21M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0        x   x   mqq (B[  21M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[  24M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[  21M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[  21M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[  21M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[  21M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[  21M]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[  21M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mTTG-1Jets_PTG-200[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0        x   x   mqq (B[  13M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0        x   x   mqq (B[  13M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[  13M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[  13M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[  13M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[  13M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0        x   x   mqq (B[  13M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0        x   x   mqq (B[  13M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[  15M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[  13M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[  13M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[  13M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[  13M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[  13M]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[  13M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mTTGG[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0        x   x   mqq (B[ 245M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0        x   x   mqq (B[ 246M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[ 244M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[ 246M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[ 246M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[ 246M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0        x   x   mqq (B[ 245M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0        x   x   mqq (B[ 246M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[ 283M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 245M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 246M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 245M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 246M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 245M]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[ 245M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mttHtoGG[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0        x   x   mqq (B[ 432M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0        x   x   mqq (B[ 433M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[ 431M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[ 434M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[ 433M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[ 432M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0        x   x   mqq (B[ 433M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0        x   x   mqq (B[ 432M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[ 499M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 432M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 432M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 432M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 433M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 432M]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[ 432M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mVBFHHto2B2G_CV_1_C2V_0_C3_1[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[ 204M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[ 207M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[ 205M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[ 205M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[ 236M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 205M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 205M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 205M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 205M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 205M]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[ 205M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mVBFHHto2B2G_CV_1_C2V_1_C3_1[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[ 131M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[ 134M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[ 133M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[ 133M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[ 154M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 133M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 133M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 133M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 133M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 133M]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[ 133M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mVBFHHto2B2G_CV_1p74_C2V_1p37_C3_14p4[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[ 163M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[ 167M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[ 165M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[ 165M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[ 191M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 165M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 165M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 165M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 165M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 165M]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[ 165M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mVBFHHto2B2G_CV_m0p012_C2V_0p030_C3_10p2[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[ 204M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[ 207M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[ 205M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[ 205M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[ 236M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 205M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 205M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 205M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 205M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 205M]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[ 205M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mVBFHHto2B2G_CV_m0p758_C2V_1p44_C3_m19p3[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[ 177M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[ 180M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[ 179M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[ 179M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[ 207M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 179M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 179M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 179M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 179M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 179M]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[ 179M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mVBFHHto2B2G_CV_m0p962_C2V_0p959_C3_m1p43[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[ 132M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[ 135M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[ 134M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[ 134M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[ 155M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 134M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 134M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 134M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 134M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 134M]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[ 134M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mVBFHHto2B2G_CV_m1p21_C2V_1p94_C3_m0p94[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[ 198M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[ 201M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[ 199M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[ 199M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[ 228M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 199M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 199M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 199M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 199M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 199M]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[ 199M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mVBFHHto2B2G_CV_m1p60_C2V_2p72_C3_m1p36[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[ 130M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[ 133M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[ 131M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[ 131M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[ 152M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 131M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 131M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 131M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 131M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 131M]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[ 131M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mVBFHHto2B2G_CV_m1p83_C2V_3p57_C3_m3p39[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[ 154M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[ 157M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[ 155M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[ 155M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[ 179M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 155M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 155M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 155M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 155M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 155M]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[ 155M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mVBFHHto2B2G_CV_m2p12_C2V_3p87_C3_m5p96[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[ 164M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[ 167M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[ 166M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[ 166M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[ 192M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 166M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 166M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 166M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 166M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 166M]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[ 166M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mVBFHtoGG[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0        x   x   mqq (B[ 240M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0        x   x   mqq (B[ 240M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[ 232M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[ 248M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[ 240M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[ 241M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0        x   x   mqq (B[ 240M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0        x   x   mqq (B[ 240M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[ 295M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 240M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 240M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 240M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 240M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 240M]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[ 240M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mVHtoGG[0m/
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_down[0m/
+(0        x   x   mqq (B[ 196M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mFNUF_up[0m/
+(0        x   x   mqq (B[ 196M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_down[0m/
+(0        x   x   mqq (B[ 192M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjec_syst_Total_up[0m/
+(0        x   x   mqq (B[ 200M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_down[0m/
+(0        x   x   mqq (B[ 196M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mjer_syst_up[0m/
+(0        x   x   mqq (B[ 196M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_down[0m/
+(0        x   x   mqq (B[ 196M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mMaterial_up[0m/
+(0        x   x   mqq (B[ 196M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x   x   mqq (B[ 232M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 196M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEB2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 196M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 196M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mScaleEE2G_IJazZ_up[0m/
+(0        x   x   mqq (B[ 196M]  NOTAG_merged.parquet
+(0        x   tqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_down[0m/
+(0        x   x   mqq (B[ 196M]  NOTAG_merged.parquet
+(0        x   mqq (B[ 4.0K]  [01;34mSmearing2G_IJazZ_up[0m/
+(0        x       mqq (B[ 196M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mWminusH_Hto2G_Wto2Q_M-125[0m/
+(0        x   mqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x       mqq (B[  37M]  NOTAG_merged.parquet
+(0        tqq (B[ 4.0K]  [01;34mWplusH_Hto2G_Wto2Q_M-125[0m/
+(0        x   mqq (B[ 4.0K]  [01;34mnominal[0m/
+(0        x       mqq (B[  50M]  NOTAG_merged.parquet
+(0        mqq (B[ 4.0K]  [01;34mZH_Hto2G_Zto2Q_M-125[0m/
+(0            mqq (B[ 4.0K]  [01;34mnominal[0m/
+(0                mqq (B[  88M]  NOTAG_merged.parquet
+
+904 directories, 837 files
