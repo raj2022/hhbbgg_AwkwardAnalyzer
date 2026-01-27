@@ -90,6 +90,9 @@ python /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/2024_parquet_productio
 * 2023PreBPix: `/eos/user/b/bsinghal/analysis/output/2023preBPix/merged`
 
 
+Space: `/eos/user/b/bartek/hhbbgg`
+
+
 ## References:
 1. Instructions: https://indico.cern.ch/event/1499924/contributions/6478750/attachments/3053886/5398744/For_Hgg_v3_production-2.pdf
 2. v4 Instructions: https://indico.cern.ch/event/1590752/contributions/6805177/attachments/3178875/5654008/InstructionsFor2024HHbbggProduction_20251121.pdf 
@@ -114,4 +117,20 @@ To merge:
 From the `HiggsDNA` folder:
 ```bash
 python higgs_dna/scripts/postprocessing/prepare_output_file.py --input /eos/user/s/sraj/Work_/CUA_20--/Analysis/output_parquet/systematics_v3/2022_postEE/ --merge --syst --varDict variation.json 
+```
+
+
+-  `2023postBPix` 
+```bash
+python /afs/cern.ch/user/s/sraj/Analysis/Analysis_HH-bbgg/parquet_production_v3/HiggsDNA/higgs_dna/scripts/run_analysis.py \
+  --json-analysis My_Json_320.json \
+  --dump /eos/user/s/sraj/Work_/CUA_20--/Analysis/output_parquet/systematics_v3/2023_postBPix/ \
+  --fiducialCuts store_flag \
+  --doDeco \
+  --Smear-sigma-m \
+  --doFlow-corrections \
+  --executor vanilla_lxplus \
+  --queue workday \
+  --memory 12000 \
+  --nano-version 12
 ```
