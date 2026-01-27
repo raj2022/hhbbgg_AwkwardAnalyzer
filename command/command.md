@@ -147,6 +147,15 @@ export EOS_MGM_URL=root://eosuser.cern.ch
 eos quota
 ```
 
+- Find large directories
+```bash
+du -h --max-depth=1 ~ | sort -h
+```
+- Find large files
+```bash
+find ~ -type f -size +10G -exec ls -lh {} \;
+```
+
 
 
 # Commands for VOMS Setup
