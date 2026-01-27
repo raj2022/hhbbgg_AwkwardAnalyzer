@@ -16,7 +16,7 @@ echo "Analyzer script completed."
 
 
 echo "Starting the plotter"
-hhbbgg_Analyzer.py
+hhbbgg_Plotter.py
 echo "Plotter script completed"
 
 # moving the plotter from stacks plot to the folder
