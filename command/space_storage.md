@@ -17,5 +17,5 @@
 
 
 * Rachel's eos: `/eos/user/b/bartek/hhbbgg`
-
+* bsahu's eos: `/eos/user/b/bsahu/XtoYH_bbgg`
 Ask for more space from B2G.
