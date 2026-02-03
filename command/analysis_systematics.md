@@ -402,3 +402,51 @@ combine -M AsymptoticLimits \
 
 
 ```
+
+
+
+
+# Impact plot plotting
+
+-  Step 0 — Convert datacard → workspace
+```bash
+text2workspace.py datacard/400/comb_mass_syst_400.txt \
+  -o datacard/400/comb_mass_syst_400.root
+```
+This creates:
+```bash
+comb_mass_syst_400.root
+```
+- Step 1 — Initial fit (NOW this will work)
+```bash
+combineTool.py -M Impacts \
+  -d datacard/400/comb_mass_syst_400.root \
+  -m 400 \
+  --robustFit 1 \
+  --rMin 0 --rMax 5 \
+  --freezeParameters allBkg \
+  --doInitialFit
+```
+
+- Step 2 — Per-nuisance fits
+```bash
+combineTool.py -M Impacts \
+  -d datacard/400/comb_mass_syst_400.root \
+  -m 400 \
+  --robustFit 1 \
+  --rMin 0 --rMax 5 \
+  --freezeParameters allBkg \
+  --doFits \
+  --parallel 8
+```
+- Step 3 — Collect impacts
+```bash
+combineTool.py -M Impacts \
+  -d datacard/400/comb_mass_syst_400.root \
+  -m 400 \
+  -o impacts_mass400.json
+```
+- Step 4 — Plot
+```bash
+plotImpacts.py -i impacts_mass400.json -o impacts_mass400
+```
