@@ -62,7 +62,7 @@ import os
 
 # --- Branching ratios if needed ---
 BR_HToGG = 2.270e-03
-BR_HTobb = 5.824e-01
+BR_HTobb = 5.824e-01  #https://twiki.cern.ch/twiki/bin/view/LHCPhysics/CERNYellowReportPageBR  
 
 # ---------------------------------------------------------------------
 # Cross sections (pb)
