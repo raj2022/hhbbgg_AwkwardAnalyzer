@@ -76,3 +76,8 @@ stats_study/**/*.so
 
 # Notebooks data
 **/notebook/dataset/rootFile/
+
+
+
+# git diff
+*.patch

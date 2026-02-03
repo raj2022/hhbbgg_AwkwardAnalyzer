@@ -14,6 +14,9 @@
 * 2023PostBPix:`/eos/user/b/bsahu/HiggsDNA_v3/HiggsDNA/output_23PostBPix/merged/`
 * 2023PreBPix: `/eos/user/b/bsinghal/analysis/output/2023preBPix/merged`
 
+#### Without systemtics
+* 2024: `/eos/user/b/bsahu/HiggsDNA_v4PrelimProd/2024/merged/`
+
 
 
 * Rachel's eos: `/eos/user/b/bartek/hhbbgg`

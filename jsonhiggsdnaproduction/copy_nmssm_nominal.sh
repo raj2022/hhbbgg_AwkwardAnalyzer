@@ -414,7 +414,11 @@ copy_nmssm() {
     local DEST_BASE=$2
     local REGEX=$3
 
-    mkdir -p "${DEST_BASE}"
+    # mkdir -p "${DEST_BASE}"
+    if [[ ! -d "${DEST_BASE}" ]]; then
+        echo "ERROR: Destination directory does not exist: ${DEST_BASE}"
+        exit 1
+    fi
 
     echo
     echo "=============================="
@@ -504,42 +508,42 @@ EOF
 ########################################
 
 # ---- preEE (NMSSM-XtoYH-MX-*-MY-*) ----
-copy_nmssm \
-  "/eos/user/b/bsinghal/analysis/output/2022preEE/merged" \
-  "/afs/cern.ch/user/s/sraj/Analysis/output_root/sample_final_nominal/preEE" \
-  "MX-([0-9]+)-MY-([0-9]+)"
+# copy_nmssm \
+#   "/eos/user/b/bsinghal/analysis/output/2022preEE/merged" \
+#   "/eos/user/b/bartek/hhbbgg/" \
+#   "MX-([0-9]+)-MY-([0-9]+)"
 
-check_missing \
-  "/eos/user/b/bsinghal/analysis/output/2022preEE/merged" \
-  "MX-([0-9]+)-MY-([0-9]+)"
-
-
----- postEE (NMSSM_X*_Y*) ----
-copy_nmssm \
-  "/eos/user/s/sraj/Work_/CUA_20--/Analysis/output_parquet/systematics_v3/2022_postEE/merged" \
-  "/afs/cern.ch/user/s/sraj/Analysis/output_root/sample_final_nominal/postEE" \
-  "X([0-9]+)_Y([0-9]+)"
-
-check_missing \
-  "/eos/user/s/sraj/Work_/CUA_20--/Analysis/output_parquet/systematics_v3/2022_postEE/merged" \
-  "X([0-9]+)_Y([0-9]+)"
+# check_missing \
+#   "/eos/user/b/bsinghal/analysis/output/2022preEE/merged" \
+#   "MX-([0-9]+)-MY-([0-9]+)"
 
 
----- postBPix (NMSSM_XtoYHto2B2G_MX-*_MY-*) ----
-copy_nmssm \
-  "/eos/user/b/bsahu/HiggsDNA_v3/HiggsDNA/output_23PostBPix/merged" \
-  "/afs/cern.ch/user/s/sraj/Analysis/output_root/sample_final_nominal/postBPix" \
-  "MX-([0-9]+)_MY-([0-9]+)"
+# ---- postEE (NMSSM_X*_Y*) ----
+# copy_nmssm \
+#   "/eos/user/s/sraj/Work_/CUA_20--/Analysis/output_parquet/systematics_v3/2022_postEE/merged" \
+#   "/eos/user/b/bartek/hhbbgg/" \
+#   "X([0-9]+)_Y([0-9]+)"
 
-check_missing \
-  "/eos/user/b/bsahu/HiggsDNA_v3/HiggsDNA/output_23PostBPix/merged" \
-  "MX-([0-9]+)_MY-([0-9]+)"
+# check_missing \
+#   "/eos/user/s/sraj/Work_/CUA_20--/Analysis/output_parquet/systematics_v3/2022_postEE/merged" \
+#   "X([0-9]+)_Y([0-9]+)"
 
 
----- preBPix (NMSSM-XtoYH-MX-*-MY-*) ----
+# ---- postBPix (NMSSM_XtoYHto2B2G_MX-*_MY-*) ----
+# copy_nmssm \
+#   "/eos/user/b/bsahu/HiggsDNA_v3/HiggsDNA/output_23PostBPix/merged" \
+#   "/eos/user/b/bartek/hhbbgg/" \
+#   "MX-([0-9]+)_MY-([0-9]+)"
+
+# check_missing \
+#   "/eos/user/b/bsahu/HiggsDNA_v3/HiggsDNA/output_23PostBPix/merged" \
+#   "MX-([0-9]+)_MY-([0-9]+)"
+
+
+# ---- preBPix (NMSSM-XtoYH-MX-*-MY-*) ----
 copy_nmssm \
   "/eos/user/b/bsinghal/analysis/output/2023preBPix/merged" \
-  "/afs/cern.ch/user/s/sraj/Analysis/output_root/sample_final_nominal/preBPix" \
+  "/eos/user/b/bartek/hhbbgg/" \
   "MX-([0-9]+)-MY-([0-9]+)"
 
 check_missing \

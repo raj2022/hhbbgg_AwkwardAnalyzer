@@ -21,3 +21,21 @@ You may find it convenient to place the setup script in a different location. In
 If you require a python environment, also place this line at the top of the script. You will find a commented box for these additions. This is also a good point to add any other environment variables you may need.
 
 
+
+```bash
+Parquet files (nominal + syst)
+        ↓
+make_templates.py          ← THIS SCRIPT
+        ↓
+histograms.root
+        ↓
+extract_signal_kappas.py   (reads histograms.root)
+        ↓
+signal_kappas.json
+        ↓
+make_signal_ws_2D_from_jsons_syst.py
+        ↓
+RooWorkspaces
+        ↓
+Datacard → Combine
+```

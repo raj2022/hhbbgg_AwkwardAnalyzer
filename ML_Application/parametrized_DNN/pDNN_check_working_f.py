@@ -134,7 +134,7 @@ WEIGHT_COL = "weight_central"
 FEATURES_CORE = [
     # photons & diphoton
     "lead_eta","lead_phi",
-    # "sublead_eta","sublead_phi",
+    "sublead_eta","sublead_phi",
     # "eta","phi",
 
     # jets, dijet, HH (Res)
@@ -166,13 +166,13 @@ FEATURES_CORE = [
     "Res_CosThetaStar_CS",
 
     # photon ID + b-tag
-    "lead_mvaID_run3",
+    "lead_mvaID",
     # "sublead_mvaID_run3",
     # "Res_lead_bjet_btagPNetB",
     # "Res_sublead_bjet_btagPNetB",
 
     # counts & MET
-    "n_leptons","n_jets","puppiMET_pt","puppiMET_phi",
+    "n_leptons","n_jets","puppiMET_pt","puppiMET_phi","Njets2p5",
 
     # Δφ(jet,MET)
     "Res_DeltaPhi_j1MET","Res_DeltaPhi_j2MET",
@@ -188,9 +188,16 @@ FEATURES_CORE = [
     # scaled pT’s required by the paper
     "Res_pholead_PtOverM","Res_phosublead_PtOverM",
     "Res_FirstJet_PtOverM","Res_SecondJet_PtOverM",
+
+    "sigma_m_over_m",
     
     # M_X
     "Res_M_X",
+    
+    # photon quality (optional)
+    "lead_r9",
+    "sublead_r9",
+
 ]
  
 
@@ -1665,3 +1672,64 @@ plot_eff_vs_eff(
     overlay_per_group=True,
     max_legend=10
 )
+
+
+
+
+
+
+
+
+
+
+# FEATURES_CORE = [
+#     # photons & diphoton
+#     "lead_eta","lead_phi",
+#     "sublead_eta","sublead_phi",
+
+#     # jets, dijet, HH (Res)
+#     "Res_dijet_eta",
+#     "Res_dijet_phi",
+#     "Res_dijet_pt",
+#     "Res_dijet_charge",
+#     "Res_HHbbggCandidate_eta",
+#     "Res_HHbbggCandidate_phi",
+#     "Res_HHbbggCandidate_pt",
+    
+#     # bb system mass
+#     "Res_dijet_mass_DNNreg",
+
+#     # angular distances
+#     "Res_DeltaR_jg_min",
+
+#     # helicity / Collins–Soper (CONSISTENT namespace)
+#     "Res_CosThetaStar_gg",
+#     "Res_CosThetaStar_jj",
+#     "Res_CosThetaStar_CS",
+
+#     # photon ID + b-tag
+#     "lead_mvaID_nano",
+#     # "Res_lead_bjet_btagPNetB",
+#     # "Res_sublead_bjet_btagPNetB",
+
+#     # counts & MET
+#     "n_leptons","n_jets","puppiMET_pt","puppiMET_phi",
+
+#     # Δφ(jet,MET)
+#     "Res_DeltaPhi_j1MET","Res_DeltaPhi_j2MET",
+
+#     # χ² terms
+#     "Res_chi_t0","Res_chi_t1",
+
+#     # raw kinematics and masses
+#     "Res_dijet_mass",
+
+#     # scaled pT’s
+#     "Res_pholead_PtOverM","Res_phosublead_PtOverM",
+#     "Res_FirstJet_PtOverM","Res_SecondJet_PtOverM",
+    
+#     # M_X
+#     "Res_M_X",
+# ]
+
+ 

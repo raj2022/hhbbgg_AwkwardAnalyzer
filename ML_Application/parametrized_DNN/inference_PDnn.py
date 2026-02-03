@@ -413,7 +413,7 @@ WEIGHT_COL      = "weight_central"
 MASS_CONST = 600
 Y_CONST    = 100
 
-BATCH_SIZE = 65536
+BATCH_SIZE = 16384
 USE_AMP    = True  # mixed precision on CUDA
 
 
@@ -583,6 +583,12 @@ def score_parquet_file(
     scores = predict_batched(model, X_t, device=device)
 
     df["pDNN_score"] = scores
+    
+    # adding downcast to save space
+    del X, X_scaled, X_t, scores
+    import gc; gc.collect()
+    if device.type == "cuda":
+        torch.cuda.empty_cache()
     return df
 
 
@@ -640,11 +646,20 @@ def main():
             rel = fp.relative_to(inp_dir) if inp_dir in fp.parents or fp.parent == inp_dir else fp.name
             out_fp = out_dir / Path(rel).with_suffix(".parquet")
             out_fp.parent.mkdir(parents=True, exist_ok=True)
+            # df_scored.to_parquet(out_fp, index=False)
+            # total_rows += len(df_scored)
+            # print(f"  ✓ {fp.name:40s} -> {out_fp}  ({len(df_scored)} rows)")
             df_scored.to_parquet(out_fp, index=False)
             total_rows += len(df_scored)
-            print(f"  ✓ {fp.name:40s} -> {out_fp}  ({len(df_scored)} rows)")
+            print(f"  {fp.name:40s} -> {out_fp}  ({len(df_scored)} rows)")
+            
+            del df_scored
+            import gc; gc.collect()
+            if device.type == "cuda":
+                torch.cuda.empty_cache()
+            
         except Exception as e:
-            print(f"  ✗ {fp.name}: {e}")
+            print(f"   {fp.name}: {e}")
 
     print(f"[DONE] Scored {len(files)} file(s), {total_rows} total rows.")
     print(f"[OUT ] Output folder: {out_dir}")

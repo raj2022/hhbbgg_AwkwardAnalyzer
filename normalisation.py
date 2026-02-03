@@ -75,7 +75,7 @@ XSEC_PATTERNS = [
     ("gluglutohh",            1.0),
 
     # Prompt photon backgrounds (from your file list)
-    ("ggjetsmgg40to80",      88.75),
+    ("ggjetsmgg40to80",      318.1),   # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS%3DGG-Box-3Jets_MGG-40to80_13p6TeV_sherpa
     ("ggjetsmgg80",          88.75),   # change if you use a different xsec for MGG-80(need to be confirmed)
     ("ggjets",              88.75),   # general match if specific not found
     ("gjetpt20to40",        242.5),
@@ -101,6 +101,11 @@ XSEC_PATTERNS = [
     ("_rescaled",           1.0),
     ("ggjets_low_rescaled", 1.0),
     ("ggjets_high_rescaled",1.0),
+    # 2024 extra samples for VH
+    ("wminusHtoGG",     0.647),
+    ("wplusHtoGG",      1.021),
+    ("zhTogg",          0.9079),
+    
 ]
 
 def _norm_name_for_match(path_or_name: str) -> str:
