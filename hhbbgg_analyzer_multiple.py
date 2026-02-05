@@ -20,6 +20,11 @@ from config.utils import lVector
 from normalisation import getXsec, getLumi
 from config.config import RunConfig
 
+
+#time
+import time
+start = time.time()  # Start time here
+
 # ---------------- PyROOT ONLY for histograms (separate file) ----------------
 import ROOT
 ROOT.gROOT.SetBatch(True)
@@ -219,8 +224,8 @@ def sanitize_for_uproot(d: dict) -> dict:
 
 # ---------------- Global accumulators ----------------
 HIST_CACHE = {}   # (sample, region, varname) -> TH1D
-TREE_ACC   = {}   # (sample, region) -> [dict(field->np.ndarray)]
-PROC_ACC   = {}   # sample -> [dict(field->np.ndarray)]
+# TREE_ACC   = {}   # (sample, region) -> [dict(field->np.ndarray)]
+# PROC_ACC   = {}   # sample -> [dict(field->np.ndarray)]
 
 # ---------------- Utils ----------------
 def is_signal_from_name(name: str) -> bool:
@@ -254,7 +259,7 @@ def _get_dd_weight_col(all_columns) -> str:
     )
 
 # ---------------- Core processing ----------------
-def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None):
+def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tree_upfile=None):
     """
     Process a single parquet file and accumulate:
       - histograms per (sample, region, variable)
@@ -631,7 +636,8 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None):
             # MC: σ×L normalization
             wc = ak.to_numpy(out_events["weight_central"])
             wc = np.where(np.isfinite(wc) & (wc != 0.0), wc, 1.0)
-            base_w = ak.to_numpy(cms_events["weight"]) * float(xsec_) * float(lumi_) / wc
+            # base_w = ak.to_numpy(cms_events["weight"]) * float(xsec_) * float(lumi_) / wc
+            base_w = ak.to_numpy(cms_events["weight"]) * float(xsec_) * float(lumi_)
             base_w = np.where(np.isfinite(base_w), base_w, 0.0)
 
         # Attach per-region weights
@@ -641,7 +647,7 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None):
             out_events = ak.with_field(out_events, base_w, "weight_"+r)
 
 
-        PROC_ACC.setdefault(sample_name_norm, []).append(ak_to_numpy_dict(out_events))
+        # PROC_ACC.setdefault(sample_name_norm, []).append(ak_to_numpy_dict(out_events))
 
         for ireg in regions:
             thisregion = out_events[out_events[ireg] == True]
@@ -666,7 +672,14 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None):
                 del h
 
             tree_data_ = ak_to_numpy_dict(thisregion_)
-            TREE_ACC.setdefault((sample_name_norm, ireg), []).append(tree_data_)
+            # TREE_ACC.setdefault((sample_name_norm, ireg), []).append(tree_data_)
+            merged = sanitize_for_uproot(tree_data_)
+            write_tree_chunked(
+                tree_upfile,
+                f"{sample_name_norm}/{ireg}",
+                merged,
+                step=50_000
+            )
 
 def ensure_dir(upfile, path):
     """Create nested directories explicitly for Uproot writing."""
@@ -731,7 +744,6 @@ def write_tree_chunked(upfile, full_path, merged, step=200_000):
 
 
 # ---------------- Entry point ----------------
-# ---------------- Entry point ----------------
 def main():
     ap = argparse.ArgumentParser(
         description="hhbbgg analyzer (parquet) with true multi-year + multi-era support"
@@ -771,9 +783,8 @@ def main():
     inputfiles = []
     for ip in args.inFile:
         p = Path(ip).resolve()
-        if p.is_file():
-            if p.suffix == ".parquet":
-                inputfiles.append(str(p))
+        if p.is_file() and p.suffix == ".parquet":
+            inputfiles.append(str(p))
         elif p.is_dir():
             inputfiles.extend(str(x) for x in sorted(p.glob("*.parquet")))
 
@@ -783,22 +794,25 @@ def main():
     print(f"[INFO] Found {len(inputfiles)} parquet files")
 
     # -----------------------------------------
-    # Per-(year, era) RunConfig cache
-    # -----------------------------------------
-    runconfig_cache = {}
-    def get_cfg(year, era):
-        key = (year, era)
-        if key not in runconfig_cache:
-            runconfig_cache[key] = RunConfig(year, era)
-        return runconfig_cache[key]
-
-    # -----------------------------------------
     # Xsec / lumi cache per file
     # -----------------------------------------
     xsec_lumi_cache = {}
 
     # -----------------------------------------
-    # Process files
+    # Output paths (created ONCE)
+    # -----------------------------------------
+    out_tag = args.tag or "_".join(config_years)
+    out_dir = Path("outputfiles") / "merged" / out_tag
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    tree_file_path = out_dir / "hhbbgg_analyzer-v2-histograms.root"
+    hist_file_path = out_dir / "hhbbgg_analyzer-v2-trees.root"
+
+    print("[INFO] Opening tree output file (streaming mode)")
+    tree_upfile = uproot.recreate(tree_file_path)
+
+    # -----------------------------------------
+    # Process files (STREAM trees)
     # -----------------------------------------
     for infile in inputfiles:
         det_year, det_era = detect_year_era_from_name(infile)
@@ -810,7 +824,6 @@ def main():
             )
 
         era = det_era or args.era
-        cfg = get_cfg(year, era)
 
         print(f"[INFO] Processing {os.path.basename(infile)} → {year} {era}")
 
@@ -818,21 +831,12 @@ def main():
             infile,
             cli_year=year,
             cli_era=era,
-            xsec_lumi_cache=xsec_lumi_cache
+            xsec_lumi_cache=xsec_lumi_cache,
+            tree_upfile=tree_upfile,
         )
 
     # -----------------------------------------
-    # Output paths
-    # -----------------------------------------
-    out_tag = args.tag or "_".join(config_years)
-    out_dir = Path("outputfiles") / "merged" / out_tag
-    out_dir.mkdir(parents=True, exist_ok=True)
-
-    hist_file_path = out_dir / "hhbbgg_histograms.root"
-    tree_file_path = out_dir / "hhbbgg_trees.root"
-
-    # -----------------------------------------
-    # Write outputs
+    # Write histograms (cached in memory)
     # -----------------------------------------
     print("[INFO] Writing histograms...")
     hist_tfile = ROOT.TFile(str(hist_file_path), "RECREATE")
@@ -842,26 +846,22 @@ def main():
         h_clone.Write()
     hist_tfile.Close()
 
-    print("[INFO] Writing trees...")
-    tree_upfile = uproot.recreate(tree_file_path)
-
-    for (sample, region), chunks in TREE_ACC.items():
-        merged = sanitize_for_uproot(concat_field_dicts(chunks))
-        write_tree_chunked(tree_upfile, f"{sample}/{region}", merged)
-
-    for sample, chunks in PROC_ACC.items():
-        merged = sanitize_for_uproot(concat_field_dicts(chunks))
-        write_tree_chunked(tree_upfile, f"{sample}/processed_events", merged)
-
+    # -----------------------------------------
+    # Close tree file
+    # -----------------------------------------
     tree_upfile.close()
 
     print("======================================")
     print(f"[OK] Histograms → {hist_file_path}")
     print(f"[OK] Trees       → {tree_file_path}")
     print("======================================")
-
     
     
 if __name__ == "__main__":
     main()
 
+
+
+
+end = time.time()
+print(f"Execution time: {end - start:.4f} seconds")
