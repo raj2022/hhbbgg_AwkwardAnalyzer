@@ -1,0 +1,867 @@
+# !/usr/bin/env python3
+# -*- coding: utf-8 -*-
+print(">>> SCRIPT STARTED <<<")
+
+import os
+import re
+import argparse
+from pathlib import Path
+
+import numpy as np
+import uproot
+import pandas as pd
+import awkward as ak
+import pyarrow.parquet as pq
+from pyarrow import Table
+import pyarrow
+import yaml
+
+from config.utils import lVector
+from normalisation import getXsec, getLumi
+from config.config import RunConfig
+
+# ---------------- PyROOT ONLY for histograms (separate file) ----------------
+import ROOT
+ROOT.gROOT.SetBatch(True)
+ROOT.TH1.AddDirectory(False)
+
+# ---------------- Helpers ----------------
+def _ensure_1d(a):
+    a = np.asarray(a)
+    return a.ravel()
+
+def make_th1_pyroot(values, weights, name, title, binning):
+    v  = _ensure_1d(values)
+    w  = None if weights is None else _ensure_1d(weights)
+
+    if w is not None:
+        mask = np.isfinite(v) & np.isfinite(w)
+        v = v[mask]; w = w[mask]
+    else:
+        mask = np.isfinite(v)
+        v = v[mask]
+
+    v2 = v.copy()
+
+    def _is_angular_name(s):
+        s = (s or "").lower()
+        return ("phi" in s) or ("deltaphi" in s) or s.endswith("_phi")
+
+    def _maybe_angle_edges(arr):
+        if arr.size < 2 or not np.isfinite(arr).all():
+            return False
+        rng = float(np.nanmax(arr) - np.nanmin(arr))
+        return (rng <= 2*np.pi + 1e-6) and (np.nanmin(arr) >= -2*np.pi-1e-6) and (np.nanmax(arr) <= 2*np.pi+1e-6)
+
+    def _unwrap_edges_and_values(edges, vals):
+        e = edges.astype("f8").copy()
+        for i in range(1, e.size):
+            if e[i] <= e[i-1] - 1e-15:
+                shift = 2*np.pi * np.ceil((e[i-1] - e[i] + 1e-15)/(2*np.pi))
+                e[i:] = e[i:] + shift
+        e0 = e[0]; two_pi = 2*np.pi
+        vals_out = vals.copy()
+        fm = np.isfinite(vals_out)
+        vals_out[ fm ] = (vals_out[ fm ] - e0) % two_pi + e0
+        return e, vals_out
+
+    if isinstance(binning, np.ndarray) or (
+        isinstance(binning, (list, tuple)) and not (
+            len(binning) == 3 and all(np.isscalar(x) for x in binning)
+        )
+    ):
+        edges_np = np.asarray(binning, dtype="f8").ravel()
+        edges_np = edges_np[np.isfinite(edges_np)]
+        if edges_np.size < 2:
+            raise ValueError(f"[{name}] Variable bin edges must have length >= 2, got: {edges_np}")
+
+        if not np.all(np.diff(edges_np) > 0):
+            if _is_angular_name(name) or _maybe_angle_edges(edges_np):
+                edges_np, v2 = _unwrap_edges_and_values(edges_np, v2)
+            else:
+                e_sorted_unique = np.unique(edges_np)
+                if e_sorted_unique.size < 2 or not np.all(np.diff(e_sorted_unique) > 0):
+                    raise ValueError(f"[{name}] Invalid variable bin edges (not strictly increasing).")
+                print(f"[WARN] {name}: edges not strictly increasing; using sorted unique edges.")
+                edges_np = e_sorted_unique
+
+        nb = len(edges_np) - 1
+        h = ROOT.TH1D(name, title, int(nb), edges_np)
+    else:
+        nb, lo, hi = binning
+        nb = int(nb); lo = float(lo); hi = float(hi)
+        if not np.isfinite([lo, hi]).all() or hi <= lo or nb <= 0:
+            raise ValueError(f"[{name}] Invalid (nb, lo, hi): {binning}")
+        h = ROOT.TH1D(name, title, nb, lo, hi)
+        edges_np = np.linspace(lo, hi, nb + 1, dtype="f8")
+
+    if v2.dtype == np.bool_:
+        v2 = v2.astype("f8")
+    if w is not None and w.dtype == np.bool_:
+        w = w.astype("f8")
+
+    counts, _ = np.histogram(v2, bins=edges_np, weights=w)
+    if w is None:
+        sumw2 = counts.astype("f8")
+    else:
+        sumw2, _ = np.histogram(v2, bins=edges_np, weights=w * w)
+
+    h.Sumw2()
+    for i in range(1, h.GetNbinsX() + 1):
+        c  = float(counts[i - 1])
+        e2 = float(sumw2[i - 1])
+        h.SetBinContent(i, c)
+        h.SetBinError(i, float(np.sqrt(e2) if e2 >= 0 else 0.0))
+
+    h.SetDirectory(0)
+    return h
+
+
+def detect_year_era_from_name(path: str):
+    name = path.lower()   # <-- FULL PATH, not basename
+
+    year = "2022" if "2022" in name else ("2023" if "2023" in name else None)
+    era = None
+
+    if "preee" in name:
+        era = "PreEE"
+        year = year or "2022"
+    elif "postee" in name:
+        era = "PostEE"
+        year = year or "2022"
+    elif "prebpix" in name:
+        era = "preBPix"
+        year = year or "2023"
+    elif "postbpix" in name:
+        era = "postBPix"
+        year = year or "2023"
+
+    return year, era
+
+
+
+def ensure_dir_in_tfile(tfile, path):
+    curr = tfile
+    if not path:
+        return curr
+    for part in path.split('/'):
+        d = curr.GetDirectory(part)
+        curr = d if d else curr.mkdir(part)
+    return curr
+
+def normalize_sample_name(name: str) -> str:
+    base = os.path.basename(name)
+    base = re.sub(r"\.(parquet|root)$", "", base, flags=re.IGNORECASE)
+    base = re.sub(r"(_part\d+|_chunk\d+|_\d+of\d+)$", "", base, flags=re.IGNORECASE)
+    # base = re.sub(r"[_-]?(2022|2023)(PreEE|PostEE|All)?", "", base, flags=re.IGNORECASE)
+    base = re.sub(r"[_-]?(2022|2023)(PreEE|PostEE|All|preBPix|postBPix)?", "", base, flags=re.IGNORECASE)
+    return base
+
+def ak_to_numpy_dict(arr: ak.Array) -> dict:
+    out = {}
+    for key in arr.fields:
+        filled = ak.fill_none(arr[key], -9999)
+        np_arr = ak.to_numpy(filled)
+        if np.issubdtype(np_arr.dtype, np.integer):
+            np_arr = np.nan_to_num(np_arr.astype("int64"), nan=-9999, posinf=999999999, neginf=-999999999)
+        else:
+            np_arr = np.nan_to_num(np_arr, nan=-9999, posinf=999999999, neginf=-999999999)
+        out[key] = np_arr
+    return out
+
+def concat_field_dicts(dict_list):
+    out = {}
+    if not dict_list:
+        return out
+    keys = dict_list[0].keys()
+    for k in keys:
+        arrs = [np.asarray(d[k]) for d in dict_list if k in d]
+        if len(arrs) == 0:
+            out[k] = np.array([], dtype=np.float32)
+        elif len(arrs) == 1:
+            out[k] = arrs[0]
+        else:
+            out[k] = np.concatenate(arrs, axis=0)
+    return out
+
+## dtypes before writing to avoid out of range in 32-bit
+def sanitize_for_uproot(d: dict) -> dict:
+    """
+    Make arrays uproot-safe:
+      * ints -> int64
+      * uints -> int64 (may clip negatives if any appear after cast, but we don't expect them)
+      * floats -> float64
+      * bool -> int8
+      * forbid object dtypes
+    Also ensure finite values (replace NaN/Inf).
+    """
+    out = {}
+    for k, v in d.items():
+        a = np.asarray(v)
+        if a.dtype == np.bool_:
+            a = a.astype(np.int8, copy=False)
+        elif a.dtype.kind == "u":  # unsigned ints
+            a = a.astype(np.int64, copy=False)
+        elif a.dtype.kind == "i":  # signed ints
+            a = a.astype(np.int64, copy=False)
+        elif a.dtype.kind == "f":  # floats
+            a = a.astype(np.float64, copy=False)
+        elif a.dtype.kind == "O":
+            raise TypeError(f"Branch '{k}' has object dtype; not supported in ROOT trees.")
+        # replace non-finites with sentinels
+        if a.dtype.kind in ("i", "u"):
+            a = np.nan_to_num(a, nan=-9999, posinf=999999999, neginf=-999999999)
+        else:
+            a = np.nan_to_num(a, nan=-9999.0, posinf=9.999e306, neginf=-9.999e306)
+        out[k] = a
+    return out
+
+
+# ---------------- Global accumulators ----------------
+HIST_CACHE = {}   # (sample, region, varname) -> TH1D
+TREE_ACC   = {}   # (sample, region) -> [dict(field->np.ndarray)]
+PROC_ACC   = {}   # sample -> [dict(field->np.ndarray)]
+
+# ---------------- Utils ----------------
+def is_signal_from_name(name: str) -> bool:
+    s = name
+    return any(x in s for x in [
+        "GluGluToHH", "VBFHH", "Radion", "Graviton", "XToHH", "HHTo", "HHTobbgg"
+    ])
+    
+def is_dd_template(path: str) -> bool:
+    """Return True for DD fake-γ templates (rescaled parquet files)."""
+    b = os.path.basename(path).lower()
+    return any(k in b for k in (
+        "ddqcdgjet_rescaled",
+        "ggjets_low_rescaled",
+        "ggjets_high_rescaled",
+        "ddqcdgjet",   # generic catch-all
+    ))
+
+# Which column to use for DD event weights if not 'weight'
+DD_WEIGHT_COLUMNS = ("weight", "evt_weight", "w", "fake_weight")
+
+def _get_dd_weight_col(all_columns) -> str:
+    """Find the name of the event-weight column in DD files."""
+    cols = set(map(str, all_columns))
+    for c in DD_WEIGHT_COLUMNS:
+        if c in cols:
+            return c
+    raise KeyError(
+        "No DD weight column found in DD template. "
+        f"Tried: {', '.join(DD_WEIGHT_COLUMNS)}; available: {sorted(cols)}"
+    )
+
+# ---------------- Core processing ----------------
+def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None):
+    """
+    Process a single parquet file and accumulate:
+      - histograms per (sample, region, variable)
+      - regional trees per (sample, region)
+      - full processed_events per sample
+    """
+    print(f"[INFO] Processing Parquet file: {inputfile}")
+    required_columns = [
+        "run",
+        "lumi",
+        "event",
+        "puppiMET_pt",
+        "puppiMET_phi",
+        "puppiMET_phiJERDown",
+        "puppiMET_phiJERUp",
+        "puppiMET_phiJESDown",
+        "puppiMET_phiJESUp",
+        "puppiMET_phiUnclusteredDown",
+        "puppiMET_phiUnclusteredUp",
+        "puppiMET_ptJERDown",
+        "puppiMET_ptJERUp",
+        "puppiMET_ptJESDown",
+        "puppiMET_ptJESUp",
+        "puppiMET_ptUnclusteredDown",
+        "puppiMET_ptUnclusteredUp",
+        "puppiMET_sumEt",
+        "Res_lead_bjet_pt",
+        "Res_lead_bjet_eta",
+        "Res_lead_bjet_phi",
+        "Res_lead_bjet_mass",
+        "Res_sublead_bjet_pt",
+        "Res_sublead_bjet_eta",
+        "Res_sublead_bjet_phi",
+        "Res_sublead_bjet_mass",
+        "lead_pt",
+        "lead_eta",
+        "lead_phi",
+        "lead_mvaID_WP90",
+        "lead_mvaID_WP80",
+        "sublead_pt",
+        "sublead_eta",
+        "sublead_phi",
+        "sublead_mvaID_WP90",
+        "sublead_mvaID_WP80",
+        "weight",
+        "weight_central",
+        "Res_lead_bjet_btagPNetB",
+        "Res_sublead_bjet_btagPNetB",
+        "Res_lead_bjet_PNetRegPtRawRes",     # Adding particle net regressed varaible
+        "Res_sublead_bjet_PNetRegPtRawRes",   # Adding particle net regressed varaible
+        "lead_isScEtaEB",
+        "sublead_isScEtaEB",
+        "Res_HHbbggCandidate_pt",
+        "Res_HHbbggCandidate_eta",
+        "Res_HHbbggCandidate_phi",
+        "Res_HHbbggCandidate_mass",
+        "Res_CosThetaStar_CS",
+        "Res_CosThetaStar_gg",
+        "Res_CosThetaStar_jj",
+        "Res_DeltaR_jg_min",
+        "Res_pholead_PtOverM",
+        "Res_phosublead_PtOverM",
+        "Res_FirstJet_PtOverM",
+        "Res_SecondJet_PtOverM",
+        "lead_mvaID",
+        "sublead_mvaID",
+        "Res_DeltaR_j1g1",
+        "Res_DeltaR_j2g1",
+        "Res_DeltaR_j1g2",
+        "Res_DeltaR_j2g2",
+        "Res_M_X",
+        "Res_DeltaPhi_j1MET",
+        "Res_DeltaPhi_j2MET",
+        "Res_chi_t0",
+        "Res_chi_t1",
+        "lepton1_mvaID",
+        "lepton1_pt",
+        "lepton1_pfIsoId",
+        "n_jets",
+        # Number of jets ration (BTV)
+        "Njets2p5",
+        # Jets for the HT(BTV)
+        "jet10_pt",
+        "jet1_pt",
+        "jet2_pt",
+        "jet3_pt",
+        "jet4_pt",
+        "jet5_pt",
+        "jet6_pt",
+        "jet7_pt",
+        "jet8_pt",
+        "jet9_pt",
+        #pDNN Score
+        "pDNN_score",
+        # number of leptons
+        "n_leptons"
+    ]
+
+    parquet_file = pq.ParquetFile(inputfile)
+
+    base = os.path.basename(inputfile)
+    sample_name_raw = base.replace(".parquet", "").replace(".root", "")
+    sample_name_norm = normalize_sample_name(sample_name_raw)
+
+    isdata = "Data" in base
+    sigflag = is_signal_from_name(base)
+    isdd   = is_dd_template(base)
+
+
+    
+    det_year, det_era = detect_year_era_from_name(inputfile)
+    use_year = det_year or str(cli_year)
+    use_era  = det_era  or str(cli_era) 
+
+    if xsec_lumi_cache is None:
+        xsec_lumi_cache = {}
+    if inputfile not in xsec_lumi_cache:
+        if isdata or isdd:
+            # No σ×L scaling for data or DD templates
+            xsec_lumi_cache[inputfile] = (1.0, 1.0)
+        else:
+            # det_year, det_era = detect_year_era_from_name(inputfile)
+            # use_year = det_year or str(cli_year)   # fallback to CLI if detection failed
+            # use_era  = det_era  or str(cli_era)
+            
+            xsec_lumi_cache[inputfile] = (float(getXsec(inputfile)), 
+                                          float(getLumi(use_year, use_era)) * 1000.0,      # lumi in pb^-1
+                                          )      
+    xsec_, lumi_ = xsec_lumi_cache[inputfile]
+    # print(f"[NORM] sample={os.path.basename(inputfile)} xsec={xsec_} pb, lumi={lumi_/1000.0:.3f} fb^-1 ({det_year or cli_year} {det_era or cli_era})")
+    print(f"[NORM] sample={os.path.basename(inputfile)} xsec={xsec_} pb, "
+      f"lumi={lumi_/1000.0:.3f} fb^-1 ({use_year} {use_era}) "
+      f"[flags: data={isdata} dd = {isdd}]") 
+
+
+    # region utils & plotting config
+    from regions import (
+        get_mask_preselection,
+        get_mask_selection,
+        get_mask_srbbgg,
+        get_mask_srbbggMET,
+        get_mask_crantibbgg, 
+        get_mask_crbbantigg, 
+        get_mask_crantibbantigg,
+        get_mask_sideband,
+        get_mask_idmva_presel, 
+        get_mask_idmva_sideband,
+    )
+    from variables import vardict, regions, variables_common
+    from binning import binning
+
+    for batch in parquet_file.iter_batches(batch_size=10000, columns=required_columns):
+        df = batch.to_pandas()
+        print(f"[INFO] Batch rows: {len(df)}")
+        tree_ = ak.from_arrow(pyarrow.Table.from_pandas(df))
+
+        cms_events = ak.zip(
+            {
+                "run": tree_["run"], "lumi": tree_["lumi"],
+                "event": tree_["event"],
+                "puppiMET_pt": tree_["puppiMET_pt"],
+                "puppiMET_phi": tree_["puppiMET_phi"],
+                "puppiMET_phiJERDown": tree_["puppiMET_phiJERDown"],
+                "puppiMET_phiJERUp": tree_["puppiMET_phiJERUp"],
+                "puppiMET_phiJESDown": tree_["puppiMET_phiJESDown"],
+                "puppiMET_phiJESUp": tree_["puppiMET_phiJESUp"],
+                "puppiMET_phiUnclusteredDown": tree_["puppiMET_phiUnclusteredDown"],
+                "puppiMET_phiUnclusteredUp": tree_["puppiMET_phiUnclusteredUp"],
+                "puppiMET_ptJERDown": tree_["puppiMET_ptJERDown"],
+                "puppiMET_ptJERUp": tree_["puppiMET_ptJERUp"],
+                "puppiMET_ptJESDown": tree_["puppiMET_ptJESDown"],
+                "puppiMET_ptJESUp": tree_["puppiMET_ptJESUp"],
+                "puppiMET_ptUnclusteredDown": tree_["puppiMET_ptUnclusteredDown"],
+                "puppiMET_ptUnclusteredUp": tree_["puppiMET_ptUnclusteredUp"],
+                "puppiMET_sumEt": tree_["puppiMET_sumEt"],
+                "lead_bjet_pt": tree_["Res_lead_bjet_pt"], 
+                "lead_bjet_eta": tree_["Res_lead_bjet_eta"],
+                "lead_bjet_phi": tree_["Res_lead_bjet_phi"], 
+                "lead_bjet_mass": tree_["Res_lead_bjet_mass"],
+                "sublead_bjet_pt": tree_["Res_sublead_bjet_pt"],
+                "sublead_bjet_eta": tree_["Res_sublead_bjet_eta"],
+                "sublead_bjet_phi": tree_["Res_sublead_bjet_phi"],
+                "sublead_bjet_mass": tree_["Res_sublead_bjet_mass"],
+                "lead_pho_pt": tree_["lead_pt"], 
+                "lead_pho_eta": tree_["lead_eta"], 
+                "lead_pho_phi": tree_["lead_phi"],
+                "lead_pho_mvaID_WP90": tree_["lead_mvaID_WP90"], 
+                "lead_pho_mvaID_WP80": tree_["lead_mvaID_WP80"],
+                "sublead_pho_pt": tree_["sublead_pt"], 
+                "sublead_pho_eta": tree_["sublead_eta"], 
+                "sublead_pho_phi": tree_["sublead_phi"],
+                "sublead_pho_mvaID_WP90": tree_["sublead_mvaID_WP90"],
+                "sublead_pho_mvaID_WP80": tree_["sublead_mvaID_WP80"],
+                "weight_central": tree_["weight_central"],
+                "weight": tree_["weight"],
+                "lead_bjet_PNetB": tree_["Res_lead_bjet_btagPNetB"], 
+                "sublead_bjet_PNetB": tree_["Res_sublead_bjet_btagPNetB"],
+                "lead_bjet_PNetRegPtRawRes": tree_["Res_lead_bjet_PNetRegPtRawRes"],    # Adding particle net regressed varaible 
+                "sublead_bjet_PNetRegPtRawRes":tree_["Res_sublead_bjet_PNetRegPtRawRes"], # Adding particle net regressed varaible
+                "lead_isScEtaEB": tree_["lead_isScEtaEB"],
+                "sublead_isScEtaEB": tree_["sublead_isScEtaEB"],
+                "CosThetaStar_CS": tree_["Res_CosThetaStar_CS"],
+                "CosThetaStar_gg": tree_["Res_CosThetaStar_gg"], 
+                "CosThetaStar_jj": tree_["Res_CosThetaStar_jj"],
+                "DeltaR_jg_min": tree_["Res_DeltaR_jg_min"],
+                "pholead_PtOverM": tree_["Res_pholead_PtOverM"],
+                "phosublead_PtOverM": tree_["Res_phosublead_PtOverM"],
+                "FirstJet_PtOverM": tree_["Res_FirstJet_PtOverM"], 
+                "SecondJet_PtOverM": tree_["Res_SecondJet_PtOverM"],
+                "lead_pho_mvaID": tree_["lead_mvaID"],
+                "sublead_pho_mvaID": tree_["sublead_mvaID"],
+                "DeltaR_j1g1": tree_["Res_DeltaR_j1g1"],
+                "DeltaR_j2g1": tree_["Res_DeltaR_j2g1"],
+                "DeltaR_j1g2": tree_["Res_DeltaR_j1g2"],
+                "DeltaR_j2g2": tree_["Res_DeltaR_j2g2"],
+                "bbgg_mass": tree_["Res_HHbbggCandidate_mass"],
+                "bbgg_pt": tree_["Res_HHbbggCandidate_pt"],
+                "bbgg_eta": tree_["Res_HHbbggCandidate_eta"],
+                "bbgg_phi": tree_["Res_HHbbggCandidate_phi"],
+                "MX": tree_["Res_M_X"],
+                "DeltaPhi_j1MET": tree_["Res_DeltaPhi_j1MET"],
+                "DeltaPhi_j2MET": tree_["Res_DeltaPhi_j2MET"],
+                "Res_chi_t0": tree_["Res_chi_t0"],
+                "Res_chi_t1": tree_["Res_chi_t1"],
+                "lepton1_mvaID": tree_["lepton1_mvaID"],
+                "lepton1_pt": tree_["lepton1_pt"], 
+                "lepton1_pfIsoId": tree_["lepton1_pfIsoId"],
+                "n_jets": tree_["n_jets"],
+                "Njets2p5": tree_["Njets2p5"],
+                "jet10_pt": tree_["jet10_pt"],
+                "jet1_pt": tree_["jet1_pt"],
+                "jet2_pt": tree_["jet2_pt"],
+                "jet3_pt": tree_["jet3_pt"],
+                "jet4_pt": tree_["jet4_pt"],
+                "jet5_pt": tree_["jet5_pt"],
+                "jet6_pt": tree_["jet6_pt"],
+                "jet7_pt": tree_["jet7_pt"],
+                "jet8_pt": tree_["jet8_pt"],
+                "jet9_pt": tree_["jet9_pt"],
+                "pDNN_score":tree_["pDNN_score"],
+                "n_leptons": tree_["n_leptons"],
+            },
+            depth_limit=1,
+        )
+
+        n_entries = len(tree_)
+        cms_events["signal"] = ak.Array(np.full(n_entries, 1 if sigflag else 0, dtype=np.int8))
+        cms_events["isdata"] = ak.Array(np.full(n_entries, 1 if isdata else 0, dtype=np.int8))
+        cms_events["isdd"]   = ak.Array(np.full(n_entries, 1 if isdd   else 0, dtype=np.int8))
+
+        out_events = ak.zip({"run": tree_["run"], "lumi": tree_["lumi"], "event": tree_["event"]}, depth_limit=1)
+
+        dibjet_ = lVector(
+            cms_events["lead_bjet_pt"], cms_events["lead_bjet_eta"], cms_events["lead_bjet_phi"],
+            cms_events["sublead_bjet_pt"], cms_events["sublead_bjet_eta"], cms_events["sublead_bjet_phi"],
+            cms_events["lead_bjet_mass"], cms_events["sublead_bjet_mass"],
+        )
+        diphoton_ = lVector(
+            cms_events["lead_pho_pt"], cms_events["lead_pho_eta"], cms_events["lead_pho_phi"],
+            cms_events["sublead_pho_pt"], cms_events["sublead_pho_eta"], cms_events["sublead_pho_phi"],
+        )
+        cms_events["dibjet_mass"] = dibjet_.mass
+        cms_events["dibjet_pt"]   = dibjet_.pt
+        cms_events["diphoton_mass"] = diphoton_.mass
+        cms_events["diphoton_pt"]   = diphoton_.pt
+        cms_events["dibjet_eta"] = dibjet_.eta
+        cms_events["dibjet_phi"] = dibjet_.phi
+        cms_events["diphoton_eta"] = diphoton_.eta
+        cms_events["diphoton_phi"] = diphoton_.phi
+
+        cms_events["lead_pt_over_diphoton_mass"]    = cms_events["lead_pho_pt"]     / cms_events["diphoton_mass"]
+        cms_events["sublead_pt_over_diphoton_mass"] = cms_events["sublead_pho_pt"]  / cms_events["diphoton_mass"]
+        cms_events["lead_pt_over_dibjet_mass"]      = cms_events["lead_bjet_pt"]    / cms_events["dibjet_mass"]
+        cms_events["sublead_pt_over_dibjet_mass"]   = cms_events["sublead_bjet_pt"] / cms_events["dibjet_mass"]
+        cms_events["diphoton_bbgg_mass"] = cms_events["diphoton_pt"] / cms_events["bbgg_mass"]
+        cms_events["dibjet_bbgg_mass"]   = cms_events["dibjet_pt"]   / cms_events["bbgg_mass"]
+
+        cms_events["max_gamma_MVA_ID"] = ak.where(
+            cms_events["lead_pho_mvaID"] > cms_events["sublead_pho_mvaID"],
+            cms_events["lead_pho_mvaID"], cms_events["sublead_pho_mvaID"]
+        )
+        
+        # Number of jets ration (BTV)
+        cms_events["Njets2p5"] = cms_events["Njets2p5"]
+        # Jets for the HT(BTV)
+        jets_pts = ak.concatenate([
+            cms_events["jet1_pt"].to_numpy().reshape(-1,1),
+            cms_events["jet2_pt"].to_numpy().reshape(-1,1),
+            cms_events["jet3_pt"].to_numpy().reshape(-1,1),
+            cms_events["jet4_pt"].to_numpy().reshape(-1,1),
+            cms_events["jet5_pt"].to_numpy().reshape(-1,1),
+            cms_events["jet6_pt"].to_numpy().reshape(-1,1),
+            cms_events["jet7_pt"].to_numpy().reshape(-1,1),
+            cms_events["jet8_pt"].to_numpy().reshape(-1,1),
+            cms_events["jet9_pt"].to_numpy().reshape(-1,1),
+            cms_events["jet10_pt"].to_numpy().reshape(-1,1),
+        ], axis=1)
+        cms_events["HT"] = ak.Array(np.sum(jets_pts, axis=1))
+        
+
+        from regions import (
+            get_mask_preselection, get_mask_selection,
+            get_mask_srbbgg, get_mask_srbbggMET,
+            get_mask_crantibbgg, get_mask_crbbantigg, get_mask_crantibbantigg,
+            get_mask_sideband, get_mask_idmva_presel, get_mask_idmva_sideband,
+        )
+        from variables import vardict, regions, variables_common
+        from binning import binning
+
+        cms_events["preselection"]   = get_mask_preselection(cms_events)
+        cms_events["selection"]      = get_mask_selection(cms_events)
+        cms_events["srbbgg"]         = get_mask_srbbgg(cms_events)
+        cms_events["srbbggMET"]      = get_mask_srbbggMET(cms_events)
+        cms_events["crbbantigg"]     = get_mask_crbbantigg(cms_events)
+        cms_events["crantibbgg"]     = get_mask_crantibbgg(cms_events)
+        cms_events["crantibbantigg"] = get_mask_crantibbantigg(cms_events)
+        cms_events["sideband"]       = get_mask_sideband(cms_events)
+        cms_events["idmva_presel"]   = get_mask_idmva_presel(cms_events)
+        cms_events["idmva_sideband"] = get_mask_idmva_sideband(cms_events)
+
+        keys_to_copy = [
+            "puppiMET_pt","puppiMET_phi","puppiMET_phiJERDown","puppiMET_phiJERUp",
+            "puppiMET_phiJESDown","puppiMET_phiJESUp","puppiMET_phiUnclusteredDown","puppiMET_phiUnclusteredUp",
+            "puppiMET_ptJERDown","puppiMET_ptJERUp","puppiMET_ptJESDown","puppiMET_ptJESUp",
+            "puppiMET_ptUnclusteredDown","puppiMET_ptUnclusteredUp","puppiMET_sumEt",
+            "lead_pho_pt","lead_pho_eta","lead_pho_phi",
+            "sublead_pho_pt","sublead_pho_eta","sublead_pho_phi",
+            "lead_bjet_pt","lead_bjet_eta","lead_bjet_phi",
+            "sublead_bjet_pt","sublead_bjet_eta","sublead_bjet_phi",
+            "dibjet_mass","diphoton_mass","bbgg_mass","dibjet_pt","diphoton_pt","bbgg_pt","bbgg_eta","bbgg_phi",
+            "DeltaPhi_j1MET","DeltaPhi_j2MET","Res_chi_t0","Res_chi_t1",
+            "lepton1_mvaID","lepton1_pt","lepton1_pfIsoId","n_jets",
+            "weight_central",
+            "dibjet_eta","dibjet_phi","diphoton_eta","diphoton_phi",
+            "lead_bjet_PNetB","sublead_bjet_PNetB", "lead_bjet_PNetRegPtRawRes","sublead_bjet_PNetRegPtRawRes", 
+            "pholead_PtOverM","phosublead_PtOverM","FirstJet_PtOverM","SecondJet_PtOverM",
+            "CosThetaStar_CS","CosThetaStar_jj","CosThetaStar_gg","DeltaR_jg_min",
+            "lead_pt_over_diphoton_mass","sublead_pt_over_diphoton_mass",
+            "lead_pt_over_dibjet_mass","sublead_pt_over_dibjet_mass",
+            "diphoton_bbgg_mass","dibjet_bbgg_mass",
+            "lead_pho_mvaID_WP90","lead_pho_mvaID_WP80","sublead_pho_mvaID_WP90","sublead_pho_mvaID_WP80",
+            "lead_pho_mvaID","sublead_pho_mvaID","max_gamma_MVA_ID",
+            "preselection","selection","srbbgg","srbbggMET","crbbantigg","crantibbgg","crantibbantigg","sideband",
+            "idmva_sideband","idmva_presel",
+            "DeltaR_j1g1","DeltaR_j2g1","DeltaR_j1g2","DeltaR_j2g2",
+            "signal","isdata", "isdd","HT","Njets2p5",
+            "pDNN_score",
+            "n_leptons",
+        ]
+        out_events = ak.zip({k: cms_events[k] for k in keys_to_copy} | {"run": tree_["run"], "lumi": tree_["lumi"], "event": tree_["event"]}, depth_limit=1)
+
+        # wc = ak.to_numpy(out_events["weight_central"])
+        # wc = np.where(np.isfinite(wc) & (wc != 0.0), wc, 1.0)
+        # base_w = ak.to_numpy(cms_events["weight"]) * float(xsec_) * float(lumi_) / wc
+        # base_w = np.where(np.isfinite(base_w), base_w, 0.0)
+        # for r in ["preselection","selection","srbbgg","srbbggMET","crbbantigg","crantibbgg","crantibbantigg","sideband","idmva_sideband","idmva_presel"]:
+        #     out_events = ak.with_field(out_events, base_w, "weight_"+r)
+        # ---------------- Build event weights ----------------
+        if isdata:
+            # Unit weight for real data
+            base_w = np.ones(len(tree_), dtype="f8")
+
+        elif isdd:
+            # DD template: read per-event weight directly
+            try:
+                dd_wname = _get_dd_weight_col(tree_.fields)
+                dd_w = ak.to_numpy(tree_[dd_wname])
+            except Exception:
+                dd_wname = _get_dd_weight_col(df.columns)
+                dd_w = df[dd_wname].to_numpy()
+            base_w = np.where(np.isfinite(dd_w), dd_w, 0.0)
+
+        else:
+            # MC: σ×L normalization
+            wc = ak.to_numpy(out_events["weight_central"])
+            wc = np.where(np.isfinite(wc) & (wc != 0.0), wc, 1.0)
+            base_w = ak.to_numpy(cms_events["weight"]) * float(xsec_) * float(lumi_) / wc
+            base_w = np.where(np.isfinite(base_w), base_w, 0.0)
+
+        # Attach per-region weights
+        for r in ["preselection","selection","srbbgg","srbbggMET",
+                "crbbantigg","crantibbgg","crantibbantigg",
+                "sideband","idmva_sideband","idmva_presel"]:
+            out_events = ak.with_field(out_events, base_w, "weight_"+r)
+
+
+        PROC_ACC.setdefault(sample_name_norm, []).append(ak_to_numpy_dict(out_events))
+
+        for ireg in regions:
+            thisregion = out_events[out_events[ireg] == True]
+            thisregion_ = thisregion[~(ak.is_none(thisregion))]
+            weight_ = "weight_" + ireg
+
+            for ivar in variables_common[ireg]:
+                hist_name_ = f"{vardict[ivar]}"
+                vals = ak.to_numpy(thisregion_[ivar])
+                wts  = ak.to_numpy(thisregion_[weight_])
+                if wts is not None:
+                    wts = np.where(np.isfinite(wts), wts, 0.0)
+                h = make_th1_pyroot(vals, wts, hist_name_, hist_name_, binning[ireg][ivar])
+
+                key = (sample_name_norm, ireg, hist_name_)
+                if key not in HIST_CACHE:
+                    acc = h.Clone(f"{hist_name_}__acc")
+                    acc.Reset()
+                    acc.SetDirectory(0)
+                    HIST_CACHE[key] = acc
+                HIST_CACHE[key].Add(h)
+                del h
+
+            tree_data_ = ak_to_numpy_dict(thisregion_)
+            TREE_ACC.setdefault((sample_name_norm, ireg), []).append(tree_data_)
+
+def ensure_dir(upfile, path):
+    """Create nested directories explicitly for Uproot writing."""
+    curr = upfile
+    if not path:
+        return curr
+    parts = [p for p in path.split("/") if p]
+    for p in parts:
+        # mkdir returns the subdirectory; if it exists, __getitem__ returns it
+        curr = curr.mkdir(p) if p not in curr.keys() else curr[p]
+    return curr
+
+def write_tree_chunked(upfile, full_path, merged, step=200_000):
+    """
+    Create directories explicitly, create a tree with a *simple name* (no slashes),
+    and stream data in chunks. `merged` must be sanitized.
+    """
+    if not merged:
+        return
+
+    # Split "sample/region" into directory + short tree name
+    parts = [p for p in full_path.split("/") if p]
+    treename = parts[-1]
+    dirpath  = "/".join(parts[:-1])
+
+    # Ensure the directory exists
+    wdir = ensure_dir(upfile, dirpath)
+
+    # Enforce 1D, consistent lengths, and map to explicit string types
+    first_key = next(iter(merged))
+    n = len(merged[first_key])
+    for k, v in merged.items():
+        a = np.asarray(v)
+        if a.ndim != 1:
+            raise ValueError(f"Branch '{k}' is not 1D (shape={a.shape}).")
+        if len(a) != n:
+            raise ValueError(f"Branch length mismatch: '{k}' has {len(a)} vs {n}.")
+
+    # Use explicit ROOT-friendly type strings (avoid dtype inference pitfalls)
+    def _branch_type(a):
+        a = np.asarray(a)
+        if a.dtype == np.bool_:
+            return "int8"
+        if a.dtype.kind in ("i", "u"):
+            return "int64"
+        if a.dtype.kind == "f":
+            return "float64"
+        raise TypeError(f"Unsupported dtype for branch: {a.dtype}")
+
+    types = {k: _branch_type(v) for k, v in merged.items()}
+
+    # Create an empty tree with a *short name*, no slashes
+    tree = wdir.mktree(treename, types)
+
+    # Stream the data
+    step = min(step, n if n else step)
+    for start in range(0, n, step):
+        stop  = min(start + step, n)
+        piece = {k: v[start:stop] for k, v in merged.items()}
+        tree.extend(piece)
+
+
+
+# ---------------- Entry point ----------------
+# ---------------- Entry point ----------------
+def main():
+    ap = argparse.ArgumentParser(
+        description="hhbbgg analyzer (parquet) with true multi-year + multi-era support"
+    )
+
+    ap.add_argument(
+        "-i", "--inFile", action="append", required=True,
+        help="Parquet file or directory. Can be given multiple times."
+    )
+
+    ap.add_argument(
+        "--config-years", type=str, required=True,
+        help="Comma-separated list of years, e.g. 2022,2023,2024"
+    )
+
+    ap.add_argument(
+        "--era", default="All",
+        help="Fallback era if not detectable from filename (PreEE, PostEE, preBPix, postBPix, All)"
+    )
+
+    ap.add_argument(
+        "--tag", default=None,
+        help="Output tag name"
+    )
+
+    args = ap.parse_args()
+
+    # -----------------------------------------
+    # Parse years
+    # -----------------------------------------
+    config_years = [y.strip() for y in args.config_years.split(",")]
+    print(f"[INFO] Configured years: {config_years}")
+
+    # -----------------------------------------
+    # Collect parquet files
+    # -----------------------------------------
+    inputfiles = []
+    for ip in args.inFile:
+        p = Path(ip).resolve()
+        if p.is_file():
+            if p.suffix == ".parquet":
+                inputfiles.append(str(p))
+        elif p.is_dir():
+            inputfiles.extend(str(x) for x in sorted(p.glob("*.parquet")))
+
+    if not inputfiles:
+        raise RuntimeError("No parquet files found")
+
+    print(f"[INFO] Found {len(inputfiles)} parquet files")
+
+    # -----------------------------------------
+    # Per-(year, era) RunConfig cache
+    # -----------------------------------------
+    runconfig_cache = {}
+    def get_cfg(year, era):
+        key = (year, era)
+        if key not in runconfig_cache:
+            runconfig_cache[key] = RunConfig(year, era)
+        return runconfig_cache[key]
+
+    # -----------------------------------------
+    # Xsec / lumi cache per file
+    # -----------------------------------------
+    xsec_lumi_cache = {}
+
+    # -----------------------------------------
+    # Process files
+    # -----------------------------------------
+    for infile in inputfiles:
+        det_year, det_era = detect_year_era_from_name(infile)
+
+        year = det_year if det_year in config_years else None
+        if year is None:
+            raise RuntimeError(
+                f"File {infile} has year={det_year}, not in --config-years {config_years}"
+            )
+
+        era = det_era or args.era
+        cfg = get_cfg(year, era)
+
+        print(f"[INFO] Processing {os.path.basename(infile)} → {year} {era}")
+
+        process_parquet_file(
+            infile,
+            cli_year=year,
+            cli_era=era,
+            xsec_lumi_cache=xsec_lumi_cache
+        )
+
+    # -----------------------------------------
+    # Output paths
+    # -----------------------------------------
+    out_tag = args.tag or "_".join(config_years)
+    out_dir = Path("outputfiles") / "merged" / out_tag
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    hist_file_path = out_dir / "hhbbgg_histograms.root"
+    tree_file_path = out_dir / "hhbbgg_trees.root"
+
+    # -----------------------------------------
+    # Write outputs
+    # -----------------------------------------
+    print("[INFO] Writing histograms...")
+    hist_tfile = ROOT.TFile(str(hist_file_path), "RECREATE")
+    for (sample, region, var), h in HIST_CACHE.items():
+        ensure_dir_in_tfile(hist_tfile, f"{sample}/{region}").cd()
+        h_clone = h.Clone(var)
+        h_clone.Write()
+    hist_tfile.Close()
+
+    print("[INFO] Writing trees...")
+    tree_upfile = uproot.recreate(tree_file_path)
+
+    for (sample, region), chunks in TREE_ACC.items():
+        merged = sanitize_for_uproot(concat_field_dicts(chunks))
+        write_tree_chunked(tree_upfile, f"{sample}/{region}", merged)
+
+    for sample, chunks in PROC_ACC.items():
+        merged = sanitize_for_uproot(concat_field_dicts(chunks))
+        write_tree_chunked(tree_upfile, f"{sample}/processed_events", merged)
+
+    tree_upfile.close()
+
+    print("======================================")
+    print(f"[OK] Histograms → {hist_file_path}")
+    print(f"[OK] Trees       → {tree_file_path}")
+    print("======================================")
+
+    
+    
+if __name__ == "__main__":
+    main()
+
