@@ -46,7 +46,7 @@ python hhbbgg_analyzer_lxplus_par.py \
 
 
 
-the outputs are saved in the `/outputfiles/merged/DD_CombinedAll/hhbbgg_analyzer-v2-trees.root`. On the saved root files, we check the plots of Data/MC using `python hhbbgg_Plotter.py`
+the outputs are saved in the `/outputfiles/merged/hhbbgg_analyzer-v2-trees.root`. On the saved root files, we check the plots of Data/MC using `python hhbbgg_Plotter.py`
 
 To get the cat numbers, we run using
 ```bash
@@ -212,7 +212,10 @@ hist_data_ch0, hist_data_ch1, hist_data_ch2
 ```
 
 
-
+convert the 2D to 1D as combine cannot run with 2D. 
+```bash
+python3 data/convert_th2_to_roodatahist.py
+```
 
 
 # Impact plot plotting
