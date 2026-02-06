@@ -12,8 +12,24 @@ import mplhep as hep
 # Configuration
 # --------------------------------
 # base_path = "/afs/cern.ch/user/s/sraj/Analysis/output_root/sample_final_nominal/preBPix/"
-base_path = "/afs/cern.ch/user/s/sraj/Analysis/output_root/sample_final_nominal/2024/"
-parquet_files = glob.glob(f"{base_path}/GGJets_MGG-40to80*.parquet")
+# base_path = "/afs/cern.ch/user/s/sraj/Analysis/output_root/sample_final_nominal/2024/"
+base_path = "/afs/cern.ch/user/s/sraj/Analysis/output_root/sample_final_nominal/postEE"
+# parquet_files = glob.glob(f"{base_path}/Data_EraE.parquet") # use for the background
+
+data_eras = ["EraE", "EraF", "EraG"]
+
+parquet_files = []
+for era in data_eras:
+    parquet_files += glob.glob(f"{base_path}/Data_{era}.parquet")
+
+if not parquet_files:
+    raise RuntimeError("No Data parquet files found for EraE/F/G")
+
+print("Using data files:")
+for pf in parquet_files:
+    print("  ", pf)
+
+
 
 if not parquet_files:
     raise RuntimeError("No GGJets_MGG-40to80 parquet files found")
@@ -107,7 +123,7 @@ plt.axvline(-2.5, color="white", ls="--", lw=1, alpha=0.7)
 
 # CMS-style annotation
 hep.cms.text("Simulation", loc=0, fontsize=13)
-hep.cms.lumitext("2024", fontsize=12)
+hep.cms.lumitext("2022PostEE", fontsize=12)
 
 # plt.title(
 #     # "GGJets_MGG-40to80\n"
@@ -117,7 +133,7 @@ hep.cms.lumitext("2024", fontsize=12)
 
 plt.tight_layout()
 plt.savefig(
-    "jet_etaphi_2024_GGJets_MGG40to80_CMSstyle.png",
+    "jet_etaphi_2022PostEE_GGJets_MGG40to80_CMSstyle.png",
     dpi=300
 )
 plt.close()
