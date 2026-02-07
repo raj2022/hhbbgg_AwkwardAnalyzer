@@ -30,13 +30,14 @@ python hhbbgg_analyzer_multiple.py \
 ```bash
 python hhbbgg_analyzer_multiple.py \
   --config-years 2022,2023,2024 \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/sample_final_nominal/2022/PreEE/scored \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/sample_final_nominal/2022/PostEE/scored \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/sample_final_nominal/2023/preBPix/scored \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/sample_final_nominal/2023/postBPix/scored \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/sample_final_nominal/PreEE/scored \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/sample_final_nominal/PostEE/scored \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/sample_final_nominal/preBPix/scored \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/sample_final_nominal/postBPix/scored \
   -i /afs/cern.ch/user/s/sraj/Analysis/output_root/sample_final_nominal/2024/scored \
   --tag 22plus23plus24
 ```
+
 
 If you don’t care about the tag name, you can omit `--tag`:
 ```bash
