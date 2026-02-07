@@ -401,6 +401,10 @@ import torch
 import torch.nn as nn
 import pickle
 
+import pyarrow as pa
+import pyarrow.parquet as pq
+
+
 
 # -----------------------------
 # Defaults / constants
@@ -493,7 +497,7 @@ def predict_batched(model: nn.Module, X_torch: torch.Tensor, device: torch.devic
     for i in range(0, N, BATCH_SIZE):
         xb = X_torch[i:i+BATCH_SIZE].to(device, non_blocking=True)
         if device.type == "cuda" and USE_AMP:
-            with torch.cuda.amp.autocast():
+            with torch.amp.autocast("cuda"):
                 logits = model(xb)
         else:
             logits = model(xb)
@@ -543,53 +547,116 @@ def load_artifacts(artifacts_dir: Path, device: torch.device):
     return FEATURES, scaler, model
 
 
+# def score_parquet_file(
+#     file_path: Path,
+#     FEATURES,
+#     scaler,
+#     model,
+#     device: torch.device,
+#     mass_const: int = MASS_CONST,
+#     y_const: int = Y_CONST,
+# ) -> pd.DataFrame:
+#     """Read a Parquet, align features, scale, score, and return a DF with pDNN_score added."""
+#     df = pd.read_parquet(file_path)
+
+#     # Align with training-time expectations
+#     df = ensure_photon_mva_columns(df)
+#     df = add_engineered_features(df)
+#     df = ensure_weight(df)
+
+#     # Inject constants if missing
+#     if "mass" not in df.columns:
+#         df["mass"] = mass_const
+#     if "y_value" not in df.columns:
+#         df["y_value"] = y_const
+
+#     # Ensure every model feature exists
+#     for f in FEATURES:
+#         if f not in df.columns:
+#             df[f] = 0.0
+
+#     # Build X in the correct column order
+#     X = df[FEATURES].copy()
+#     # Fill NaNs with column means (fallback)
+#     X = X.fillna(X.mean(numeric_only=True))
+#     # Scale as at training time
+#     X_scaled = scaler.transform(X.values).astype("float32")
+
+#     # Torch & predict
+#     X_t = torch.tensor(X_scaled, dtype=torch.float32)
+#     scores = predict_batched(model, X_t, device=device)
+
+#     df["pDNN_score"] = scores
+    
+#     # adding downcast to save space
+#     del X, X_scaled, X_t, scores
+#     import gc; gc.collect()
+#     if device.type == "cuda":
+#         torch.cuda.empty_cache()
+#     return df
 def score_parquet_file(
     file_path: Path,
+    out_path: Path,
     FEATURES,
     scaler,
     model,
     device: torch.device,
     mass_const: int = MASS_CONST,
     y_const: int = Y_CONST,
-) -> pd.DataFrame:
-    """Read a Parquet, align features, scale, score, and return a DF with pDNN_score added."""
-    df = pd.read_parquet(file_path)
+    chunk_size: int = 100_000,
+):
+    """
+    Truly memory-safe parquet scoring.
+    Reads → scores → writes chunk-by-chunk.
+    Never stores full file in RAM.
+    """
 
-    # Align with training-time expectations
-    df = ensure_photon_mva_columns(df)
-    df = add_engineered_features(df)
-    df = ensure_weight(df)
+    import pyarrow as pa
+    import pyarrow.parquet as pq
+    import gc
 
-    # Inject constants if missing
-    if "mass" not in df.columns:
-        df["mass"] = mass_const
-    if "y_value" not in df.columns:
-        df["y_value"] = y_const
+    parquet_file = pq.ParquetFile(file_path)
+    writer = None
 
-    # Ensure every model feature exists
-    for f in FEATURES:
-        if f not in df.columns:
-            df[f] = 0.0
+    for batch in parquet_file.iter_batches(batch_size=chunk_size):
+        df = batch.to_pandas()
 
-    # Build X in the correct column order
-    X = df[FEATURES].copy()
-    # Fill NaNs with column means (fallback)
-    X = X.fillna(X.mean(numeric_only=True))
-    # Scale as at training time
-    X_scaled = scaler.transform(X.values).astype("float32")
+        df = ensure_photon_mva_columns(df)
+        df = add_engineered_features(df)
+        df = ensure_weight(df)
 
-    # Torch & predict
-    X_t = torch.tensor(X_scaled, dtype=torch.float32)
-    scores = predict_batched(model, X_t, device=device)
+        if "mass" not in df.columns:
+            df["mass"] = mass_const
+        if "y_value" not in df.columns:
+            df["y_value"] = y_const
 
-    df["pDNN_score"] = scores
-    
-    # adding downcast to save space
-    del X, X_scaled, X_t, scores
-    import gc; gc.collect()
-    if device.type == "cuda":
-        torch.cuda.empty_cache()
-    return df
+        for f in FEATURES:
+            if f not in df.columns:
+                df[f] = 0.0
+
+        X = df[FEATURES].fillna(0.0)
+        X_scaled = scaler.transform(X.values).astype("float32")
+        X_t = torch.from_numpy(X_scaled)
+
+        scores = predict_batched(model, X_t, device=device)
+        df["pDNN_score"] = scores
+
+        table = pa.Table.from_pandas(df, preserve_index=False)
+
+        if writer is None:
+            writer = pq.ParquetWriter(out_path, table.schema)
+
+        writer.write_table(table)
+
+        # 🔥 Aggressive cleanup
+        del df, X, X_scaled, X_t, scores, table
+        gc.collect()
+        if device.type == "cuda":
+            torch.cuda.empty_cache()
+
+    if writer is not None:
+        writer.close()
+
 
 
 # -----------------------------
@@ -637,27 +704,52 @@ def main():
 
     # Process
     total_rows = 0
+    # for fp in files:
+    #     try:
+    #         df_scored = score_parquet_file(
+    #             fp, FEATURES, scaler, model, device,
+    #             mass_const=args.mass_const, y_const=args.y_const
+    #         )
+    #         rel = fp.relative_to(inp_dir) if inp_dir in fp.parents or fp.parent == inp_dir else fp.name
+    #         out_fp = out_dir / Path(rel).with_suffix(".parquet")
+    #         out_fp.parent.mkdir(parents=True, exist_ok=True)
+    #         # df_scored.to_parquet(out_fp, index=False)
+    #         # total_rows += len(df_scored)
+    #         # print(f"  ✓ {fp.name:40s} -> {out_fp}  ({len(df_scored)} rows)")
+    #         df_scored.to_parquet(out_fp, index=False)
+    #         total_rows += len(df_scored)
+    #         print(f"  {fp.name:40s} -> {out_fp}  ({len(df_scored)} rows)")
+            
+    #         del df_scored
+    #         import gc; gc.collect()
+    #         if device.type == "cuda":
+    #             torch.cuda.empty_cache()
+            
+    #     except Exception as e:
+    #         print(f"   {fp.name}: {e}")
+
     for fp in files:
         try:
-            df_scored = score_parquet_file(
-                fp, FEATURES, scaler, model, device,
-                mass_const=args.mass_const, y_const=args.y_const
-            )
             rel = fp.relative_to(inp_dir) if inp_dir in fp.parents or fp.parent == inp_dir else fp.name
             out_fp = out_dir / Path(rel).with_suffix(".parquet")
             out_fp.parent.mkdir(parents=True, exist_ok=True)
-            # df_scored.to_parquet(out_fp, index=False)
-            # total_rows += len(df_scored)
-            # print(f"  ✓ {fp.name:40s} -> {out_fp}  ({len(df_scored)} rows)")
-            df_scored.to_parquet(out_fp, index=False)
-            total_rows += len(df_scored)
-            print(f"  {fp.name:40s} -> {out_fp}  ({len(df_scored)} rows)")
-            
-            del df_scored
-            import gc; gc.collect()
-            if device.type == "cuda":
-                torch.cuda.empty_cache()
-            
+
+            score_parquet_file(
+                file_path=fp,
+                out_path=out_fp,
+                FEATURES=FEATURES,
+                scaler=scaler,
+                model=model,
+                device=device,
+                mass_const=args.mass_const,
+                y_const=args.y_const
+            )
+
+            # Get row count for logging
+            row_count = pq.ParquetFile(out_fp).metadata.num_rows
+            total_rows += row_count
+            print(f"  ✓ {fp.name:40s} -> {out_fp}  ({row_count} rows)")
+
         except Exception as e:
             print(f"   {fp.name}: {e}")
 
