@@ -706,9 +706,10 @@ from variables import vardict, regions as REGION_LIST, variables_common  # <- ke
 # If you have a year/era-aware getLumi, replace this label.
 def lumi_label():
     # return "34.65"  # fb^-1 for 2022 only
-    return "27.76"  # fb^-1 for 2023 only
+    # return "27.76"  # fb^-1 for 2023 only
     # return "108.96"  # fb^-1 for 2024 only
-    # return "171.37"  # fb^-1 for 2022-2024
+    # return 62.31  # fb^-1 for 2022-2023
+    return "171.37"  # fb^-1 for 2022-2024
 
 # ------------------- Styling -------------------
 hep.style.use("CMS")
@@ -987,7 +988,7 @@ def stack1d_histograms(up, output_dir, blind=True):
                 "TTGG", 
                 "TTG"]
     signal_bases = [
-                    # "NMSSM_X400_Y100",
+                    "NMSSM_X400_Y100",
                     # "NMSSM_X400_Y125",
                     # "NMSSM_X400_Y150",
                     # "NMSSM_X500_Y100",
@@ -1086,7 +1087,7 @@ def stack1d_histograms(up, output_dir, blind=True):
         print(f"[OK] {region}/{var}")
 
 def main():
-    root_path = "/afs/cern.ch/user/s/sraj/Analysis/hhbbgg_AwkwardAnalyzer/outputfiles/merged/2022_All/hhbbgg_analyzer-v2-histograms.root" # plotting for 2022 All era
+    root_path = "/afs/cern.ch/user/s/sraj/Analysis/hhbbgg_AwkwardAnalyzer/outputfiles/merged/22plus23plus24/hhbbgg_analyzer-v2-histograms.root" # plotting for 2022 All era
     up = uproot.open(root_path)
     out = "stack_plots"
     os.makedirs(out, exist_ok=True)
