@@ -55,6 +55,7 @@ slides_fitting/CMSSW_*/tmp/
 slides_fitting/CMSSW_*/lib/
 slides_fitting/CMSSW_*/bin/
 slides_fitting/CMSSW_*/objs/
+slides_fitting/CMSSW_*/src/
 
 # ROOT / CMSSW artifacts
 *.o
