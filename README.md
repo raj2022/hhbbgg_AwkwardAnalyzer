@@ -276,6 +276,12 @@ python make_templates.py \
   /afs/cern.ch/user/s/sraj/Analysis/output_parquet/v3_production/production_v3/2022_postEE/merged/NMSSM_X300_Y100/
 ```
 
+# To read files from central B2G directories:
+```
+python hhbbgg_analyzer_lxplus_par.py --config-year 2023 --era postBPix \
+-i /eos/cms/store/group/phys_b2g/HHbbgg/HiggsDNA_parquet/v3/Run3_2023/sim/postBPix \
+--datasets GGJets_MGG-80,VHtoGG --tag Y2023_PostBPix 
+```
 
 
 

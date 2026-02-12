@@ -1757,11 +1757,33 @@ def ensure_dir_in_tfile(tfile, path):
 
 # Do NOT strip year or era in the analyzer. Ever.
 
+
 def normalize_sample_name(name: str) -> str:
     base = os.path.basename(name)
     base = re.sub(r"\.(parquet|root)$", "", base, flags=re.IGNORECASE)
     base = re.sub(r"(_part\d+|_chunk\d+|_\d+of\d+)$", "", base, flags=re.IGNORECASE)
     return base
+
+
+def sample_label_from_inputfile(inputfile: str) -> str:
+    """
+    input directory: .../<dataset>/<folder>/NOTAG_merged.parquet -> dataset_folder
+    example:
+      .../GGJets_MGG-40to80/FNUF_down/NOTAG_merged.parquet
+      -> GGJets_MGG_40to80_FNUF_down
+    """
+    p = Path(inputfile)
+    name = f"{p.parent.parent.name}_{p.parent.name}"
+    #return name.replace("-", "_")
+    return name
+
+def dataset_label_from_inputfile(inputfile: str) -> str:
+    """
+    .../<dataset>/<folder>/<file>.parquet -> dataset
+    Used for getXsec() lookup.
+    """
+    p = Path(inputfile)
+    return p.parent.parent.name
 
 
 def ak_to_numpy_dict(arr: ak.Array) -> dict:
@@ -1850,7 +1872,6 @@ def _ensure_tree(upfile, treedir, treename, first_piece):
 
     types = {k: _btype(v) for k, v in first_piece.items()}
     return curr.mktree(treename, types)
-
     
 # Cache for warnings about year/era detection
 WARNED_YEAR_FALLBACK = set()
@@ -1953,17 +1974,27 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
         "jet8_pt",
         "jet9_pt",
         #pDNN Score
-        "pDNN_score",
+        #"pDNN_score",
         # number of leptons
         "n_leptons"
     ]
 
+    #parquet_file = pq.ParquetFile(inputfile)
+
+    #base = os.path.basename(inputfile)
+    #sample_name_raw = base.replace(".parquet", "").replace(".root", "")
+
     parquet_file = pq.ParquetFile(inputfile)
-
-    base = os.path.basename(inputfile)
-    sample_name_raw = base.replace(".parquet", "").replace(".root", "")
+    print(f"[INFO] Processing Parquet file: {inputfile}")
+    parquet_file = pq.ParquetFile(str(inputfile))
+    base = os.path.basename(str(inputfile))
+    sample_name_raw  = sample_label_from_inputfile(inputfile)
     sample_name_norm = normalize_sample_name(sample_name_raw)
-
+    #print(f"[INFO] Processing Parquet file: {inputfile}")
+    print(f"[INFO] base: {base}")
+    print(f"[INFO] sample_name_raw: {sample_name_raw}")
+    print(f"[INFO] sample_name_norm: {sample_name_norm}")
+    
     isdata = "Data" in base
     sigflag = is_signal_from_name(base)
     isdd   = is_dd_template(base)
@@ -1983,7 +2014,7 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
     use_year, use_era = detect_year_era_from_path(inputfile)
 
     
-    if det_era in ("PreEE", "PostEE"):
+    if det_era in ("preEE", "postEE"):
         use_year = "2022"
         use_era  = det_era
         
@@ -2008,7 +2039,7 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
     #-----------------------------------
     #-------------------
     #------Sanity check --------
-    if use_era in ("PreEE", "PostEE") and use_year != "2022":
+    if use_era in ("preEE", "postEE") and use_year != "2022":
         raise RuntimeError(f"Invalid era/year combination: {use_year} {use_era}")
 
     if use_era in ("preBPix", "postBPix") and use_year != "2023":
@@ -2023,16 +2054,20 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
     #---------------------
     #--------
     
+    if xsec_lumi_cache is None:
+        xsec_lumi_cache = {}
     
-    cache_key = (inputfile, use_year, use_era)
+    #cache_key = (inputfile, use_year, use_era)
+    cache_key = (sample_name_raw, use_year, use_era)
     
     if cache_key not in xsec_lumi_cache:
         if isdata or isdd:
             # Data / DD: no xsec, no lumi
             xsec_lumi_cache[cache_key] = (None, None)
         else:
+            ds_key = dataset_label_from_inputfile(inputfile)
             xsec_lumi_cache[cache_key] = (
-                float(getXsec(inputfile)),
+                float(getXsec(ds_key)),
                 float(getLumi(use_year, use_era)) * 1000.0,  # pb^-1
             )
     xsec_, lumi_ = xsec_lumi_cache[cache_key]
@@ -2076,7 +2111,8 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
 
     else:
         print(
-            f"[NORM] MC sample={os.path.basename(inputfile)} "
+            #f"[NORM] MC sample={os.path.basename(inputfile)} "
+            f"[NORM] MC sample= {sample_name_norm} "
             f"xsec={xsec_} pb, "
             f"lumi={lumi_/1000.0:.3f} fb^-1 "
             f"({use_year} {use_era})"
@@ -2189,7 +2225,7 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
                 "jet7_pt": tree_["jet7_pt"],
                 "jet8_pt": tree_["jet8_pt"],
                 "jet9_pt": tree_["jet9_pt"],
-                "pDNN_score":tree_["pDNN_score"],
+                #"pDNN_score":tree_["pDNN_score"],
                 "n_leptons": tree_["n_leptons"],
             },
             depth_limit=1,
@@ -2302,7 +2338,7 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
             "idmva_sideband","idmva_presel",
             "DeltaR_j1g1","DeltaR_j2g1","DeltaR_j1g2","DeltaR_j2g2",
             "signal","isdata","isdd","HT","Njets2p5",
-            "pDNN_score",
+            #"pDNN_score",
             "n_leptons",
         ]
         out_events = ak.zip(
@@ -2398,6 +2434,9 @@ def main():
     ap.add_argument("--config-year", required=True, help="Year used ONLY for config paths and output directory naming")
     ap.add_argument("--era", default="All", help="Era (ignored for 2024)")
     ap.add_argument("--tag", default=None, help="If multiple -i are given, outputs go to outputfiles/merged/<tag>")
+    ap.add_argument("--datasets", default=None, help="dataset directory names under -i base dir (e.g. GGJets_MGG-40to80,GGJets_MGG-80). All directories will run if not used.")
+    ap.add_argument("--folders", default="nominal", help="systematic folders to include. Example: nominal,FNUF_down,FNUF_up")
+
     args = ap.parse_args()
 
     # era = args.era 
@@ -2435,6 +2474,8 @@ def main():
     os.makedirs(out_dir, exist_ok=True)
 
     inputfiles = []
+
+    """
     for path in in_paths:
         if path.is_file():
             if str(path).lower().endswith(".parquet"):
@@ -2443,7 +2484,33 @@ def main():
                 print(f"[WARN] Non-parquet file skipped: {path}")
         else:
             inputfiles.extend([str(p) for p in sorted(path.rglob("*.parquet"))])  # Add all parquet files recursively--change to rglob for recursive search
+    """
+    allowed_datasets = None
+    if args.datasets:
+        allowed_datasets = set(d.strip() for d in args.datasets.split(",") if d.strip())
 
+    allowed_folders = set(f.strip().lower() for f in args.folders.split(",") if f.strip())
+
+
+    for path in in_paths:
+        if path.is_file():
+            if str(path).lower().endswith(".parquet"):
+                inputfiles.append(str(path))
+            else:
+                print(f"[WARN] Non-parquet file skipped: {path}")
+            continue
+
+        # path is a base dir like .../sim/preEE
+        for dsdir in sorted([d for d in path.iterdir() if d.is_dir()]):
+            if allowed_datasets and dsdir.name not in allowed_datasets:
+                continue
+
+            # only go into selected folder(s)
+            for fol in sorted([d for d in dsdir.iterdir() if d.is_dir()]):
+                if fol.name.lower() not in allowed_folders:
+                    continue
+                inputfiles.extend([str(p) for p in fol.glob("*.parquet")])
+            
     if not inputfiles:
         raise FileNotFoundError(f"No .parquet files found in: {', '.join(str(p) for p in in_paths)}")
 
@@ -2459,6 +2526,7 @@ def main():
     # process files (streaming trees per batch)
     xsec_lumi_cache = {}
     for infile_ in inputfiles:
+        print("%%%%%%%%%%%%%%%%%%%%%%%%   infile_ {} and inputfiles {}".format( infile_, inputfiles))
         process_parquet_file(infile_, cfg.year, cfg.era, xsec_lumi_cache, out_files)
 
     # write accumulated histograms

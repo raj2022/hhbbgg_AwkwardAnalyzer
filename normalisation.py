@@ -76,7 +76,9 @@ XSEC_PATTERNS = [
 
     # Prompt photon backgrounds (from your file list)
     ("ggjetsmgg40to80",      318.1),   # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS%3DGG-Box-3Jets_MGG-40to80_13p6TeV_sherpa
+    #("GGJets_MGG-40to80",      318.1),
     ("ggjetsmgg80",          88.75),   # change if you use a different xsec for MGG-80(need to be confirmed)
+    #("GGJets_MGG_80",          88.75),   # change if you use a different xsec for MGG-80(need to be confirmed)
     ("ggjets",              88.75),   # general match if specific not found
     ("gjetpt20to40",        242.5),
     ("gjetpt40",            919.1),
