@@ -297,6 +297,8 @@ python hhbbgg_analyzer_lxplus_par_systematics_v1.py --config-year 2022 --era Pos
 
 #step 2: similar to the previous script, this will create the root files.
 #The Tdirectory format in the histogram root file is changed.
+```
+
 ```bash
 hhbbgg_analyzer-v2-histograms.root
   \u2514\u2500 Sample name
@@ -304,6 +306,7 @@ hhbbgg_analyzer-v2-histograms.root
   \u2514\u2500 weight (name of weight columns)
   \u2514\u2500 variables
 ```
+```bash
 #The output file can be found:
 /eos/user/b/bsahu/B2G_25_010_AwkwardAnalyzer/updated_central/hhbbgg_AwkwardAnalyzer/systematics_noBin_changed_outputfiles
 
