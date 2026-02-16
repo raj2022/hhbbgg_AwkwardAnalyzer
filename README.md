@@ -286,7 +286,7 @@ python hhbbgg_analyzer_lxplus_par.py --config-year 2023 --era postBPix \
 ```
 
 # To Run systematics from the nominal parquet files:
-```
+```bash
 #step 1: Run the AwkwardAnalyzer using hhbbgg_analyzer_lxplus_par_systematics_v1.py file
 
 python hhbbgg_analyzer_lxplus_par_systematics_v1.py --config-year 2022 --era PreEE \
