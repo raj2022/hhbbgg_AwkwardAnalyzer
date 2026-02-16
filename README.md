@@ -301,10 +301,7 @@ python hhbbgg_analyzer_lxplus_par_systematics_v1.py --config-year 2022 --era Pos
 
 ```bash
 hhbbgg_analyzer-v2-histograms.root
-  \u2514\u2500 Sample name
-  \u2514\u2500 regions  
-  \u2514\u2500 weight (name of weight columns)
-  \u2514\u2500 variables
+  --> Sample name > regions > weight (name of weight columns) > variables
 ```
 ```bash
 #The output file can be found:
