@@ -2,11 +2,11 @@ import copy
 
 binning = {}
 binning["preselection"] = {
-    "dibjet_mass": [33, 0, 180],
-    "diphoton_mass": [25, 95, 180],    # avoiding the turn-on issues for the mass below MX<95GeV
-    "bbgg_mass": [45, 150, 800],
-    "dibjet_pt": [25, 30, 500],
-    "diphoton_pt": [25, 30, 500],
+    "dibjet_mass": [90, 0, 180], #33
+    "diphoton_mass": [85, 95, 180], #25   # avoiding the turn-on issues for the mass below MX<95GeV
+    "bbgg_mass": [130, 150, 800], #45
+    "dibjet_pt": [94, 30, 500], #25
+    "diphoton_pt": [94, 30, 500], #25
     "bbgg_pt": [25, 50, 1000],
     "bbgg_eta": [10, -3, 3],
     "bbgg_phi": [10, -3.14, 3.14],
