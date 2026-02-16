@@ -289,13 +289,16 @@ python hhbbgg_analyzer_lxplus_par.py --config-year 2023 --era postBPix \
 ```
 #step 1: Run the AwkwardAnalyzer using hhbbgg_analyzer_lxplus_par_systematics_v1.py file
 
-python hhbbgg_analyzer_lxplus_par_systematics_v1.py --config-year 2022 --era PreEE -i /eos/user/b/bsinghal/analysis/output/2022preEE/merged/ --tag Y2022_PreEE
+python hhbbgg_analyzer_lxplus_par_systematics_v1.py --config-year 2022 --era PreEE \
+-i /eos/user/b/bsinghal/analysis/output/2022preEE/merged/ --tag Y2022_PreEE
 
-python hhbbgg_analyzer_lxplus_par_systematics_v1.py --config-year 2022 --era PostEE -i /eos/user/b/bartek/hhbbgg/systematics_v3/2022_postEE/merged/ --tag Y2022_PostEE
+python hhbbgg_analyzer_lxplus_par_systematics_v1.py --config-year 2022 --era PostEE \
+-i /eos/user/b/bartek/hhbbgg/systematics_v3/2022_postEE/merged/ --tag Y2022_PostEE
 
-#step 2: similar to the previous script, this will create the root files. The Tdirectory format in the histogram root file is changed.
+#step 2: similar to the previous script, this will create the root files.
+#The Tdirectory format in the histogram root file is changed.
 ```bash
-  hhbbgg_analyzer-v2-histograms.root
+hhbbgg_analyzer-v2-histograms.root
   \u2514\u2500 Sample name
   \u2514\u2500 regions  
   \u2514\u2500 weight (name of weight columns)
@@ -305,10 +308,12 @@ python hhbbgg_analyzer_lxplus_par_systematics_v1.py --config-year 2022 --era Pos
 /eos/user/b/bsahu/B2G_25_010_AwkwardAnalyzer/updated_central/hhbbgg_AwkwardAnalyzer/systematics_noBin_changed_outputfiles
 
 #step 3: make plot of the sytematics using makeplot_syst.py:
-python3 script_by_python.py -i 2022_postEE/hhbbgg_analyzer-v2-histograms.root --base NMSSM_X500_Y150_nominal --sel preselection --hist dibjet_mass  -o MX500_MY150_bb_mass --outdir 500_150_bb_pngs_presel  --pdfdir 500_150_bb_pdfs_presel --year 2022postEE --lumi 26.67
+python3 script_by_python.py -i 2022_postEE/hhbbgg_analyzer-v2-histograms.root \
+--base NMSSM_X500_Y150_nominal --sel preselection --hist dibjet_mass  \
+-o MX500_MY150_bb_mass --outdir 500_150_bb_pngs_presel  --pdfdir 500_150_bb_pdfs_presel\
+--year 2022postEE --lumi 26.67
 
 # This step will create two directories: 500_150_bb_pdfs_presel & 500_150_bb_pngs_presel for pdfs and png files, respectively. 
-
 ```
 
 
