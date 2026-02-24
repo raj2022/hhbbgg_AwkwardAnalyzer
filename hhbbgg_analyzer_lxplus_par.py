@@ -1540,6 +1540,7 @@
     
     
 # ## To Do: we need to work on the kiling part
+# Good for the individual file processing like seperately for year 2022, 2023, 2024.
 
 
 #!/usr/bin/env python3
@@ -2319,8 +2320,8 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
             dd_w = ak.to_numpy(tree_[dd_wname])
             base_w = np.where(np.isfinite(dd_w), dd_w, 0.0)
         else:
-            wc = ak.to_numpy(out_events["weight_central"])
-            wc = np.where(np.isfinite(wc) & (wc != 0.0), wc, 1.0)
+            # wc = ak.to_numpy(out_events["weight_central"])
+            # wc = np.where(np.isfinite(wc) & (wc != 0.0), wc, 1.0)
             # base_w = ak.to_numpy(cms_events["weight"]) * float(xsec_) * float(lumi_) / wc 
             base_w = ak.to_numpy(cms_events["weight"]) * float(xsec_) * float(lumi_)
             base_w = np.where(np.isfinite(base_w), base_w, 0.0)

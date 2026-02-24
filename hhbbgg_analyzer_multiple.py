@@ -122,26 +122,60 @@ def make_th1_pyroot(values, weights, name, title, binning):
     return h
 
 
-def detect_year_era_from_name(path: str):
-    name = path.lower()   # <-- FULL PATH, not basename
+# def detect_year_era_from_name(path: str):
+#     name = path.lower()   # <-- FULL PATH, not basename
 
-    year = "2022" if "2022" in name else ("2023" if "2023" in name else None)
+#     year = "2022" if "2022" in name else ("2023" if "2023" in name else None)
+#     era = None
+
+#     if "preee" in name:
+#         era = "PreEE"
+#         year = year or "2022"
+#     elif "postee" in name:
+#         era = "PostEE"
+#         year = year or "2022"
+#     elif "prebpix" in name:
+#         era = "preBPix"
+#         year = year or "2023"
+#     elif "postbpix" in name:
+#         era = "postBPix"
+#         year = year or "2023"
+
+#     return year, era
+def detect_year_era_from_name(path: str):
+    name = path.lower()
+
+    year = None
     era = None
 
+    # --- explicit year in path ---
+    if "2022" in name:
+        year = "2022"
+    elif "2023" in name:
+        year = "2023"
+    elif "2024" in name:
+        year = "2024"
+
+    # --- era implies year ---
     if "preee" in name:
         era = "PreEE"
-        year = year or "2022"
+        year = "2022"
     elif "postee" in name:
         era = "PostEE"
-        year = year or "2022"
+        year = "2022"
     elif "prebpix" in name:
         era = "preBPix"
-        year = year or "2023"
+        year = "2023"
     elif "postbpix" in name:
         era = "postBPix"
-        year = year or "2023"
+        year = "2023"
+
+    # --- 2024 has no eras ---
+    if year == "2024" and era is None:
+        era = "All"
 
     return year, era
+
 
 
 
@@ -271,21 +305,21 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
         "run",
         "lumi",
         "event",
-        "puppiMET_pt",
-        "puppiMET_phi",
-        "puppiMET_phiJERDown",
-        "puppiMET_phiJERUp",
-        "puppiMET_phiJESDown",
-        "puppiMET_phiJESUp",
-        "puppiMET_phiUnclusteredDown",
-        "puppiMET_phiUnclusteredUp",
-        "puppiMET_ptJERDown",
-        "puppiMET_ptJERUp",
-        "puppiMET_ptJESDown",
-        "puppiMET_ptJESUp",
-        "puppiMET_ptUnclusteredDown",
-        "puppiMET_ptUnclusteredUp",
-        "puppiMET_sumEt",
+        # "puppiMET_pt",
+        # "puppiMET_phi",
+        # "puppiMET_phiJERDown",
+        # "puppiMET_phiJERUp",
+        # "puppiMET_phiJESDown",
+        # "puppiMET_phiJESUp",
+        # "puppiMET_phiUnclusteredDown",
+        # "puppiMET_phiUnclusteredUp",
+        # "puppiMET_ptJERDown",
+        # "puppiMET_ptJERUp",
+        # "puppiMET_ptJESDown",
+        # "puppiMET_ptJESUp",
+        # "puppiMET_ptUnclusteredDown",
+        # "puppiMET_ptUnclusteredUp",
+        # "puppiMET_sumEt",
         "Res_lead_bjet_pt",
         "Res_lead_bjet_eta",
         "Res_lead_bjet_phi",
@@ -420,21 +454,21 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
             {
                 "run": tree_["run"], "lumi": tree_["lumi"],
                 "event": tree_["event"],
-                "puppiMET_pt": tree_["puppiMET_pt"],
-                "puppiMET_phi": tree_["puppiMET_phi"],
-                "puppiMET_phiJERDown": tree_["puppiMET_phiJERDown"],
-                "puppiMET_phiJERUp": tree_["puppiMET_phiJERUp"],
-                "puppiMET_phiJESDown": tree_["puppiMET_phiJESDown"],
-                "puppiMET_phiJESUp": tree_["puppiMET_phiJESUp"],
-                "puppiMET_phiUnclusteredDown": tree_["puppiMET_phiUnclusteredDown"],
-                "puppiMET_phiUnclusteredUp": tree_["puppiMET_phiUnclusteredUp"],
-                "puppiMET_ptJERDown": tree_["puppiMET_ptJERDown"],
-                "puppiMET_ptJERUp": tree_["puppiMET_ptJERUp"],
-                "puppiMET_ptJESDown": tree_["puppiMET_ptJESDown"],
-                "puppiMET_ptJESUp": tree_["puppiMET_ptJESUp"],
-                "puppiMET_ptUnclusteredDown": tree_["puppiMET_ptUnclusteredDown"],
-                "puppiMET_ptUnclusteredUp": tree_["puppiMET_ptUnclusteredUp"],
-                "puppiMET_sumEt": tree_["puppiMET_sumEt"],
+                # "puppiMET_pt": tree_["puppiMET_pt"],
+                # "puppiMET_phi": tree_["puppiMET_phi"],
+                # "puppiMET_phiJERDown": tree_["puppiMET_phiJERDown"],
+                # "puppiMET_phiJERUp": tree_["puppiMET_phiJERUp"],
+                # "puppiMET_phiJESDown": tree_["puppiMET_phiJESDown"],
+                # "puppiMET_phiJESUp": tree_["puppiMET_phiJESUp"],
+                # "puppiMET_phiUnclusteredDown": tree_["puppiMET_phiUnclusteredDown"],
+                # "puppiMET_phiUnclusteredUp": tree_["puppiMET_phiUnclusteredUp"],
+                # "puppiMET_ptJERDown": tree_["puppiMET_ptJERDown"],
+                # "puppiMET_ptJERUp": tree_["puppiMET_ptJERUp"],
+                # "puppiMET_ptJESDown": tree_["puppiMET_ptJESDown"],
+                # "puppiMET_ptJESUp": tree_["puppiMET_ptJESUp"],
+                # "puppiMET_ptUnclusteredDown": tree_["puppiMET_ptUnclusteredDown"],
+                # "puppiMET_ptUnclusteredUp": tree_["puppiMET_ptUnclusteredUp"],
+                # "puppiMET_sumEt": tree_["puppiMET_sumEt"],
                 "lead_bjet_pt": tree_["Res_lead_bjet_pt"], 
                 "lead_bjet_eta": tree_["Res_lead_bjet_eta"],
                 "lead_bjet_phi": tree_["Res_lead_bjet_phi"], 
@@ -581,10 +615,10 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
         cms_events["idmva_sideband"] = get_mask_idmva_sideband(cms_events)
 
         keys_to_copy = [
-            "puppiMET_pt","puppiMET_phi","puppiMET_phiJERDown","puppiMET_phiJERUp",
-            "puppiMET_phiJESDown","puppiMET_phiJESUp","puppiMET_phiUnclusteredDown","puppiMET_phiUnclusteredUp",
-            "puppiMET_ptJERDown","puppiMET_ptJERUp","puppiMET_ptJESDown","puppiMET_ptJESUp",
-            "puppiMET_ptUnclusteredDown","puppiMET_ptUnclusteredUp","puppiMET_sumEt",
+            # "puppiMET_pt","puppiMET_phi","puppiMET_phiJERDown","puppiMET_phiJERUp",
+            # "puppiMET_phiJESDown","puppiMET_phiJESUp","puppiMET_phiUnclusteredDown","puppiMET_phiUnclusteredUp",
+            # "puppiMET_ptJERDown","puppiMET_ptJERUp","puppiMET_ptJESDown","puppiMET_ptJESUp",
+            # "puppiMET_ptUnclusteredDown","puppiMET_ptUnclusteredUp","puppiMET_sumEt",
             "lead_pho_pt","lead_pho_eta","lead_pho_phi",
             "sublead_pho_pt","sublead_pho_eta","sublead_pho_phi",
             "lead_bjet_pt","lead_bjet_eta","lead_bjet_phi",
@@ -805,8 +839,8 @@ def main():
     out_dir = Path("outputfiles") / "merged" / out_tag
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    tree_file_path = out_dir / "hhbbgg_analyzer-v2-histograms.root"
-    hist_file_path = out_dir / "hhbbgg_analyzer-v2-trees.root"
+    tree_file_path = out_dir / "hhbbgg_analyzer-v2-trees.root"
+    hist_file_path = out_dir / "hhbbgg_analyzer-v2-histograms.root"
 
     print("[INFO] Opening tree output file (streaming mode)")
     tree_upfile = uproot.recreate(tree_file_path)
