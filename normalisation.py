@@ -47,10 +47,10 @@
 #         "Data_EraE": 5.8070,
 #         "Data_EraF": 17.7819,
 #         "Data_EraG": 3.0828,
-#         # Data eras : 2023 
+#         # Data eras : 2023
 #         "Data_EraC_2023": 17.794,
 #         "Data_EraD_2023": 9.451,
-        
+
 #     }
 #     # Total integrated luminosity
 #     total_integrated_luminosity = sum(integrated_luminosities.values())
@@ -62,7 +62,7 @@ import os
 
 # --- Branching ratios if needed ---
 BR_HToGG = 2.270e-03
-BR_HTobb = 5.824e-01  #https://twiki.cern.ch/twiki/bin/view/LHCPhysics/CERNYellowReportPageBR  
+BR_HTobb = 5.824e-01  #https://twiki.cern.ch/twiki/bin/view/LHCPhysics/CERNYellowReportPageBR
 
 # ---------------------------------------------------------------------
 # Cross sections (pb)
@@ -89,7 +89,7 @@ XSEC_PATTERNS = [
     ("tthtogg",         0.5687),   # https://docs.google.com/spreadsheets/d/1vQEHbnte3SOfTylWWmmdbExSwm70tappKtwpo3NTgco/edit?gid=1154630745#gid=1154630745
     ("vbfhtogg",        4.359),  # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS%3DVBFHtoGG_M-125_TuneCP5_13p6TeV_amcatnlo-pythia8
     ("vhtogg",          2.556),  # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS%3DVHtoGG_M-125_TuneCP5_13p6TeV_amcatnloFXFX-madspin-pythia8%20
-    ("ttgg",            0.02391), # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS%3DttGG 
+    ("ttgg",            0.02391), # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS%3DttGG
     ("ttg-100to200",     0.4114), # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS%3DTTG-1Jets_PTG-100to200_TuneCP5_13p6TeV
     ("ttg-200",         0.1284), # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS%3DTTG-1Jets_PTG-200_TuneCP5_13p6TeV
 
@@ -103,10 +103,10 @@ XSEC_PATTERNS = [
     ("ggjets_low_rescaled", 1.0),
     ("ggjets_high_rescaled",1.0),
     # 2024 extra samples for VH
-    ("wminusHtoGG",     0.647),
-    ("wplusHtoGG",      1.021),
+    ("WmHtoGG",     0.647),
+    ("WpHtoGG",      1.021),
     ("zhTogg",          0.9079),
-    
+
 ]
 
 def _norm_name_for_match(path_or_name: str) -> str:
@@ -153,7 +153,7 @@ LUMI_2024 = {
     "H": 5.44,
     "I": 11.47,
 }
-    
+
 
 def getLumi(year=None, era=None) -> float:
     """
@@ -169,7 +169,7 @@ def getLumi(year=None, era=None) -> float:
 
     if y == "2022":
         if e in ("preee", "pre"):
-            return LUMI_2022["C"] + LUMI_2022["D"] 
+            return LUMI_2022["C"] + LUMI_2022["D"]
         if e in ("postee", "post"):
             return LUMI_2022["E"] + LUMI_2022["F"] + LUMI_2022["G"]
         return sum(LUMI_2022.values())
