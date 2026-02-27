@@ -268,6 +268,9 @@ python hhbbgg_analyzer_lxplus_par.py \
  -i /eos/user/s/sraj/Work_/CUA_20--/Analysis/output_root/sample_final_nominal/2024 
  ```
 
+-  The above approach works fine. However, reading across multiple years simultaneously is described in the following document:
+https://github.com/raj2022/hhbbgg_AwkwardAnalyzer/blob/2024_data/command/analyzer_running.md 
+
 
 # To Run the systematics
 ```bash
