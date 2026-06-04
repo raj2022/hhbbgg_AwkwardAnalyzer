@@ -86,12 +86,12 @@ XSEC_PATTERNS = [
     ("glugluhtogg",   52.23 * BR_HToGG),  # matches "GluGluHtoGG" / "GluGluHToGG"
 
     # ttH, VBFH, VH (gamma gamma)
-    ("tthtogg",         0.5687),   # https://docs.google.com/spreadsheets/d/1vQEHbnte3SOfTylWWmmdbExSwm70tappKtwpo3NTgco/edit?gid=1154630745#gid=1154630745
-    ("vbfhtogg",        4.359),  # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS%3DVBFHtoGG_M-125_TuneCP5_13p6TeV_amcatnlo-pythia8
-    ("vhtogg",          2.556),  # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS%3DVHtoGG_M-125_TuneCP5_13p6TeV_amcatnloFXFX-madspin-pythia8%20
-    ("ttgg",            0.02391), # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS%3DttGG
-    ("ttg-100to200",     0.4114), # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS%3DTTG-1Jets_PTG-100to200_TuneCP5_13p6TeV
-    ("ttg-200",         0.1284), # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS%3DTTG-1Jets_PTG-200_TuneCP5_13p6TeV
+    ("tthtogg",         0.5687 * BR_HToGG),   # https://docs.google.com/spreadsheets/d/1vQEHbnte3SOfTylWWmmdbExSwm70tappKtwpo3NTgco/edit?gid=1154630745#gid=1154630745
+    ("vbfhtogg",        4.359 * BR_HToGG),  # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS%3DVBFHtoGG_M-125_TuneCP5_13p6TeV_amcatnlo-pythia8
+    ("vhtogg",          2.556 * BR_HToGG),  # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS%3DVHtoGG_M-125_TuneCP5_13p6TeV_amcatnloFXFX-madspin-pythia8%20
+    ("ttgg",            0.02391 * BR_HToGG), # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS%3DttGG
+    ("ttg-100to200",     0.4114 * BR_HToGG), # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS%3DTTG-1Jets_PTG-100to200_TuneCP5_13p6TeV
+    ("ttg-200",         0.1284 * BR_HToGG), # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS%3DTTG-1Jets_PTG-200_TuneCP5_13p6TeV
 
     # QCD (match your files: QCDPt30To40, QCDPt40ToInf)
     ("qcdpt30to40",    25950.0),
