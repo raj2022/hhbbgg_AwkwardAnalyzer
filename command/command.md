@@ -541,6 +541,8 @@ and to delete a branch on GitHub (remote), use:
 - `git blame <file>`: Shows who modified each line of a file and when.
 - `git shortlog`: Summarizes `git log` output by author.
 
+## 
+
 ---
 # Vim Commands
 
@@ -1348,21 +1350,188 @@ combine -M AsymptoticLimits datacard.txt
 
 
 
-# Setup a new key either on github/gitlab
-1. Generate a new specific SSH key(e.g. for CERN gitlab)
+# Setup a New SSH Key (GitHub / GitLab)
+
+## 1. Generate a new SSH key
+
+For example, create a dedicated key for CERN GitLab:
+
 ```bash
 ssh-keygen -t ed25519 -C "your.cern.email@cern.ch" -f ~/.ssh/id_ed25519_cern
 ```
+
 You'll be asked:
-```sh
+
+```text
 Enter passphrase (empty for no passphrase):
 ```
-You can either set one or press Enter.
-This creates:
-```bash
+
+You can either:
+- Enter a passphrase (recommended), or
+- Press **Enter** to leave it empty.
+
+This creates two files:
+
+```text
 ~/.ssh/id_ed25519_cern
 ~/.ssh/id_ed25519_cern.pub
 ```
 
-2. Add the key to your SSH agent
+- `id_ed25519_cern` → your **private key** (keep this secret)
+- `id_ed25519_cern.pub` → your **public key** (this is the one you'll upload)
 
+---
+
+## 2. Add the key to your SSH agent
+
+Start the SSH agent if it isn't already running:
+
+```bash
+eval "$(ssh-agent -s)"
+```
+
+Add your new private key:
+
+```bash
+ssh-add ~/.ssh/id_ed25519_cern
+```
+
+Verify it was added:
+
+```bash
+ssh-add -l
+```
+
+---
+
+## 3. Copy your public key
+
+Display the public key:
+
+```bash
+cat ~/.ssh/id_ed25519_cern.pub
+```
+
+Copy the entire output. It should look similar to:
+
+```text
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... your.cern.email@cern.ch
+```
+
+Alternatively, copy directly to your clipboard:
+
+### macOS
+
+```bash
+pbcopy < ~/.ssh/id_ed25519_cern.pub
+```
+
+### Linux (xclip)
+
+```bash
+xclip -selection clipboard < ~/.ssh/id_ed25519_cern.pub
+```
+
+### Linux (Wayland)
+
+```bash
+wl-copy < ~/.ssh/id_ed25519_cern.pub
+```
+
+---
+
+## 4. Add the SSH key to GitHub or GitLab
+
+### GitHub
+
+1. Log in to GitHub.
+2. Go to **Settings** → **SSH and GPG keys**.
+3. Click **New SSH key**.
+4. Give the key a descriptive title (e.g. `Laptop`, `Workstation`, `CERN`).
+5. Paste the contents of `id_ed25519_cern.pub`.
+6. Click **Add SSH key**.
+
+### GitLab
+
+1. Log in to GitLab.
+2. Go to **Preferences** (or **Edit Profile**) → **SSH Keys**.
+3. Paste the contents of `id_ed25519_cern.pub`.
+4. Give the key a descriptive title.
+5. (Optional) Set an expiration date.
+6. Click **Add key**.
+
+---
+
+## 5. Configure SSH (recommended)
+
+If you use multiple SSH keys, create or edit `~/.ssh/config`:
+
+```text
+Host gitlab.cern.ch
+    HostName gitlab.cern.ch
+    User git
+    IdentityFile ~/.ssh/id_ed25519_cern
+    IdentitiesOnly yes
+```
+
+For GitHub, add:
+
+```text
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_github
+    IdentitiesOnly yes
+```
+
+---
+
+## 6. Test the connection
+
+For GitHub:
+
+```bash
+ssh -T git@github.com
+```
+
+Expected output:
+
+```text
+Hi <username>! You've successfully authenticated, but GitHub does not provide shell access.
+```
+
+For GitLab:
+
+```bash
+ssh -T git@gitlab.cern.ch
+```
+
+Expected output:
+
+```text
+Welcome to GitLab, @username!
+```
+
+---
+
+## 7. Clone repositories using SSH
+
+Instead of cloning via HTTPS:
+
+```text
+https://gitlab.cern.ch/group/project.git
+```
+
+use the SSH URL:
+
+```bash
+git clone git@gitlab.cern.ch:group/project.git
+```
+
+or for GitHub:
+
+```bash
+git clone git@github.com:username/repository.git
+```
+
+You should now be able to push and pull without entering your username and password.
