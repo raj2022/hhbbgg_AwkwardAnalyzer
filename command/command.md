@@ -1345,3 +1345,24 @@ cd ~/hhbbgg/combine
 cmsenv   # from CMSSW_14_1_0_pre4
 combine -M AsymptoticLimits datacard.txt
 ```
+
+
+
+# Setup a new key either on github/gitlab
+1. Generate a new specific SSH key(e.g. for CERN gitlab)
+```bash
+ssh-keygen -t ed25519 -C "your.cern.email@cern.ch" -f ~/.ssh/id_ed25519_cern
+```
+You'll be asked:
+```sh
+Enter passphrase (empty for no passphrase):
+```
+You can either set one or press Enter.
+This creates:
+```bash
+~/.ssh/id_ed25519_cern
+~/.ssh/id_ed25519_cern.pub
+```
+
+2. Add the key to your SSH agent
+
