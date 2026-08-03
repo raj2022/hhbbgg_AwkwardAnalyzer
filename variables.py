@@ -85,7 +85,7 @@ vardict = {
     "lepton1_pt":"lepton1_pt",
     "lepton1_pfIsoId":"lepton1_pfIsoId",
     "n_jets":"n_jets",  
-    "pDNN_score":"pDNN_score",
+    #"pDNN_score":"pDNN_score",
     # BTV variables can be added here
     "Njets2p5":"Njets2p5",
     "HT":"HT",
@@ -163,7 +163,7 @@ variables_common = {
         "lepton1_pt",
         "lepton1_pfIsoId",
         "n_jets",
-        "pDNN_score",
+        #"pDNN_score",
         # BTV variables can be added here
         "Njets2p5",
         "HT",

@@ -1540,7 +1540,6 @@
     
     
 # ## To Do: we need to work on the kiling part
-# Good for the individual file processing like seperately for year 2022, 2023, 2024.
 
 
 #!/usr/bin/env python3
@@ -1822,7 +1821,7 @@ def sanitize_for_uproot(d: dict) -> dict:
     return out
 
 # ---------------- Global caches/handles ----------------
-HIST_CACHE   = {}   # (sample, region, varname) -> TH1D
+HIST_CACHE   = {}    # (sample, region, weightname, varname) -> TH1D
 TREE_HANDLES = {}   # (sample, region) -> uproot Tree handle (created once, extended per batch)
 PROC_TREE    = {}   # sample -> uproot Tree handle for processed_events
 
@@ -1928,6 +1927,24 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
         "sublead_mvaID_WP80",
         "weight",
         "weight_central",
+        "weight_bTagSF_sys_hfUp",
+        "weight_bTagSF_sys_hfDown",
+        "weight_bTagSF_sys_lfUp",
+        "weight_bTagSF_sys_lfDown",
+        "weight_bTagSF_sys_hfstats1Up",
+        "weight_bTagSF_sys_hfstats1Down",
+        "weight_bTagSF_sys_hfstats2Up",
+        "weight_bTagSF_sys_hfstats2Down",
+        "weight_bTagSF_sys_lfstats1Up",
+        "weight_bTagSF_sys_lfstats1Down",
+        "weight_bTagSF_sys_lfstats2Up",
+        "weight_bTagSF_sys_lfstats2Down",
+        "weight_bTagSF_sys_cferr1Up",
+        "weight_bTagSF_sys_cferr1Down",
+        "weight_bTagSF_sys_cferr2Up",
+        "weight_bTagSF_sys_cferr2Down",
+        "weight_bTagSF_sys_jesUp",
+        "weight_bTagSF_sys_jesDown",
         "Res_lead_bjet_btagPNetB",
         "Res_sublead_bjet_btagPNetB",
         "Res_lead_bjet_PNetRegPtRawRes",     # Adding particle net regressed varaible
@@ -1980,6 +1997,29 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
         "n_leptons"
     ]
 
+    WEIGHT_VARIATIONS = [
+        "weight",
+        "weight_bTagSF_sys_hfUp",
+        "weight_bTagSF_sys_hfDown",
+        "weight_bTagSF_sys_lfUp",
+        "weight_bTagSF_sys_lfDown",
+        "weight_bTagSF_sys_hfstats1Up",
+        "weight_bTagSF_sys_hfstats1Down",
+        "weight_bTagSF_sys_hfstats2Up",
+        "weight_bTagSF_sys_hfstats2Down",
+        "weight_bTagSF_sys_lfstats1Up",
+        "weight_bTagSF_sys_lfstats1Down",
+        "weight_bTagSF_sys_lfstats2Up",
+        "weight_bTagSF_sys_lfstats2Down",
+        "weight_bTagSF_sys_cferr1Up",
+        "weight_bTagSF_sys_cferr1Down",
+        "weight_bTagSF_sys_cferr2Up",
+        "weight_bTagSF_sys_cferr2Down",
+        "weight_bTagSF_sys_jesUp",
+        "weight_bTagSF_sys_jesDown",
+    ]
+
+    
     #parquet_file = pq.ParquetFile(inputfile)
 
     #base = os.path.basename(inputfile)
@@ -2349,6 +2389,7 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
         )
 
         # event weights
+        '''
         if isdata:
             base_w = np.ones(len(tree_), dtype="f8")
         elif isdd:
@@ -2356,22 +2397,51 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
             dd_w = ak.to_numpy(tree_[dd_wname])
             base_w = np.where(np.isfinite(dd_w), dd_w, 0.0)
         else:
-            # wc = ak.to_numpy(out_events["weight_central"])
-            # wc = np.where(np.isfinite(wc) & (wc != 0.0), wc, 1.0)
+            wc = ak.to_numpy(out_events["weight_central"])
+            wc = np.where(np.isfinite(wc) & (wc != 0.0), wc, 1.0)
             # base_w = ak.to_numpy(cms_events["weight"]) * float(xsec_) * float(lumi_) / wc 
             base_w = ak.to_numpy(cms_events["weight"]) * float(xsec_) * float(lumi_)
             base_w = np.where(np.isfinite(base_w), base_w, 0.0)
+            '''
+        base_w = {}  # map: weight_name -> numpy array
 
+        if isdata:
+            ones = np.ones(len(tree_), dtype="f8")
+            for wname in WEIGHT_VARIATIONS:
+                base_w[wname] = ones
+
+        elif isdd:
+            dd_wname = _get_dd_weight_col(tree_.fields)
+            dd_w = ak.to_numpy(tree_[dd_wname])
+            dd_w = np.where(np.isfinite(dd_w), dd_w, 0.0)
+            for wname in WEIGHT_VARIATIONS:
+                base_w[wname] = dd_w
+        else:
+            # MC: treat each variation exactly like 'weight'
+            for wname in WEIGHT_VARIATIONS:
+                w = ak.to_numpy(tree_[wname])           # <-- key point: direct, no multiplying by nominal weight
+                w = np.where(np.isfinite(w), w, 0.0)
+                w = w * float(xsec_) * float(lumi_)     # <-- same scaling you do for weight
+                w = np.where(np.isfinite(w), w, 0.0)
+                base_w[wname] = w
+            
             # NOTE:
             # cms_events["weight"] is assumed to be ALREADY normalized
             # (i.e. includes 1/weight_central or equivalent).
             # DO NOT divide by weight_central again here.
 
+        for wname in WEIGHT_VARIATIONS:
+            arr = base_w[wname]
+            print(f"{wname:35s}  sum = {np.sum(arr):.6e}   mean = {np.mean(arr):.6e}")
+        print()
+            
+            
         # attach per-region weights
         for r in ["preselection","selection","srbbgg","srbbggMET",
                   "crbbantigg","crantibbgg","crantibbantigg",
                   "sideband","idmva_sideband","idmva_presel"]:
-            out_events = ak.with_field(out_events, base_w, "weight_"+r)
+            for wname, warr in base_w.items():
+                out_events = ak.with_field(out_events, warr, f"{wname}_{r}")
 
         # --- stream processed_events (per-sample) ---
         proc_piece = ak_to_numpy_dict(out_events)
@@ -2390,6 +2460,7 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
             thisregion = out_events[out_events[ireg] == True]
             thisregion = thisregion[~(ak.is_none(thisregion))]
 
+            '''
             weight_ = "weight_" + ireg
 
             # histograms
@@ -2409,7 +2480,30 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, out
                     HIST_CACHE[key] = acc
                 HIST_CACHE[key].Add(h)
                 del h
+            '''
 
+            for ivar in variables_common[ireg]:
+                hist_name_ = f"{vardict[ivar]}"
+                vals = ak.to_numpy(thisregion[ivar])
+                
+                for wname in WEIGHT_VARIATIONS:
+                    wfield = f"{wname}_{ireg}"
+                    wts = ak.to_numpy(thisregion[wfield])
+                    wts = np.where(np.isfinite(wts), wts, 0.0)
+                    
+                    h = make_th1_pyroot(vals, wts, hist_name_, hist_name_, binning[ireg][ivar])
+
+                    key = (sample_name_norm, ireg, wname, hist_name_)
+                    if key not in HIST_CACHE:
+                        acc = h.Clone(f"{hist_name_}__acc__{wname}")
+                        acc.Reset()
+                        acc.SetDirectory(0)
+                        HIST_CACHE[key] = acc
+
+                    HIST_CACHE[key].Add(h)
+                    del h
+
+            
             # regional trees (stream)
             tree_piece = ak_to_numpy_dict(thisregion)
             tree_piece = sanitize_for_uproot(tree_piece)
@@ -2532,8 +2626,8 @@ def main():
 
     # write accumulated histograms
     print("[INFO] Writing accumulated histograms...")
-    for (sample, region, varname), h in HIST_CACHE.items():
-        dir_path = f"{sample}/{region}"
+    for (sample, region, wname, varname), h in HIST_CACHE.items():
+        dir_path = f"{sample}/{region}/{wname}"
         ensure_dir_in_tfile(out_files["hist"], dir_path).cd()
         h_clone = h.Clone(varname)
         h_clone.SetDirectory(ROOT.gDirectory)
