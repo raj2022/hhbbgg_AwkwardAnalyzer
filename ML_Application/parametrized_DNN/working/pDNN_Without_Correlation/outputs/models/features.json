@@ -1,0 +1,23 @@
+{
+  "features": [
+    "lead_eta",
+    "lead_phi",
+    "sublead_eta",
+    "sublead_phi",
+    "Res_HHbbggCandidate_pt",
+    "n_leptons",
+    "n_jets",
+    "puppiMET_pt",
+    "puppiMET_phi",
+    "Res_chi_t0",
+    "Res_chi_t1",
+    "Res_dijet_pt",
+    "Res_FirstJet_PtOverM",
+    "Res_SecondJet_PtOverM",
+    "Res_lead_bjet_btagPNetB",
+    "ptjj_over_mHH",
+    "ptHH_over_mHH",
+    "mass",
+    "y_value"
+  ]
+}
