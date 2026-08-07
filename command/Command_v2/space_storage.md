@@ -48,3 +48,10 @@ https://docs.google.com/spreadsheets/d/1vQEHbnte3SOfTylWWmmdbExSwm70tappKtwpo3NT
 - 2024: `/eos/user/b/bartek/hhbbgg/higgsdna_v7/2024/merged/`
 - 2022preEE: `/eos/cms/store/group/phys_b2g/HHbbgg/bsahu/higgsdna_v7/2022preEE/merged/`
 - 2022postEE: `/eos/cms/store/group/phys_b2g/HHbbgg/bsahu/higgsdna_v7/2022postEE/merged/`
+
+
+- Backgrounds:
+* 2022: /afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2022/
+* 2023: /afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2023/
+* 2024: /afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2024/
+* 2025: /afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2022/
