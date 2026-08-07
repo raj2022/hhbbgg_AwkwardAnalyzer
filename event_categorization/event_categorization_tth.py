@@ -16,6 +16,18 @@ BR_MGG     = "diphoton_mass"
 BR_WGT     = "weight_selection"
 BR_ISDATA  = "isdata"
 
+# ttH-killer score branch, expected to already be attached to each sample's
+# tree the same way pDNN_score was (per-event, written out after training).
+BR_TTH     = "ttH_killer_score"
+
+# Branch labels used everywhere below. "low" = ttH-depleted (kept as the
+# analysis's primary signal-region branch), "high" = ttH-enriched (split
+# off so ttH contamination is confined to, and constrained within, its own
+# branch rather than diluted across every category).
+TTH_LOW  = "tth_low"   # ttH-killer score < cut  -> ttH-depleted
+TTH_HIGH = "tth_high"  # ttH-killer score >= cut -> ttH-enriched
+TTH_ALL  = "combined"  # used when --tth-cut is not given (no split at all)
+
 USE_SIGMOID_SCORE = False
 def sigmoid(x): return 1.0 / (1.0 + np.exp(-x))
 
@@ -61,6 +73,18 @@ def concat1(lst):
     if len(lst) == 1: return ak.to_numpy(lst[0])
     return ak.to_numpy(ak.concatenate(lst, axis=0))
 
+# -------------------- ttH-killer branch split --------------------
+def tth_branch_mask(tth_score_np, cut):
+    """Return boolean mask: True where event falls in the ttH-enriched
+    ("high") branch, i.e. ttH-killer score >= cut. False = ttH-depleted."""
+    return tth_score_np >= cut
+
+def branch_labels(cut):
+    """Which branch keys are active for this run."""
+    if cut is None:
+        return [TTH_ALL]
+    return [TTH_LOW, TTH_HIGH]
+
 # -------------------- significance & optimization --------------------
 def AMS(s, b):
     """AMS = sqrt( 2 * ((s+b) ln(1+s/b) - s) )"""
@@ -88,12 +112,10 @@ def build_edges(scores, s_w, b_w, nmin, min_gain, max_bins):
          same starting point; keep doubling until an improvement is found
          or too few events remain.
 
-    NOTE: this fixes a previous bug where the "before" baseline was fixed
-    to the grand total of ALL events and never shrank as SRs were
-    accepted, causing every accepted SR's yield to be double-counted in
-    the objective (once inside the permanent "everything" total, once as
-    its own bin). That inflated the acceptance gain on nearly every
-    candidate and did not correspond to genuine disjoint-bin significance.
+    This function is branch-agnostic: it is called once per (tag, ttH
+    branch) pair, on whatever events already belong to that branch. The
+    ttH-killer split happens upstream, when events are bucketed; nothing
+    about the edge-building logic itself changes between branches.
     """
     order = np.argsort(scores)[::-1]
     s, sw, bw = scores[order], s_w[order], b_w[order]
@@ -106,7 +128,6 @@ def build_edges(scores, s_w, b_w, nmin, min_gain, max_bins):
     idx = 0
 
     def significance(acc_S, acc_B):
-        # "before" with nothing accepted yet contributes zero significance.
         return objective(acc_S, acc_B) if acc_S else 0.0
 
     while (N - idx) >= 1 and len(edges) < max_bins:
@@ -124,7 +145,7 @@ def build_edges(scores, s_w, b_w, nmin, min_gain, max_bins):
             accepted_S.append(S_new)
             accepted_B.append(B_new)
             idx = nxt
-            nmin = nmin_start  # reset for the next SR search (per step 2)
+            nmin = nmin_start
         else:
             nmin *= 2
             if nmin > (N - idx):
@@ -154,7 +175,8 @@ def eval_alpha(x, centers, alpha, lohi):
 
 # -------------------- main --------------------
 def main():
-    ap = argparse.ArgumentParser(description="Sideband-based (data-driven) pDNN categorization using AMS and α(score).")
+    ap = argparse.ArgumentParser(description="Sideband-based (data-driven) pDNN categorization using AMS and alpha(score), "
+                                              "with an optional orthogonal ttH-killer pre-split.")
     ap.add_argument("--root", required=True, help="merged ROOT file with per-sample directories")
     ap.add_argument("--sr-sigma", type=float, default=SR_DEFAULT, help="SR: |mgg-125| < SR_SIGMA (GeV)")
     ap.add_argument("--cr-sidebands", type=float, nargs=2, default=list(CR_DEFAULT),
@@ -167,8 +189,18 @@ def main():
     ap.add_argument("--outdir", default="outputs/categories_alpha")
     ap.add_argument("--per-mass", action="store_true", help="derive per-mass edges for signal dirs")
     ap.add_argument("--write-categorized", action="store_true", help="clone ROOT and add cat/region branches")
-    ap.add_argument("--alpha-bins", type=int, default=60, help="nbins for α(score)")
+    ap.add_argument("--alpha-bins", type=int, default=60, help="nbins for alpha(score)")
     ap.add_argument("--sigmoid-score", action="store_true", help="apply sigmoid to pDNN_score (if logits)")
+
+    # --- new: ttH-killer pre-split (Option B) ---
+    ap.add_argument("--tth-branch", default=BR_TTH,
+                     help="ttH-killer score branch name in each tree (default: %(default)s)")
+    ap.add_argument("--tth-cut", type=float, default=None,
+                     help="ttH-killer working-point cut. If given, events are split into "
+                          "'tth_low' (score < cut, ttH-depleted) and 'tth_high' (score >= cut, "
+                          "ttH-enriched) BEFORE pDNN categorization; the existing edge-building "
+                          "algorithm then runs independently, unmodified, in each branch. "
+                          "If omitted, behaves exactly as before (single 'combined' branch).")
     args = ap.parse_args()
 
     os.makedirs(args.outdir, exist_ok=True)
@@ -180,20 +212,31 @@ def main():
     sr_hi = 125.0 + args.sr_sigma
     cr_lo, cr_hi = args.cr_sidebands
 
+    tth_cut = args.tth_cut
+    active_branches = branch_labels(tth_cut)
+    if tth_cut is not None:
+        print(f"[INFO] ttH-killer pre-split ENABLED: branch='{args.tth_branch}', cut={tth_cut:.4f} "
+              f"(low=depleted <{tth_cut:.4f}, high=enriched >={tth_cut:.4f})")
+    else:
+        print("[INFO] ttH-killer pre-split DISABLED (no --tth-cut given); running single combined branch, "
+              "identical to the original pDNN-only categorization.")
+
     # -------- read & collect --------
     with uproot.open(args.root) as fin:
         dir_bases = collect_dirs(fin)
 
+        # buckets are now keyed by (tag, ttH_branch)
         buckets = {}
-        def ensure(tag):
-            if tag not in buckets:
-                buckets[tag] = dict(
+        def ensure(tag, branch):
+            key = (tag, branch)
+            if key not in buckets:
+                buckets[key] = dict(
                     S_sr_scores=[], S_sr_w=[],
                     B_sr_scores_mc=[], B_sr_w_mc=[],
                     B_cr_scores_mc=[], B_cr_w_mc=[],
                     D_cr_scores=[], D_cr_w=[]
                 )
-            return buckets[tag]
+            return buckets[key]
 
         for dbase in dir_bases:
             tdir = fin[dbase]
@@ -204,10 +247,18 @@ def main():
             tree = tdir[sel_key]
             tfields = set(tree.keys())
             needed = {BR_SCORE, BR_MGG, BR_WGT, BR_ISDATA}
+            if tth_cut is not None:
+                needed = needed | {args.tth_branch}
             if not needed.issubset(tfields):
+                if tth_cut is not None and args.tth_branch not in tfields:
+                    print(f"[warn] '{dbase}': missing ttH-killer branch '{args.tth_branch}'; skipping.")
                 continue
 
-            arr = tree.arrays([BR_SCORE, BR_MGG, BR_WGT, BR_ISDATA], library="ak")
+            read_fields = [BR_SCORE, BR_MGG, BR_WGT, BR_ISDATA]
+            if tth_cut is not None:
+                read_fields.append(args.tth_branch)
+
+            arr = tree.arrays(read_fields, library="ak")
             mgg   = arr[BR_MGG]
             score = arr[BR_SCORE]
             wgt   = arr[BR_WGT]
@@ -215,47 +266,66 @@ def main():
 
             mc   = (isdata == 0)
             data = (isdata != 0)
+            mc_np   = ak.to_numpy(mc)
+            data_np = ak.to_numpy(data)
 
             in_sr = (mgg >= sr_lo) & (mgg <= sr_hi)
             absd  = np.abs(ak.to_numpy(mgg) - 125.0)
             in_cr = (absd >= cr_lo) & (absd < cr_hi)
+            in_sr_np = ak.to_numpy(in_sr)
+            in_cr_np = in_cr  # already numpy (built from ak.to_numpy(mgg))
 
             score_np = ak.to_numpy(score)
             if USE_SIGMOID_SCORE:
                 score_np = sigmoid(score_np)
             w_np = ak.to_numpy(wgt)
 
+            # ttH-killer branch assignment (per-event, before anything else)
+            if tth_cut is not None:
+                tth_score_np = ak.to_numpy(arr[args.tth_branch])
+                is_high = tth_branch_mask(tth_score_np, tth_cut)  # True -> ttH-enriched
+            else:
+                is_high = np.zeros(len(score_np), dtype=bool)  # unused when no split
+
             tag = "combined"
             if args.per_mass and is_signal_dir(dbase):
                 tag = mass_tag_from_dir(dbase)
-            dest = ensure(tag)
 
-            if is_data_dir(dbase):
-                dsel = ak.to_numpy(in_cr[data])
-                dest["D_cr_scores"].append(score_np[data][dsel])
-                dest["D_cr_w"].append(np.ones_like(score_np[data][dsel]))
-            elif is_signal_dir(dbase):
-                ssel = ak.to_numpy(in_sr[mc])
-                dest["S_sr_scores"].append(score_np[mc][ssel])
-                dest["S_sr_w"].append(w_np[mc][ssel])
-            else:
-                ssel = ak.to_numpy(in_sr[mc])
-                csel = ak.to_numpy(in_cr[mc])
-                dest["B_sr_scores_mc"].append(score_np[mc][ssel])
-                dest["B_sr_w_mc"].append(w_np[mc][ssel])
-                dest["B_cr_scores_mc"].append(score_np[mc][csel])
-                dest["B_cr_w_mc"].append(w_np[mc][csel])
+            for branch in active_branches:
+                if tth_cut is None:
+                    branch_sel_all = np.ones(len(score_np), dtype=bool)
+                else:
+                    branch_sel_all = (is_high if branch == TTH_HIGH else ~is_high)
 
-    # -------- build edges with α(score) --------
+                dest = ensure(tag, branch)
+
+                if is_data_dir(dbase):
+                    dsel = in_cr_np[data_np] & branch_sel_all[data_np]
+                    dest["D_cr_scores"].append(score_np[data_np][dsel])
+                    dest["D_cr_w"].append(np.ones_like(score_np[data_np][dsel]))
+                elif is_signal_dir(dbase):
+                    ssel = in_sr_np[mc_np] & branch_sel_all[mc_np]
+                    dest["S_sr_scores"].append(score_np[mc_np][ssel])
+                    dest["S_sr_w"].append(w_np[mc_np][ssel])
+                else:
+                    ssel = in_sr_np[mc_np] & branch_sel_all[mc_np]
+                    csel = in_cr_np[mc_np] & branch_sel_all[mc_np]
+                    dest["B_sr_scores_mc"].append(score_np[mc_np][ssel])
+                    dest["B_sr_w_mc"].append(w_np[mc_np][ssel])
+                    dest["B_cr_scores_mc"].append(score_np[mc_np][csel])
+                    dest["B_cr_w_mc"].append(w_np[mc_np][csel])
+
+    # -------- build edges with alpha(score), per (tag, branch) --------
+    # results[tag][branch] = edges
     results = {}
-    for tag, d in buckets.items():
+    for (tag, branch), d in buckets.items():
         Sscore = concat1(d["S_sr_scores"]); Sw = concat1(d["S_sr_w"])
         Bsr_mc = concat1(d["B_sr_scores_mc"]); Bsrw_mc = concat1(d["B_sr_w_mc"])
         Bcr_mc = concat1(d["B_cr_scores_mc"]); Bcrw_mc = concat1(d["B_cr_w_mc"])
         Dcr    = concat1(d["D_cr_scores"]);    Dcrw    = concat1(d["D_cr_w"])
 
         if Sscore.size == 0 or Dcr.size == 0 or Bsr_mc.size == 0 or Bcr_mc.size == 0:
-            print(f"[warn] Tag '{tag}': insufficient inputs for α-method; skipping.")
+            print(f"[warn] Tag '{tag}' / branch '{branch}': insufficient inputs for alpha-method; skipping.")
             continue
 
         centers, alpha, lohi = make_alpha(Bsr_mc, Bsrw_mc, Bcr_mc, Bcrw_mc, nbins=args.alpha_bins)
@@ -270,15 +340,20 @@ def main():
             min_gain=args.min_gain,
             max_bins=args.max_bins
         )
-        results[tag] = edges
-        print(f"[edges α-method] {tag}: {edges}")
+        results.setdefault(tag, {})[branch] = edges
+        print(f"[edges alpha-method] tag='{tag}' branch='{branch}': {edges}")
 
     # -------- write JSON --------
     out_json = os.path.join(args.outdir, "event_categories.json")
     payload = {
-        "boundaries": results,
+        "boundaries": results,          # results[tag][branch] = [edges]
         "sr_mgg_window_GeV": args.sr_sigma,
-        "cr_mgg_sidebands_GeV": list(args.cr_sidebands)
+        "cr_mgg_sidebands_GeV": list(args.cr_sidebands),
+        "tth_split": {
+            "enabled": tth_cut is not None,
+            "branch_name": args.tth_branch if tth_cut is not None else None,
+            "cut": tth_cut,
+        },
     }
     with open(out_json, "w") as f:
         json.dump(payload, f, indent=2)
@@ -348,16 +423,22 @@ def main():
                     tbase = tkey.split(";")[0]
                     tree  = in_dir_obj[tkey]
 
-                    if (
-                        tbase != TREE_NAME
-                        or (BR_SCORE not in tree.keys())
-                        or (BR_MGG   not in tree.keys())
-                    ):
+                    required_ok = (
+                        tbase == TREE_NAME
+                        and BR_SCORE in tree.keys()
+                        and BR_MGG   in tree.keys()
+                        and (tth_cut is None or args.tth_branch in tree.keys())
+                    )
+                    if not required_ok:
                         arrays_np = tree.arrays(library="np")
                         write_tree(out_dir, tbase, arrays_np)
                         continue
 
-                    arr = tree.arrays(library="ak")
+                    read_fields = [BR_SCORE, BR_MGG]
+                    if tth_cut is not None:
+                        read_fields.append(args.tth_branch)
+
+                    arr = tree.arrays(read_fields, library="ak")
                     score_np = ak.to_numpy(arr[BR_SCORE])
                     if USE_SIGMOID_SCORE:
                         score_np = 1.0 / (1.0 + np.exp(-score_np))
@@ -370,25 +451,47 @@ def main():
                     tag = "combined"
                     if args.per_mass and is_signal_dir(dbase):
                         tag = mass_tag_from_dir(dbase)
-                    edges = results.get(tag)
-                    if edges is None:
-                        edges = results.get("combined", [])
-                        if args.per_mass and is_signal_dir(dbase):
-                            print(f"[warn] No per-mass edges for tag '{tag}' (dir '{dbase}'); "
-                                  f"falling back to 'combined' edges.")
+
+                    tag_results = results.get(tag, results.get("combined", {}))
+
+                    if tth_cut is not None:
+                        tth_score_np = ak.to_numpy(arr[args.tth_branch])
+                        is_high = tth_branch_mask(tth_score_np, tth_cut)
+                        tth_branch_arr = np.where(is_high, 1, 0).astype(np.int8)  # 0=low/depleted, 1=high/enriched
+                    else:
+                        is_high = np.zeros(len(score_np), dtype=bool)
+                        tth_branch_arr = np.zeros(len(score_np), dtype=np.int8)
 
                     cat    = np.full(len(score_np), -99, np.int16)
                     region = np.full(len(score_np),  -1, np.int8)
-                    for i, thr in enumerate(edges):
-                        sel = (score_np >= thr) & sr_mask
-                        cat[sel]    = i
-                        region[sel] = 1
+
+                    for branch_name, branch_is_high in ((TTH_LOW, False), (TTH_HIGH, True)) if tth_cut is not None else ((TTH_ALL, None),):
+                        edges = tag_results.get(branch_name)
+                        if edges is None:
+                            fallback = results.get("combined", {}).get(branch_name, [])
+                            edges = fallback
+                            if edges and args.per_mass and is_signal_dir(dbase):
+                                print(f"[warn] No per-mass edges for tag='{tag}' branch='{branch_name}' "
+                                      f"(dir '{dbase}'); falling back to 'combined' edges.")
+
+                        if tth_cut is None:
+                            branch_mask = np.ones(len(score_np), dtype=bool)
+                        else:
+                            branch_mask = (is_high if branch_is_high else ~is_high)
+
+                        for i, thr in enumerate(edges or []):
+                            sel = (score_np >= thr) & sr_mask & branch_mask
+                            cat[sel]    = i
+                            region[sel] = 1
+
                     cat[cr_mask]    = -1
                     region[cr_mask] = 0
 
                     arrays_np = tree.arrays(library="np")
-                    arrays_np["cat"]    = cat
-                    arrays_np["region"] = region
+                    arrays_np["cat"]        = cat
+                    arrays_np["region"]     = region
+                    if tth_cut is not None:
+                        arrays_np["tth_branch"] = tth_branch_arr  # 0=depleted, 1=enriched
                     write_tree(out_dir, tbase, arrays_np)
 
         print(f"Wrote {out_root}")
