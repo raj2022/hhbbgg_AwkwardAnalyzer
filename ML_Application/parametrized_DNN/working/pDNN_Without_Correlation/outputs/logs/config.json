@@ -16,15 +16,15 @@
     "Res_chi_t0",
     "Res_chi_t1",
     "Res_dijet_pt",
-    "Res_pholead_PtOverM",
     "Res_FirstJet_PtOverM",
     "Res_SecondJet_PtOverM",
+    "Res_lead_bjet_btagPNetB",
     "ptjj_over_mHH",
     "ptHH_over_mHH",
     "mass",
     "y_value"
   ],
-  "timestamp": "2026-07-30T23:28:05.744899+00:00",
+  "timestamp": "2026-08-03T13:26:14.230809+00:00",
   "config": {
     "SEED": 42,
     "SIG_TPL": "/eos/user/s/sraj/Work_/CUA_20--/Analysis/output_root/sample_final_nominal/postEE/NMSSM_X{m}_Y{y}.parquet",

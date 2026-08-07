@@ -370,28 +370,42 @@
 #                      datas=datas,
 #                      out_prefix="otherSamples")
 
-
-
-
-
 #!/usr/bin/env python3
 """
 Score all Parquet files in a folder with a Parameterized DNN.
 
 Usage:
-  python score_folder.py -i /path/to/folder
+  python score_folder.py -i /path/to/folder --recursive
 Optional:
   --artifacts /path/to/artifacts   (default: current directory)
   --output /path/to/output         (default: "<input>/scored")
   --pattern "*.parquet"            (default)
   --recursive                      (recurse into subfolders)
-  --mass-const 600 --y-const 100   (used if file lacks 'mass' / 'y_value')
+  --mass-const 600 --y-const 100   (fallback only for files where (mass, y)
+                                     cannot be auto-detected from the path,
+                                     e.g. background / data samples)
+
+Mass-point auto-detection
+--------------------------
+Each file's own path is searched for an "X###_Y###" pattern (matching the
+convention used elsewhere in the pipeline, e.g. NMSSM_X700_Y500/nominal/...).
+If found, that file is scored at ITS OWN (mass, y) hypothesis, regardless
+of --mass-const/--y-const. Those flags are used ONLY as a fallback for
+files where no such pattern is found anywhere in the path (background and
+data samples, which have no physical mass/y label of their own).
+
+This matters because "mass"/"y_value" are not physical detector quantities
+-- they are training-time labels assigned from the signal filename/folder,
+and are never present in the raw analysis ntuples for EITHER signal or
+background. Falling back to a single global constant for every file in a
+recursive run would silently score every signal mass point except the one
+matching the constant at the wrong hypothesis.
 """
 
 import argparse
 import glob
+import gc
 import json
-import os
 import re
 from pathlib import Path
 
@@ -405,13 +419,16 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 
 
-
 # -----------------------------
 # Defaults / constants
 # -----------------------------
 SAVE_MODEL_NAME = "outputs/models/best_pdnn.pt"
 SCALER_NAME     = "outputs/models/scaler.pkl"
-FEATLIST_NAME   = "outputs/models/features_used.json"
+# pDNN_v2.py's Config.FEATURES_PATH saves "features.json". Older runs / other
+# scripts have used "features_used.json". Both are tried, in this order,
+# so a mismatch here fails loudly (with the exact paths checked) rather
+# than silently pointing at a stale/missing file.
+FEATLIST_CANDIDATES = ["outputs/models/features.json", "outputs/models/features_used.json"]
 WEIGHT_COL      = "weight_central"
 
 MASS_CONST = 600
@@ -420,9 +437,54 @@ Y_CONST    = 100
 BATCH_SIZE = 16384
 USE_AMP    = True  # mixed precision on CUDA
 
+# Matches e.g. "NMSSM_X700_Y500", "x300_y95", anywhere in the path.
+MASS_Y_RE = re.compile(r"[Xx](\d+)_[Yy](\d+)")
+
+# Known systematic-variation folder naming convention: ends in "_up"/"_down"
+# (ScaleEB_Zee_down, jec_syst_Total_up, Smearing_down, ...). "nominal" is
+# its own special case, matched separately below.
+SYSTEMATIC_VARIATION_RE = re.compile(r"(_up|_down)$", re.IGNORECASE)
+
+
+def classify_systematic(file_path: Path):
+    """Identify which systematic-variation folder (if any) a file belongs to.
+
+    Returns "nominal" if a parent directory is literally named "nominal",
+    the matched folder name (e.g. "jec_syst_Total_up") if a parent
+    directory matches the "_up"/"_down" naming convention, or None if
+    neither is found anywhere in the path -- i.e. this file shows no
+    evidence of belonging to a systematic-variation family at all (a flat
+    background/data file under the old folder layout, for example), and
+    should always be kept regardless of the --all-systematics setting.
+    """
+    parts = [file_path.parent.name] + [p.name for p in file_path.parents]
+    for part in parts:
+        if part.lower() == "nominal":
+            return "nominal"
+    for part in parts:
+        if SYSTEMATIC_VARIATION_RE.search(part):
+            return part
+    return None
+
 
 # -----------------------------
-# Helpers to match your notebook
+# Mass-point auto-detection
+# -----------------------------
+def detect_mass_y_from_path(file_path: Path):
+    """Search every component of a file's path for an X###_Y### pattern.
+
+    Returns (mass, y) as ints if found anywhere in the path (checking the
+    file's parent directories first, then the filename itself), else None.
+    """
+    for part in [file_path.parent.name] + [p.name for p in file_path.parents] + [file_path.name]:
+        m = MASS_Y_RE.search(part)
+        if m:
+            return int(m.group(1)), int(m.group(2))
+    return None
+
+
+# -----------------------------
+# Helpers to match training-time preprocessing
 # -----------------------------
 def ensure_photon_mva_columns(df: pd.DataFrame) -> pd.DataFrame:
     """Fallback for older NanoAOD-like columns."""
@@ -431,6 +493,7 @@ def ensure_photon_mva_columns(df: pd.DataFrame) -> pd.DataFrame:
         if want not in df.columns and alt in df.columns:
             df[want] = df[alt]
     return df
+
 
 def add_engineered_features(df: pd.DataFrame) -> pd.DataFrame:
     """Create the engineered features used at training time."""
@@ -442,8 +505,8 @@ def add_engineered_features(df: pd.DataFrame) -> pd.DataFrame:
 
     if all(c in df.columns for c in ["lead_phi", "sublead_phi", "lead_eta", "sublead_eta"]):
         dphi = np.abs(df["lead_phi"] - df["sublead_phi"])
-        dphi = np.where(dphi > np.pi, 2*np.pi - dphi, dphi)
-        df["DeltaR_gg"] = np.sqrt((df["lead_eta"] - df["sublead_eta"])**2 + dphi**2)
+        dphi = np.where(dphi > np.pi, 2 * np.pi - dphi, dphi)
+        df["DeltaR_gg"] = np.sqrt((df["lead_eta"] - df["sublead_eta"]) ** 2 + dphi ** 2)
     else:
         df["DeltaR_gg"] = 0.0
 
@@ -452,14 +515,36 @@ def add_engineered_features(df: pd.DataFrame) -> pd.DataFrame:
             df[c] = df[c].abs()
 
     for c in ["ptjj_over_mHH", "ptHH_over_mHH", "DeltaR_gg"]:
-        df[c] = df[c].fillna(0)
+        df[c] = pd.Series(df[c]).replace([np.inf, -np.inf], np.nan).fillna(0)
 
     return df
+
 
 def ensure_weight(df: pd.DataFrame, weight_col: str = WEIGHT_COL) -> pd.DataFrame:
     if weight_col not in df.columns:
         df[weight_col] = 1.0
     return df
+
+
+def impute_like_training(x_df: pd.DataFrame, rng: np.random.Generator) -> pd.DataFrame:
+    """Fill NaNs by sampling from each column's own observed values.
+
+    Matches pDNN_v2.py's df_to_arrays() imputation exactly (sampling from
+    the observed marginal, not a flat 0.0 or a mean-fill), so inference-time
+    missingness handling doesn't diverge from what the model was trained
+    on. A flat 0.0 fill in particular can sit far outside a feature's real
+    (post-scaling) distribution and bias predictions for any row with a
+    missing value.
+    """
+    x_df = x_df.copy()
+    for col in x_df.columns:
+        n_missing = int(x_df[col].isna().sum())
+        if n_missing == 0:
+            continue
+        observed = x_df[col].dropna().values
+        fill_values = rng.choice(observed, size=n_missing, replace=True) if len(observed) > 0 else 0.0
+        x_df.loc[x_df[col].isna(), col] = fill_values
+    return x_df
 
 
 # -----------------------------
@@ -468,14 +553,15 @@ def ensure_weight(df: pd.DataFrame, weight_col: str = WEIGHT_COL) -> pd.DataFram
 def maybe_bn(_):  # BatchNorm was disabled in the notebook you shared
     return nn.Identity()
 
+
 class ParameterizedDNN(nn.Module):
     def __init__(self, d: int):
         super().__init__()
         self.net = nn.Sequential(
             nn.Linear(d, 128), maybe_bn(128), nn.ReLU(), nn.Dropout(0.3),
-            nn.Linear(128,  64), maybe_bn(64),  nn.ReLU(), nn.Dropout(0.3),
-            nn.Linear(64,   32), maybe_bn(32),  nn.ReLU(), nn.Dropout(0.2),
-            nn.Linear(32,    1)
+            nn.Linear(128, 64), maybe_bn(64), nn.ReLU(), nn.Dropout(0.3),
+            nn.Linear(64, 32), maybe_bn(32), nn.ReLU(), nn.Dropout(0.2),
+            nn.Linear(32, 1)
         )
 
     def forward(self, x):
@@ -495,7 +581,7 @@ def predict_batched(model: nn.Module, X_torch: torch.Tensor, device: torch.devic
     out = []
     N = X_torch.shape[0]
     for i in range(0, N, BATCH_SIZE):
-        xb = X_torch[i:i+BATCH_SIZE].to(device, non_blocking=True)
+        xb = X_torch[i:i + BATCH_SIZE].to(device, non_blocking=True)
         if device.type == "cuda" and USE_AMP:
             with torch.amp.autocast("cuda"):
                 logits = model(xb)
@@ -518,12 +604,19 @@ def predict_batched(model: nn.Module, X_torch: torch.Tensor, device: torch.devic
 
 
 def load_artifacts(artifacts_dir: Path, device: torch.device):
-    feat_path = artifacts_dir / FEATLIST_NAME
+    feat_path = None
+    for candidate in FEATLIST_CANDIDATES:
+        p = artifacts_dir / candidate
+        if p.exists():
+            feat_path = p
+            break
+    if feat_path is None:
+        checked = "\n    ".join(str(artifacts_dir / c) for c in FEATLIST_CANDIDATES)
+        raise FileNotFoundError(f"No features file found. Checked:\n    {checked}")
+
     scaler_path = artifacts_dir / SCALER_NAME
     model_path = artifacts_dir / SAVE_MODEL_NAME
 
-    if not feat_path.exists():
-        raise FileNotFoundError(f"Missing features file: {feat_path}")
     if not scaler_path.exists():
         raise FileNotFoundError(f"Missing scaler file:   {scaler_path}")
     if not model_path.exists():
@@ -531,6 +624,7 @@ def load_artifacts(artifacts_dir: Path, device: torch.device):
 
     with open(feat_path, "r") as f:
         FEATURES = json.load(f)["features"]
+    print(f"[INFO] Feature list loaded from {feat_path}")
 
     with open(scaler_path, "rb") as f:
         scaler = pickle.load(f)
@@ -547,53 +641,6 @@ def load_artifacts(artifacts_dir: Path, device: torch.device):
     return FEATURES, scaler, model
 
 
-# def score_parquet_file(
-#     file_path: Path,
-#     FEATURES,
-#     scaler,
-#     model,
-#     device: torch.device,
-#     mass_const: int = MASS_CONST,
-#     y_const: int = Y_CONST,
-# ) -> pd.DataFrame:
-#     """Read a Parquet, align features, scale, score, and return a DF with pDNN_score added."""
-#     df = pd.read_parquet(file_path)
-
-#     # Align with training-time expectations
-#     df = ensure_photon_mva_columns(df)
-#     df = add_engineered_features(df)
-#     df = ensure_weight(df)
-
-#     # Inject constants if missing
-#     if "mass" not in df.columns:
-#         df["mass"] = mass_const
-#     if "y_value" not in df.columns:
-#         df["y_value"] = y_const
-
-#     # Ensure every model feature exists
-#     for f in FEATURES:
-#         if f not in df.columns:
-#             df[f] = 0.0
-
-#     # Build X in the correct column order
-#     X = df[FEATURES].copy()
-#     # Fill NaNs with column means (fallback)
-#     X = X.fillna(X.mean(numeric_only=True))
-#     # Scale as at training time
-#     X_scaled = scaler.transform(X.values).astype("float32")
-
-#     # Torch & predict
-#     X_t = torch.tensor(X_scaled, dtype=torch.float32)
-#     scores = predict_batched(model, X_t, device=device)
-
-#     df["pDNN_score"] = scores
-    
-#     # adding downcast to save space
-#     del X, X_scaled, X_t, scores
-#     import gc; gc.collect()
-#     if device.type == "cuda":
-#         torch.cuda.empty_cache()
-#     return df
 def score_parquet_file(
     file_path: Path,
     out_path: Path,
@@ -604,17 +651,26 @@ def score_parquet_file(
     mass_const: int = MASS_CONST,
     y_const: int = Y_CONST,
     chunk_size: int = 100_000,
+    seed: int = 42,
 ):
     """
-    Truly memory-safe parquet scoring.
-    Reads → scores → writes chunk-by-chunk.
-    Never stores full file in RAM.
+    Memory-safe parquet scoring: reads, scores, and writes chunk-by-chunk,
+    never holding the full file in RAM.
+
+    (mass, y) are auto-detected from the file's own path (e.g.
+    NMSSM_X700_Y500/...) when possible; mass_const/y_const are used only
+    as a fallback for files with no such pattern in their path.
     """
+    detected = detect_mass_y_from_path(file_path)
+    if detected is not None:
+        mass_val, y_val = detected
+        print(f"  [mass/y] {file_path.name}: auto-detected ({mass_val}, {y_val}) from path")
+    else:
+        mass_val, y_val = mass_const, y_const
+        print(f"  [mass/y] {file_path.name}: no X###_Y### pattern in path, "
+              f"using fallback ({mass_val}, {y_val})")
 
-    import pyarrow as pa
-    import pyarrow.parquet as pq
-    import gc
-
+    rng = np.random.default_rng(seed)
     parquet_file = pq.ParquetFile(file_path)
     writer = None
 
@@ -625,16 +681,17 @@ def score_parquet_file(
         df = add_engineered_features(df)
         df = ensure_weight(df)
 
-        if "mass" not in df.columns:
-            df["mass"] = mass_const
-        if "y_value" not in df.columns:
-            df["y_value"] = y_const
+        # Always set mass/y_value to the resolved hypothesis for this file
+        # (overwrite rather than "if missing", since a stray identically-
+        # named column from upstream processing should not silently win).
+        df["mass"] = mass_val
+        df["y_value"] = y_val
 
         for f in FEATURES:
             if f not in df.columns:
-                df[f] = 0.0
+                df[f] = np.nan  # let imputation handle it consistently, not a silent 0.0
 
-        X = df[FEATURES].fillna(0.0)
+        X = impute_like_training(df[FEATURES], rng)
         X_scaled = scaler.transform(X.values).astype("float32")
         X_t = torch.from_numpy(X_scaled)
 
@@ -645,10 +702,8 @@ def score_parquet_file(
 
         if writer is None:
             writer = pq.ParquetWriter(out_path, table.schema)
-
         writer.write_table(table)
 
-        # 🔥 Aggressive cleanup
         del df, X, X_scaled, X_t, scores, table
         gc.collect()
         if device.type == "cuda":
@@ -658,7 +713,6 @@ def score_parquet_file(
         writer.close()
 
 
-
 # -----------------------------
 # CLI
 # -----------------------------
@@ -666,11 +720,27 @@ def main():
     ap = argparse.ArgumentParser(description="Score all Parquet files in a folder with a trained Parameterized DNN.")
     ap.add_argument("-i", "--input", required=True, help="Input folder containing .parquet files")
     ap.add_argument("-o", "--output", default=None, help="Output folder for scored Parquets (default: <input>/scored)")
-    ap.add_argument("--artifacts", default=".", help="Folder with best_pdnn.pt, scaler.pkl, features_used.json")
+    ap.add_argument("--artifacts", default=".", help="Folder with best_pdnn.pt, scaler.pkl, features(.json|_used.json)")
     ap.add_argument("--pattern", default="*.parquet", help='Glob pattern for input files (default: "*.parquet")')
     ap.add_argument("--recursive", action="store_true", help="Recurse into subfolders")
-    ap.add_argument("--mass-const", type=int, default=MASS_CONST, help=f"Default mass if column missing (default: {MASS_CONST})")
-    ap.add_argument("--y-const", type=int, default=Y_CONST, help=f"Default y_value if column missing (default: {Y_CONST})")
+    ap.add_argument("--mass-const", type=int, default=MASS_CONST,
+                     help=f"Fallback mass for files with no X###_Y### in their path, e.g. background/data "
+                          f"(default: {MASS_CONST})")
+    ap.add_argument("--y-const", type=int, default=Y_CONST,
+                     help=f"Fallback y_value for files with no X###_Y### in their path (default: {Y_CONST})")
+    ap.add_argument("--all-systematics", action="store_true",
+                     help="Also score files under systematic-variation subfolders (e.g. "
+                          "jec_syst_Total_up, Smearing_down, ScaleEE_Zee_up). Default: "
+                          "score only 'nominal' (plus any file with no systematic-folder "
+                          "structure at all, e.g. flat background/data files).")
+    ap.add_argument("--min-mass", type=int, default=300,
+                     help="Only score signal files with X >= this value (default: 300). "
+                          "Files with no detectable X/Y in their path (background/data) "
+                          "are always kept regardless of this setting.")
+    ap.add_argument("--min-y", type=int, default=90,
+                     help="Only score signal files with Y >= this value (default: 90). "
+                          "Files with no detectable X/Y in their path (background/data) "
+                          "are always kept regardless of this setting.")
     args = ap.parse_args()
 
     inp_dir = Path(args.input).expanduser().resolve()
@@ -682,16 +752,13 @@ def main():
 
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    # Device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"[INFO] Using device: {device}")
 
-    # Load artifacts
     FEATURES, scaler, model = load_artifacts(art_dir, device)
     print(f"[INFO] Loaded artifacts from {art_dir}")
     print(f"[INFO] Num features: {len(FEATURES)}")
 
-    # Collect files
     pattern = str(inp_dir / ("**/" + args.pattern if args.recursive else args.pattern))
     files = sorted(glob.glob(pattern, recursive=args.recursive))
     files = [Path(f) for f in files if Path(f).is_file()]
@@ -700,34 +767,49 @@ def main():
         print(f"[WARN] No files matched pattern {args.pattern} in {inp_dir}")
         return
 
+    if not args.all_systematics:
+        kept, skipped_systs = [], set()
+        for fp in files:
+            syst = classify_systematic(fp)
+            if syst is None or syst == "nominal":
+                kept.append(fp)
+            else:
+                skipped_systs.add(syst)
+        if skipped_systs:
+            print(f"[INFO] Restricting to 'nominal' (pass --all-systematics to also score "
+                  f"the {len(files) - len(kept)} file(s) found under systematic-variation "
+                  f"folders): {sorted(skipped_systs)}")
+        files = kept
+
+    # Restrict to the in-scope signal grid: X >= min-mass, Y > min-y.
+    # Files with no detectable (mass, y) in their path -- background/data --
+    # are always kept; this restriction only applies to signal mass points.
+    kept, skipped_mass = [], []
+    for fp in files:
+        detected = detect_mass_y_from_path(fp)
+        if detected is None:
+            kept.append(fp)
+            continue
+        mass_val, y_val = detected
+        if mass_val >= args.min_mass and y_val >= args.min_y:
+            kept.append(fp)
+        else:
+            skipped_mass.append((fp, mass_val, y_val))
+    if skipped_mass:
+        print(f"[INFO] Skipping {len(skipped_mass)} file(s) outside the in-scope signal grid "
+              f"(X >= {args.min_mass}, Y >= {args.min_y}):")
+        for fp, m, y in skipped_mass:
+            print(f"    (X={m}, Y={y}): {fp}")
+    files = kept
+
+    if not files:
+        print("[WARN] No files left to score after filtering to 'nominal'. "
+              "Pass --all-systematics if that's not what you intended.")
+        return
+
     print(f"[INFO] Found {len(files)} file(s). Scoring...")
 
-    # Process
     total_rows = 0
-    # for fp in files:
-    #     try:
-    #         df_scored = score_parquet_file(
-    #             fp, FEATURES, scaler, model, device,
-    #             mass_const=args.mass_const, y_const=args.y_const
-    #         )
-    #         rel = fp.relative_to(inp_dir) if inp_dir in fp.parents or fp.parent == inp_dir else fp.name
-    #         out_fp = out_dir / Path(rel).with_suffix(".parquet")
-    #         out_fp.parent.mkdir(parents=True, exist_ok=True)
-    #         # df_scored.to_parquet(out_fp, index=False)
-    #         # total_rows += len(df_scored)
-    #         # print(f"  ✓ {fp.name:40s} -> {out_fp}  ({len(df_scored)} rows)")
-    #         df_scored.to_parquet(out_fp, index=False)
-    #         total_rows += len(df_scored)
-    #         print(f"  {fp.name:40s} -> {out_fp}  ({len(df_scored)} rows)")
-            
-    #         del df_scored
-    #         import gc; gc.collect()
-    #         if device.type == "cuda":
-    #             torch.cuda.empty_cache()
-            
-    #     except Exception as e:
-    #         print(f"   {fp.name}: {e}")
-
     for fp in files:
         try:
             rel = fp.relative_to(inp_dir) if inp_dir in fp.parents or fp.parent == inp_dir else fp.name
@@ -742,19 +824,19 @@ def main():
                 model=model,
                 device=device,
                 mass_const=args.mass_const,
-                y_const=args.y_const
+                y_const=args.y_const,
             )
 
-            # Get row count for logging
             row_count = pq.ParquetFile(out_fp).metadata.num_rows
             total_rows += row_count
-            print(f"  ✓ {fp.name:40s} -> {out_fp}  ({row_count} rows)")
+            print(f"  {fp.name:40s} -> {out_fp}  ({row_count} rows)")
 
         except Exception as e:
-            print(f"   {fp.name}: {e}")
+            print(f"  [ERROR] {fp}: {e}")
 
     print(f"[DONE] Scored {len(files)} file(s), {total_rows} total rows.")
     print(f"[OUT ] Output folder: {out_dir}")
+
 
 if __name__ == "__main__":
     main()
