@@ -1,5 +1,39 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
+#
+# ============================================================================
+# USAGE
+# ============================================================================
+# Signal and background can live in completely different directories --
+# just pass -i multiple times (each is searched recursively, independently,
+# and defaults to 'nominal' only for the nested <mass_point>/<systematic>/
+# signal layout; flat background/data files are unaffected).
+#
+# Example: 2022 PreEE, signal and background in separate locations
+#
+#   python hhbbgg_analyzer_lxplus_par.py \
+#     --config-years 2022 \
+#     --era PreEE \
+#     -i /eos/cms/store/group/phys_b2g/HHbbgg/.../2022preEE_signal/merged/ \
+#     -i /afs/cern.ch/user/.../2022preEE_background/ \
+#     --tag DD_2022preEE
+#
+# Notes:
+#   --config-years   comma-separated, e.g. 2022,2023 (multi-year runs allowed)
+#   --era            fallback only -- year/era are auto-detected PER FILE
+#                     from its own path (e.g. "preee"/"postee" in the name);
+#                     --era is only used if that detection fails for a file
+#   --all-systematics  also process jec/jer/Scale/Smearing variation folders
+#                     (default: nominal-only signal + all flat background/data)
+#
+# IMPORTANT: every file's path must contain its year (e.g. "2022") somewhere,
+# or detect_year_era_from_name() returns year=None and the run aborts with
+# RuntimeError partway through processing. Your background/data filenames
+# already encode this (e.g. 2022_preEE_GGJets_low_Rescaled.parquet), so this
+# should be fine as-is, but worth a quick sanity check on any new directory
+# before a full run.
+# ============================================================================
+
 print(">>> SCRIPT STARTED <<<")
 
 import os
@@ -122,26 +156,6 @@ def make_th1_pyroot(values, weights, name, title, binning):
     return h
 
 
-# def detect_year_era_from_name(path: str):
-#     name = path.lower()   # <-- FULL PATH, not basename
-
-#     year = "2022" if "2022" in name else ("2023" if "2023" in name else None)
-#     era = None
-
-#     if "preee" in name:
-#         era = "PreEE"
-#         year = year or "2022"
-#     elif "postee" in name:
-#         era = "PostEE"
-#         year = year or "2022"
-#     elif "prebpix" in name:
-#         era = "preBPix"
-#         year = year or "2023"
-#     elif "postbpix" in name:
-#         era = "postBPix"
-#         year = year or "2023"
-
-#     return year, era
 def detect_year_era_from_name(path: str):
     name = path.lower()
 
@@ -177,6 +191,59 @@ def detect_year_era_from_name(path: str):
     return year, era
 
 
+# ---------------- Nested-folder / systematic-variation handling ----------------
+# Same convention as inference_PDnn.py's classify_systematic(), duplicated here
+# (rather than imported) so this script has no hard dependency on the pDNN
+# working directory. Keep the two in sync if the naming convention changes.
+SYSTEMATIC_VARIATION_RE = re.compile(r"(_up|_down)$", re.IGNORECASE)
+
+
+def classify_systematic(file_path: Path):
+    """Identify which systematic-variation folder (if any) a file belongs to.
+
+    Returns "nominal" if a parent directory is literally named "nominal",
+    the matched folder name (e.g. "jec_syst_Total_up") if a parent
+    directory matches the "_up"/"_down" naming convention, or None if
+    neither is found anywhere in the path -- i.e. a flat file with no
+    systematic-folder structure at all (the old layout used for
+    background/data samples), which is always kept.
+    """
+    parts = [file_path.parent.name] + [p.name for p in file_path.parents]
+    for part in parts:
+        if part.lower() == "nominal":
+            return "nominal"
+    for part in parts:
+        if SYSTEMATIC_VARIATION_RE.search(part):
+            return part
+    return None
+
+
+def collect_parquet_files(root: Path, all_systematics: bool = False):
+    """Recursively find parquet files under `root`, restricted to 'nominal'
+    (plus any flat file with no systematic-folder structure at all) unless
+    `all_systematics` is set.
+
+    This mirrors inference_PDnn.py's default behavior exactly, since only
+    'nominal' files are guaranteed to actually carry a pDNN_score column
+    -- reading a systematic-variation file that was never scored would
+    otherwise raise immediately in process_parquet_file().
+    """
+    all_files = sorted(root.rglob("*.parquet"))
+    if all_systematics:
+        return all_files
+
+    kept, skipped = [], set()
+    for fp in all_files:
+        syst = classify_systematic(fp)
+        if syst is None or syst == "nominal":
+            kept.append(fp)
+        else:
+            skipped.add(syst)
+    if skipped:
+        print(f"[INFO] {root}: restricting to 'nominal' (pass --all-systematics to also "
+              f"process {len(all_files) - len(kept)} file(s) under systematic-variation "
+              f"folders): {sorted(skipped)}")
+    return kept
 
 
 def ensure_dir_in_tfile(tfile, path):
@@ -192,7 +259,6 @@ def normalize_sample_name(name: str) -> str:
     base = os.path.basename(name)
     base = re.sub(r"\.(parquet|root)$", "", base, flags=re.IGNORECASE)
     base = re.sub(r"(_part\d+|_chunk\d+|_\d+of\d+)$", "", base, flags=re.IGNORECASE)
-    # base = re.sub(r"[_-]?(2022|2023)(PreEE|PostEE|All)?", "", base, flags=re.IGNORECASE)
     base = re.sub(r"[_-]?(2022|2023)(PreEE|PostEE|All|preBPix|postBPix)?", "", base, flags=re.IGNORECASE)
     return base
 
@@ -258,8 +324,6 @@ def sanitize_for_uproot(d: dict) -> dict:
 
 # ---------------- Global accumulators ----------------
 HIST_CACHE = {}   # (sample, region, varname) -> TH1D
-# TREE_ACC   = {}   # (sample, region) -> [dict(field->np.ndarray)]
-# PROC_ACC   = {}   # sample -> [dict(field->np.ndarray)]
 
 # ---------------- Utils ----------------
 def is_signal_from_name(name: str) -> bool:
@@ -305,21 +369,6 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
         "run",
         "lumi",
         "event",
-        # "puppiMET_pt",
-        # "puppiMET_phi",
-        # "puppiMET_phiJERDown",
-        # "puppiMET_phiJERUp",
-        # "puppiMET_phiJESDown",
-        # "puppiMET_phiJESUp",
-        # "puppiMET_phiUnclusteredDown",
-        # "puppiMET_phiUnclusteredUp",
-        # "puppiMET_ptJERDown",
-        # "puppiMET_ptJERUp",
-        # "puppiMET_ptJESDown",
-        # "puppiMET_ptJESUp",
-        # "puppiMET_ptUnclusteredDown",
-        # "puppiMET_ptUnclusteredUp",
-        # "puppiMET_sumEt",
         "Res_lead_bjet_pt",
         "Res_lead_bjet_eta",
         "Res_lead_bjet_phi",
@@ -415,15 +464,10 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
             # No σ×L scaling for data or DD templates
             xsec_lumi_cache[inputfile] = (1.0, 1.0)
         else:
-            # det_year, det_era = detect_year_era_from_name(inputfile)
-            # use_year = det_year or str(cli_year)   # fallback to CLI if detection failed
-            # use_era  = det_era  or str(cli_era)
-            
             xsec_lumi_cache[inputfile] = (float(getXsec(inputfile)), 
                                           float(getLumi(use_year, use_era)) * 1000.0,      # lumi in pb^-1
                                           )      
     xsec_, lumi_ = xsec_lumi_cache[inputfile]
-    # print(f"[NORM] sample={os.path.basename(inputfile)} xsec={xsec_} pb, lumi={lumi_/1000.0:.3f} fb^-1 ({det_year or cli_year} {det_era or cli_era})")
     print(f"[NORM] sample={os.path.basename(inputfile)} xsec={xsec_} pb, "
       f"lumi={lumi_/1000.0:.3f} fb^-1 ({use_year} {use_era}) "
       f"[flags: data={isdata} dd = {isdd}]") 
@@ -454,21 +498,6 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
             {
                 "run": tree_["run"], "lumi": tree_["lumi"],
                 "event": tree_["event"],
-                # "puppiMET_pt": tree_["puppiMET_pt"],
-                # "puppiMET_phi": tree_["puppiMET_phi"],
-                # "puppiMET_phiJERDown": tree_["puppiMET_phiJERDown"],
-                # "puppiMET_phiJERUp": tree_["puppiMET_phiJERUp"],
-                # "puppiMET_phiJESDown": tree_["puppiMET_phiJESDown"],
-                # "puppiMET_phiJESUp": tree_["puppiMET_phiJESUp"],
-                # "puppiMET_phiUnclusteredDown": tree_["puppiMET_phiUnclusteredDown"],
-                # "puppiMET_phiUnclusteredUp": tree_["puppiMET_phiUnclusteredUp"],
-                # "puppiMET_ptJERDown": tree_["puppiMET_ptJERDown"],
-                # "puppiMET_ptJERUp": tree_["puppiMET_ptJERUp"],
-                # "puppiMET_ptJESDown": tree_["puppiMET_ptJESDown"],
-                # "puppiMET_ptJESUp": tree_["puppiMET_ptJESUp"],
-                # "puppiMET_ptUnclusteredDown": tree_["puppiMET_ptUnclusteredDown"],
-                # "puppiMET_ptUnclusteredUp": tree_["puppiMET_ptUnclusteredUp"],
-                # "puppiMET_sumEt": tree_["puppiMET_sumEt"],
                 "lead_bjet_pt": tree_["Res_lead_bjet_pt"], 
                 "lead_bjet_eta": tree_["Res_lead_bjet_eta"],
                 "lead_bjet_phi": tree_["Res_lead_bjet_phi"], 
@@ -615,10 +644,6 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
         cms_events["idmva_sideband"] = get_mask_idmva_sideband(cms_events)
 
         keys_to_copy = [
-            # "puppiMET_pt","puppiMET_phi","puppiMET_phiJERDown","puppiMET_phiJERUp",
-            # "puppiMET_phiJESDown","puppiMET_phiJESUp","puppiMET_phiUnclusteredDown","puppiMET_phiUnclusteredUp",
-            # "puppiMET_ptJERDown","puppiMET_ptJERUp","puppiMET_ptJESDown","puppiMET_ptJESUp",
-            # "puppiMET_ptUnclusteredDown","puppiMET_ptUnclusteredUp","puppiMET_sumEt",
             "lead_pho_pt","lead_pho_eta","lead_pho_phi",
             "sublead_pho_pt","sublead_pho_eta","sublead_pho_phi",
             "lead_bjet_pt","lead_bjet_eta","lead_bjet_phi",
@@ -645,12 +670,6 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
         ]
         out_events = ak.zip({k: cms_events[k] for k in keys_to_copy} | {"run": tree_["run"], "lumi": tree_["lumi"], "event": tree_["event"]}, depth_limit=1)
 
-        # wc = ak.to_numpy(out_events["weight_central"])
-        # wc = np.where(np.isfinite(wc) & (wc != 0.0), wc, 1.0)
-        # base_w = ak.to_numpy(cms_events["weight"]) * float(xsec_) * float(lumi_) / wc
-        # base_w = np.where(np.isfinite(base_w), base_w, 0.0)
-        # for r in ["preselection","selection","srbbgg","srbbggMET","crbbantigg","crantibbgg","crantibbantigg","sideband","idmva_sideband","idmva_presel"]:
-        #     out_events = ak.with_field(out_events, base_w, "weight_"+r)
         # ---------------- Build event weights ----------------
         if isdata:
             # Unit weight for real data
@@ -670,7 +689,6 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
             # MC: σ×L normalization
             wc = ak.to_numpy(out_events["weight_central"])
             wc = np.where(np.isfinite(wc) & (wc != 0.0), wc, 1.0)
-            # base_w = ak.to_numpy(cms_events["weight"]) * float(xsec_) * float(lumi_) / wc
             base_w = ak.to_numpy(cms_events["weight"]) * float(xsec_) * float(lumi_)
             base_w = np.where(np.isfinite(base_w), base_w, 0.0)
 
@@ -680,8 +698,6 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
                 "sideband","idmva_sideband","idmva_presel"]:
             out_events = ak.with_field(out_events, base_w, "weight_"+r)
 
-
-        # PROC_ACC.setdefault(sample_name_norm, []).append(ak_to_numpy_dict(out_events))
 
         for ireg in regions:
             thisregion = out_events[out_events[ireg] == True]
@@ -706,7 +722,6 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
                 del h
 
             tree_data_ = ak_to_numpy_dict(thisregion_)
-            # TREE_ACC.setdefault((sample_name_norm, ireg), []).append(tree_data_)
             merged = sanitize_for_uproot(tree_data_)
             write_tree_chunked(
                 tree_upfile,
@@ -785,7 +800,10 @@ def main():
 
     ap.add_argument(
         "-i", "--inFile", action="append", required=True,
-        help="Parquet file or directory. Can be given multiple times."
+        help="Parquet file or directory. Can be given multiple times. "
+             "Directories are searched recursively (handles both the flat "
+             "background/data layout and the nested "
+             "<mass_point>/<systematic>/*.parquet signal layout)."
     )
 
     ap.add_argument(
@@ -803,6 +821,16 @@ def main():
         help="Output tag name"
     )
 
+    ap.add_argument(
+        "--all-systematics", action="store_true",
+        help="Also process files under systematic-variation subfolders (e.g. "
+             "jec_syst_Total_up, Smearing_down). Default: process only "
+             "'nominal' (plus any flat file with no systematic-folder "
+             "structure at all). Systematic-variation files that were never "
+             "scored by inference_PDnn.py will not have a pDNN_score column "
+             "and would otherwise crash this script."
+    )
+
     args = ap.parse_args()
 
     # -----------------------------------------
@@ -812,7 +840,7 @@ def main():
     print(f"[INFO] Configured years: {config_years}")
 
     # -----------------------------------------
-    # Collect parquet files
+    # Collect parquet files (recursively, filtered to nominal by default)
     # -----------------------------------------
     inputfiles = []
     for ip in args.inFile:
@@ -820,7 +848,8 @@ def main():
         if p.is_file() and p.suffix == ".parquet":
             inputfiles.append(str(p))
         elif p.is_dir():
-            inputfiles.extend(str(x) for x in sorted(p.glob("*.parquet")))
+            found = collect_parquet_files(p, all_systematics=args.all_systematics)
+            inputfiles.extend(str(x) for x in found)
 
     if not inputfiles:
         raise RuntimeError("No parquet files found")
