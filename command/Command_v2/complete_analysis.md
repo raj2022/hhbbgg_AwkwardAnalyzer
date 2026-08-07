@@ -66,6 +66,10 @@ python inference_PDnn_updated.py \
   -i /eos/cms/store/group/phys_b2g/HHbbgg/bsahu/higgsdna_v7/2022postEE/merged/ \
   --recursive
 ```
+eg for the 2024 pDNN score at `/afs/cern.ch/user/s/sraj/Analysis/hhbbgg_AwkwardAnalyzer/ML_Application/parametrized_DNN/working/pDNN_Without_Correlation`:
+```bash
+ python inference_PDnn_updated.py -i /eos/user/b/bartek/hhbbgg/higgsdna_v7/2024/merged/ --recursive     ````
+python
 
 - `--recursive` is required: samples live in a nested
   `<mass_point>/<systematic>/NOTAG_merged.parquet` structure (one folder
@@ -101,7 +105,7 @@ Before or after scoring, `check_missing_masses.py` scans a folder of
 grid (X=300-1000) and reports missing, incomplete, and out-of-grid points:
 
 ```bash
-python check_missing_masses.py \
+python sample_study/Check_missing_mass/Check_missing_masses_folder.py \
   -i /eos/cms/store/group/phys_b2g/HHbbgg/bsahu/higgsdna_v7/2022postEE/merged \
   --require-file NOTAG_merged.parquet
 ```
