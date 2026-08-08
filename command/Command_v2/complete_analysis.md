@@ -57,19 +57,35 @@ one after the other**, so that both score branches end up in the same
 files before the analyzer step. Order matters only in that both must run
 before step 4 — they don't depend on each other's output.
 
+**Systematics note:** by default (no `--all-systematics`), only the
+`nominal` subfolder is scored — folder-based systematic variations
+(`jec_syst_Total_up`, `Smearing_down`, `ScaleEB_Zee_up`, ...) are skipped.
+Pass `--all-systematics` to score those too. For a genuine "with
+systematics" run, this flag must be passed consistently to **both**
+inference scripts (3.1 and 3.2) *and* the analyzer (step 4) — if only the
+analyzer gets it, it will read variation-folder files that were never
+actually scored and silently fall back to `NaN`-filled `pDNN_score` /
+`ttH_killer_score` for them.
+
 ### 3.1 Score with the Trained pDNN
 
 Location: `/afs/cern.ch/user/s/sraj/Analysis/hhbbgg_AwkwardAnalyzer/ML_Application/parametrized_DNN/working/pDNN_Without_Correlation`
 
+**Nominal only (default):**
 ```bash
 python inference_PDnn_updated.py \
-  -i /eos/cms/store/group/phys_b2g/HHbbgg/bsahu/higgsdna_v7/2022postEE/merged/ \
+  -i /eos/user/b/bartek/hhbbgg/higgsdna_v7/2024/merged/ \
   --recursive
 ```
-eg for the 2024 pDNN score at `/afs/cern.ch/user/s/sraj/Analysis/hhbbgg_AwkwardAnalyzer/ML_Application/parametrized_DNN/working/pDNN_Without_Correlation`:
+
+**With all systematics:**
 ```bash
- python inference_PDnn_updated.py -i /eos/user/b/bartek/hhbbgg/higgsdna_v7/2024/merged/ --recursive     ````
-python
+python inference_PDnn_updated.py \
+  -i /eos/user/b/bartek/hhbbgg/higgsdna_v7/2024/merged/ \
+  --recursive --all-systematics
+```
+
+(2022postEE example, same flags: `-i /eos/cms/store/group/phys_b2g/HHbbgg/bsahu/higgsdna_v7/2022postEE/merged/`)
 
 - `--recursive` is required: samples live in a nested
   `<mass_point>/<systematic>/NOTAG_merged.parquet` structure (one folder
@@ -81,11 +97,6 @@ python
 - `(mass, y)` is auto-detected per file from its own `NMSSM_X###_Y###`
   folder name; background/data files (no such pattern in their path) fall
   back to `--mass-const`/`--y-const`.
-- **By default, only the `nominal` subfolder is scored**, plus any flat
-  file with no systematic-folder structure at all. Systematic variations
-  (`jec_syst_Total_up`, `Smearing_down`, `ScaleEB_Zee_up`, ...) are
-  skipped and listed in the log output. Add `--all-systematics` once
-  those are needed for the fit *(not yet decided)*.
 - **Mass-grid scope**: only signal points with X >= 300 and Y >= 90 are
   scored (`--min-mass`/`--min-y`, both inclusive, defaults 300/90).
   Out-of-scope points found on disk (e.g. `NMSSM_X700_Y60`) are skipped
@@ -117,71 +128,106 @@ python sample_study/Check_missing_mass/Check_missing_masses_folder.py \
 
 Location: `/afs/cern.ch/user/s/sraj/Analysis/hhbbgg_AwkwardAnalyzer/tth_killer`
 
-```bash
-python inference_tth_killer.py -i /path/to/your/folder \
-  --model best_tth_killer.pt \
-  --scaler scaler_tth.pkl
-```
-
-e.g.
+**Nominal only (default) — input is the pDNN-scored `scored/` folder from 3.1:**
 ```bash
 python inference_ttH_killer.py \
   -i /eos/user/b/bartek/hhbbgg/higgsdna_v7/2024/merged/scored/ \
   --recursive \
   --model best_tth_killer.pt --scaler scaler_tth.pkl
-  ```
+```
+
+**With all systematics:**
+```bash
+python inference_ttH_killer.py \
+  -i /eos/user/b/bartek/hhbbgg/higgsdna_v7/2024/merged/scored/ \
+  --recursive --all-systematics \
+  --model best_tth_killer.pt --scaler scaler_tth.pkl
+```
 
 Run once per sample folder — **the same folders scored in step 3.1** — to
 attach the `ttH_killer_score` branch alongside the existing `pDNN_score`
-branch in each file. Both branches must be present before step 5, since
+branch in each file. Files are updated **in place** by default (both
+scores end up in the same file); pass `--output` to instead mirror into a
+separate directory. Both branches must be present before step 5, since
 the categorization script's ttH-killer pre-split (`--tth-cut`) reads
 `ttH_killer_score` directly from the tree.
-
-> **New step.** Previously the ttH killer was trained (step 2) but never
-> actually scored onto samples, so `ttH_killer_score` never reached the
-> analyzer output. This step closes that gap.
 
 ---
 
 ## 4. Run the Analyzer
 
 The analyzer performs full sample processing, including data-driven (DD)
-background estimation and template fitting.
+background estimation, weight-based systematic histogram filling, and
+template fitting.
 
+**Nominal only (default):**
 ```bash
 python hhbbgg_analyzer_lxplus_par.py \
-  --year 2023 --era All \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preEE/scored/ \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postEE/scored/ \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preBPix/scored/ \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postBPix/scored/ \
-  --tag DD_CombinedAll
-```
-e.g. with multiple processing
-```bash
-# ----------------------------------------------------------------------------
-# Run the analyzer -- 2024, signal + data + simulated background
-# (using hhbbgg_analyzer_multiple.py; verify this copy includes the
-#  ttH_killer_score wiring before relying on the output -- see check below)
-# ----------------------------------------------------------------------------
-python hhbbgg_analyzer_multiple.py \
-  --config-year 2024 \
-  --era All \
+  --config-years 2024 --era All \
   -i /eos/user/b/bartek/hhbbgg/higgsdna_v7/2024/merged/scored/ \
   -i /afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2024/data/scored/ \
   -i /afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2024/sim/scored/ \
   --tag DD_2024
 ```
+
+**With all systematics** (requires 3.1 and 3.2 above to have also been run
+with `--all-systematics`, so the variation-folder files actually carry
+real `pDNN_score`/`ttH_killer_score` values):
+```bash
+python hhbbgg_analyzer_lxplus_par.py \
+  --config-years 2024 --era All \
+  -i /eos/user/b/bartek/hhbbgg/higgsdna_v7/2024/merged/scored/ \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2024/data/scored/ \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2024/sim/scored/ \
+  --tag DD_2024_AllSyst \
+  --all-systematics
+```
+
+(2022–2023 example, same flags: replace `-i` with the per-era
+`preEE/postEE/preBPix/postBPix` `scored/` directories and
+`--config-years 2022,2023`.)
+
+> **Filename/flag note.** This document uses `hhbbgg_analyzer_lxplus_par.py`
+> with `--config-years` (plural), matching the script's actual `argparse`
+> definition and everything fixed/tested in this conversation. A
+> differently-named copy (`hhbbgg_analyzer_multiple.py`) using
+> `--config-year` (singular) has also been seen in practice — confirm
+> which file is actually deployed before relying on either flag name; the
+> two are not confirmed to be the same script.
+
 - Each `-i` directory is searched **recursively**, handling both the flat
   background/data layout and the nested `<mass_point>/<systematic>/*.parquet`
   signal layout in the same pass.
-- **By default, only `nominal` is processed** (plus flat files with no
-  systematic-folder structure), matching step 3.1's scoring scope exactly
-  — a systematic-variation file that was never scored would otherwise
-  crash on the missing `pDNN_score` column. Add `--all-systematics` only
-  once step 3.1 has also been rerun with that flag.
+- **Sample identity** is resolved per file, not from the leaf filename
+  alone: falls back to the nearest non-systematic parent directory (e.g.
+  `NMSSM_X700_Y500`, `DDQCCDGJets`) whenever the basename is a generic
+  placeholder like `NOTAG_merged` — every file in the newer HiggsDNA-style
+  production is named identically, so basename-only naming would silently
+  collide unrelated samples onto the same output path. The old flat
+  convention (unique, descriptive basenames) is unaffected.
+- **Systematic dimension**: histogram and tree output paths are now
+  `sample/systematic/region[/variable]`, with `"nominal"` as an explicit
+  value. Weight-based systematics (`Pileup`, `TriggerSF`, `PreselSF`,
+  `ElectronVetoSF`, and the 8-way b-tag SF family) are filled
+  automatically for every nominal-folder MC file — no flag needed, no new
+  input files required, histograms only (not duplicated as full event
+  trees, since kinematics are identical to nominal). `--all-systematics`
+  additionally processes the folder-based (JEC/JER/Smearing/Scale)
+  variation directories, each getting its own single pass at that
+  folder's own label with the nominal weight (object-level and
+  weight-level systematics are evaluated independently, not combined).
+- `weight_central` is not used anywhere in this script's weight
+  computation (confirmed to have no role in this pipeline's
+  normalization) — systematic-varied weights are applied by direct
+  substitution into the same `weight × xsec × lumi` formula nominal uses,
+  swapping in `weight_<syst>Up/Down` for `weight`.
+- By default (no `--all-systematics`), only `nominal` is processed (plus
+  flat files with no systematic-folder structure) — a systematic-variation
+  file that was never scored would otherwise crash on the missing
+  `pDNN_score` column.
 
-**Output:** `outputfiles/merged/DD_CombinedAll/hhbbgg_analyzer-v2-trees.root`
+**Output:** `outputfiles/merged/<tag>/hhbbgg_analyzer-v2-trees.root` and
+`-histograms.root`.
 
 ### 4.1 Validate Data/MC Agreement
 
@@ -190,6 +236,13 @@ Inspect Data/MC plots from the merged output using:
 ```bash
 python hhbbgg_Plotter.py
 ```
+
+> **Known issue, currently blocked.** `plot_stacks.py`'s `dir_to_base()`
+> sample-grouping has the same `DDQCDGJET`/`DDQCCDGJets` naming mismatch
+> already fixed in the analyzer's `is_dd_template()`, plus a hardcoded,
+> manually-maintained `lumi_label()` and hardcoded signal/MC sample lists.
+> Fixing these was blocked on the analyzer sample-collision/tree-cycle fix
+> above landing first — now unblocked, not yet applied.
 
 ---
 
@@ -212,7 +265,7 @@ doubling it on rejection.
 
 ```bash
 python event_categorization/build_pdnn_categories.py \
-  --root outputfiles/merged/DD_CombinedAll/hhbbgg_analyzer-v2-trees.root \
+  --root outputfiles/merged/DD_2024/hhbbgg_analyzer-v2-trees.root \
   --sr-sigma 2.0 --cr-sidebands 4 10 \
   --nmin 50 --min-gain 0.005 --max-bins 2 \
   --alpha-bins 60 \
@@ -225,7 +278,7 @@ python event_categorization/build_pdnn_categories.py \
 
 ```bash
 python event_categorization/build_pdnn_categories.py \
-  --root outputfiles/merged/DD_CombinedAll/hhbbgg_analyzer-v2-trees.root \
+  --root outputfiles/merged/DD_2024/hhbbgg_analyzer-v2-trees.root \
   --sr-sigma 2.0 --cr-sidebands 4 10 \
   --nmin 50 --min-gain 0.005 --max-bins 2 \
   --alpha-bins 60 \
@@ -275,13 +328,15 @@ python event_categorization/build_pdnn_categories.py \
 > the split is worth keeping -- see the validation plan discussed
 > separately.
 
-> **Open item (systematics):** everything above runs on `nominal` only.
-> Turning on `--all-systematics` in steps 3.1/3.2/4 makes `pDNN_score` /
-> `ttH_killer_score` available in the variation trees, but does not by
-> itself wire those into the fit as shape uncertainties, nor revisit
-> whether the nominal-derived category boundaries and mass-sculpting
-> validation still hold under each variation. Treat as a separate,
-> deliberate step once the nominal-only chain is fully validated.
+> **Open item (systematics — datacard wiring):** the analyzer now produces
+> both weight-based and (optionally) folder-based systematic shapes with a
+> proper `sample/systematic/region` output structure. Nothing yet
+> assembles those into a `combine`-style datacard (shape systematics via
+> up/down histogram naming, rate systematics as `lnN` lines) — tracked
+> separately, not part of this document's scope yet. Category boundaries
+> from `build_edges()` are derived from nominal only; whether the same
+> boundaries are reused for every systematic variation or re-derived per
+> variation has not yet been decided.
 
 ---
 
@@ -291,19 +346,27 @@ python event_categorization/build_pdnn_categories.py \
 pDNN_v2.py / pDNN_v_WC.py     tth_killer_v2.py
         | (train)                    | (train)
         v                            v
-inference_PDnn_updated.py  --->  inference_tth_killer.py
- (pDNN_score; nominal-only,     (ttH_killer_score, same folder)
-  X>=300/Y>=90, --recursive)
+inference_PDnn_updated.py  --->  inference_ttH_killer.py
+ (pDNN_score; nominal by         (ttH_killer_score, same folder,
+  default, X>=300/Y>=90,          in place by default)
+  --recursive, optional
+  --all-systematics)
         |                            |
         +-------------+--------------+
                        v
-        hhbbgg_analyzer_lxplus_par.py   (merge + DD background + template fit;
-                       |                 recursive, nominal-only by default)
+        hhbbgg_analyzer_lxplus_par.py   (merge + DD background + weight-based
+                       |                 systematics (automatic) + optional
+                       |                 --all-systematics (folder-based);
+                       |                 output: sample/systematic/region)
                        v
-              hhbbgg_Plotter.py          (Data/MC validation)
-                       |
+              hhbbgg_Plotter.py          (Data/MC validation -- fixes pending,
+                       |                  blocked-then-unblocked, not yet applied)
                        v
         build_pdnn_categories.py /       (alpha(score) categorization,
         categorize_with_tth_split.py      optional ttH-killer pre-split
                                           -> cat/region/tth_branch branches)
+                       |
+                       v
+              [not yet built]             (datacard assembly with systematics
+                                           -- tracked separately)
 ```
