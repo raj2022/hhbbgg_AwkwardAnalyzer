@@ -123,6 +123,14 @@ python inference_tth_killer.py -i /path/to/your/folder \
   --scaler scaler_tth.pkl
 ```
 
+e.g.
+```bash
+python inference_ttH_killer.py \
+  -i /eos/user/b/bartek/hhbbgg/higgsdna_v7/2024/merged/scored/ \
+  --recursive \
+  --model best_tth_killer.pt --scaler scaler_tth.pkl
+  ```
+
 Run once per sample folder — **the same folders scored in step 3.1** — to
 attach the `ttH_killer_score` branch alongside the existing `pDNN_score`
 branch in each file. Both branches must be present before step 5, since
@@ -149,7 +157,21 @@ python hhbbgg_analyzer_lxplus_par.py \
   -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postBPix/scored/ \
   --tag DD_CombinedAll
 ```
-
+e.g. with multiple processing
+```bash
+# ----------------------------------------------------------------------------
+# Run the analyzer -- 2024, signal + data + simulated background
+# (using hhbbgg_analyzer_multiple.py; verify this copy includes the
+#  ttH_killer_score wiring before relying on the output -- see check below)
+# ----------------------------------------------------------------------------
+python hhbbgg_analyzer_multiple.py \
+  --config-year 2024 \
+  --era All \
+  -i /eos/user/b/bartek/hhbbgg/higgsdna_v7/2024/merged/scored/ \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2024/data/scored/ \
+  -i /afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2024/sim/scored/ \
+  --tag DD_2024
+```
 - Each `-i` directory is searched **recursively**, handling both the flat
   background/data layout and the nested `<mass_point>/<systematic>/*.parquet`
   signal layout in the same pass.
