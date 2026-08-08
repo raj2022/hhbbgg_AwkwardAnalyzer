@@ -50,14 +50,14 @@ https://docs.google.com/spreadsheets/d/1vQEHbnte3SOfTylWWmmdbExSwm70tappKtwpo3NT
 - 2022postEE: `/eos/cms/store/group/phys_b2g/HHbbgg/bsahu/higgsdna_v7/2022postEE/merged/`
 
 
-- Backgrounds:
-* 2022: /afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2022/sim
-* 2023: /afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2023/sim
-* 2024: /afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2024/sim
-* 2025: /afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2022/sim
+##  Backgrounds:
+- 2022: `/afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2022/sim`
+- 2023: `/afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2023/sim`
+- 2024: `/afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2024/sim`
+- 2025: `/afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2022/sim`
 
-- data:
-* 2022: /afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2022/data
-* 2023: /afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2023/data
-* 2024: /afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2024/data
-* 2025: /afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2022/data
+## data:
+- 2022: `/afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2022/data`
+- 2023: `/afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2023/data`
+- 2024: `/afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2024/data`
+- 2025: `/afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2022/data`
