@@ -231,18 +231,58 @@ python hhbbgg_analyzer_lxplus_par.py \
 
 ### 4.1 Validate Data/MC Agreement
 
-Inspect Data/MC plots from the merged output using:
+Inspect Data/MC plots from the merged output using `plot_stacks.py` (the
+active script inside `hhbbgg_Plotter.py`'s module):
 
+**Nominal (default):**
 ```bash
-python hhbbgg_Plotter.py
+python plot_stacks.py \
+  --root outputfiles/merged/DD_2024/hhbbgg_analyzer-v2-histograms.root
 ```
 
-> **Known issue, currently blocked.** `plot_stacks.py`'s `dir_to_base()`
-> sample-grouping has the same `DDQCDGJET`/`DDQCCDGJets` naming mismatch
-> already fixed in the analyzer's `is_dd_template()`, plus a hardcoded,
-> manually-maintained `lumi_label()` and hardcoded signal/MC sample lists.
-> Fixing these was blocked on the analyzer sample-collision/tree-cycle fix
-> above landing first — now unblocked, not yet applied.
+**A specific systematic** (e.g. to inspect a weight-based variation's
+shape, or a folder-based one if `--all-systematics` was used upstream):
+```bash
+python plot_stacks.py \
+  --root outputfiles/merged/DD_2024_AllSyst/hhbbgg_analyzer-v2-histograms.root \
+  --systematic PileupUp
+```
+
+Other flags: `--outdir` (default `stack_plots/`, nested as
+`<outdir>/<systematic>/<region>/<var>.{png,pdf}`), `--blind` (blinds the
+signal-mass window in `dibjet_mass`/`diphoton_mass`; off by default).
+
+**Fixed since the last pass through this document** (previously listed as
+"known issue, blocked" — now applied):
+- **Critical path-structure break**: histogram paths were still
+  `sample/region/variable`, missing the `systematic` segment the
+  analyzer now writes (`sample/systematic/region/variable`). Every
+  `path in up` lookup was silently failing — not a crash, just every
+  plot showing "nothing to draw." Fixed by threading a `--systematic`
+  CLI argument (default `"nominal"`) through every path construction.
+- **`dir_to_base()`'s DD-template regex** now matches `DDQCCDGJets`
+  (2024 naming) as well as `DDQCDGJET_Rescaled` (2022 naming), mirroring
+  the identical fix already applied to the analyzer's `is_dd_template()`.
+- **A separate, previously-unnoticed bug found while testing the above**:
+  the `GGJets_(high|low)_Rescaled` DD-template check used `re.match`,
+  which anchors to the start of the string — silently failing on any
+  era-prefixed name (`2022_preEE_GGJets_high_Rescaled`), misclassifying
+  that DD template as a plain `GGJets` background instead. Changed to
+  `re.search`.
+- `--root`, `--outdir`, `--blind` are now proper CLI arguments instead of
+  hardcoded values in `main()`.
+
+**Still deferred, not yet applied** (lower priority, flagged but
+intentionally not bundled into the above):
+- `lumi_label()` is still a hardcoded, manually-commented single value
+  per year/era combination — easy to silently plot with the wrong
+  luminosity if the wrong line is left uncommented. Should eventually be
+  computed the same way the analyzer does (`getLumi(year, era)`),
+  CLI/config-driven rather than hand-edited source.
+- `mc_bases` / `signal_bases` are still hardcoded, manually-maintained
+  lists (most of the 196-point signal grid is commented out). Could
+  auto-discover `NMSSM_*` bases from the file's own top-level directories
+  instead of requiring manual upkeep per mass point.
 
 ---
 
@@ -359,8 +399,10 @@ inference_PDnn_updated.py  --->  inference_ttH_killer.py
                        |                 --all-systematics (folder-based);
                        |                 output: sample/systematic/region)
                        v
-              hhbbgg_Plotter.py          (Data/MC validation -- fixes pending,
-                       |                  blocked-then-unblocked, not yet applied)
+              plot_stacks.py             (Data/MC validation; systematic-
+                       |                  aware via --systematic, DD-naming
+                       |                  fixed; lumi_label/sample lists
+                       |                  still hardcoded, deferred)
                        v
         build_pdnn_categories.py /       (alpha(score) categorization,
         categorize_with_tth_split.py      optional ttH-killer pre-split
