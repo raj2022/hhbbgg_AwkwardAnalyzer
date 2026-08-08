@@ -74,6 +74,7 @@ binning["preselection"] = {
     "lepton1_pfIsoId":[100,0,100],
     "n_jets":[10,0,15], # changed binning from 100 to 15.
     "pDNN_score":[20,0,1],
+    "ttH_killer_score":[20,0,1],
     # Additional BTV variables can be added here
     "Njets2p5":[10,0,15],
     "HT":[20,0,1000],
