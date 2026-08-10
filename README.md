@@ -1,292 +1,176 @@
 # hhbbgg AwkwardAnalyzer
-Repository to keep the analyzers using awkward arrays, using skimmer or nanoAOD as input.
 
-### Dependencies
-Following packages are needed for the analyzer to work
-```
-matplotlib
-uproot
-hist
-numpy
-mplhep
-vector
-root
-awkward
-pandas
-pyarrow
-```
-A virtual environment can be created for this using the following command
-```
-conda env create -f requirement.yaml
-```
-if available, do it with mamba, it's much faster
-```
-mamba env create -f requirement.yaml
-```
-To use the framework, the environment created by conda has to be activated every time. It can be done as follows:
-```
-conda activate hhbbgg-awk
-```
-For now the analyzer can be run normally using python
+Analysis framework for the X→YH→bbγγ resonant search, using
+[awkward-array](https://awkward-array.org/)-based processing of
+skimmed/NanoAOD-derived samples. Covers pDNN and ttH-killer network
+scoring, event processing (histograms + trees, with a full systematic
+dimension), Data/MC validation, and score-based event categorization.
 
-#### with `.root` file
-```
-python hhbbgg_Analyzer.py -i <Input root file directory OR single root file>
-```
-provided that the input directory having one root file for each background is defined with the variable name `inputfilesDir` in `hhbbgg_Analyzer.py`.
-This saves a root file in `outputfiles` which contains sample names as directory and all the histograms are saved inside those directories.
+For the complete, up-to-date command sequence with explanations of every
+flag, see **`Analysis_Commands.md`** in this repository — that document is
+the maintained source of truth for the pipeline and is kept in sync with
+the scripts as they change. This README gives an overview and quick
+reference; anything here that conflicts with `Analysis_Commands.md` should
+be resolved in favor of the latter.
 
-#### with `.parquet` file
-```
-python hhbbgg_Analyzer_parquet.py -i <Input root file directory OR single root file>
-```
-e.g. with all file moved in this `NMSSM_v2`
-```
-python hhbbgg_Analyzer_parquet.py -i ../../output_root/v2_production_central/
-```
+---
 
-To plot the histograms `hhbbgg_Plotter.py` can be used as:
-```
-python hhbbgg_Plotter.py
-```
-The plots will be saved in `stack_plots` directory
+## Installation
 
-To add the variable, changes are to be done in `hhbbgg_Analyzer.py`, `binning.py` and `variables.py` file
-
-To plot the histogram of the variable, it has to be added in `histogram_names` list and `xtitle_dict` dictionary in `hhbbgg_Plotter.py` file
-
-
-### Fixing issues of seg fault on lxplus
-with files `hhbbgg_analyzer_lxplus_par.py`, it fixes the seg fault.  
 ```bash
-python hhbbgg_analyzer_lxplus_par.py -i ~/public/samples/VBFHToGG.parquet
-```
-
-
-# Quickstart
-```bash
-# 1. Clone the repository
 git clone https://github.com/raj2022/hhbbgg_AwkwardAnalyzer.git
-cd hhbbgg-AwkwardAnalyzer
+cd hhbbgg_AwkwardAnalyzer
+```
 
-# 2. Install micromamba (lightweight, recommended)
+Three environment managers are referenced across this project's history
+(`conda`, `mamba`, `micromamba`) — **pick one and confirm the environment
+file it reads actually exists and is current** (`requirement.yaml` and
+`environment.yml` have both been referenced; verify which is real before
+relying on either):
+
+```bash
+# conda / mamba (faster)
+mamba env create -f requirement.yaml
+conda activate hhbbgg-awk
+
+# micromamba (lightweight alternative)
 curl -Ls https://micro.mamba.pm/install.sh | bash
 export PATH="$HOME/.local/bin:$PATH"
-
-# 3. Create the environment
 micromamba create -f environment.yml
-
-# 4. Activate the environment
 micromamba activate hhbbgg-awk
-
-# 5. Run the analyzer (example with .root file)
-python hhbbgg_Analyzer.py -i <input_root_file_or_dir>
 ```
 
-## Changes according to `Era`
+**Dependencies:** `matplotlib`, `uproot`, `hist`, `numpy`, `mplhep`,
+`vector`, `root`, `awkward`, `pandas`, `pyarrow`.
 
-### Single era/year (use config)
-```bash
-python hhbbgg_analyzer_lxplus_par.py --year 2022 --era PostEE
+---
+
+## Pipeline Overview
+
+```
+pDNN training  →  ttH-killer training  →  score samples (both networks)
+     →  run the analyzer  →  validate Data/MC  →  event categorization
+     →  [datacard + fit — not yet built, tracked separately]
 ```
 
-This will:
-* Read Parquet files from the path defined in datasets.yaml
-* Write outputs to:
+Full commands, flags, and the reasoning behind each design decision are
+in `Analysis_Commands.md`. Summary below.
+
+### 1–2. Train the networks
 ```bash
-outputfiles/2022/PostEE/
-  ├─ hhbbgg_analyzer-v2-histograms.root
-  └─ hhbbgg_analyzer-v2-trees.root
+python pDNN_v2.py          # parameterized DNN (with correlation pruning)
+python tth_killer_v2.py    # ttH-killer network
 ```
 
-### Override input path manually
+### 3. Score samples
+Both networks are applied to the same sample folders, one after the
+other. By default only the `nominal` subfolder is scored (systematic
+variations are opt-in via `--all-systematics`, and must be requested
+consistently across every stage below if used):
 ```bash
-python hhbbgg_analyzer_lxplus_par.py --year 2022 --era PostEE \
-  -i /afs/cern.ch/user/s/sraj/public/samples
-```
-### combine everything (2022 + 2023, all eras)
-Provide `-i` multiple times:
-```bash
-python hhbbgg_analyzer_lxplus_par.py --year 2023 --era All \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preEE \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postEE \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preBPix \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postBPix \
-  --tag CombinedAll
-```
-### For individual eras
-#### 2022 only
-```bash
-# 2022 PreEE (C+D)
-python hhbbgg_analyzer_lxplus_par.py \
-  --year 2022 --era PreEE \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preEE \
-  --tag Y2022_PreEE
-
-# 2022 PostEE (E+F+G)
-python hhbbgg_analyzer_lxplus_par.py \
-  --year 2022 --era PostEE \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postEE \
-  --tag Y2022_PostEE
-```
-#### 2023 only
-
-```bash
-# 2023 preBPix (Era C)
-python hhbbgg_analyzer_lxplus_par.py \
-  --year 2023 --era preBPix \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preBPix \
-  --tag Y2023_preBPix
-
-# 2023 postBPix (Era D)
-python hhbbgg_analyzer_lxplus_par.py \
-  --year 2023 --era postBPix \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postBPix \
-  --tag Y2023_postBPix
+python inference_PDnn_updated.py -i <merged_sample_dir> --recursive
+python inference_ttH_killer.py -i <merged_sample_dir>/scored/ --recursive \
+  --model best_tth_killer.pt --scaler scaler_tth.pkl
 ```
 
-### drive from `datasets.yaml` (no `-i`)
-If you wired `RunConfig` to use `cfg.raw_paths` when `-i` isn’t given, you can run:
-```bash
-# From YAML: 2022 (PreEE+PostEE)
-python hhbbgg_analyzer_lxplus_par.py --year 2022 --era All --tag Combined2022
-
-# From YAML: 2023 (preBPix+postBPix)
-python hhbbgg_analyzer_lxplus_par.py --year 2023 --era All --tag Combined2023
-```
-
-
-
-
-### With DD sample:
-
-#### Combine DD (2022 + 2023, all eras)
-with only a file
-```bash
-python hhbbgg_analyzer_lxplus_par.py --year 2023 --era All \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preEE/DDQCDGJET_Rescaled.parquet \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postEE/DDQCDGJET_Rescaled.parquet \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preBPix/DDQCDGJET_Rescaled.parquet \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postBPix/DDQCDGJET_Rescaled.parquet \
-  --tag DD_CombinedAll
-```
-with whole folder
-```bash
-python hhbbgg_analyzer_lxplus_par.py --year 2023 --era All \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preEE/ \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postEE/ \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preBPix/ \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postBPix/ \
-  --tag DD_CombinedAll
-```
-
-For individual eras
-
-#### 2022 only
-```bash
-# 2022 PreEE
-python hhbbgg_analyzer_lxplus_par.py \
-  --year 2022 --era PreEE \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preEE/DDQCDGJET_Rescaled.parquet \
-  --tag DD_Y2022_PreEE
-
-# 2022 PostEE
-python hhbbgg_analyzer_lxplus_par.py \
-  --year 2022 --era PostEE \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postEE/DDQCDGJET_Rescaled.parquet \
-  --tag DD_Y2022_PostEE
-```
-#### 2023 only 
-```bash
-# 2023 preBPix
-python hhbbgg_analyzer_lxplus_par.py \
-  --year 2023 --era preBPix \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preBPix/DDQCDGJET_Rescaled.parquet \
-  --tag DD_Y2023_preBPix
-
-# 2023 postBPix
-python hhbbgg_analyzer_lxplus_par.py \
-  --year 2023 --era postBPix \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postBPix/DDQCDGJET_Rescaled.parquet \
-  --tag DD_Y2023_postBPix
-```
-
-
-
-
-## For Changing variables
-- Change variables in these variables.
-* `binning.py`
-* `hhbbgg_analyzer_lxplus_par.py`
-* `variables.py`
-- If adding particleNet regrressed masss 
-* `regions.py`
-
-## For including file name:
- - Inlcude the file name or similar structure in the `normalisation.py`
- - further include it the Plotter, `hhbbgg_Plotter.py`
- 
-
-## 2024
-- To run only the 2024 signal samples
-```bash
-python hhbbgg_analyzer_lxplus_par.py --year 2024 -i /eos/user/b/bsahu/HiggsDNA_v4PrelimProd/2024/merged/NMSSM-XtoYH-MX-300-MY-100/NOTAG_merged.parquet
-``` 
-
-- To run on the complete dataset for three years:
+### 4. Run the analyzer
 ```bash
 python hhbbgg_analyzer_lxplus_par.py \
-  --config-year 2024 \
-  -i /eos/user/s/sraj/Work_/CUA_20--/Analysis/output_root/v4_production/2024 \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preEE/ \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postEE/ \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/preBPix/ \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/v3_production/samples/postBPix/ \
-  --tag DD_CombinedAll
+  --config-years <year(s)> --era <era> \
+  -i <scored_signal_dir> -i <scored_data_dir> -i <scored_background_dir> \
+  --tag <run_tag>
 ```
 
+> **Flag-name warning.** Different copies of this script in active use
+> have used `--year`, `--config-year` (singular), and `--config-years`
+> (plural) — all three appear across this repository's own history,
+> including within this README. **Confirm which flag the copy you are
+> actually running accepts** (`python hhbbgg_analyzer_lxplus_par.py --help`)
+> before trusting any example command, here or elsewhere. This has caused
+> real failed runs; it is not a cosmetic inconsistency.
 
--  To Run only 2022
+Output: `outputfiles/merged/<tag>/hhbbgg_analyzer-v2-trees.root` and
+`-histograms.root`. Histogram/tree paths inside these files are structured
+`sample/systematic/region[/variable]`, with `nominal` as an explicit value.
+
+### 5. Validate Data/MC agreement
 ```bash
-python hhbbgg_analyzer_lxplus_par.py \
-  --config-year 2022 \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/sample_final_nominal/preEE/ \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/sample_final_nominal/postEE/
-```
--  To Run only 2023
-```bash
-python hhbbgg_analyzer_lxplus_par.py \
-  --config-year 2023 \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/sample_final_nominal/preBPix/ \
-  -i /afs/cern.ch/user/s/sraj/Analysis/output_root/sample_final_nominal/postBPix/
-```
-
-- To run only 2024:
-```bash
- python hhbbgg_analyzer_lxplus_par.py \
- --config-year 2024 \
- -i /eos/user/s/sraj/Work_/CUA_20--/Analysis/output_root/sample_final_nominal/2024 
- ```
-
--  The above approach works fine. However, reading across multiple years simultaneously is described in the following document:
-https://github.com/raj2022/hhbbgg_AwkwardAnalyzer/blob/2024_data/command/analyzer_running.md 
-
-
-# To Run the systematics
-```bash
-python make_templates.py \
-  --year 2022 \
-  /afs/cern.ch/user/s/sraj/Analysis/output_parquet/v3_production/production_v3/2022_postEE/merged/NMSSM_X300_Y100/
+python hhbbgg_Plotter.py --root outputfiles/merged/<tag>/hhbbgg_analyzer-v2-histograms.root
 ```
 
+### 6. Event categorization
+```bash
+python event_categorization/build_pdnn_categories.py \
+  --root outputfiles/merged/<tag>/hhbbgg_analyzer-v2-trees.root \
+  --outdir <outdir> --write-categorized --per-mass
+```
+An optional ttH-killer pre-split variant exists at
+`event_categorization/event_categorization_tth.py` (adds `--tth-cut`).
 
+---
 
+## Output Storage Conventions
 
+Analyzer output is written to `outputfiles/merged/<tag>/`. Some existing
+per-year/combined outputs on `/afs`:
 
+| Tag | Path |
+|---|---|
+| 2022 (All) | `outputfiles/merged/2022_All/hhbbgg_analyzer-v2-histograms.root` |
+| 2023 (All) | `outputfiles/merged/2023_All/hhbbgg_analyzer-v2-histograms.root` |
+| 2024 (All) | `outputfiles/2024_All/` |
 
-# Files storage for year and combined
-Files after processed through `analyzer`
-* 2022 : `/afs/cern.ch/user/s/sraj/Analysis/hhbbgg_AwkwardAnalyzer/outputfiles/merged/2022_All/hhbbgg_analyzer-v2-histograms.root`
-* 2023:`/afs/cern.ch/user/s/sraj/Analysis/hhbbgg_AwkwardAnalyzer/outputfiles/merged/2023_All/hhbbgg_analyzer-v2-histograms.root`
-* 2024: `/afs/cern.ch/user/s/sraj/Analysis/hhbbgg_AwkwardAnalyzer/outputfiles/2024_All`
-* Combined_all = 
+**Verify these paths still exist and still correspond to output produced
+by the current version of the analyzer before relying on them** —
+significant fixes have landed in the analyzer since any of these may have
+last been produced (sample-name resolution, tree-cycle handling, the
+systematic dimension); older files at these paths may predate those fixes
+and should not be treated as current.
+
+---
+
+## Adding Variables / Regions
+
+- New variables: `binning.py`, `variables.py`, and
+  `hhbbgg_analyzer_lxplus_par.py` (where the variable is computed/read).
+- ParticleNet-regressed mass additions: also touch `regions.py`.
+- New sample/file names: add to `normalisation.py` (cross-section/lumi
+  lookup) and to the plotting script's sample-grouping logic.
+
+---
+
+## Known Open Items
+
+- **`--year` / `--config-year` / `--config-years` flag-name
+  inconsistency** across different deployed copies of the analyzer —
+  needs a single confirmed answer, not per-command guessing.
+- **VH background** (`WmHToGG`/`WpHToGG`/`ZHToGG`) not currently combined
+  in the Plotter's sample grouping — tracked separately.
+- **Datacard/fit stage** does not exist yet in this repository as
+  reviewed; the pipeline currently ends at event categorization.
+- See `Analysis_Commands.md`'s "Open item" callouts for the complete,
+  current list (working-point validation, systematics-in-datacard
+  wiring, category-boundary freeze-vs-per-systematic decision).
+
+---
+
+## Legacy / Unverified
+
+The following are referenced in this repository's history but were **not
+part of the verification and fixes described in `Analysis_Commands.md`**.
+Treat any command below as unconfirmed until independently checked —
+listed here for completeness, not as a recommendation to use as-is:
+
+- `hhbbgg_Analyzer.py` — original `.root`-input analyzer
+  (`python hhbbgg_Analyzer.py -i <dir_or_file>`)
+- `hhbbgg_Analyzer_parquet.py` — original `.parquet`-input analyzer,
+  distinct from `hhbbgg_analyzer_lxplus_par.py`
+  (`python hhbbgg_Analyzer_parquet.py -i <dir>`)
+- `make_templates.py` — referenced for systematics template production
+  (`python make_templates.py --year <year> <sample_dir>`); not reviewed,
+  not confirmed to still exist or function
+- The historical "segfault fix" note pointing at
+  `hhbbgg_analyzer_lxplus_par.py -i ~/public/samples/VBFHToGG.parquet` —
+  predates the `-i`/`--recursive`/`--config-years` interface described
+  above; the single-file invocation style may no longer match the current
+  argument parser
