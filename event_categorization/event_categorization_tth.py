@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
+#event_categorization_tth.py
 import argparse, json, os, re, math
 import numpy as np
 import awkward as ak
@@ -54,13 +54,31 @@ def mass_tag_from_dir(name: str) -> str:
     return f"m{m2.group(1)}" if m2 else "combined"
 
 def collect_dirs(fin):
-    dirs = []
+    """Return only TRUE top-level sample directory names.
+
+    `fin.keys()` (non-recursive) in this uproot version still returns
+    every nested key, not just top-level ones -- and every intermediate
+    directory (e.g. "sample/nominal") is itself a ReadOnlyDirectory, so a
+    naive "is this a directory" filter treats every systematic
+    subdirectory as if it were its own separate top-level sample. Fixed
+    identically to the same bug in build_pDNN_categories.py: only keep
+    the first path segment of each key, deduplicated via string parsing
+    before any file access (one open per unique top-level name, not one
+    per nested key).
+    """
+    candidates = set()
     for dkey in fin.keys():
         dbase = dkey.split(";")[0]
-        obj = fin[dkey]
-        if isinstance(obj, uproot.reading.ReadOnlyDirectory) and dbase not in dirs:
-            dirs.append(dbase)
-    return dirs
+        top = dbase.split("/")[0]
+        if top:
+            candidates.add(top)
+
+    tops = []
+    for top in sorted(candidates):
+        obj = fin[top]
+        if isinstance(obj, uproot.reading.ReadOnlyDirectory):
+            tops.append(top)
+    return tops
 
 def get_tree_key(tdir, base):
     for tkey in tdir.keys():
@@ -201,6 +219,14 @@ def main():
                           "ttH-enriched) BEFORE pDNN categorization; the existing edge-building "
                           "algorithm then runs independently, unmodified, in each branch. "
                           "If omitted, behaves exactly as before (single 'combined' branch).")
+    ap.add_argument("--systematic", default="nominal",
+                     help="Which systematic's trees to read (default: nominal). The analyzer's "
+                          "output structure is sample/systematic/region -- this selects the "
+                          "middle segment. Category boundaries (for every tag/branch) are "
+                          "derived from, and --write-categorized only processes, this ONE "
+                          "systematic; whether boundaries should be frozen on nominal and "
+                          "reused elsewhere, or re-derived per systematic, is an open decision "
+                          "not resolved by this flag alone.")
     args = ap.parse_args()
 
     os.makedirs(args.outdir, exist_ok=True)
@@ -238,13 +264,26 @@ def main():
                 )
             return buckets[key]
 
+        n_used = n_skipped_no_tree = n_skipped_missing_fields = 0
         for dbase in dir_bases:
             tdir = fin[dbase]
-            sel_key = get_tree_key(tdir, TREE_NAME)
+
+            # Analyzer output is now sample/systematic/region, not the old
+            # sample/region -- descend into the requested systematic
+            # subdirectory first, same fix as build_pDNN_categories.py. A
+            # directory with no such subdirectory at all (flat/legacy
+            # file) falls back to looking directly in tdir.
+            if args.systematic in [k.split(";")[0] for k in tdir.keys()]:
+                systdir = tdir[args.systematic]
+            else:
+                systdir = tdir
+
+            sel_key = get_tree_key(systdir, TREE_NAME)
             if sel_key is None:
+                n_skipped_no_tree += 1
                 continue
 
-            tree = tdir[sel_key]
+            tree = systdir[sel_key]
             tfields = set(tree.keys())
             needed = {BR_SCORE, BR_MGG, BR_WGT, BR_ISDATA}
             if tth_cut is not None:
@@ -252,7 +291,9 @@ def main():
             if not needed.issubset(tfields):
                 if tth_cut is not None and args.tth_branch not in tfields:
                     print(f"[warn] '{dbase}': missing ttH-killer branch '{args.tth_branch}'; skipping.")
+                n_skipped_missing_fields += 1
                 continue
+            n_used += 1
 
             read_fields = [BR_SCORE, BR_MGG, BR_WGT, BR_ISDATA]
             if tth_cut is not None:
@@ -315,6 +356,15 @@ def main():
                     dest["B_cr_scores_mc"].append(score_np[mc_np][csel])
                     dest["B_cr_w_mc"].append(w_np[mc_np][csel])
 
+        print(f"[INFO] systematic='{args.systematic}': used {n_used}/{len(dir_bases)} sample "
+              f"directories ({n_skipped_no_tree} had no '{TREE_NAME}' tree under this "
+              f"systematic, {n_skipped_missing_fields} were missing required branches)")
+        if n_used == 0:
+            print(f"[WARN] No usable trees found for systematic='{args.systematic}' -- check "
+                  f"the spelling matches what the analyzer actually wrote (e.g. 'nominal'), "
+                  f"and that --root points at a file produced by the current analyzer version "
+                  f"(sample/systematic/region structure, not the older sample/region layout).")
+
     # -------- build edges with alpha(score), per (tag, branch) --------
     # results[tag][branch] = edges
     results = {}
@@ -367,14 +417,11 @@ def main():
         )
         with uproot.open(args.root) as fin, uproot.recreate(out_root) as fout:
 
-            for dkey in fin.keys():
-                obj = fin[dkey]
-                dbase = dkey.split(";")[0]
-                if isinstance(obj, uproot.reading.ReadOnlyDirectory):
-                    try:
-                        fout.mkdir(dbase)
-                    except Exception:
-                        pass
+            for dbase in collect_dirs(fin):
+                try:
+                    fout.mkdir(dbase)
+                except Exception:
+                    pass
 
             def write_tree(out_dir, tname: str, arrays_np: dict):
                 clean = {}
@@ -411,17 +458,33 @@ def main():
                 out_tree = out_dir.mktree(tname, branch_types)
                 out_tree.extend(clean)
 
-            for dkey in fin.keys():
-                in_dir_obj = fin[dkey]
-                if not isinstance(in_dir_obj, uproot.reading.ReadOnlyDirectory):
-                    continue
+            n_copied_samples = 0
+            for dbase in collect_dirs(fin):
+                in_dir_obj = fin[dbase]
+                sample_out_dir = fout[dbase]
 
-                dbase = dkey.split(";")[0]
-                out_dir = fout[dbase]
+                # Analyzer output is now sample/systematic/region -- descend
+                # into the requested systematic subdirectory before looking
+                # for trees, same fix as the boundary-fitting loop above.
+                # Only this ONE systematic is copied into the categorized
+                # output for now (see --systematic help text).
+                child_names = [k.split(";")[0] for k in in_dir_obj.keys()]
+                if args.systematic in child_names:
+                    syst_in_dir = in_dir_obj[args.systematic]
+                    try:
+                        out_dir = sample_out_dir.mkdir(args.systematic)
+                    except Exception:
+                        out_dir = sample_out_dir[args.systematic]
+                else:
+                    # Flat/legacy structure with no systematic subdirectory.
+                    syst_in_dir = in_dir_obj
+                    out_dir = sample_out_dir
 
-                for tkey in in_dir_obj.keys():
+                n_copied_samples += 1
+
+                for tkey in syst_in_dir.keys():
                     tbase = tkey.split(";")[0]
-                    tree  = in_dir_obj[tkey]
+                    tree  = syst_in_dir[tkey]
 
                     required_ok = (
                         tbase == TREE_NAME
@@ -494,7 +557,7 @@ def main():
                         arrays_np["tth_branch"] = tth_branch_arr  # 0=depleted, 1=enriched
                     write_tree(out_dir, tbase, arrays_np)
 
-        print(f"Wrote {out_root}")
+        print(f"Wrote {out_root} ({n_copied_samples} sample(s), systematic='{args.systematic}')")
 
 
 if __name__ == "__main__":
