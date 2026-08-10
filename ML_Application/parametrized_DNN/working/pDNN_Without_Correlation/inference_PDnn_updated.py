@@ -369,7 +369,6 @@
 #                      backgrounds=backgrounds,
 #                      datas=datas,
 #                      out_prefix="otherSamples")
-
 #!/usr/bin/env python3
 """
 Score all Parquet files in a folder with a Parameterized DNN.
@@ -576,6 +575,22 @@ def predict_batched(model: nn.Module, X_torch: torch.Tensor, device: torch.devic
     """
     Returns probabilities in [0,1] for the positive class.
     Supports models with 1-logit (sigmoid) or 2-logit (softmax) heads.
+
+    IMPORTANT: under CUDA autocast, the forward pass (including logits)
+    runs in float16. If sigmoid/softmax were applied directly to those
+    float16 logits, the resulting probability would be QUANTIZED to
+    float16's grid spacing -- coarse enough (~5e-4 near 1.0) to produce
+    visibly discrete "comb" artifacts in the score distribution's tail,
+    and to saturate to exactly 1.0 far more readily than float32 does.
+    Confirmed against a real trained model's output: the most common
+    near-1.0 score values matched float16 grid points bit-for-bit.
+    `.astype("float32")` at the end of this function does NOT fix this --
+    it only widens the storage after the precision has already been lost.
+    Logits are explicitly upcast to float32 BEFORE sigmoid/softmax below,
+    so autocast still speeds up the bulk matrix multiplications, but the
+    final probability -- which is exactly what downstream category-
+    boundary searches depend on most sensitively, right at the extreme
+    tail -- is computed at full precision.
     """
     model.eval()
     out = []
@@ -585,6 +600,7 @@ def predict_batched(model: nn.Module, X_torch: torch.Tensor, device: torch.devic
         if device.type == "cuda" and USE_AMP:
             with torch.amp.autocast("cuda"):
                 logits = model(xb)
+            logits = logits.float()  # upcast BEFORE sigmoid/softmax, not after
         else:
             logits = model(xb)
 
@@ -762,6 +778,37 @@ def main():
     pattern = str(inp_dir / ("**/" + args.pattern if args.recursive else args.pattern))
     files = sorted(glob.glob(pattern, recursive=args.recursive))
     files = [Path(f) for f in files if Path(f).is_file()]
+
+    # Exclude anything already inside the output directory. By default
+    # out_dir is <input>/scored -- a subdirectory of the very tree being
+    # recursively scanned -- so without this, a second run over the same
+    # -i (e.g. to rescore after a bugfix) sweeps up every already-scored
+    # output file as if it were fresh raw input, reprocessing it and
+    # writing it into a confusing doubly-nested <input>/scored/scored/...
+    # Verified: reproduced with a synthetic tree before this fix (2 files
+    # found where only 1 raw input file existed).
+    out_dir_resolved = out_dir.resolve()
+    before_count = len(files)
+    files = [f for f in files if out_dir_resolved not in f.resolve().parents]
+    n_excluded = before_count - len(files)
+    if n_excluded:
+        print(f"[INFO] Excluded {n_excluded} file(s) already inside the output "
+              f"directory ({out_dir_resolved}) from being treated as input.")
+
+    # Second, more general safeguard: exclude anything under a directory
+    # literally named "scored" anywhere in its path, not just this run's
+    # own out_dir. Covers a residual case the check above doesn't: if a
+    # DIFFERENT --output was used on a previous run, that older scored/
+    # folder isn't this run's out_dir, so it wouldn't otherwise be caught
+    # -- but "scored" is an unambiguous, pipeline-specific marker that a
+    # file is output, never legitimate raw input, in this convention.
+    before_count = len(files)
+    files = [f for f in files if "scored" not in [p.name for p in f.parents]]
+    n_excluded_generic = before_count - len(files)
+    if n_excluded_generic:
+        print(f"[INFO] Excluded {n_excluded_generic} additional file(s) found under "
+              f"a directory named 'scored' elsewhere in the input tree (likely output "
+              f"from a previous run with a different --output).")
 
     if not files:
         print(f"[WARN] No files matched pattern {args.pattern} in {inp_dir}")
