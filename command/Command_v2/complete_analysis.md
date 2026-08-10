@@ -162,7 +162,7 @@ template fitting.
 
 **Nominal only (default):**
 ```bash
-python hhbbgg_analyzer_lxplus_par.py \
+python hhbbgg_analyzer_with_systematics.py \
   --config-years 2024 --era All \
   -i /eos/user/b/bartek/hhbbgg/higgsdna_v7/2024/merged/scored/ \
   -i /afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2024/data/scored/ \
@@ -174,7 +174,7 @@ python hhbbgg_analyzer_lxplus_par.py \
 with `--all-systematics`, so the variation-folder files actually carry
 real `pDNN_score`/`ttH_killer_score` values):
 ```bash
-python hhbbgg_analyzer_lxplus_par.py \
+python hhbbgg_analyzer_with_systematics.py \
   --config-years 2024 --era All \
   -i /eos/user/b/bartek/hhbbgg/higgsdna_v7/2024/merged/scored/ \
   -i /afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2024/data/scored/ \
@@ -231,19 +231,18 @@ python hhbbgg_analyzer_lxplus_par.py \
 
 ### 4.1 Validate Data/MC Agreement
 
-Inspect Data/MC plots from the merged output using `plot_stacks.py` (the
-active script inside `hhbbgg_Plotter.py`'s module):
+Inspect Data/MC plots from the merged output using `hhbbgg_Plotter.py`:
 
 **Nominal (default):**
 ```bash
-python plot_stacks.py \
+python hhbbgg_Plotter.py \
   --root outputfiles/merged/DD_2024/hhbbgg_analyzer-v2-histograms.root
 ```
 
 **A specific systematic** (e.g. to inspect a weight-based variation's
 shape, or a folder-based one if `--all-systematics` was used upstream):
 ```bash
-python plot_stacks.py \
+python hhbbgg_Plotter.py \
   --root outputfiles/merged/DD_2024_AllSyst/hhbbgg_analyzer-v2-histograms.root \
   --systematic PileupUp
 ```
@@ -299,9 +298,23 @@ The category-boundary search itself (`build_edges()`) implements the exact
 the next `--nmin` highest-scoring *remaining* events, accept it only if
 summed AMS² improves by >= `--min-gain` over the currently-accepted SRs alone
 (not a fixed grand total), resetting `--nmin` after each acceptance and
-doubling it on rejection.
+doubling it on rejection. Identical in both scripts below.
 
-**Baseline (pDNN-only, no ttH-killer split):**
+**`--sigmoid-score` is RESOLVED: do not pass it.** Confirmed directly from
+a Data/MC stack plot of `pDNN_score` -- the distribution spans exactly
+[0.0, 1.0] with real physics structure at both edges, meaning
+`inference_PDnn_updated.py`'s output is already a probability
+(`predict_batched()` applies `torch.sigmoid()`/`torch.softmax()`
+internally). Passing `--sigmoid-score` on top would apply sigmoid a
+second time, compressing the whole distribution toward 0.5 and
+destroying the separation power visible in that plot. Both commands
+below have had the flag removed accordingly. Separately, `ttH_killer_score`
+is also already a probability in [0, 1] (`inference_tth_killer.py` applies
+`sigmoid()` internally, matching `tth_killer_v2.py`'s
+`BCEWithLogitsLoss` training) — neither script here applies any
+additional transform to it, which is correct as-is.
+
+**Baseline (pDNN-only, no ttH-killer split) -- `event_categorization/build_pdnn_categories.py`:**
 
 ```bash
 python event_categorization/build_pdnn_categories.py \
@@ -310,55 +323,67 @@ python event_categorization/build_pdnn_categories.py \
   --nmin 50 --min-gain 0.005 --max-bins 2 \
   --alpha-bins 60 \
   --outdir slides_fitting/CMSSW_14_1_0_pre4/src/outputs/categories_alpha_3cats \
-  --write-categorized --sigmoid-score
+  --write-categorized
 ```
 
-**With the ttH-killer pre-split**, using the Tight working point
-(ε(ttH)=0.10 → cut=0.401 from the trained model's validation-set scan):
+**With the ttH-killer pre-split -- `event_categorization/event_categorization_tth.py`**
+(confirmed filename; the earlier "`categorize_with_tth_split.py`" naming
+note below was a placeholder guess, now corrected), using the Tight
+working point (ε(ttH)=0.10 → cut=0.401 from the trained model's
+validation-set scan):
 
 ```bash
-python event_categorization/build_pdnn_categories.py \
+python event_categorization/event_categorization_tth.py \
   --root outputfiles/merged/DD_2024/hhbbgg_analyzer-v2-trees.root \
   --sr-sigma 2.0 --cr-sidebands 4 10 \
   --nmin 50 --min-gain 0.005 --max-bins 2 \
   --alpha-bins 60 \
   --outdir slides_fitting/CMSSW_14_1_0_pre4/src/outputs/categories_tth_split_tight \
-  --write-categorized --sigmoid-score \
+  --write-categorized \
   --tth-cut 0.401
 ```
 
-> **Naming note.** The `--tth-cut` / `--tth-branch` flags require the
-> updated version of this script (`categorize_with_tth_split.py`). Either
-> replace `build_pdnn_categories.py` with the updated version, keeping the
-> same filename, or update the command above to point at the new
-> filename — whichever keeps the rest of the pipeline's references
-> consistent.
+**Fixed in both scripts since the last pass through this document**
+(both had independently-introduced copies of the same three bugs, since
+neither reused a shared helper module -- each was audited and fixed
+separately, then verified end to end against a fake file matching the
+analyzer's real `sample/systematic/region` output structure):
+- **`collect_dirs()` nested-path pollution**: non-recursive `fin.keys()`
+  in this uproot version still returns every nested key, and every
+  intermediate directory (e.g. `sample/nominal`) is itself a
+  `ReadOnlyDirectory` -- so every systematic subdirectory was being
+  treated as its own separate "sample." In the worst case this caused
+  silent cross-systematic contamination, not just double-counting: a
+  spurious `sample/PileupUp` entry has no `nominal` child to descend
+  into, so the (now-fixed) systematic-descent logic fell back to reading
+  *that* entry directly -- silently mixing PileupUp-systematic events
+  into what was requested as `--systematic nominal`. Fixed identically in
+  both scripts: top-level names derived via first-path-segment string
+  parsing, deduplicated before any file access.
+- **Stale `sample/region` tree-access assumption**: both scripts looked
+  for the `selection` tree directly inside the sample directory. Since
+  the analyzer now writes `sample/systematic/region`, this either found
+  nothing (main scoring loop -- silent skip) or crashed outright
+  (`--write-categorized`'s copy loop, calling `.arrays()` on what's now a
+  subdirectory object). Fixed by adding `--systematic` (default
+  `nominal`) to both scripts, descending into it before any tree lookup.
+- **Loud diagnostics added**: both scripts now print
+  `[INFO] systematic='...': used N/M sample directories (...)` so a wrong
+  `--systematic` value, or a file from the older analyzer structure,
+  fails visibly instead of silently producing empty or wrong results.
+  Worth checking this line first after any run.
 
-**Outputs:**
-- `event_categories.json` — derived category boundaries, now nested per
-  mass tag *and* per ttH branch (`tth_low` / `tth_high`) when `--tth-cut`
-  is used; a single `"combined"` branch otherwise
-- `hhbbgg_analyzer-v2-trees__categorized.root` — input file cloned with
-  `cat`/`region` branches added, plus `tth_branch` (0=depleted,
-  1=enriched) when `--tth-cut` is used
-
-> **Open item (pDNN):** `--sigmoid-score` applies a sigmoid to
-> `pDNN_score` before categorization. This is only correct if the score
-> written by `inference_PDnn_updated.py` is a raw logit. If it is already
-> a probability in [0, 1] (as `predict_batched()` in that script already
-> applies `torch.sigmoid()`/`torch.softmax()` internally, suggesting it
-> is), this flag would apply sigmoid twice and should be dropped. Verify
-> the range of `pDNN_score` in the analyzer output before relying on
-> results from this step. *(To be confirmed -- see follow-up.)*
-
-> **Open item (ttH killer):** `inference_tth_killer.py` already applies
-> `sigmoid()` internally (matching how `tth_killer_v2.py` trains with
-> `BCEWithLogitsLoss` and evaluates with `torch.sigmoid(...)`), so
-> `ttH_killer_score` written to the tree is already a probability in
-> [0, 1] -- **do not** additionally sigmoid it downstream. This is
-> independent of whatever is decided for `pDNN_score` above; the two
-> scores may have different conventions and should be checked
-> separately.
+**Outputs (from `--outdir`):**
+- `event_categories.json` — derived category boundaries, nested per mass
+  tag *and* per ttH branch (`tth_low` / `tth_high`) when `--tth-cut` is
+  used (event_categorization_tth.py only); a single `"combined"` branch
+  otherwise
+- `<input>__categorized.root` — input file cloned with `cat`/`region`
+  branches added, plus `tth_branch` (0=depleted, 1=enriched) when
+  `--tth-cut` is used. Only the ONE requested `--systematic` is copied
+  into this output (see the open item below on frozen-vs-per-systematic
+  boundaries) -- other systematics present in the input are not carried
+  into the categorized copy.
 
 > **Open item (cut value):** `--tth-cut 0.401` above is the Tight working
 > point from the ttH killer's validation-set scan
@@ -370,13 +395,16 @@ python event_categorization/build_pdnn_categories.py \
 
 > **Open item (systematics — datacard wiring):** the analyzer now produces
 > both weight-based and (optionally) folder-based systematic shapes with a
-> proper `sample/systematic/region` output structure. Nothing yet
-> assembles those into a `combine`-style datacard (shape systematics via
-> up/down histogram naming, rate systematics as `lnN` lines) — tracked
-> separately, not part of this document's scope yet. Category boundaries
-> from `build_edges()` are derived from nominal only; whether the same
-> boundaries are reused for every systematic variation or re-derived per
-> variation has not yet been decided.
+> proper `sample/systematic/region` output structure, and both
+> categorization scripts can now correctly read any single systematic via
+> `--systematic`. Nothing yet assembles these into a `combine`-style
+> datacard (shape systematics via up/down histogram naming, rate
+> systematics as `lnN` lines) — tracked separately, not part of this
+> document's scope yet. Category boundaries from `build_edges()` are
+> still derived from nominal only per run; whether the same boundaries
+> are reused for every systematic variation or re-derived per variation
+> (running the categorization script once per systematic) has not yet
+> been decided.
 
 ---
 
@@ -399,14 +427,16 @@ inference_PDnn_updated.py  --->  inference_ttH_killer.py
                        |                 --all-systematics (folder-based);
                        |                 output: sample/systematic/region)
                        v
-              plot_stacks.py             (Data/MC validation; systematic-
+              hhbbgg_Plotter.py          (Data/MC validation; systematic-
                        |                  aware via --systematic, DD-naming
                        |                  fixed; lumi_label/sample lists
                        |                  still hardcoded, deferred)
                        v
         build_pdnn_categories.py /       (alpha(score) categorization,
-        categorize_with_tth_split.py      optional ttH-killer pre-split
-                                          -> cat/region/tth_branch branches)
+        event_categorization_tth.py       optional ttH-killer pre-split;
+                                          --systematic + collect_dirs bugs
+                                          fixed in both -> cat/region/
+                                          tth_branch branches)
                        |
                        v
               [not yet built]             (datacard assembly with systematics
