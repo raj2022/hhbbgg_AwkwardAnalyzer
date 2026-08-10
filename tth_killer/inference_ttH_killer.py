@@ -180,26 +180,52 @@ def score_parquet_file(file_path: Path, out_path: Path, model, scaler, chunk_siz
 
 
 def collect_parquet_files(root: Path, pattern: str, all_systematics: bool = False):
-    """Recursive discovery, restricted to 'nominal' (+ flat files with no
-    systematic-folder structure) unless all_systematics is set -- same
-    default as inference_PDnn.py."""
-    all_files = sorted(root.rglob(pattern))
-    all_files = [f for f in all_files if f.is_file()]
-    if all_systematics:
-        return all_files
+    """File discovery, with a fast path mirroring inference_PDnn.py's fix.
 
-    kept, skipped = [], set()
-    for fp in all_files:
-        syst = classify_systematic(fp)
-        if syst is None or syst == "nominal":
-            kept.append(fp)
+    A naive root.rglob() has to walk into EVERY subdirectory to enumerate
+    files -- including any systematic-variation folders that happen to be
+    present -- before filtering them out afterward. In practice this
+    script's input is normally the scored/ output of inference_PDnn.py,
+    which (with that script's own default nominal-only behavior) never
+    contains systematic-variation folders in the first place, so this
+    doesn't reproduce the severe slowdown found there. Still fixed here
+    for robustness and consistency: this assumption doesn't hold if
+    inference_PDnn.py was ever run with --all-systematics, or if -i is
+    pointed at something other than its scored/ output.
+    """
+    if all_systematics:
+        return sorted(f for f in root.rglob(pattern) if f.is_file())
+
+    files = []
+    try:
+        top_entries = sorted(root.iterdir())
+    except OSError:
+        top_entries = []
+
+    skipped = set()
+    for entry in top_entries:
+        if entry.is_file():
+            if entry.match(pattern):
+                files.append(entry)
+            continue
+        if not entry.is_dir():
+            continue
+
+        nominal_dir = entry / "nominal"
+        if nominal_dir.is_dir():
+            files.extend(p for p in nominal_dir.rglob(pattern) if p.is_file())
+            # Note any sibling systematic folders purely for the log
+            # message below -- without listing into them.
+            for sib in entry.iterdir():
+                if sib.is_dir() and sib.name != "nominal" and SYSTEMATIC_VARIATION_RE.search(sib.name):
+                    skipped.add(sib.name)
         else:
-            skipped.add(syst)
+            files.extend(p for p in entry.rglob(pattern) if p.is_file())
+
     if skipped:
         print(f"[INFO] restricting to 'nominal' (pass --all-systematics to also score "
-              f"{len(all_files) - len(kept)} file(s) under systematic-variation folders): "
-              f"{sorted(skipped)}")
-    return kept
+              f"files under systematic-variation folders): {sorted(skipped)}")
+    return sorted(files)
 
 
 def main():
