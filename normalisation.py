@@ -246,6 +246,7 @@ XSEC_PATTERNS = [
                                              # direct test before fixing.
     ("ttg200",          0.1284 * BR_HToGG), # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS%3DTTG-1Jets_PTG-200_TuneCP5_13p6TeV
                                              # FIXED: was "ttg-200", same dash issue as above.
+    ("bbhtogg",         0.4385	* BR_HToGG), # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?searchQuery=DAS=BBHto2G_M-125_TuneCP5_13p6TeV_powheg-pythia8
 
     # QCD (match your files: QCDPt30To40, QCDPt40ToInf)
     ("qcdpt30to40",    25950.0),
