@@ -1097,9 +1097,6 @@
 #     main()
 
 
-
-# hhbbgg_Plotter.py
-
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
@@ -1226,7 +1223,19 @@ def dir_to_base(name: str) -> "str | None":
         "GJetPt40": r"GJet.*40",
         "GluGluHToGG": r"GluGluHToGG",
         "VBFHToGG": r"VBFHToGG",
-        "VHToGG": r"VHToGG",
+        # FIXED: previously only matched the literal 2022/2023-style
+        # combined "VHToGG" name, silently dropping the 2024+ production's
+        # WmHtoGG/WpHtoGG/ZHtoGG (three separate directories, no combined
+        # "VHToGG" ever exists there) -- confirmed these three samples
+        # were completely absent from every 2024 Data/MC stack plot as a
+        # result. Same underlying naming-convention gap already fixed in
+        # normalisation.py's getXsec() and common/io_utils.py's
+        # is_resonant_bkg_dir()/group_of(); this is the third independent
+        # occurrence of it. All four variants combine into one "VHToGG"
+        # base so 2022/2023 (single combined sample) and 2024+ (three
+        # separate samples, summed) both land in the same stacked
+        # component.
+        "VHToGG": r"VHToGG|WmHToGG|WpHToGG|ZHToGG",
         "ttHToGG": r"ttHToGG",
         "TTGG": r"TTGG",
         "TTG": r"TTG",
@@ -1251,6 +1260,39 @@ def dir_to_base(name: str) -> "str | None":
 def group_by_base(upfile):
     groups = {}
     for d in list_top_dirs(upfile):
+        base = dir_to_base(d)
+        if base is None:
+            continue
+        groups.setdefault(base, []).append(d)
+    return {k: sorted(v) for k, v in groups.items()}
+
+
+def list_top_dirs_from_keys(all_keys) -> list:
+    """Extract top-level directory names by parsing an already-fetched
+    recursive key listing, instead of opening each top-level directory
+    individually via `upfile[name]` (see list_top_dirs above).
+
+    This is the actual fix for the multi-minute (or longer) hang: the
+    per-sample count hasn't grown, but each individual `upfile[name]`
+    open now has to materialize a directory object whose internal subtree
+    is ~4 levels deep and ~14x bigger (sample -> systematic -> region ->
+    variable, with weight-based systematics added). Over AFS/EOS, that
+    made each of the ~N individual opens dramatically slower even though
+    nothing else about the code changed. Parsing pre-fetched key strings
+    instead does zero additional file access.
+    """
+    tops = set()
+    for k in all_keys:
+        base = k.split(";")[0]
+        top = base.split("/")[0]
+        if top:
+            tops.add(top)
+    return sorted(tops)
+
+
+def group_by_base_from_keys(all_keys) -> dict:
+    groups = {}
+    for d in list_top_dirs_from_keys(all_keys):
         base = dir_to_base(d)
         if base is None:
             continue
@@ -1339,28 +1381,33 @@ xaxis_titles = {
 def stack1d_histograms(up, output_dir, systematic="nominal", blind=True):
     import time
 
-    t0 = time.time()
-    print("[INFO] Listing sample directories...")
-    groups = group_by_base(up)  # base -> [concrete dirs]
-    print(f"[INFO] Found {sum(len(v) for v in groups.values())} sample directories "
-          f"across {len(groups)} bases ({time.time() - t0:.1f}s)")
-
-    # Read every available histogram path ONCE, up front, into an in-memory
-    # set. `path in up` on a nested uproot path otherwise triggers its own
-    # sub-directory traversal against the underlying file on every single
-    # call -- over AFS/EOS that's real per-call network latency, and with
+    # Single bulk read of every key in the file, done ONCE. This is the
+    # actual fix for the hang: everything else below (sample grouping,
+    # path-existence checks) is derived from this one in-memory result via
+    # pure string parsing, instead of each doing its own individual file
+    # access. The old code called `upfile[name]` separately for every
+    # top-level sample directory (in list_top_dirs) AND did a separate
+    # `path in up` check per region/variable/sample combination later --
+    # both patterns are fine on a small local file, but over AFS/EOS, with
     # weight-based systematics now adding ~14x more histogram objects per
-    # MC sample (computed automatically, independent of --all-systematics),
-    # this was very likely the actual source of the multi-hour hang: many
-    # thousands of individual remote lookups instead of one bulk read.
+    # MC sample (automatic, independent of --all-systematics), those many
+    # small individual lookups compounded into a very long stall.
     t1 = time.time()
-    print("[INFO] Reading full path list from ROOT file (one-time, may take a moment "
-          "on a large/remote file)...")
+    print("[INFO] Reading full path list from ROOT file (one-time bulk read, "
+          "may take a moment on a large/remote file)...")
+    raw_keys = up.keys(recursive=True)
+    print(f"[INFO] Read {len(raw_keys)} total keys in {time.time() - t1:.1f}s")
+
     # Strip ROOT cycle suffixes (";1", ";2", ...) so membership checks below
     # match the same cycle-agnostic semantics as `path in up` (which
     # matches the latest cycle of a path regardless of its number).
-    all_paths = {k.rsplit(";", 1)[0] if ";" in k else k for k in up.keys(recursive=True)}
-    print(f"[INFO] Read {len(all_paths)} total keys in {time.time() - t1:.1f}s")
+    all_paths = {k.rsplit(";", 1)[0] if ";" in k else k for k in raw_keys}
+
+    t0 = time.time()
+    print("[INFO] Grouping sample directories...")
+    groups = group_by_base_from_keys(raw_keys)  # base -> [concrete dirs]
+    print(f"[INFO] Found {sum(len(v) for v in groups.values())} sample directories "
+          f"across {len(groups)} bases ({time.time() - t0:.1f}s)")
 
     data_base = "Data"
     mc_bases = ["GGJets",
