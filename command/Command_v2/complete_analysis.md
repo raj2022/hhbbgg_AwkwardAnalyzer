@@ -162,7 +162,7 @@ template fitting.
 
 **Nominal only (default):**
 ```bash
-python hhbbgg_analyzer_with_systematics.py \
+python hhbbgg_analyzer_lxplus_par.py \
   --config-years 2024 --era All \
   -i /eos/user/b/bartek/hhbbgg/higgsdna_v7/2024/merged/scored/ \
   -i /afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2024/data/scored/ \
@@ -174,7 +174,7 @@ python hhbbgg_analyzer_with_systematics.py \
 with `--all-systematics`, so the variation-folder files actually carry
 real `pDNN_score`/`ttH_killer_score` values):
 ```bash
-python hhbbgg_analyzer_with_systematics.py \
+python hhbbgg_analyzer_lxplus_par.py \
   --config-years 2024 --era All \
   -i /eos/user/b/bartek/hhbbgg/higgsdna_v7/2024/merged/scored/ \
   -i /afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2024/data/scored/ \
@@ -405,6 +405,79 @@ analyzer's real `sample/systematic/region` output structure):
 > are reused for every systematic variation or re-derived per variation
 > (running the categorization script once per systematic) has not yet
 > been decided.
+
+---
+
+## 6. Fixes from the regions.py / binning.py / VH audit (this session)
+
+Confirmed and fixed against the actual production framework (HiggsDNA
+source, checked directly rather than assumed) before the next analyzer
+re-run:
+
+- **`regions.py`**: every region mask now explicitly requires
+  `(dibjet_mass > 0) & (diphoton_mass > 0)` -- previously only
+  `preselection` had this, and `-9999`-style reconstruction-failure
+  sentinels were confirmed passing straight through `selection` and
+  `srbbgg` into downstream analysis. Also: the
+  `PNetRegPtRawRes > 0.2605` cuts (present in `srbbgg`, `srbbggMET`,
+  `crantibbgg`, `sideband`) were confirmed as a genuine bug via HiggsDNA's
+  own source (`PNetRegPtRawRes` is an mbb-regression input feature,
+  never a cut variable anywhere in that framework) -- fixed per-region
+  (deleted where redundant with an existing correct `PNetB` cut;
+  restored a correct, previously-commented-out `PNetB` cut in
+  `crbbantigg`, where it had been the *only* active requirement).
+  Confirmed via a direct functional test with a synthetic
+  `awkward.Array` that the original `srbbgg` mask produced **zero**
+  surviving events on realistic data due to this bug, and the fixed
+  version does not.
+- **`binning.py`**: `dibjet_mass` widened from `[33, 0, 180]` to
+  `[80, 0, 800]` (every region inherits this via `copy.deepcopy`, so one
+  fix propagates everywhere) -- the M_Y grid spans 90-800 GeV, and the
+  old range hid every high-mass signal point in the overflow bin. Also
+  fixed: `DeltaPhi_j1MET`/`j2MET` (`[10,100,110]` -> `[20,0,3.14]`, not a
+  valid angular range), `lepton1_mvaID` (`[100,0,100]` -> `[20,-1,1]`,
+  matching this file's own photon-mvaID convention), `lepton1_pfIsoId`
+  (`[100,0,100]` -> `[7,0,7]`, a discrete flag, not continuous).
+- **`normalisation.py`**: VH cross-section lookup fixed for the 2024+
+  `WmHtoGG`/`WpHtoGG`/`ZHtoGG` naming convention (previously only
+  matched the 2022/2023-style combined `VHToGG` name, silently returning
+  xsec=1.0 for the split-sample years).
+- **`hhbbgg_Plotter.py`**: same VH naming gap, independently present a
+  third time in `mc_patterns["VHToGG"]` -- fixed to combine all four
+  naming variants into one stacked component, verified against 8 test
+  cases including confirming no false-positive collision with
+  `GluGluHToGG`/`VBFHToGG`/`ttHToGG`.
+
+**Important**: none of these fixes are retroactive -- they only affect
+runs *after* being deployed. The existing merged tree/histogram output
+predates all four and should not be trusted for `dibjet_mass` shape,
+`srbbgg`-region yields, or VH background until a fresh analyzer run has
+picked these up.
+
+## 7. Running the analyzer as a Condor batch job
+
+For long, unattended runs that survive closing your laptop or switching
+machines -- see `README.md` / `run_analyzer.sh` / `submit_analyzer.sub`
+(separate files, not reproduced here) for the full setup and debugging
+history. Summary of what was needed, in case any of it recurs:
+
+- **Dependencies**: the analyzer does local imports (`from config.utils
+  import lVector`, `from regions import ...`, `from binning import
+  binning`, `from normalisation import getXsec, getLumi`) resolved
+  relative to the working directory at runtime -- `regions.py`,
+  `binning.py`, `variables.py`, `normalisation.py`, and the whole
+  `config/` package must all sit alongside the analyzer script wherever
+  it's actually run from.
+- **conda + `set -u`**: conda's own activation hooks (specifically
+  `binutils_linux-64`'s, referencing `$ADDR2LINE`) are incompatible with
+  bash's `set -u` -- fixed by pre-defining the variable before
+  activation, not by toggling `-u` on the wrapper script (which alone
+  was not sufficient, since the hook is `source`d and can independently
+  affect global shell state).
+- **AFS quota**: this analysis's real output size (~20GB+ trees) does
+  not fit in a 10GB home-AFS quota -- must run from a location backed by
+  larger storage (in this case, `Analysis/` resolves through a symlink
+  to EOS, which comfortably holds it).
 
 ---
 
