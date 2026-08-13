@@ -46,6 +46,7 @@ https://docs.google.com/spreadsheets/d/1vQEHbnte3SOfTylWWmmdbExSwm70tappKtwpo3NT
 # V7 processing
 - Centrally produced background: `/eos/cms/store/group/phys_b2g/HHbbgg/HiggsDNA_parquet/v7`
 - 2024: `/eos/user/b/bartek/hhbbgg/higgsdna_v7/2024/merged/`
+        `/eos/cms/store/group/phys_b2g/HHbbgg/sraj/scored/`
 - 2022preEE: `/eos/cms/store/group/phys_b2g/HHbbgg/bsahu/higgsdna_v7/2022preEE/merged/`
 - 2022postEE: `/eos/cms/store/group/phys_b2g/HHbbgg/bsahu/higgsdna_v7/2022postEE/merged/`
 
