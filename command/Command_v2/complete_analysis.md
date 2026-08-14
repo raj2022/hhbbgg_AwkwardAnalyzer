@@ -425,6 +425,31 @@ analyzer's real `sample/systematic/region` output structure):
 > (running the categorization script once per systematic) has not yet
 > been decided.
 
+
+
+### ttH Killer implementation(fixed)
+Table from the ttH script:
+
+
+| WP     | cut   | ε(ttH) | ε(oth. H) |
+|--------|-------|--------|-----------|
+| Loose  | 0.924 | 0.500  | 0.997     |
+| Medium | 0.682 | 0.200  | 0.978     |
+| Tight  | 0.401 | 0.100  | 0.947     |
+
+
+```bash
+python categorize_events.py \
+  --root outputfiles/merged/DD_2024/hhbbgg_analyzer-v2-trees.root \
+  --sr-sigma 2.0 --cr-sidebands 4 10 \
+  --nmin 50 --min-gain 0.05 --max-bins 5 \
+  --alpha-bins 60 \
+  --tth-killer-cut 0.682 \
+  --per-mass \
+  --outdir outputs/categories_tth_medium \
+  --write-categorized --systematic nominal
+  ```
+
 ---
 
 ## 6. Fixes from the regions.py / binning.py / VH audit (this session)
@@ -497,6 +522,32 @@ history. Summary of what was needed, in case any of it recurs:
   not fit in a 10GB home-AFS quota -- must run from a location backed by
   larger storage (in this case, `Analysis/` resolves through a symlink
   to EOS, which comfortably holds it).
+- **`--all-systematics` must be explicit in the submitted command, and
+  is easy to silently omit** -- confirmed directly via
+  `hhbbgg_analyzer_with_systematics.py --help`: without it, the analyzer
+  defaults to nominal-only, meaning a completed, verified systematics
+  scoring pass (step 3 above) would be entirely wasted for a Condor
+  submission that forgot this one flag. Before submitting, confirm the
+  actual `run_analyzer.sh` being used has it, not just this document.
+- **Condor resource sizing**: `request_memory`/`+JobFlavour` should be
+  bumped from a nominal-only run's `8GB`/`"tomorrow"` (1 day) once
+  `--all-systematics` is added -- confirmed roughly an order-of-magnitude
+  increase in data read/processed per sample (every JEC/JER/Scale/
+  Smearing variation folder on top of nominal, all confirmed present on
+  disk for e.g. `NMSSM_X350_Y100` under
+  `/eos/cms/store/group/phys_b2g/HHbbgg/sraj/2024/merged/scored/`).
+  `16GB`/`"testmatch"` (3 days) is a reasonable, conservative starting
+  point for the full-systematics run, not a precisely measured
+  requirement -- if a real run comfortably finishes with room to spare,
+  tune back down for future submissions; if it gets OOM-killed or hits
+  the time limit, that's real evidence for the next value.
+- **Real crash risk, from the analyzer's own `--help` text**: a
+  systematic-variation file that was never actually scored (steps 3.1/
+  3.2 above, `--all-systematics` on both) has no `pDNN_score` column and
+  will crash the analyzer rather than being silently skipped. Confirm
+  the completed scoring genuinely covers every systematic subfolder
+  present on disk for every sample before submitting a long Condor run
+  on the assumption it will finish cleanly.
 
 ---
 

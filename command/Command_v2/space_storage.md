@@ -37,7 +37,7 @@ https://docs.google.com/spreadsheets/d/1vQEHbnte3SOfTylWWmmdbExSwm70tappKtwpo3NT
 * 2025:	`/eos/user/b/bsahu/HiggsDNA_v6PrelimProd/2025/merged`
 	
 
-* 2024 with systematics:  	`/eos/user/b/bartek/hhbbgg/systematics_v6/2024`
+* 2024 with systematics:  	`/eos/user/b/bartek/hhbbgg/systematics_v6/2024` \
 	`/eos/user/b/bsahu/HiggsDNA_v6PrelimProd/2024`
 	
 
@@ -45,8 +45,8 @@ https://docs.google.com/spreadsheets/d/1vQEHbnte3SOfTylWWmmdbExSwm70tappKtwpo3NT
 
 # V7 processing
 - Centrally produced background: `/eos/cms/store/group/phys_b2g/HHbbgg/HiggsDNA_parquet/v7`
-- 2024: `/eos/user/b/bartek/hhbbgg/higgsdna_v7/2024/merged/`
-        `/eos/cms/store/group/phys_b2g/HHbbgg/sraj/scored/`
+- 2024: `/eos/user/b/bartek/hhbbgg/higgsdna_v7/2024/merged/` \
+        `/eos/cms/store/group/phys_b2g/HHbbgg/sraj/merged/`
 - 2022preEE: `/eos/cms/store/group/phys_b2g/HHbbgg/bsahu/higgsdna_v7/2022preEE/merged/`
 - 2022postEE: `/eos/cms/store/group/phys_b2g/HHbbgg/bsahu/higgsdna_v7/2022postEE/merged/`
 
