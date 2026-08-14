@@ -78,12 +78,24 @@ python inference_PDnn_updated.py \
   --recursive
 ```
 
+
 **With all systematics:**
 ```bash
 python inference_PDnn_updated.py \
   -i /eos/user/b/bartek/hhbbgg/higgsdna_v7/2024/merged/ \
   --recursive --all-systematics
 ```
+
+Due to space constraints for systematics at the Rachel's EOS area, we are moving to the B2G eos, `/eos/cms/store/group/phys_b2g/HHbbgg/sraj`
+the updated command: 
+
+**With all systematics:**
+```bash
+python inference_PDnn_updated.py \
+  -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/2024/merged/ \
+  --recursive --all-systematics
+```
+
 
 (2022postEE example, same flags: `-i /eos/cms/store/group/phys_b2g/HHbbgg/bsahu/higgsdna_v7/2022postEE/merged/`)
 
@@ -140,6 +152,13 @@ python inference_ttH_killer.py \
 ```bash
 python inference_ttH_killer.py \
   -i /eos/user/b/bartek/hhbbgg/higgsdna_v7/2024/merged/scored/ \
+  --recursive --all-systematics \
+  --model best_tth_killer.pt --scaler scaler_tth.pkl
+```
+after storage update:
+```bash
+python inference_ttH_killer.py \
+  -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/2024/merged/scored/ \
   --recursive --all-systematics \
   --model best_tth_killer.pt --scaler scaler_tth.pkl
 ```
