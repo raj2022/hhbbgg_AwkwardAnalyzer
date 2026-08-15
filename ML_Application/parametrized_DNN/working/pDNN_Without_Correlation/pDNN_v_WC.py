@@ -2917,10 +2917,6 @@
 #     main()
 
 
-
-
-
-
 #!/usr/bin/env python
 # =============================================================================
 # pDNN_v2.py
@@ -3035,9 +3031,22 @@ class Config:
             for filename in self.BACKGROUND_FILENAMES
         )
 
-    MASS_POINTS: Tuple[int, ...] = (300, 400, 500, 550, 600, 650, 700, 800, 900, 1000)
-    # In scope: X >= 300, Y >= 90.
-    Y_VALUES: Tuple[int, ...] = (90, 95, 100, 125, 150, 200, 300, 400, 500, 600, 800)
+    # Full confirmed 196-point signal grid (X >= 300, Y >= 90). NOTE: this
+    # grid is NOT rectangular -- each X has its own list of valid Y values
+    # (e.g. X=300 only goes up to Y=170, while X=1000 goes up to Y=800).
+    # MASS_POINTS/Y_VALUES below are the UNION of all X's and all Y's
+    # respectively; load_signal()'s nested loop tries every (X, Y)
+    # combination in their cross-product (16 x 18 = 288), of which only
+    # the 196 that actually exist on disk are found -- the other 92 are
+    # silently and correctly skipped via the existing os.path.exists()
+    # check in load_signal(), not an error. A diagnostic summary count is
+    # printed at the end of load_signal() so this is visible, not silent.
+    MASS_POINTS: Tuple[int, ...] = (
+        300, 320, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000,
+    )
+    Y_VALUES: Tuple[int, ...] = (
+        90, 95, 100, 125, 150, 170, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 800,
+    )
     WEIGHT_COL: str = "weight_central"
 
     # --- data handling ---
@@ -3308,16 +3317,33 @@ def split_summary(df: pd.DataFrame, name: str) -> None:
 @torch.no_grad()
 def predict_batched(model: nn.Module, x_tensor: torch.Tensor, device: torch.device,
                      batch: int = CFG.EVAL_BATCH, use_amp: bool = True) -> np.ndarray:
-    """Run the model over ``x_tensor`` in chunks and return sigmoid probabilities."""
+    """Run the model over ``x_tensor`` in chunks and return sigmoid probabilities.
+
+    IMPORTANT: under CUDA autocast, the forward pass runs in float16. If
+    sigmoid() is applied while still inside the autocast context, the
+    resulting probability is computed at float16 precision -- coarse
+    enough (~5e-4 near 1.0) to produce a visibly quantized "comb" pattern
+    in the score distribution's tail and to saturate to exactly 1.0 far
+    more readily than float32 does. This is the identical bug found and
+    fixed in inference_PDnn_updated.py's predict_batched(); it existed
+    here too, independently, since this function -- not that script's --
+    is what generates test_probs for every evaluation and physics
+    validation in this file (ROC curve, score distributions, mass
+    sculpting, etc.). Logits are explicitly upcast to float32 and
+    sigmoid is applied OUTSIDE the autocast context below, so autocast
+    still speeds up the forward pass itself, but the probability actually
+    used downstream is computed at full precision.
+    """
     model.eval()
     n = x_tensor.shape[0]
     out = np.empty(n, dtype=np.float32)
     amp_ctx = torch.amp.autocast(device_type=device.type, enabled=(use_amp and device.type == "cuda"))
-    with amp_ctx:
-        for i in range(0, n, batch):
-            xb = x_tensor[i:i + batch].to(device, non_blocking=True)
+    for i in range(0, n, batch):
+        xb = x_tensor[i:i + batch].to(device, non_blocking=True)
+        with amp_ctx:
             logits = model(xb).view(-1)
-            out[i:i + batch] = torch.sigmoid(logits).detach().cpu().numpy()
+        logits = logits.float()  # upcast BEFORE sigmoid, not after
+        out[i:i + batch] = torch.sigmoid(logits).detach().cpu().numpy()
     return out
 
 
@@ -3418,23 +3444,38 @@ def _prepare_raw(df: pd.DataFrame) -> pd.DataFrame:
 def load_signal(cfg: Config = CFG) -> pd.DataFrame:
     """Load and label all available signal (mass, y) parquet samples.
 
-    Missing files are silently skipped (not all grid points necessarily
-    exist on disk). Missing optional columns are handled gracefully by
-    ``_prepare_raw`` / ``add_engineered_features``.
+    MASS_POINTS/Y_VALUES together form a rectangular cross-product, but
+    the real signal grid is NOT rectangular (see the comment beside those
+    fields in Config) -- most (X, Y) combinations tried here are expected
+    to not exist on disk and are silently skipped, not an error. A
+    found/skipped/found-vs-expected summary is printed at the end so this
+    is visible rather than fully silent; missing optional columns in a
+    found file are still handled gracefully by ``_prepare_raw`` /
+    ``add_engineered_features``.
     """
     rows = []
+    n_tried = n_found = n_skipped_missing = 0
+    found_points = []
     for mass in cfg.MASS_POINTS:
         for y in cfg.Y_VALUES:
+            n_tried += 1
             fp = cfg.SIG_TPL.format(m=mass, y=y)
             if not os.path.exists(fp):
+                n_skipped_missing += 1
                 continue
             try:
                 df = _prepare_raw(_read_parquet_slim(fp))
                 df["mass"], df["y_value"], df["label"] = mass, y, 1
                 df = downcast_float_cols(ensure_weight(df, cfg.WEIGHT_COL))
                 rows.append(df)
+                n_found += 1
+                found_points.append((mass, y))
             except Exception as e:
                 print(f"[WARN] read fail {fp}: {e}")
+    print(f"[INFO] load_signal: found {n_found}/{n_tried} (X,Y) combinations tried "
+          f"({n_skipped_missing} did not exist on disk -- expected, given the "
+          f"non-rectangular grid; see check_missing_masses.py to cross-check "
+          f"against the full expected 196-point list).")
     signal_df = pd.concat(rows, ignore_index=True) if rows else pd.DataFrame()
     if signal_df.empty:
         raise RuntimeError("No signal samples could be loaded.")
