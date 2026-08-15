@@ -1,32 +1,72 @@
 name: hhbbgg-awk
+
 channels:
   - conda-forge
+
 dependencies:
-  - matplotlib==3.8.4
-  - uproot==5.3.3
-  - hist==2.7.3
-  - numpy==1.26.4
-  - mplhep==0.3.48
-  - vector==1.4.0
-  - awkward==2.6.3
-  - pandas==2.2.2
-  # ML
-  - scikit-learn
-  - scipy
-  - xgboost
-  - seaborn==0.13.2
-  # Jupyter and related packages
+
+  # ============================================================
+  # Python
+  # ============================================================
+  - python=3.12
+  - pip
+
+  # ============================================================
+  # ROOT / PyROOT
+  # Keep ROOT inside the environment so that Python and PyROOT
+  # are built against the same interpreter/toolchain.
+  # ============================================================
+  - root=6.40.02
+
+  # ============================================================
+  # HEP / Scientific Python
+  # ============================================================
+  - numpy=2.1.*
+  - scipy=1.15.*
+  - pandas=2.2.*
+  - awkward=2.9.*
+  - uproot=5.6.*
+  - hist=2.8.*
+  - vector=1.*
+
+  # ============================================================
+  # Plotting / HEP plotting
+  # ============================================================
+  - matplotlib=3.10.*
+  - mplhep=0.4.*
+  - seaborn=0.13.*
+
+  # ============================================================
+  # Machine Learning
+  # ============================================================
+  - scikit-learn=1.7.*
+  - xgboost=3.*
+
+  # ============================================================
+  # Jupyter
+  # ============================================================
   - jupyter
   - jupyterlab
   - ipykernel
   - ipywidgets
   - nb_conda_kernels
-  # PIP packages
-  - pip
-  - pip:
-    - torch
-    - torchvision
-    - torchaudio  # Match the torchaudio version with torch
-    - torch-summary
-    - tensorflow
 
+  # ============================================================
+  # Additional analysis utilities
+  # ============================================================
+  - pyyaml
+  - tqdm
+  - requests
+
+  # ============================================================
+  # Pip-installed ML packages
+  #
+  # PyTorch / torchvision / torchaudio MUST be matched.
+  # We install the versions together below.
+  # ============================================================
+  - pip:
+      - torch==2.11.0
+      - torchvision==0.26.0
+      - torchaudio==2.11.0
+      - torch-summary
+      - tensorflow==2.20.*
