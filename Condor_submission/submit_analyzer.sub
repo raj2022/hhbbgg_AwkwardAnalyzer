@@ -1,0 +1,37 @@
+# ============================================================================
+# submit_analyzer.sub
+#
+# Runs the analyzer as a Condor batch job -- fully independent of any
+# lxplus login session, so you can close your laptop, switch machines,
+# and check back later from anywhere.
+#
+# Submit with:  condor_submit submit_analyzer.sub
+# Monitor with: condor_q
+#               tail -f logs/analyzer.out   (live progress)
+# ============================================================================
+
+universe                = vanilla
+executable              = run_analyzer.sh
+
+# --- Resources ---
+# CPU-only (no GPU needed here, unlike the pDNN inference job). Given the
+# full 2024 signal grid (197 points) + backgrounds + data, this can run
+# for a long time -- "tomorrow" (1 day) is a safe starting point; extend
+# to "testmatch" (3 days) if a first run doesn't finish in time.
+request_cpus             = 4
+request_memory            = 8GB
++JobFlavour               = "tomorrow"
+
+# --- Logging ---
+# Create the logs/ folder before submitting: mkdir -p logs
+log                      = logs/analyzer_$(ClusterId).log
+output                   = logs/analyzer_$(ClusterId).log.out
+error                    = logs/analyzer_$(ClusterId).log.err
+
+# --- Environment / file transfer ---
+# AFS and EOS are both directly accessible on CERN worker nodes -- no
+# file transfer directives needed.
+should_transfer_files    = NO
+getenv                   = False
+
+queue
