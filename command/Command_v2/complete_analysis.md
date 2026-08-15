@@ -181,9 +181,9 @@ template fitting.
 
 **Nominal only (default):**
 ```bash
-python hhbbgg_analyzer_lxplus_par.py \
+python hhbbgg_analyzer_with_systematics.py \
   --config-years 2024 --era All \
-  -i /eos/user/b/bartek/hhbbgg/higgsdna_v7/2024/merged/scored/ \
+  -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/2024/merged/scored/ \
   -i /afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2024/data/scored/ \
   -i /afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2024/sim/scored/ \
   --tag DD_2024
@@ -193,12 +193,12 @@ python hhbbgg_analyzer_lxplus_par.py \
 with `--all-systematics`, so the variation-folder files actually carry
 real `pDNN_score`/`ttH_killer_score` values):
 ```bash
-python hhbbgg_analyzer_lxplus_par.py \
+python hhbbgg_analyzer_with_systematics.py \
   --config-years 2024 --era All \
-  -i /eos/user/b/bartek/hhbbgg/higgsdna_v7/2024/merged/scored/ \
+  -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/2024/merged/scored/ \
   -i /afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2024/data/scored/ \
   -i /afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2024/sim/scored/ \
-  --tag DD_2024_AllSyst \
+  --tag DD_2024 \
   --all-systematics
 ```
 
