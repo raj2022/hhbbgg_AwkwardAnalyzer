@@ -1100,7 +1100,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-plot_stacks.py
+hhbbgg_Plotter.py
 
 Data/MC validation stack plots from the analyzer's merged histogram output.
 
