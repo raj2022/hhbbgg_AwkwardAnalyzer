@@ -52,6 +52,17 @@ INPUT ASSUMPTIONS
   for your `pDNN_score` before trusting results either way -- passing
   this flag when the score is already a probability silently degrades
   category separation by applying sigmoid twice.
+- OPTIONAL ttH-killer cut (`--tth-killer-cut`): if passed, every event
+  (signal, background MC, and data alike) is required to satisfy
+  ttH_killer_score < CUT before anything else -- confirmed directly from
+  a validated efficiency-vs-cut study that this is the correct direction
+  (lower score = less ttH-like), with Loose/Medium/Tight working points
+  at cuts 0.924/0.682/0.401 (ttH efficiency 50%/20%/10%, signal efficiency
+  99.7%/97.8%/94.7%). NOT applied by default (None), for backward
+  compatibility with files that predate this branch -- when explicitly
+  given, directories missing the ttH_killer_score branch are skipped with
+  a clear warning, the same pattern already used for other required
+  branches below, rather than silently proceeding without the cut.
 
 --------------------------------------------------------------------------
 OUTPUT
@@ -74,11 +85,13 @@ USAGE
       --sr-sigma 2.0 --cr-sidebands 4 10 \\
       --nmin 50 --min-gain 0.05 --max-bins 5 \\
       --alpha-bins 60 \\
+      --tth-killer-cut 0.682 \\
       --outdir outputs/categories_2024 \\
       --write-categorized --systematic nominal
 """
 
 import argparse, json, os, re, math
+from pathlib import Path
 import numpy as np
 import awkward as ak
 import uproot
@@ -88,10 +101,11 @@ SR_DEFAULT = 2.0                 # SR: |mgg-125| < SR_DEFAULT (GeV)
 CR_DEFAULT = (4.0, 10.0)         # CR: 4 <= |mgg-125| < 10 (GeV)
 TREE_NAME  = "selection"         # tree inside each directory
 
-BR_SCORE   = "pDNN_score"
-BR_MGG     = "diphoton_mass"
-BR_WGT     = "weight_selection"
-BR_ISDATA  = "isdata"
+BR_SCORE      = "pDNN_score"
+BR_MGG        = "diphoton_mass"
+BR_WGT        = "weight_selection"
+BR_ISDATA     = "isdata"
+BR_TTH_KILLER = "ttH_killer_score"
 
 USE_SIGMOID_SCORE = False
 def sigmoid(x): return 1.0 / (1.0 + np.exp(-x))
@@ -256,9 +270,51 @@ def eval_alpha(x, centers, alpha, lohi):
     return np.interp(np.clip(x, lo, hi), centers, alpha)
 
 # -------------------- main --------------------
+def resolve_input_files(root_arg: str):
+    """Resolve --root into a list of ROOT files to process.
+
+    Handles the analyzer's per-sample output split (a real, confirmed
+    fix for a 2GB uproot-write-cascade crash under --all-systematics --
+    struct.error: 'i' format requires -2147483648 <= number <=
+    2147483647, hit mid-run once systematics pushed a single monolithic
+    tree file's size past uproot's 32-bit file-offset limit). The
+    analyzer now writes one file per sample instead:
+    hhbbgg_analyzer-v2-trees__<sample>.root.
+
+    - If root_arg is a file: return [root_arg] (also covers the old,
+      pre-fix single-file layout unchanged).
+    - If root_arg is a directory: glob for hhbbgg_analyzer-v2-trees__*.root
+      (new layout). If none found, fall back to a single
+      hhbbgg_analyzer-v2-trees.root in that directory (old layout), so
+      this doesn't break against outputs produced before this fix.
+    """
+    p = Path(root_arg) if not isinstance(root_arg, Path) else root_arg
+    if p.is_file():
+        return [str(p)]
+    if p.is_dir():
+        per_sample = sorted(p.glob("hhbbgg_analyzer-v2-trees__*.root"))
+        if per_sample:
+            print(f"[INFO] --root is a directory: found {len(per_sample)} per-sample tree file(s).")
+            return [str(f) for f in per_sample]
+        legacy = p / "hhbbgg_analyzer-v2-trees.root"
+        if legacy.is_file():
+            print(f"[INFO] --root is a directory: no per-sample files found, "
+                  f"falling back to legacy single file: {legacy}")
+            return [str(legacy)]
+        raise FileNotFoundError(
+            f"--root '{root_arg}' is a directory but contains neither "
+            f"hhbbgg_analyzer-v2-trees__*.root (new layout) nor "
+            f"hhbbgg_analyzer-v2-trees.root (legacy layout)."
+        )
+    raise FileNotFoundError(f"--root '{root_arg}' is neither a file nor a directory.")
+
+
 def main():
     ap = argparse.ArgumentParser(description="Sideband-based (data-driven) pDNN categorization using AMS and α(score).")
-    ap.add_argument("--root", required=True, help="merged ROOT file with per-sample directories")
+    ap.add_argument("--root", required=True,
+                     help="Either a single merged ROOT file (old layout), or a directory "
+                          "containing per-sample hhbbgg_analyzer-v2-trees__<sample>.root files "
+                          "(current analyzer output layout, after the 2GB-crash fix).")
     ap.add_argument("--sr-sigma", type=float, default=SR_DEFAULT, help="SR: |mgg-125| < SR_SIGMA (GeV)")
     ap.add_argument("--cr-sidebands", type=float, nargs=2, default=list(CR_DEFAULT),
                     help="CR: |mgg-125| in [LO, HI) (GeV)")
@@ -272,6 +328,14 @@ def main():
     ap.add_argument("--write-categorized", action="store_true", help="clone ROOT and add cat/region branches")
     ap.add_argument("--alpha-bins", type=int, default=60, help="nbins for α(score)")
     ap.add_argument("--sigmoid-score", action="store_true", help="apply sigmoid to pDNN_score (if logits)")
+    ap.add_argument("--tth-killer-cut", type=float, default=None,
+                     help="If set, require ttH_killer_score < CUT for every event (signal, "
+                          "background MC, and data alike) before anything else -- confirmed "
+                          "direction (lower score = less ttH-like) and working points from a "
+                          "validated efficiency study: Loose=0.924 (ttH eff 50%%), "
+                          "Medium=0.682 (ttH eff 20%%, signal eff 97.8%%), Tight=0.401 (ttH "
+                          "eff 10%%, signal eff 94.7%%). Not applied by default, for backward "
+                          "compatibility with files that predate this branch.")
     ap.add_argument("--systematic", default="nominal",
                      help="Which systematic's trees to read (default: nominal). The analyzer's "
                           "output structure is sample/systematic/region -- this selects the "
@@ -291,107 +355,132 @@ def main():
     sr_hi = 125.0 + args.sr_sigma
     cr_lo, cr_hi = args.cr_sidebands
 
-    # -------- read & collect --------
-    with uproot.open(args.root) as fin:
-        dir_bases = collect_dirs(fin)
+    apply_tth_cut = args.tth_killer_cut is not None
+    if apply_tth_cut:
+        print(f"[INFO] ttH-killer cut ENABLED: requiring ttH_killer_score < {args.tth_killer_cut}")
 
-        # Signal is bucketed per-tag (per mass point with --per-mass, or a
-        # single "combined" tag without it). Background MC and data have no
-        # mass identity of their own -- pooled into ONE shared reservoir
-        # and reused for every tag's boundary search below. Previously,
-        # background/data were bucketed by the SAME `tag` variable as
-        # signal, which defaults to "combined" for anything that isn't a
-        # signal directory -- with --per-mass, every signal directory gets
-        # its own unique tag, so background/data (always "combined")
-        # ended up completely disjoint from every per-mass signal bucket,
-        # and "combined" itself never received any signal. Every single
-        # tag failed the size-nonzero check as a result.
-        buckets = {}
-        def ensure(tag):
-            if tag not in buckets:
-                buckets[tag] = dict(S_sr_scores=[], S_sr_w=[])
-            return buckets[tag]
+    input_files = resolve_input_files(args.root)
 
-        shared_bg = dict(
-            B_sr_scores_mc=[], B_sr_w_mc=[],
-            B_cr_scores_mc=[], B_cr_w_mc=[],
-            D_cr_scores=[], D_cr_w=[]
-        )
+    # -------- read & collect (across ALL input files) --------
+    # buckets/shared_bg/counters now accumulate across every file in
+    # input_files, not just one -- required since the analyzer's
+    # per-sample output split means signal/background/data are now
+    # spread across many files instead of one, and the whole point of
+    # this pooling is combining them before deriving category boundaries.
+    buckets = {}
+    def ensure(tag):
+        if tag not in buckets:
+            buckets[tag] = dict(S_sr_scores=[], S_sr_w=[])
+        return buckets[tag]
 
-        n_used = n_skipped_no_tree = n_skipped_missing_fields = 0
-        for dbase in dir_bases:
-            tdir = fin[dbase]
+    shared_bg = dict(
+        B_sr_scores_mc=[], B_sr_w_mc=[],
+        B_cr_scores_mc=[], B_cr_w_mc=[],
+        D_cr_scores=[], D_cr_w=[]
+    )
 
-            # Analyzer output is now sample/systematic/region, not the old
-            # sample/region -- descend into the requested systematic
-            # subdirectory first. A directory with no such subdirectory at
-            # all (e.g. a genuinely flat/legacy file) falls back to
-            # looking directly in tdir, so this doesn't break against
-            # older-structure files.
-            if args.systematic in [k.split(";")[0] for k in tdir.keys()]:
-                systdir = tdir[args.systematic]
-            else:
-                systdir = tdir
+    n_used = n_skipped_no_tree = n_skipped_missing_fields = n_skipped_no_tth = 0
+    n_files_total_dirs = 0
 
-            sel_key = get_tree_key(systdir, TREE_NAME)
-            if sel_key is None:
-                n_skipped_no_tree += 1
-                continue
+    for root_file in input_files:
+        with uproot.open(root_file) as fin:
+            dir_bases = collect_dirs(fin)
+            n_files_total_dirs += len(dir_bases)
+            for dbase in dir_bases:
+                tdir = fin[dbase]
 
-            tree = systdir[sel_key]
-            tfields = set(tree.keys())
-            needed = {BR_SCORE, BR_MGG, BR_WGT, BR_ISDATA}
-            if not needed.issubset(tfields):
-                n_skipped_missing_fields += 1
-                continue
-            n_used += 1
+                # Analyzer output is now sample/systematic/region, not the old
+                # sample/region -- descend into the requested systematic
+                # subdirectory first. A directory with no such subdirectory at
+                # all (e.g. a genuinely flat/legacy file) falls back to
+                # looking directly in tdir, so this doesn't break against
+                # older-structure files.
+                if args.systematic in [k.split(";")[0] for k in tdir.keys()]:
+                    systdir = tdir[args.systematic]
+                else:
+                    systdir = tdir
 
-            arr = tree.arrays([BR_SCORE, BR_MGG, BR_WGT, BR_ISDATA], library="ak")
-            mgg   = arr[BR_MGG]
-            score = arr[BR_SCORE]
-            wgt   = arr[BR_WGT]
-            isdata = arr[BR_ISDATA] if BR_ISDATA in arr.fields else ak.zeros_like(mgg)
+                sel_key = get_tree_key(systdir, TREE_NAME)
+                if sel_key is None:
+                    n_skipped_no_tree += 1
+                    continue
 
-            mc   = (isdata == 0)
-            data = (isdata != 0)
+                tree = systdir[sel_key]
+                tfields = set(tree.keys())
+                needed = {BR_SCORE, BR_MGG, BR_WGT, BR_ISDATA}
+                if not needed.issubset(tfields):
+                    n_skipped_missing_fields += 1
+                    continue
+                if apply_tth_cut and BR_TTH_KILLER not in tfields:
+                    n_skipped_no_tth += 1
+                    continue
+                n_used += 1
 
-            in_sr = (mgg >= sr_lo) & (mgg <= sr_hi)
-            absd  = np.abs(ak.to_numpy(mgg) - 125.0)
-            in_cr = (absd >= cr_lo) & (absd < cr_hi)
+                read_branches = [BR_SCORE, BR_MGG, BR_WGT, BR_ISDATA]
+                if apply_tth_cut:
+                    read_branches.append(BR_TTH_KILLER)
+                arr = tree.arrays(read_branches, library="ak")
+                mgg   = arr[BR_MGG]
+                score = arr[BR_SCORE]
+                wgt   = arr[BR_WGT]
+                isdata = arr[BR_ISDATA] if BR_ISDATA in arr.fields else ak.zeros_like(mgg)
 
-            score_np = ak.to_numpy(score)
-            if USE_SIGMOID_SCORE:
-                score_np = sigmoid(score_np)
-            w_np = ak.to_numpy(wgt)
+                mc   = (isdata == 0)
+                data = (isdata != 0)
 
-            if is_data_dir(dbase):
-                dsel = ak.to_numpy(in_cr[data])
-                shared_bg["D_cr_scores"].append(score_np[data][dsel])
-                shared_bg["D_cr_w"].append(np.ones_like(score_np[data][dsel]))
-            elif is_signal_dir(dbase):
-                tag = "combined"
-                if args.per_mass:
-                    tag = mass_tag_from_dir(dbase)
-                dest = ensure(tag)
-                ssel = ak.to_numpy(in_sr[mc])
-                dest["S_sr_scores"].append(score_np[mc][ssel])
-                dest["S_sr_w"].append(w_np[mc][ssel])
-            else:
-                ssel = ak.to_numpy(in_sr[mc])
-                csel = ak.to_numpy(in_cr[mc])
-                shared_bg["B_sr_scores_mc"].append(score_np[mc][ssel])
-                shared_bg["B_sr_w_mc"].append(w_np[mc][ssel])
-                shared_bg["B_cr_scores_mc"].append(score_np[mc][csel])
-                shared_bg["B_cr_w_mc"].append(w_np[mc][csel])
+                in_sr = (mgg >= sr_lo) & (mgg <= sr_hi)
+                absd  = np.abs(ak.to_numpy(mgg) - 125.0)
+                in_cr = (absd >= cr_lo) & (absd < cr_hi)
 
-        print(f"[INFO] systematic='{args.systematic}': used {n_used}/{len(dir_bases)} sample "
-              f"directories ({n_skipped_no_tree} had no '{TREE_NAME}' tree under this "
-              f"systematic, {n_skipped_missing_fields} were missing required branches)")
-        if n_used == 0:
-            print(f"[WARN] No usable trees found for systematic='{args.systematic}' -- check "
-                  f"the spelling matches what the analyzer actually wrote (e.g. 'nominal'), "
-                  f"and that --root points at a file produced by the current analyzer version "
-                  f"(sample/systematic/region structure, not the older sample/region layout).")
+                # ttH-killer cut, applied uniformly across signal/background/
+                # data before anything else -- confirmed direction is
+                # "lower score = less ttH-like", so pass = score < cut.
+                if apply_tth_cut:
+                    tth_pass = arr[BR_TTH_KILLER] < args.tth_killer_cut
+                    in_sr = in_sr & tth_pass
+                    in_cr = in_cr & tth_pass
+
+                score_np = ak.to_numpy(score)
+                if USE_SIGMOID_SCORE:
+                    score_np = sigmoid(score_np)
+                w_np = ak.to_numpy(wgt)
+
+                if is_data_dir(dbase):
+                    dsel = ak.to_numpy(in_cr[data])
+                    shared_bg["D_cr_scores"].append(score_np[data][dsel])
+                    shared_bg["D_cr_w"].append(np.ones_like(score_np[data][dsel]))
+                elif is_signal_dir(dbase):
+                    tag = "combined"
+                    if args.per_mass:
+                        tag = mass_tag_from_dir(dbase)
+                    dest = ensure(tag)
+                    ssel = ak.to_numpy(in_sr[mc])
+                    dest["S_sr_scores"].append(score_np[mc][ssel])
+                    dest["S_sr_w"].append(w_np[mc][ssel])
+                else:
+                    ssel = ak.to_numpy(in_sr[mc])
+                    csel = ak.to_numpy(in_cr[mc])
+                    shared_bg["B_sr_scores_mc"].append(score_np[mc][ssel])
+                    shared_bg["B_sr_w_mc"].append(w_np[mc][ssel])
+                    shared_bg["B_cr_scores_mc"].append(score_np[mc][csel])
+                    shared_bg["B_cr_w_mc"].append(w_np[mc][csel])
+
+    # Summary printed ONCE, after all input files -- moved out of the
+    # per-file loop (a real bug from the multi-file restructuring: it
+    # was printing once per file with len(dir_bases) reflecting only
+    # the LAST file's directory count, not the true cumulative total,
+    # while n_used/n_skipped_* are genuinely cumulative -- producing a
+    # confusing, incorrect-looking ratio if left inside the loop).
+    print(f"[INFO] systematic='{args.systematic}': used {n_used}/{n_files_total_dirs} sample "
+          f"directories across {len(input_files)} file(s) ({n_skipped_no_tree} had no "
+          f"'{TREE_NAME}' tree under this systematic, {n_skipped_missing_fields} were "
+          f"missing required branches"
+          + (f", {n_skipped_no_tth} were missing '{BR_TTH_KILLER}' with --tth-killer-cut set)" if apply_tth_cut else ")"))
+    if n_used == 0:
+        print(f"[WARN] No usable trees found for systematic='{args.systematic}' -- check "
+              f"the spelling matches what the analyzer actually wrote (e.g. 'nominal'), "
+              f"and that --root points at file(s) produced by the current analyzer version "
+              f"(sample/systematic/region structure, not the older sample/region layout).")
 
     # -------- build edges with α(score) --------
     # Background MC and data are shared across every tag (see shared_bg
@@ -434,145 +523,172 @@ def main():
     payload = {
         "boundaries": results,
         "sr_mgg_window_GeV": args.sr_sigma,
-        "cr_mgg_sidebands_GeV": list(args.cr_sidebands)
+        "cr_mgg_sidebands_GeV": list(args.cr_sidebands),
+        "tth_killer_cut": args.tth_killer_cut
     }
     with open(out_json, "w") as f:
         json.dump(payload, f, indent=2)
     print(f"Wrote {out_json}")
 
     # -------- optional: categorized ROOT copy (uproot-5 safe) --------
+    # Produces ONE categorized output PER input file, matching the
+    # analyzer's own per-sample split -- not just for consistency, but
+    # because writing everything back into a single combined output
+    # would risk reintroducing the exact same uproot 2GB write-cascade
+    # crash this whole restructuring exists to avoid.
     if args.write_categorized:
-        out_root = os.path.join(
-            args.outdir,
-            os.path.basename(args.root).replace(".root", "__categorized.root")
-        )
-        with uproot.open(args.root) as fin, uproot.recreate(out_root) as fout:
+        for root_file in input_files:
+            out_root = os.path.join(
+                args.outdir,
+                os.path.basename(root_file).replace(".root", "__categorized.root")
+            )
+            with uproot.open(root_file) as fin, uproot.recreate(out_root) as fout:
 
-            for dbase in collect_dirs(fin):
-                try:
-                    fout.mkdir(dbase)
-                except Exception:
-                    pass
-
-            def write_tree(out_dir, tname: str, arrays_np: dict):
-                clean = {}
-                for k, v in arrays_np.items():
-                    arr = np.asarray(v)
-
-                    if arr.dtype == np.dtype("O"):
-                        raise RuntimeError(f"Branch '{tname}:{k}' has object dtype — convert jagged arrays to fixed numpy arrays first.")
-
-                    if arr.ndim != 1:
-                        raise RuntimeError(f"Branch '{tname}:{k}' is not 1-D (ndim={arr.ndim}).")
-
-                    if np.issubdtype(arr.dtype, np.integer):
-                        amin = arr.min() if arr.size else 0
-                        amax = arr.max() if arr.size else 0
-                        if amin < np.iinfo(np.int32).min or amax > np.iinfo(np.int32).max:
-                            print(f"[warn] Branch '{tname}:{k}' requires int64 range ({amin}..{amax}). Keeping int64.")
-                            clean[k] = arr.astype(np.int64)
-                        else:
-                            clean[k] = arr.astype(np.int32)
-                        continue
-
-                    if np.issubdtype(arr.dtype, np.floating):
-                        clean[k] = arr.astype(np.float32)
-                        continue
-
-                    if arr.dtype == np.bool_:
-                        clean[k] = arr.astype(np.uint8)
-                        continue
-
-                    clean[k] = arr
-
-                branch_types = {k: v.dtype for k, v in clean.items()}
-                out_tree = out_dir.mktree(tname, branch_types)
-                out_tree.extend(clean)
-
-            n_copied_samples = 0
-            for dbase in collect_dirs(fin):
-                in_dir_obj = fin[dbase]
-                sample_out_dir = fout[dbase]
-
-                # Analyzer output is now sample/systematic/region -- descend
-                # into the requested systematic subdirectory before looking
-                # for trees, same as the boundary-fitting loop above. Only
-                # this ONE systematic is copied into the categorized output
-                # for now; writing cat/region-tagged copies of every
-                # systematic is blocked on the still-open
-                # frozen-vs-per-systematic-boundaries decision.
-                child_names = [k.split(";")[0] for k in in_dir_obj.keys()]
-                if args.systematic in child_names:
-                    syst_in_dir = in_dir_obj[args.systematic]
+                for dbase in collect_dirs(fin):
                     try:
-                        out_dir = sample_out_dir.mkdir(args.systematic)
+                        fout.mkdir(dbase)
                     except Exception:
-                        out_dir = sample_out_dir[args.systematic]
-                else:
-                    # Flat/legacy structure with no systematic subdirectory.
-                    syst_in_dir = in_dir_obj
-                    out_dir = sample_out_dir
+                        pass
 
-                n_copied_samples += 1
+                def write_tree(out_dir, tname: str, arrays_np: dict):
+                    clean = {}
+                    for k, v in arrays_np.items():
+                        arr = np.asarray(v)
 
-                for tkey in syst_in_dir.keys():
-                    tbase = tkey.split(";")[0]
-                    tree  = syst_in_dir[tkey]
+                        if arr.dtype == np.dtype("O"):
+                            raise RuntimeError(f"Branch '{tname}:{k}' has object dtype — convert jagged arrays to fixed numpy arrays first.")
 
-                    if (
-                        tbase != TREE_NAME
-                        or (BR_SCORE not in tree.keys())
-                        or (BR_MGG   not in tree.keys())
-                    ):
-                        arrays_np = tree.arrays(library="np")
-                        write_tree(out_dir, tbase, arrays_np)
-                        continue
+                        if arr.ndim != 1:
+                            raise RuntimeError(f"Branch '{tname}:{k}' is not 1-D (ndim={arr.ndim}).")
 
-                    arr = tree.arrays(library="ak")
-                    score_np = ak.to_numpy(arr[BR_SCORE])
-                    if USE_SIGMOID_SCORE:
-                        score_np = 1.0 / (1.0 + np.exp(-score_np))
-                    mgg_np   = ak.to_numpy(arr[BR_MGG])
+                        if np.issubdtype(arr.dtype, np.integer):
+                            amin = arr.min() if arr.size else 0
+                            amax = arr.max() if arr.size else 0
+                            if amin < np.iinfo(np.int32).min or amax > np.iinfo(np.int32).max:
+                                print(f"[warn] Branch '{tname}:{k}' requires int64 range ({amin}..{amax}). Keeping int64.")
+                                clean[k] = arr.astype(np.int64)
+                            else:
+                                clean[k] = arr.astype(np.int32)
+                            continue
 
-                    sr_mask = np.abs(mgg_np - 125.0) < args.sr_sigma
-                    lo, hi  = args.cr_sidebands
-                    cr_mask = (np.abs(mgg_np - 125.0) >= lo) & (np.abs(mgg_np - 125.0) < hi)
+                        if np.issubdtype(arr.dtype, np.floating):
+                            clean[k] = arr.astype(np.float32)
+                            continue
 
-                    tag = "combined"
-                    if args.per_mass and is_signal_dir(dbase):
-                        tag = mass_tag_from_dir(dbase)
-                    edges = results.get(tag)
-                    if edges is None:
-                        edges = results.get("combined", [])
+                        if arr.dtype == np.bool_:
+                            clean[k] = arr.astype(np.uint8)
+                            continue
+
+                        clean[k] = arr
+
+                    branch_types = {k: v.dtype for k, v in clean.items()}
+                    out_tree = out_dir.mktree(tname, branch_types)
+                    out_tree.extend(clean)
+
+                n_copied_samples = 0
+                for dbase in collect_dirs(fin):
+                    in_dir_obj = fin[dbase]
+                    sample_out_dir = fout[dbase]
+
+                    # Analyzer output is now sample/systematic/region -- descend
+                    # into the requested systematic subdirectory before looking
+                    # for trees, same as the boundary-fitting loop above. Only
+                    # this ONE systematic is copied into the categorized output
+                    # for now; writing cat/region-tagged copies of every
+                    # systematic is blocked on the still-open
+                    # frozen-vs-per-systematic-boundaries decision.
+                    child_names = [k.split(";")[0] for k in in_dir_obj.keys()]
+                    if args.systematic in child_names:
+                        syst_in_dir = in_dir_obj[args.systematic]
+                        try:
+                            out_dir = sample_out_dir.mkdir(args.systematic)
+                        except Exception:
+                            out_dir = sample_out_dir[args.systematic]
+                    else:
+                        # Flat/legacy structure with no systematic subdirectory.
+                        syst_in_dir = in_dir_obj
+                        out_dir = sample_out_dir
+
+                    n_copied_samples += 1
+
+                    for tkey in syst_in_dir.keys():
+                        tbase = tkey.split(";")[0]
+                        tree  = syst_in_dir[tkey]
+
+                        if (
+                            tbase != TREE_NAME
+                            or (BR_SCORE not in tree.keys())
+                            or (BR_MGG   not in tree.keys())
+                        ):
+                            arrays_np = tree.arrays(library="np")
+                            write_tree(out_dir, tbase, arrays_np)
+                            continue
+
+                        arr = tree.arrays(library="ak")
+                        score_np = ak.to_numpy(arr[BR_SCORE])
+                        if USE_SIGMOID_SCORE:
+                            score_np = 1.0 / (1.0 + np.exp(-score_np))
+                        mgg_np   = ak.to_numpy(arr[BR_MGG])
+
+                        sr_mask = np.abs(mgg_np - 125.0) < args.sr_sigma
+                        lo, hi  = args.cr_sidebands
+                        cr_mask = (np.abs(mgg_np - 125.0) >= lo) & (np.abs(mgg_np - 125.0) < hi)
+
+                        # Same ttH-killer cut as the boundary-fitting loop above,
+                        # applied here too so the categorized output file is
+                        # consistent with the edges that were actually derived
+                        # from cut events -- an event failing the cut gets no
+                        # region/category assignment at all (stays at the
+                        # -1/-99 default), same treatment as an event outside
+                        # both the SR and CR windows entirely.
+                        if apply_tth_cut:
+                            if BR_TTH_KILLER in tree.keys():
+                                tth_np = ak.to_numpy(tree.arrays([BR_TTH_KILLER], library="ak")[BR_TTH_KILLER])
+                                tth_pass = tth_np < args.tth_killer_cut
+                                sr_mask = sr_mask & tth_pass
+                                cr_mask = cr_mask & tth_pass
+                            else:
+                                print(f"[warn] '{dbase}': --tth-killer-cut set but '{BR_TTH_KILLER}' "
+                                      f"not found in this tree -- no events here will be assigned to "
+                                      f"any region (safer than silently skipping the cut).")
+                                sr_mask = np.zeros_like(sr_mask)
+                                cr_mask = np.zeros_like(cr_mask)
+
+                        tag = "combined"
                         if args.per_mass and is_signal_dir(dbase):
-                            print(f"[warn] No per-mass edges for tag '{tag}' (dir '{dbase}'); "
-                                  f"falling back to 'combined' edges.")
-                        elif args.per_mass and not edges:
-                            print(f"[warn] '{dbase}': background/data has no single mass "
-                                  f"identity, and no shared 'combined' edges exist under "
-                                  f"--per-mass (only per-mass signal tags do) -- SR events in "
-                                  f"this directory will NOT get a cat/region assignment (stay "
-                                  f"at the -99/-1 default). This reflects an open design "
-                                  f"question: background/data currently carries a single "
-                                  f"pDNN_score (scored at one reference mass point, not "
-                                  f"per-signal-hypothesis), so there is no principled single "
-                                  f"set of edges to apply to it across the whole per-mass grid.")
+                            tag = mass_tag_from_dir(dbase)
+                        edges = results.get(tag)
+                        if edges is None:
+                            edges = results.get("combined", [])
+                            if args.per_mass and is_signal_dir(dbase):
+                                print(f"[warn] No per-mass edges for tag '{tag}' (dir '{dbase}'); "
+                                      f"falling back to 'combined' edges.")
+                            elif args.per_mass and not edges:
+                                print(f"[warn] '{dbase}': background/data has no single mass "
+                                      f"identity, and no shared 'combined' edges exist under "
+                                      f"--per-mass (only per-mass signal tags do) -- SR events in "
+                                      f"this directory will NOT get a cat/region assignment (stay "
+                                      f"at the -99/-1 default). This reflects an open design "
+                                      f"question: background/data currently carries a single "
+                                      f"pDNN_score (scored at one reference mass point, not "
+                                      f"per-signal-hypothesis), so there is no principled single "
+                                      f"set of edges to apply to it across the whole per-mass grid.")
 
-                    cat    = np.full(len(score_np), -99, np.int16)
-                    region = np.full(len(score_np),  -1, np.int8)
-                    for i, thr in enumerate(edges):
-                        sel = (score_np >= thr) & sr_mask
-                        cat[sel]    = i
-                        region[sel] = 1
-                    cat[cr_mask]    = -1
-                    region[cr_mask] = 0
+                        cat    = np.full(len(score_np), -99, np.int16)
+                        region = np.full(len(score_np),  -1, np.int8)
+                        for i, thr in enumerate(edges):
+                            sel = (score_np >= thr) & sr_mask
+                            cat[sel]    = i
+                            region[sel] = 1
+                        cat[cr_mask]    = -1
+                        region[cr_mask] = 0
 
-                    arrays_np = tree.arrays(library="np")
-                    arrays_np["cat"]    = cat
-                    arrays_np["region"] = region
-                    write_tree(out_dir, tbase, arrays_np)
+                        arrays_np = tree.arrays(library="np")
+                        arrays_np["cat"]    = cat
+                        arrays_np["region"] = region
+                        write_tree(out_dir, tbase, arrays_np)
 
-        print(f"Wrote {out_root} ({n_copied_samples} sample(s), systematic='{args.systematic}')")
+            print(f"Wrote {out_root} ({n_copied_samples} sample(s), systematic='{args.systematic}')")
 
 
 if __name__ == "__main__":

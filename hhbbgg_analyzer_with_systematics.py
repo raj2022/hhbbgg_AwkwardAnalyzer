@@ -560,7 +560,19 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
             # No σ×L scaling for data or DD templates
             xsec_lumi_cache[inputfile] = (1.0, 1.0)
         else:
-            xsec_lumi_cache[inputfile] = (float(getXsec(inputfile)), 
+            # Use the RESOLVED sample identity, not the raw file path --
+            # getXsec() matches by substring against os.path.basename() of
+            # whatever it's given, and every file in the newer HiggsDNA-
+            # style production shares the identical generic leaf filename
+            # "NOTAG_merged.parquet". Passing inputfile directly meant
+            # getXsec() was matching against "notagmerged" for nearly
+            # every sample -- silently falling through to its 1.0 pb
+            # default for the vast majority of signal and background
+            # samples alike, with no error or warning. sample_name_norm
+            # is already correctly resolved above (via resolve_sample_name)
+            # to the real per-sample identity (e.g. "GGJets_MGG-80",
+            # "GluGluHtoGG") and is what must be used here instead.
+            xsec_lumi_cache[inputfile] = (float(getXsec(sample_name_norm)),
                                           float(getLumi(use_year, use_era)) * 1000.0,      # lumi in pb^-1
                                           )      
     xsec_, lumi_ = xsec_lumi_cache[inputfile]
@@ -1019,35 +1031,82 @@ def main():
     out_dir = Path("outputfiles") / "merged" / out_tag
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    tree_file_path = out_dir / "hhbbgg_analyzer-v2-trees.root"
     hist_file_path = out_dir / "hhbbgg_analyzer-v2-histograms.root"
 
-    print("[INFO] Opening tree output file (streaming mode)")
-    tree_upfile = uproot.recreate(tree_file_path)
-
     # -----------------------------------------
-    # Process files (STREAM trees)
+    # Group input files by resolved sample identity, and process one
+    # sample's tree output file at a time (see main loop below).
+    #
+    # FIXED: a real, confirmed bug -- a single tree_upfile was opened
+    # ONCE for the entire run and every one of 3108 parquet files (every
+    # sample, every systematic variation) streamed into that one,
+    # continuously-growing ROOT file. Confirmed as the direct cause of a
+    # live crash mid-run:
+    #   struct.error: 'i' format requires -2147483648 <= number <= 2147483647
+    # 2147483647 is exactly 2^31-1, the ceiling of a 32-bit signed int --
+    # uproot's classic-ROOT-format write cascade uses 32-bit file-offset
+    # integers, which overflow once the single output file crosses
+    # roughly 2GB. This was never hit before --all-systematics existed
+    # (nominal-only output stayed well under that threshold), but the
+    # ~15x volume increase from every JEC/JER/Scale/Smearing/weight
+    # variation pushes a single monolithic file over the edge partway
+    # through a full run -- confirmed directly: the crash happened mid-
+    # way through NMSSM_X1000_Y150, after X1000_Y100 and part of
+    # X1000_Y125 had already been written successfully.
+    #
+    # Fixed by opening a SEPARATE tree output file per sample instead of
+    # one file for the whole run -- each individual sample's own
+    # systematics-included volume is confirmed well under the 2GB
+    # threshold (multiple full samples were written successfully before
+    # the crash), so per-sample splitting is more than sufficient
+    # granularity. TREE_CACHE (keyed by "sample/systematic/region") is
+    # cleared between samples, since its entries are live handles into
+    # whichever file is currently open -- carrying stale entries across
+    # a file close/reopen would make write_tree_chunked() try to extend
+    # a tree object belonging to an already-closed file.
     # -----------------------------------------
+    from collections import OrderedDict
+    files_by_sample = OrderedDict()
     for infile in inputfiles:
-        det_year, det_era = detect_year_era_from_name(infile)
+        s = resolve_sample_name(infile)
+        files_by_sample.setdefault(s, []).append(infile)
 
-        year = det_year if det_year in config_years else None
-        if year is None:
-            raise RuntimeError(
-                f"File {infile} has year={det_year}, not in --config-years {config_years}"
+    print(f"[INFO] Grouped into {len(files_by_sample)} sample(s) for per-sample tree output files")
+
+    def _safe_filename_part(s: str) -> str:
+        return re.sub(r"[^A-Za-z0-9_.-]", "_", s)
+
+    for sample_name, sample_files in files_by_sample.items():
+        safe_name = _safe_filename_part(sample_name)
+        tree_file_path = out_dir / f"hhbbgg_analyzer-v2-trees__{safe_name}.root"
+        print(f"[INFO] Opening tree output file for sample '{sample_name}' "
+              f"({len(sample_files)} file(s)): {tree_file_path}")
+        tree_upfile = uproot.recreate(tree_file_path)
+        TREE_CACHE.clear()
+
+        for infile in sample_files:
+            det_year, det_era = detect_year_era_from_name(infile)
+
+            year = det_year if det_year in config_years else None
+            if year is None:
+                raise RuntimeError(
+                    f"File {infile} has year={det_year}, not in --config-years {config_years}"
+                )
+
+            era = det_era or args.era
+
+            print(f"[INFO] Processing {os.path.basename(infile)} → {year} {era}")
+
+            process_parquet_file(
+                infile,
+                cli_year=year,
+                cli_era=era,
+                xsec_lumi_cache=xsec_lumi_cache,
+                tree_upfile=tree_upfile,
             )
 
-        era = det_era or args.era
-
-        print(f"[INFO] Processing {os.path.basename(infile)} → {year} {era}")
-
-        process_parquet_file(
-            infile,
-            cli_year=year,
-            cli_era=era,
-            xsec_lumi_cache=xsec_lumi_cache,
-            tree_upfile=tree_upfile,
-        )
+        tree_upfile.close()
+        print(f"[OK] Closed tree output file for sample '{sample_name}': {tree_file_path}")
 
     # -----------------------------------------
     # Write histograms (cached in memory)
@@ -1060,14 +1119,10 @@ def main():
         h_clone.Write()
     hist_tfile.Close()
 
-    # -----------------------------------------
-    # Close tree file
-    # -----------------------------------------
-    tree_upfile.close()
-
     print("======================================")
     print(f"[OK] Histograms → {hist_file_path}")
-    print(f"[OK] Trees       → {tree_file_path}")
+    print(f"[OK] Trees       → {out_dir} (one file per sample: "
+          f"hhbbgg_analyzer-v2-trees__<sample>.root)")
     print("======================================")
     
     
