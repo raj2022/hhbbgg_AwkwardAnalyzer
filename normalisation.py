@@ -258,15 +258,15 @@ XSEC_PATTERNS = [
     ("ggjets_low_rescaled", 1.0),
     ("ggjets_high_rescaled",1.0),
     # 2024 extra samples for VH
-    ("wmhtogg",     0.647),   # FIXED: was "WmHtoGG" -- mixed-case key compared against an
+    ("wmhtogg",     0.647 * BR_HToGG),   # FIXED: was "WmHtoGG" -- mixed-case key compared against an
                                # always-lowercased match target could never match; confirmed
                                # via direct test (fell through to the 1.0 default every time)
                                # before fixing. This is the same WmHToGG/WpHToGG/ZHToGG naming
                                # family already flagged as missing from the Plotter's sample
                                # grouping -- this is a second, independent occurrence of that
                                # same underlying naming issue, in a different script.
-    ("wphtogg",      1.021),  # FIXED: was "WpHtoGG", same case issue as above.
-    ("zhtogg",          0.9079),  # FIXED: was "zhTogg", same case issue as above.
+    ("wphtogg",      1.021 * BR_HToGG),  # FIXED: was "WpHtoGG", same case issue as above.
+    ("zhtogg",          0.9079 * BR_HToGG),  # FIXED: was "zhTogg", same case issue as above.
 
 ]
 
