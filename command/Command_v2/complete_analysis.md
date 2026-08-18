@@ -362,6 +362,12 @@ per invocation) -- merge with `hadd` as shown above to get back the
 familiar single `hhbbgg_analyzer-v2-trees.root` /
 `hhbbgg_analyzer-v2-histograms.root` for downstream use.
 
+```bash
+cd outputfiles/merged/DD_2024
+hadd hhbbgg_analyzer-v2-trees.root hhbbgg_analyzer-v2-trees__*.root
+hadd hhbbgg_analyzer-v2-histograms.root hhbbgg_analyzer-v2-histograms__*.root
+```
+
 ### 4.1 Validate Data/MC Agreement
 
 Inspect Data/MC plots from the merged output using `hhbbgg_Plotter.py`:
@@ -455,7 +461,7 @@ additional transform to it, which is correct as-is.
 **Baseline (pDNN-only, no ttH-killer split) -- `event_categorization/build_pdnn_categories.py`:**
 
 ```bash
-python event_categorization/build_pdnn_categories.py \
+python event_categorization/build_pdnn_categories.py  \
   --root outputfiles/merged/DD_2024/hhbbgg_analyzer-v2-trees.root \
   --sr-sigma 2.0 --cr-sidebands 4 10 \
   --nmin 50 --min-gain 0.005 --max-bins 2 \
@@ -471,7 +477,7 @@ working point (ε(ttH)=0.10 → cut=0.401 from the trained model's
 validation-set scan):
 
 ```bash
-python event_categorization/event_categorization_tth.py \
+python event_categorization/build_pdnn_categories.py  \
   --root outputfiles/merged/DD_2024/hhbbgg_analyzer-v2-trees.root \
   --sr-sigma 2.0 --cr-sidebands 4 10 \
   --nmin 50 --min-gain 0.005 --max-bins 2 \
@@ -558,14 +564,14 @@ Table from the ttH script:
 
 
 ```bash
-python categorize_events.py \
-  --root outputfiles/merged/DD_2024/hhbbgg_analyzer-v2-trees.root \
+python event_categorization/build_pdnn_categories.py  \
+  --root outputfiles/merged/DD_2024/ \
   --sr-sigma 2.0 --cr-sidebands 4 10 \
   --nmin 50 --min-gain 0.05 --max-bins 5 \
   --alpha-bins 60 \
   --tth-killer-cut 0.682 \
   --per-mass \
-  --outdir outputs/categories_tth_medium \
+  --outdir slides_fitting/CMSSW_14_1_0_pre4/src/outputs/categories_alpha  \
   --write-categorized --systematic nominal
   ```
 
@@ -576,14 +582,13 @@ tree output (§4.0): pass the merged output directory directly
 `hhbbgg_analyzer-v2-trees__*.root`, processing all of them together
 without needing to `hadd` first:
 ```bash
-python categorize_events.py \
+python event_categorization/build_pdnn_categories.py \
   --root outputfiles/merged/DD_2024/ \
   --sr-sigma 2.0 --cr-sidebands 4 10 \
   --nmin 50 --min-gain 0.05 --max-bins 5 \
   --alpha-bins 60 \
-  --tth-killer-cut 0.682 \
-  --per-mass \
-  --outdir outputs/categories_tth_medium \
+  --tth-killer-cut 0.682 --per-mass \
+  --outdir slides_fitting/CMSSW_14_1_0_pre4/src/outputs/categories_alpha \
   --write-categorized --systematic nominal
 ```
 Falls back to a single `hhbbgg_analyzer-v2-trees.root` in that directory
