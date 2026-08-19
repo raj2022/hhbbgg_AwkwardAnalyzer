@@ -458,6 +458,16 @@ is also already a probability in [0, 1] (`inference_tth_killer.py` applies
 `BCEWithLogitsLoss` training) — neither script here applies any
 additional transform to it, which is correct as-is.
 
+> **These two examples are early, historical reference only** --
+> predate the `srbbgg`/tie-tolerance/catch-all-category fixes described
+> below, and use a different `--max-bins`/`--min-gain`/`--outdir`
+> convention than what the analysis actually settled on. **For the
+> current, correct command, see "ttH Killer implementation (fixed)"
+> further down this section** -- that is the one actually validated
+> end-to-end (real, sensible category boundaries; real, non-zero yields
+> in every category) and should be used as the template going forward,
+> not either of the two below.
+
 **Baseline (pDNN-only, no ttH-killer split) -- `event_categorization/build_pdnn_categories.py`:**
 
 ```bash
@@ -517,6 +527,66 @@ analyzer's real `sample/systematic/region` output structure):
   fails visibly instead of silently producing empty or wrong results.
   Worth checking this line first after any run.
 
+**Fixed later this session, in `categorize_events.py` specifically
+(confirmed as a real, silent bug -- not caught by the fixes above,
+since it doesn't crash or error at all):**
+- **`TREE_NAME` was hardcoded to `"selection"`, not `"srbbgg"`** -- the
+  analysis's actual, intended signal region. `"selection"` is a real,
+  much looser upstream cut, not the signal region. This was NOT a typo
+  caught immediately: since `"selection"` is a genuinely valid tree name
+  that exists in every sample's output, the script ran without error,
+  produced plausible-looking boundaries, and even wrote `cat`/`region`
+  columns successfully -- the wrongness was entirely silent, only
+  caught by directly comparing `selection`-region vs. `srbbgg`-region
+  statistics for the same sample and noticing they were very different
+  pools of events. **Every example in this section now uses `srbbgg`
+  correctly** -- if working from an older copy of `categorize_events.py`
+  or `build_pdnn_categories.py`, confirm `TREE_NAME = "srbbgg"` directly
+  in the source before trusting any output.
+- **Severe `pDNN_score` saturation at the top of the range, combined
+  with a raw event-count-based `--nmin`, produced degenerate,
+  non-informative category boundaries** -- confirmed directly:
+  thousands of SR events sharing (or differing only in the last few
+  representable `float32` digits from) the exact same score near 1.0,
+  meaning a cutoff defined purely by event count landed arbitrarily
+  inside that saturated cluster, producing boundaries like
+  `[0.9999995, 0.9999996, 0.9999997, 0.9999998, 1.0]` that don't
+  actually separate anything. **Fixed in `build_edges()`**: candidate
+  bins now extend past any near-tie group (within a small tolerance,
+  `tie_tol`, default `1e-4`, not exact float equality -- the real
+  saturated cluster was distinct-but-adjacent `float32` values, not
+  bit-identical ones) before accepting a boundary, so the entire
+  saturated spike becomes one legitimate top category instead of being
+  split arbitrarily. Confirmed working: the same real data that
+  previously produced degenerate boundaries now produces genuinely
+  distinct ones (e.g. `[0.921, 0.998, 0.99998]`) with the ORIGINAL,
+  small `--nmin 50` -- no need to artificially inflate `--nmin` as a
+  workaround once this fix is in place.
+- **SR events scoring below the lowest derived boundary were silently
+  left uncategorized (`cat=-99`) and excluded from the fit entirely**,
+  not folded into any real category -- confirmed as a real loss of
+  signal-region acceptance whenever `build_edges()` found fewer
+  boundaries than `--max-bins` (common with sparser per-mass-point
+  statistics). **Fixed**: added a catch-all lowest category (index
+  `len(edges)`) that captures every SR event not already assigned to a
+  boundary-defined category, so `--max-bins` fewer-than-requested
+  boundaries genuinely still means "N usable categories, plus one
+  catch-all," never "some real signal-region acceptance silently
+  discarded."
+- **`--write-categorized`'s copy loop could crash the entire run
+  uncaught partway through**, losing every not-yet-processed sample's
+  categorized output: `AttributeError: 'ReadOnlyDirectory' object has
+  no attribute 'arrays'`, confirmed as a real, live crash. Root cause:
+  `uproot`'s `.keys()` can surface nested-directory keys alongside leaf
+  tree keys (the same underlying behavior the `collect_dirs()` fix
+  above already handles elsewhere), and the copy-loop's fallback path
+  (for any tree that isn't the main target) called `.arrays()`
+  unconditionally without first confirming the key actually resolved to
+  a tree rather than a directory. **Fixed**: an explicit
+  `hasattr(tree, "arrays")` check before any `.arrays()` call, skipping
+  with a loud `[WARN]` instead of crashing the whole run if a key
+  doesn't resolve to a genuine tree.
+
 **Outputs (from `--outdir`):**
 - `event_categories.json` — derived category boundaries, nested per mass
   tag *and* per ttH branch (`tth_low` / `tth_high`) when `--tth-cut` is
@@ -529,26 +599,31 @@ analyzer's real `sample/systematic/region` output structure):
   boundaries) -- other systematics present in the input are not carried
   into the categorized copy.
 
-> **Open item (cut value):** `--tth-cut 0.401` above is the Tight working
-> point from the ttH killer's validation-set scan
-> (ε(ttH)=0.10, ε(other resonant H)=0.947). Before adopting it for the
-> full categorization, compare the ttH-branch category structure across
-> at least the Loose/Medium/Tight cuts (0.924 / 0.682 / 0.401) to confirm
-> the split is worth keeping -- see the validation plan discussed
-> separately.
+> **Open item (cut value) — RESOLVED, differently than this example
+> shows.** The working point actually adopted for all downstream
+> systematics/datacard work is **Medium (`--tth-killer-cut 0.682`,
+> `--tth-cut` equivalent)**, not Tight (0.401) as shown in the example
+> above — Medium roughly halves remaining ttH contamination relative to
+> Loose for only a 3-point signal-efficiency cost, and matches the
+> standard default-vs-specialized convention for this kind of pre-split.
+> The Tight-WP example above predates that decision; kept here as a
+> working syntax reference, not as the recommended cut value.
 
-> **Open item (systematics — datacard wiring):** the analyzer now produces
-> both weight-based and (optionally) folder-based systematic shapes with a
-> proper `sample/systematic/region` output structure, and both
-> categorization scripts can now correctly read any single systematic via
-> `--systematic`. Nothing yet assembles these into a `combine`-style
-> datacard (shape systematics via up/down histogram naming, rate
-> systematics as `lnN` lines) — tracked separately, not part of this
-> document's scope yet. Category boundaries from `build_edges()` are
-> still derived from nominal only per run; whether the same boundaries
-> are reused for every systematic variation or re-derived per variation
-> (running the categorization script once per systematic) has not yet
-> been decided.
+> **Open item (systematics — datacard wiring): now real, ongoing work,
+> tracked in a separate, dedicated document
+> (`Fitting_Commands_Systematics.md`), not just a future item.** Rate
+> (weight-based) and shape (mgg + mjj object-level) systematics have
+> both been computed and wired into a real signal workspace and datacard
+> for one test mass point (`mX600_mY300`), verified end-to-end through a
+> real `AsymptoticLimits` result and a real, sensible impact plot. See
+> that document for the full procedure, the real bugs found while
+> building it (including a category-boundary-computation bug and a
+> `normalisation.py` branching-ratio bug, both described below in a
+> new §6.5/§6.6), and what's still genuinely open (scaling to the full
+> grid, per-category rate systematics, per-component shape shifts,
+> per-component background). Category boundaries from `build_edges()`
+> are still derived from nominal only per run, unresolved as stated
+> below.
 
 
 
@@ -646,6 +721,48 @@ runs *after* being deployed. The existing merged tree/histogram output
 predates all four and should not be trusted for `dibjet_mass` shape,
 `srbbgg`-region yields, or VH background until a fresh analyzer run has
 picked these up.
+
+### 6.5 A SEPARATE, later-found `normalisation.py` bug -- not the naming-match issue above
+
+Distinct from the case-sensitivity/naming-match VH bug fixed earlier in
+this section: `WmHtoGG`/`WpHtoGG`/`ZHtoGG`'s cross-section entries were
+missing the `* BR_HToGG` (H→γγ branching ratio) multiplication that
+every other H→γγ process in the same lookup table has -- inflating
+these three samples' effective yield by `1/BR_HToGG`, roughly 440x.
+Found via a real, physically implausible result: `ZHtoGG` showing as
+44% of the total combined background, when its production cross-section
+is ~20x smaller than `GluGluHtoGG`'s (which showed as 0.2%). Fixed:
+```python
+("wmhtogg",     0.647 * BR_HToGG),
+("wphtogg",      1.021 * BR_HToGG),
+("zhtogg",          0.9079 * BR_HToGG),
+```
+**Retroactive impact, same caution as above**: any histogram/tree output
+predating this fix that includes these three samples is wrong and needs
+regenerating -- for the full grid whenever it's next touched, not just
+the one test point this was found on. Full detail, including the exact
+symptom and how it was traced, in `Fitting_Commands_Systematics.md`.
+
+### 6.6 Categorized (`--write-categorized`) output goes stale independently, on its OWN schedule
+
+A fix to `normalisation.py` (§6.5) or any other change to a sample's
+underlying tree data does **NOT** automatically update any existing
+`--write-categorized` output (§5) built from the old data -- that
+output is a genuinely separate, cloned copy of each sample's tree, with
+`cat`/`region` columns added at the time `--write-categorized` was run,
+and it has no mechanism to know its own inputs later changed.
+
+**Confirmed as a real, live consequence**, not hypothetical: computing
+a resonant-vs-non-resonant background composition from categorized
+output produced `ZHtoGG` = 437.49 (should be ~1.77 post-§6.5-fix) --
+the categorized copy simply predated the fix and was never regenerated,
+silently serving ~250x-too-large values with no error or warning at
+all. **Whenever tree data changes for any reason (a normalisation fix,
+a fresh analyzer run, anything), `--write-categorized` needs re-running
+before trusting anything computed from its output** -- worth checking
+the categorized file's own timestamp against the tree files it reads
+from, the same discipline `Fitting_Commands_Systematics.md` §6 already
+recommends for `resbkg_fits`/`data_npz` against `event_categories.json`.
 
 ## 7. Running the analyzer as a Condor batch job
 
@@ -747,15 +864,23 @@ inference_PDnn_updated.py  --->  inference_ttH_killer.py
                        |                  still hardcoded, deferred; expects
                        |                  the merged single histogram file)
                        v
-        build_pdnn_categories.py /       (alpha(score) categorization,
-        event_categorization_tth.py /     optional ttH-killer pre-split;
-        categorize_events.py              --systematic + collect_dirs bugs
+        build_pdnn_categories.py /       (alpha(score) categorization, srbbgg
+        event_categorization_tth.py /     region (was wrongly "selection"),
+        categorize_events.py              tie-tolerant boundaries, catch-all
+                                          category, crash-guarded copy loop;
+                                          --systematic + collect_dirs bugs
                                           fixed in all three -> cat/region/
                                           tth_branch branches; --root now
                                           accepts the per-sample tree
-                                          directory directly, no hadd needed)
+                                          directory directly, no hadd needed;
+                                          re-run whenever underlying tree
+                                          data changes, see §6.6)
                        |
                        v
-              [not yet built]             (datacard assembly with systematics
-                                           -- tracked separately)
+        Fitting_Commands_Systematics.md   (datacard assembly WITH real rate +
+        (separate document, finalfit_hhbbgg   shape systematics -- verified
+        pipeline)                          end-to-end for one mass point via
+                                           a real AsymptoticLimits result and
+                                           a real, sensible impact plot; NOT
+                                           yet scaled to the full grid)
 ```
