@@ -414,7 +414,8 @@ def _get_dd_weight_col(all_columns) -> str:
     )
 
 # ---------------- Core processing ----------------
-def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tree_upfile=None):
+def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tree_upfile=None,
+                          skip_trees=False, skip_histograms=False):
     """
     Process a single parquet file and accumulate:
       - histograms per (sample, region, variable)
@@ -844,22 +845,23 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
                 thisregion_ = thisregion[~(ak.is_none(thisregion))]
                 weight_ = "weight_" + ireg
 
-                for ivar in variables_common[ireg]:
-                    hist_name_ = f"{vardict[ivar]}"
-                    vals = ak.to_numpy(thisregion_[ivar])
-                    wts  = ak.to_numpy(thisregion_[weight_])
-                    if wts is not None:
-                        wts = np.where(np.isfinite(wts), wts, 0.0)
-                    h = make_th1_pyroot(vals, wts, hist_name_, hist_name_, binning[ireg][ivar])
+                if not skip_histograms:
+                    for ivar in variables_common[ireg]:
+                        hist_name_ = f"{vardict[ivar]}"
+                        vals = ak.to_numpy(thisregion_[ivar])
+                        wts  = ak.to_numpy(thisregion_[weight_])
+                        if wts is not None:
+                            wts = np.where(np.isfinite(wts), wts, 0.0)
+                        h = make_th1_pyroot(vals, wts, hist_name_, hist_name_, binning[ireg][ivar])
 
-                    key = (sample_name_norm, systematic_label, ireg, hist_name_)
-                    if key not in HIST_CACHE:
-                        acc = h.Clone(f"{hist_name_}__acc")
-                        acc.Reset()
-                        acc.SetDirectory(0)
-                        HIST_CACHE[key] = acc
-                    HIST_CACHE[key].Add(h)
-                    del h
+                        key = (sample_name_norm, systematic_label, ireg, hist_name_)
+                        if key not in HIST_CACHE:
+                            acc = h.Clone(f"{hist_name_}__acc")
+                            acc.Reset()
+                            acc.SetDirectory(0)
+                            HIST_CACHE[key] = acc
+                        HIST_CACHE[key].Add(h)
+                        del h
 
                 # Full event trees are written only for the baseline pass of
                 # this file (nominal, or this file's own folder-systematic
@@ -871,7 +873,7 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
                 # isn't needed just to preserve that information. Revisit if
                 # downstream (datacard/fit) tooling turns out to need
                 # per-weight-systematic trees rather than just histograms.
-                if systematic_label == folder_systematic:
+                if not skip_trees and systematic_label == folder_systematic:
                     tree_data_ = ak_to_numpy_dict(thisregion_)
                     merged = sanitize_for_uproot(tree_data_)
                     write_tree_chunked(
@@ -993,8 +995,28 @@ def main():
              "scored by inference_PDnn.py will not have a pDNN_score column "
              "and would otherwise crash this script."
     )
+    ap.add_argument(
+        "--skip-trees", action="store_true",
+        help="Skip writing per-event tree output entirely -- only fill and write "
+             "histograms. Useful for a second pass over the same input once trees "
+             "are already complete, to (re)generate histograms without redoing the "
+             "much larger tree-writing I/O. Mutually meaningful with "
+             "--skip-histograms (running with both set does nothing)."
+    )
+    ap.add_argument(
+        "--skip-histograms", action="store_true",
+        help="Skip filling and writing histogram output entirely -- only write "
+             "trees. Useful when running trees-only now and histograms in a "
+             "separate, later pass (see --skip-trees) to avoid the histogram "
+             "output's fixed-filename RECREATE mode overwriting a shared file "
+             "unnecessarily during a trees-only run."
+    )
 
     args = ap.parse_args()
+
+    if args.skip_trees and args.skip_histograms:
+        raise SystemExit("--skip-trees and --skip-histograms cannot both be set -- "
+                          "that would process every input file and write no output at all.")
 
     # -----------------------------------------
     # Parse years
@@ -1031,60 +1053,129 @@ def main():
     out_dir = Path("outputfiles") / "merged" / out_tag
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    hist_file_path = out_dir / "hhbbgg_analyzer-v2-histograms.root"
+    hist_file_path = out_dir / f"hhbbgg_analyzer-v2-histograms__{time.strftime('%Y%m%d_%H%M%S')}.root"
 
     # -----------------------------------------
-    # Group input files by resolved sample identity, and process one
-    # sample's tree output file at a time (see main loop below).
+    # Group input files by (resolved sample identity, systematic), and
+    # process one (sample, systematic) tree output file at a time.
     #
-    # FIXED: a real, confirmed bug -- a single tree_upfile was opened
-    # ONCE for the entire run and every one of 3108 parquet files (every
-    # sample, every systematic variation) streamed into that one,
-    # continuously-growing ROOT file. Confirmed as the direct cause of a
-    # live crash mid-run:
+    # FIXED (round 1): a single tree_upfile was opened ONCE for the
+    # entire run and every parquet file streamed into it -- confirmed as
+    # the cause of a live crash mid-run:
     #   struct.error: 'i' format requires -2147483648 <= number <= 2147483647
-    # 2147483647 is exactly 2^31-1, the ceiling of a 32-bit signed int --
-    # uproot's classic-ROOT-format write cascade uses 32-bit file-offset
-    # integers, which overflow once the single output file crosses
-    # roughly 2GB. This was never hit before --all-systematics existed
-    # (nominal-only output stayed well under that threshold), but the
-    # ~15x volume increase from every JEC/JER/Scale/Smearing/weight
-    # variation pushes a single monolithic file over the edge partway
-    # through a full run -- confirmed directly: the crash happened mid-
-    # way through NMSSM_X1000_Y150, after X1000_Y100 and part of
-    # X1000_Y125 had already been written successfully.
+    # (2^31-1, the 32-bit signed-int ceiling uproot's classic-ROOT write
+    # cascade uses for file offsets, overflowing once a single output
+    # file crosses ~2GB). Round-1 fix: one tree file per SAMPLE instead.
     #
-    # Fixed by opening a SEPARATE tree output file per sample instead of
-    # one file for the whole run -- each individual sample's own
-    # systematics-included volume is confirmed well under the 2GB
-    # threshold (multiple full samples were written successfully before
-    # the crash), so per-sample splitting is more than sufficient
-    # granularity. TREE_CACHE (keyed by "sample/systematic/region") is
-    # cleared between samples, since its entries are live handles into
-    # whichever file is currently open -- carrying stale entries across
-    # a file close/reopen would make write_tree_chunked() try to extend
-    # a tree object belonging to an already-closed file.
+    # FIXED (round 2, this pass): per-sample splitting alone was NOT
+    # sufficient granularity, confirmed by a second live crash --
+    # GGJets_MGG-80(_Rescaled).root (3.2GB each) and GluGluHtoGG.root
+    # (2.8GB) all completed successfully DESPITE being well over 2GB,
+    # which reveals the real mechanism: the crash isn't a hard file-size
+    # ceiling, it specifically happens when a NEW directory needs
+    # creating (mkdir(), for a not-yet-seen sample/systematic/region
+    # combination) AFTER the file has already grown past the internal
+    # offset limit -- further writes to an ALREADY-existing directory
+    # are just tree.extend() calls, which don't hit this code path even
+    # well past 2GB. A large background MC sample with many systematic
+    # variations can exceed the threshold within its OWN file, once a
+    # later systematic's fresh directories are needed.
+    #
+    # Since each input parquet file already corresponds to exactly ONE
+    # systematic (folder structure: <mass_point>/<systematic>/*.parquet),
+    # and full event trees are only ever written for a file's own
+    # baseline pass (never duplicated per weight-systematic variant --
+    # see the "systematic_label == folder_systematic" check in
+    # process_parquet_file), grouping by (sample, systematic) instead of
+    # sample alone maps naturally onto the existing per-file systematic
+    # boundaries and gives much finer, safer granularity.
+    #
+    # TREE_CACHE is cleared between groups, since its entries are live
+    # handles into whichever file is currently open -- carrying stale
+    # entries across a close/reopen would make write_tree_chunked() try
+    # to extend a tree object belonging to an already-closed file.
     # -----------------------------------------
     from collections import OrderedDict
-    files_by_sample = OrderedDict()
+    files_by_group = OrderedDict()
     for infile in inputfiles:
         s = resolve_sample_name(infile)
-        files_by_sample.setdefault(s, []).append(infile)
+        syst = classify_systematic(Path(infile)) or "flat"
+        files_by_group.setdefault((s, syst), []).append(infile)
 
-    print(f"[INFO] Grouped into {len(files_by_sample)} sample(s) for per-sample tree output files")
+    print(f"[INFO] Grouped into {len(files_by_group)} (sample, systematic) group(s) "
+          f"for per-group tree output files")
 
     def _safe_filename_part(s: str) -> str:
         return re.sub(r"[^A-Za-z0-9_.-]", "_", s)
 
-    for sample_name, sample_files in files_by_sample.items():
-        safe_name = _safe_filename_part(sample_name)
-        tree_file_path = out_dir / f"hhbbgg_analyzer-v2-trees__{safe_name}.root"
-        print(f"[INFO] Opening tree output file for sample '{sample_name}' "
-              f"({len(sample_files)} file(s)): {tree_file_path}")
-        tree_upfile = uproot.recreate(tree_file_path)
-        TREE_CACHE.clear()
+    if not args.skip_trees:
+        for (sample_name, syst_name), group_files in files_by_group.items():
+            safe_sample = _safe_filename_part(sample_name)
+            safe_syst = _safe_filename_part(syst_name)
+            tree_file_path = out_dir / f"hhbbgg_analyzer-v2-trees__{safe_sample}__{safe_syst}.root"
 
-        for infile in sample_files:
+            # Resumability: skip a (sample, systematic) group whose output
+            # already exists AND is genuinely readable -- lets a re-run of
+            # the exact same command pick up only what's missing after a
+            # crash, without reprocessing hours of already-good output.
+            # Existence alone is NOT enough to trust: the group that was
+            # mid-write when a crash happened will have a partial, likely
+            # UNREADABLE file on disk (uproot.recreate() never got to
+            # finalize it) -- skipping that on existence alone would
+            # silently leave a corrupted/incomplete file in place forever.
+            # Confirmed necessary directly: this is exactly the situation
+            # after the most recent crash, not a hypothetical.
+            if tree_file_path.exists():
+                try:
+                    with uproot.open(tree_file_path) as _check:
+                        _ = _check.keys()
+                    print(f"[SKIP] '{sample_name}' / '{syst_name}': output already exists and "
+                          f"is readable, skipping ({tree_file_path})")
+                    continue
+                except Exception as e:
+                    print(f"[WARN] '{sample_name}' / '{syst_name}': existing output file is "
+                          f"present but NOT readable ({type(e).__name__}: {e}) -- likely a "
+                          f"partial file from an interrupted run. Reprocessing from scratch.")
+
+            print(f"[INFO] Opening tree output file for sample '{sample_name}', systematic "
+                  f"'{syst_name}' ({len(group_files)} file(s)): {tree_file_path}")
+            tree_upfile = uproot.recreate(tree_file_path)
+            TREE_CACHE.clear()
+
+            for infile in group_files:
+                det_year, det_era = detect_year_era_from_name(infile)
+
+                year = det_year if det_year in config_years else None
+                if year is None:
+                    raise RuntimeError(
+                        f"File {infile} has year={det_year}, not in --config-years {config_years}"
+                    )
+
+                era = det_era or args.era
+
+                print(f"[INFO] Processing {os.path.basename(infile)} → {year} {era}")
+
+                process_parquet_file(
+                    infile,
+                    cli_year=year,
+                    cli_era=era,
+                    xsec_lumi_cache=xsec_lumi_cache,
+                    tree_upfile=tree_upfile,
+                    skip_trees=False,
+                    skip_histograms=args.skip_histograms,
+                )
+
+            tree_upfile.close()
+            print(f"[OK] Closed tree output file for sample '{sample_name}', systematic "
+                  f"'{syst_name}': {tree_file_path}")
+    else:
+        # --skip-trees: no per-(sample, systematic) tree file machinery
+        # needed at all -- just iterate every input file directly, filling
+        # HIST_CACHE only. This is the "second pass, histograms only" mode
+        # for a run where trees are already complete.
+        print(f"[INFO] --skip-trees set: processing {len(inputfiles)} file(s) for "
+              f"histograms only, no tree output will be written.")
+        for infile in inputfiles:
             det_year, det_era = detect_year_era_from_name(infile)
 
             year = det_year if det_year in config_years else None
@@ -1102,27 +1193,34 @@ def main():
                 cli_year=year,
                 cli_era=era,
                 xsec_lumi_cache=xsec_lumi_cache,
-                tree_upfile=tree_upfile,
+                tree_upfile=None,
+                skip_trees=True,
+                skip_histograms=False,
             )
-
-        tree_upfile.close()
-        print(f"[OK] Closed tree output file for sample '{sample_name}': {tree_file_path}")
 
     # -----------------------------------------
     # Write histograms (cached in memory)
     # -----------------------------------------
-    print("[INFO] Writing histograms...")
-    hist_tfile = ROOT.TFile(str(hist_file_path), "RECREATE")
-    for (sample, systematic, region, var), h in HIST_CACHE.items():
-        ensure_dir_in_tfile(hist_tfile, f"{sample}/{systematic}/{region}").cd()
-        h_clone = h.Clone(var)
-        h_clone.Write()
-    hist_tfile.Close()
+    if args.skip_histograms:
+        print("[INFO] --skip-histograms set: no histogram output written this run.")
+    else:
+        print("[INFO] Writing histograms...")
+        hist_tfile = ROOT.TFile(str(hist_file_path), "RECREATE")
+        for (sample, systematic, region, var), h in HIST_CACHE.items():
+            ensure_dir_in_tfile(hist_tfile, f"{sample}/{systematic}/{region}").cd()
+            h_clone = h.Clone(var)
+            h_clone.Write()
+        hist_tfile.Close()
 
     print("======================================")
     print(f"[OK] Histograms → {hist_file_path}")
-    print(f"[OK] Trees       → {out_dir} (one file per sample: "
-          f"hhbbgg_analyzer-v2-trees__<sample>.root)")
+    print(f"[OK] Trees       → {out_dir} (one file per sample+systematic: "
+          f"hhbbgg_analyzer-v2-trees__<sample>__<systematic>.root)")
+    print(f"[NOTE] Histogram output now uses a unique per-run filename (was previously a "
+          f"single fixed name that a targeted re-run would silently overwrite, destroying "
+          f"any prior run's accumulated histograms). Merge all "
+          f"hhbbgg_analyzer-v2-histograms__*.root files with hadd once every sample has "
+          f"been processed, the same way as the per-sample tree files.")
     print("======================================")
     
     
