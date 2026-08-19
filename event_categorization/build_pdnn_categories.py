@@ -99,7 +99,18 @@ import uproot
 # -------------------- user defaults --------------------
 SR_DEFAULT = 2.0                 # SR: |mgg-125| < SR_DEFAULT (GeV)
 CR_DEFAULT = (4.0, 10.0)         # CR: 4 <= |mgg-125| < 10 (GeV)
-TREE_NAME  = "selection"         # tree inside each directory
+TREE_NAME  = "srbbgg"             # tree inside each directory -- confirmed
+                                   # as the analysis's actual signal region
+                                   # (not "selection", a looser upstream
+                                   # cut). Fixed here after discovering my
+                                   # own local copy of this file had never
+                                   # actually incorporated this change --
+                                   # every fix shipped after it was applied
+                                   # on top of a version still targeting
+                                   # "selection", silently routing srbbgg
+                                   # trees down the copy-as-is fallback
+                                   # path (no cat/region added) instead of
+                                   # the real categorization path.
 
 BR_SCORE      = "pDNN_score"
 BR_MGG        = "diphoton_mass"
@@ -189,7 +200,7 @@ def objective(Ss, Bs):
     """We maximize sum(AMS^2) -> minimize negative for greedy selection."""
     return -sum(AMS(s, b)**2 for s, b in zip(Ss, Bs))
 
-def build_edges(scores, s_w, b_w, nmin, min_gain, max_bins):
+def build_edges(scores, s_w, b_w, nmin, min_gain, max_bins, tie_tol=1e-4):
     """Greedy category-boundary search, implementing the exact 6-step
     B2G-24-001 procedure:
 
@@ -211,6 +222,22 @@ def build_edges(scores, s_w, b_w, nmin, min_gain, max_bins):
     the objective (once inside the permanent "everything" total, once as
     its own bin). That inflated the acceptance gain on nearly every
     candidate and did not correspond to genuine disjoint-bin significance.
+
+    FIXED (this pass, round 2): the round-1 tie-extension fix used EXACT
+    floating-point equality (s[nxt-1] == s[nxt]) to detect tie groups.
+    Confirmed via a real run that this does not match the actual failure
+    mode: near the score ceiling, events don't share bit-identical
+    float32 values -- they're spread across many distinct values
+    differing only in the last representable digits (~1e-7, float32's
+    precision limit near 1.0), a direct consequence of how a saturated
+    sigmoid output is stored, not genuine ties. A real run with the
+    exact-equality version still produced boundaries like
+    [0.9999995231628418, 0.9999996423721313, 0.9999997615814209,
+    0.9999998807907104, 1.0] -- five "distinct" values that are all
+    practically the same cut. Switched to a tolerance-based comparison
+    (tie_tol, default 1e-4) so events within that tolerance of each
+    other are correctly treated as one effective tie group, regardless
+    of exact float32 representation.
     """
     order = np.argsort(scores)[::-1]
     s, sw, bw = scores[order], s_w[order], b_w[order]
@@ -229,6 +256,10 @@ def build_edges(scores, s_w, b_w, nmin, min_gain, max_bins):
     while (N - idx) >= 1 and len(edges) < max_bins:
         this_nmin = min(nmin, N - idx)
         nxt = idx + this_nmin
+        # Extend past any (near-)tie group straddling the cutoff -- see
+        # docstring. s is sorted descending, so s[nxt-1] >= s[nxt] always.
+        while nxt < N and (s[nxt - 1] - s[nxt]) < tie_tol:
+            nxt += 1
         S_new = sw[idx:nxt].sum()
         B_new = bw[idx:nxt].sum()
 
@@ -615,6 +646,27 @@ def main():
                         tbase = tkey.split(";")[0]
                         tree  = syst_in_dir[tkey]
 
+                        # Guard against tkey resolving to a nested
+                        # ReadOnlyDirectory rather than an actual TTree --
+                        # confirmed as a real, live crash: uproot's .keys()
+                        # can surface nested-directory keys alongside leaf
+                        # tree keys (the same underlying behavior already
+                        # handled for collect_dirs() elsewhere in this
+                        # script), and a directory object has no .arrays()
+                        # method. Previously this reached tree.arrays()
+                        # unconditionally in the "copy any other tree
+                        # as-is" fallback below, crashing the ENTIRE
+                        # --write-categorized run uncaught partway through
+                        # -- meaning every sample after the failing one
+                        # never got its categorized output written at all.
+                        # Skip loudly instead of crashing, so one
+                        # unexpected key can't take down the whole run.
+                        if not hasattr(tree, "arrays"):
+                            print(f"[WARN] '{dbase}/{args.systematic}/{tkey}' is not a tree "
+                                  f"(got {type(tree).__name__}) -- skipping this key, not "
+                                  f"copying it into the categorized output.")
+                            continue
+
                         if (
                             tbase != TREE_NAME
                             or (BR_SCORE not in tree.keys())
@@ -680,6 +732,25 @@ def main():
                             sel = (score_np >= thr) & sr_mask
                             cat[sel]    = i
                             region[sel] = 1
+                        # Catch-all: any SR event not yet assigned a
+                        # category (score below every derived boundary)
+                        # gets grouped into one final, lowest-score
+                        # category instead of being silently left
+                        # uncategorized (-99) and excluded from the fit.
+                        # Confirmed necessary directly: when build_edges()
+                        # finds fewer boundaries than --max-bins (common
+                        # with sparser signal statistics -- e.g. 63/197
+                        # mass points landing at just 1 boundary for
+                        # srbbgg), only the highest-scoring slice of the
+                        # SR was previously getting any category at all;
+                        # everything below the lowest boundary silently
+                        # lost real signal-region acceptance. Works
+                        # correctly whether edges has 0, 1, or more
+                        # entries -- the catch-all becomes category
+                        # len(edges), one past the highest explicit index.
+                        catchall_sel = (cat == -99) & sr_mask
+                        cat[catchall_sel] = len(edges)
+                        region[catchall_sel] = 1
                         cat[cr_mask]    = -1
                         region[cr_mask] = 0
 
