@@ -732,25 +732,38 @@ def main():
                             sel = (score_np >= thr) & sr_mask
                             cat[sel]    = i
                             region[sel] = 1
-                        # Catch-all: any SR event not yet assigned a
-                        # category (score below every derived boundary)
-                        # gets grouped into one final, lowest-score
-                        # category instead of being silently left
-                        # uncategorized (-99) and excluded from the fit.
-                        # Confirmed necessary directly: when build_edges()
-                        # finds fewer boundaries than --max-bins (common
-                        # with sparser signal statistics -- e.g. 63/197
-                        # mass points landing at just 1 boundary for
-                        # srbbgg), only the highest-scoring slice of the
-                        # SR was previously getting any category at all;
-                        # everything below the lowest boundary silently
-                        # lost real signal-region acceptance. Works
-                        # correctly whether edges has 0, 1, or more
-                        # entries -- the catch-all becomes category
-                        # len(edges), one past the highest explicit index.
-                        catchall_sel = (cat == -99) & sr_mask
-                        cat[catchall_sel] = len(edges)
-                        region[catchall_sel] = 1
+                        # Events scoring below every derived boundary are
+                        # deliberately left at cat=-99 (excluded), NOT
+                        # folded into a catch-all category. This matches
+                        # common/io_utils.py's score_to_category() -- the
+                        # pipeline's own documented shared source of truth
+                        # for this exact mapping -- and the AMS boundary
+                        # search's own logic: build_edges() only accepts a
+                        # new SR when it improves combined sensitivity by
+                        # >=5%, so events left over once it stops are
+                        # exactly the ones that optimization already
+                        # judged not worth a dedicated category.
+                        #
+                        # A catch-all category (cat = len(edges)) was
+                        # tried here previously, reasoning that excluding
+                        # these events looked like lost signal acceptance.
+                        # That reasoning didn't account for
+                        # score_to_category() already being a deliberate,
+                        # separately-validated design choice -- it fixed a
+                        # real, previously-caught bug (fit_signal_shapes_
+                        # for_slides.py / fit_signal_mjj_for_slides.py once
+                        # used the opposite convention, silently shifting
+                        # every category index by one; caught via a real
+                        # 122-million chi2/ndof outlier). The catch-all
+                        # addition here silently reintroduced that same
+                        # mismatch from the other direction: every
+                        # downstream shape fit silently skipped the
+                        # catch-all category with no error at all, most
+                        # visibly for mX1000_mY300 (2 categories under the
+                        # catch-all convention; the shape fit only ever
+                        # attempted category 0). Reverted -- do not
+                        # re-add without also updating score_to_category()
+                        # and every one of its consumers to match.
                         cat[cr_mask]    = -1
                         region[cr_mask] = 0
 
