@@ -1,6 +1,6 @@
 import copy
 
-regions = ["preselection", "selection", "srbbgg", "srbbggMET", "crantibbgg", "crbbantigg", "crantibbantigg", "sideband", "idmva_sideband","idmva_presel"]
+regions = ["preselection", "selection", "srbbgg", "srbbgg_EBEB", "srbbgg_mixed", "srbbgg_EEEE", "srbbggMET", "crantibbgg", "crbbantigg", "crantibbantigg", "sideband", "idmva_sideband","idmva_presel"]
 vardict = {
     # dibjet 
     "dibjet_mass": "dibjet_mass",

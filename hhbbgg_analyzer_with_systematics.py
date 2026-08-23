@@ -135,6 +135,8 @@ def detect_year_era_from_name(path: str):
         year = "2023"
     elif "2024" in name:
         year = "2024"
+    elif "2025" in name:
+        year = "2025"
 
     # --- era implies year ---
     if "preee" in name:
@@ -150,11 +152,37 @@ def detect_year_era_from_name(path: str):
         era = "postBPix"
         year = "2023"
 
-    # --- 2024 has no eras ---
-    if year == "2024" and era is None:
+    # --- 2024/2025 have no sub-eras ---
+    if year in ("2024", "2025") and era is None:
         era = "All"
 
     return year, era
+
+
+# Numeric era code, one entry per BTAG_MEDIUM_WP key in regions.py --
+# kept here since (year, era) is correctly detected per file here;
+# regions.py only ever sees the resolved integer via cms_events.era_code.
+ERA_CODES = {
+    ("2022", "PreEE"): 0,
+    ("2022", "PostEE"): 1,
+    ("2023", "preBPix"): 2,
+    ("2023", "postBPix"): 3,
+    ("2024", "All"): 4,
+    ("2025", "All"): 5,
+}
+
+
+def era_code_from_year_era(year, era):
+    """Map (year, era) to the integer era code used by cms_events.era_code
+    and regions.py's BTAG_MEDIUM_WP/UPART_YEARS. Raises on an unmapped
+    combination rather than silently defaulting."""
+    key = (str(year), str(era))
+    if key not in ERA_CODES:
+        raise ValueError(
+            f"era_code_from_year_era: no era code mapped for (year={year!r}, "
+            f"era={era!r}). Known combinations: {sorted(ERA_CODES.keys())}."
+        )
+    return ERA_CODES[key]
 
 
 # ---------------- Nested-folder / systematic-variation handling ----------------
@@ -356,6 +384,8 @@ WEIGHT_SYSTEMATICS = {
     "bTagSF_lfstats1":  ("weight_bTagSF_sys_lfstats1Up", "weight_bTagSF_sys_lfstats1Down"),
     "bTagSF_lfstats2":  ("weight_bTagSF_sys_lfstats2Up", "weight_bTagSF_sys_lfstats2Down"),
     "bTagSF_jes":       ("weight_bTagSF_sys_jesUp", "weight_bTagSF_sys_jesDown"),
+    "bTagSF_bc_correlated":    ("weight_btagSFbc_correlatedUp", "weight_btagSFbc_correlatedDown"),
+    "bTagSF_light_correlated": ("weight_btagSFlight_correlatedUp", "weight_btagSFlight_correlatedDown"),
 }
 
 
@@ -450,8 +480,12 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
         "Res_sublead_bjet_btagPNetB",
         "Res_lead_bjet_PNetRegPtRawRes",     # Adding particle net regressed varaible
         "Res_sublead_bjet_PNetRegPtRawRes",   # Adding particle net regressed varaible
+        "Res_lead_bjet_btagUParTAK4B",      # Adding particle net regressed varaible for 2024 and 2025
+        "Res_sublead_bjet_btagUParTAK4B",   # Adding particle net regressed varaible for 2024 and 2025
         "lead_isScEtaEB",
         "sublead_isScEtaEB",
+        "lead_isScEtaEE",
+        "sublead_isScEtaEE",
         "Res_HHbbggCandidate_pt",
         "Res_HHbbggCandidate_eta",
         "Res_HHbbggCandidate_phi",
@@ -554,6 +588,24 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
     use_year = det_year or str(cli_year)
     use_era  = det_era  or str(cli_era) 
 
+    for _flavor in ("bc", "light"):
+        _syst_name = f"bTagSF_{_flavor}_{use_year}"
+        _up_col = f"weight_btagSF{_flavor}_{use_year}Up"
+        _down_col = f"weight_btagSF{_flavor}_{use_year}Down"
+        _cols_present = [c for c in (_up_col, _down_col) if c in schema_names]
+        for _c in _cols_present:
+            if _c not in required_columns:
+                required_columns.append(_c)
+        if _cols_present:
+            available_weight_systs[_syst_name] = (
+                _up_col if _up_col in schema_names else None,
+                _down_col if _down_col in schema_names else None,
+            )
+        else:
+            print(f"[WARN] {inputfile}: missing year-specific uncorrelated b-tag SF "
+                  f"column(s) for {_syst_name} (looked for {_up_col}/{_down_col}); "
+                  f"that variant will be skipped for this file.")
+
     if xsec_lumi_cache is None:
         xsec_lumi_cache = {}
     if inputfile not in xsec_lumi_cache:
@@ -587,6 +639,9 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
         get_mask_preselection,
         get_mask_selection,
         get_mask_srbbgg,
+        get_mask_srbbgg_EBEB,
+        get_mask_srbbgg_mixed,
+        get_mask_srbbgg_EEEE,
         get_mask_srbbggMET,
         get_mask_crantibbgg, 
         get_mask_crbbantigg, 
@@ -630,8 +685,12 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
                 "sublead_bjet_PNetB": tree_["Res_sublead_bjet_btagPNetB"],
                 "lead_bjet_PNetRegPtRawRes": tree_["Res_lead_bjet_PNetRegPtRawRes"],    # Adding particle net regressed varaible 
                 "sublead_bjet_PNetRegPtRawRes":tree_["Res_sublead_bjet_PNetRegPtRawRes"], # Adding particle net regressed varaible
+                "lead_bjet_PNetUParTAK4B": tree_["Res_lead_bjet_btagUParTAK4B"],    # Adding particle net  varaible for 2024 and 2025
+                "sublead_bjet_PNetUParTAK4B":tree_["Res_sublead_bjet_btagUParTAK4B"], # Adding particle net  varaible for 2024 and 2025
                 "lead_isScEtaEB": tree_["lead_isScEtaEB"],
                 "sublead_isScEtaEB": tree_["sublead_isScEtaEB"],
+                "lead_isScEtaEE": tree_["lead_isScEtaEE"],
+                "sublead_isScEtaEE": tree_["sublead_isScEtaEE"],
                 "CosThetaStar_CS": tree_["Res_CosThetaStar_CS"],
                 "CosThetaStar_gg": tree_["Res_CosThetaStar_gg"], 
                 "CosThetaStar_jj": tree_["Res_CosThetaStar_jj"],
@@ -684,6 +743,8 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
         cms_events["signal"] = ak.Array(np.full(n_entries, 1 if sigflag else 0, dtype=np.int8))
         cms_events["isdata"] = ak.Array(np.full(n_entries, 1 if isdata else 0, dtype=np.int8))
         cms_events["isdd"]   = ak.Array(np.full(n_entries, 1 if isdd   else 0, dtype=np.int8))
+        this_era_code = era_code_from_year_era(use_year, use_era)
+        cms_events["era_code"] = ak.Array(np.full(n_entries, this_era_code, dtype=np.int8))
 
         # Weight-systematic variant columns, for whichever ones this file's
         # schema actually has (per available_weight_systs, computed above).
@@ -744,7 +805,9 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
 
         from regions import (
             get_mask_preselection, get_mask_selection,
-            get_mask_srbbgg, get_mask_srbbggMET,
+            get_mask_srbbgg, get_mask_srbbgg_EBEB, 
+            get_mask_srbbgg_mixed, get_mask_srbbgg_EEEE,
+            get_mask_srbbggMET,
             get_mask_crantibbgg, get_mask_crbbantigg, get_mask_crantibbantigg,
             get_mask_sideband, get_mask_idmva_presel, get_mask_idmva_sideband,
         )
@@ -754,6 +817,9 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
         cms_events["preselection"]   = get_mask_preselection(cms_events)
         cms_events["selection"]      = get_mask_selection(cms_events)
         cms_events["srbbgg"]         = get_mask_srbbgg(cms_events)
+        cms_events["srbbgg_EBEB"]    = get_mask_srbbgg_EBEB(cms_events)
+        cms_events["srbbgg_mixed"]   = get_mask_srbbgg_mixed(cms_events)
+        cms_events["srbbgg_EEEE"]    = get_mask_srbbgg_EEEE(cms_events)
         cms_events["srbbggMET"]      = get_mask_srbbggMET(cms_events)
         cms_events["crbbantigg"]     = get_mask_crbbantigg(cms_events)
         cms_events["crantibbgg"]     = get_mask_crantibbgg(cms_events)
@@ -772,6 +838,7 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
             "lepton1_mvaID","lepton1_pt","lepton1_pfIsoId","n_jets",
             "dibjet_eta","dibjet_phi","diphoton_eta","diphoton_phi",
             "lead_bjet_PNetB","sublead_bjet_PNetB", "lead_bjet_PNetRegPtRawRes","sublead_bjet_PNetRegPtRawRes", 
+            "lead_bjet_PNetUParTAK4B","sublead_bjet_PNetUParTAK4B", 
             "pholead_PtOverM","phosublead_PtOverM","FirstJet_PtOverM","SecondJet_PtOverM",
             "CosThetaStar_CS","CosThetaStar_jj","CosThetaStar_gg","DeltaR_jg_min",
             "lead_pt_over_diphoton_mass","sublead_pt_over_diphoton_mass",
@@ -779,10 +846,10 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
             "diphoton_bbgg_mass","dibjet_bbgg_mass",
             "lead_pho_mvaID_WP90","lead_pho_mvaID_WP80","sublead_pho_mvaID_WP90","sublead_pho_mvaID_WP80",
             "lead_pho_mvaID","sublead_pho_mvaID","max_gamma_MVA_ID",
-            "preselection","selection","srbbgg","srbbggMET","crbbantigg","crantibbgg","crantibbantigg","sideband",
+            "preselection","selection","srbbgg","srbbgg_EBEB","srbbgg_mixed","srbbgg_EEEE","srbbggMET","crbbantigg","crantibbgg","crantibbantigg","sideband",
             "idmva_sideband","idmva_presel",
             "DeltaR_j1g1","DeltaR_j2g1","DeltaR_j1g2","DeltaR_j2g2",
-            "signal","isdata", "isdd","HT","Njets2p5",
+            "signal","isdata", "isdd","era_code","HT","Njets2p5",
             "pDNN_score",
             "n_leptons",
             "ttH_killer_score",
@@ -835,7 +902,7 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
 
         for systematic_label, syst_w in systematic_passes:
             out_events_syst = out_events
-            for r in ["preselection","selection","srbbgg","srbbggMET",
+            for r in ["preselection","selection","srbbgg","srbbgg_EBEB", "srbbgg_EEEE", "srbbgg_mixed", "srbbggMET",
                     "crbbantigg","crantibbgg","crantibbantigg",
                     "sideband","idmva_sideband","idmva_presel"]:
                 out_events_syst = ak.with_field(out_events_syst, syst_w, "weight_"+r)

@@ -5,128 +5,143 @@
 # selecting events belonging to that region.
 #
 # --------------------------------------------------------------------------
-# FIXED IN EARLIER PASSES (unchanged, see full history below)
+# FIXED IN EARLIER PASSES (unchanged, kept for history)
 # --------------------------------------------------------------------------
 # 1. SENTINEL-VALUE PROTECTION -- (cms_events.dibjet_mass > 0) and
 #    (cms_events.diphoton_mass > 0) already exclude the -9999.0
 #    reconstruction-failure sentinel in every region, since -9999.0 < 0.
-#    No additional explicit sentinel check was needed on top of these.
 #
 # 2. Dead code removed: get_mask_wmunu1b() (unrelated W+jets/muon-channel
 #    mask from a different analysis).
 #
-# 3. THE PNetRegPtRawRes CUTS -- CONFIRMED BUG, FIXED.
-#    PNetRegPtRawRes is an ONNX regression input feature
-#    (higgs_dna/tools/HHbbgg_mbb_regression.py), never intended as a
-#    selection-cut variable -- confirmed via full-codebase grep for
+# 3. THE PNetRegPtRawRes CUTS -- CONFIRMED BUG, FIXED. PNetRegPtRawRes is
+#    an ONNX regression input feature (higgs_dna/tools/
+#    HHbbgg_mbb_regression.py), never intended as a selection-cut
+#    variable -- confirmed via full-codebase grep for
 #    "PNetRegPtRawRes\s*[<>]" returning zero matches anywhere in
 #    HiggsDNA. A ">0.2605" cut on it let through ~0.4%/3.5% of events
 #    per jet (lead/sublead) even before combining, producing 0 surviving
 #    events out of 7879 for NMSSM_X700_Y500 in the 'selection'-level
-#    sample. Fixed per-region:
-#      - srbbgg, srbbggMET, crantibbgg, crantibbantigg, sideband: the
-#        erroneous PNetRegPtRawRes lines were purely redundant with each
-#        region's own correctly-named PNetB cut and were removed.
-#      - crbbantigg: the real PNetB cut had been commented out, leaving
-#        PNetRegPtRawRes as the only (effectively impossible) b-tag-like
-#        requirement. Fixed by restoring the PNetB cut rather than just
-#        deleting the bug, since this region's docstring documents
-#        "pass medium Btag" as its intent.
+#    sample. Removed everywhere it appeared (srbbgg, srbbggMET,
+#    crantibbgg, crantibbantigg, sideband -- purely redundant with each
+#    region's own correctly-named PNetB cut) and, for crbbantigg
+#    specifically, the real PNetB cut that had been commented out in
+#    its place was restored, matching this region's own documented
+#    intent ("pass medium Btag").
 #
 # --------------------------------------------------------------------------
 # FIXED IN THIS PASS
 # --------------------------------------------------------------------------
 # 4. B-TAGGING WORKING POINT -- HARDCODED 0.2605 REPLACED WITH
-#    YEAR-DEPENDENT VALUES (see tools/WPs_btagging_HHbbgg.json):
+#    ERA-DEPENDENT VALUES (tools/WPs_btagging_HHbbgg.json):
 #
-#        2022preEE     PNet   0.2450
-#        2022postEE    PNet   0.2605   <- the value that was hardcoded
-#        2023preBPix   PNet   0.1917
-#        2023postBPix  PNet   0.1919
-#        2024          UParT  0.1272
-#        2025          UParT  0.1272
+#        era_code  year/era        tagger  WP
+#        0         2022preEE       PNet    0.2450
+#        1         2022postEE      PNet    0.2605   <- the value that was hardcoded
+#        2         2023preBPix     PNet    0.1917
+#        3         2023postBPix    PNet    0.1919
+#        4         2024            UParT   0.1272
+#        5         2025            UParT   0.1272
 #
-# 5. B-TAGGING DISCRIMINANT -- NOW ALSO YEAR-DEPENDENT, NOT JUST THE
-#    THRESHOLD.
-#    CORRECTION to a note in an earlier pass of this file: it was
-#    previously believed that HiggsDNA's HHbbgg.py hardcoded the stored
-#    per-jet b-tag branch to PNet for every year, with no UParT
-#    equivalent stored for 2024/2025. That was WRONG -- checked directly
+# 5. B-TAGGING DISCRIMINANT -- NOW ALSO ERA-DEPENDENT, NOT JUST THE
+#    THRESHOLD. HiggsDNA itself is not buggy here -- confirmed directly
 #    against HHbbgg.py (~line 1085-1120): for nano_version >= 14
-#    (2024/2025), BOTH branches are written to the output ntuple:
-#        {AnType}_lead_bjet_btagPNetB        (always)
-#        {AnType}_lead_bjet_btagUParTAK4B    (nano_version >= 14 only)
-#    and equivalently for sublead_. HiggsDNA itself is not buggy here.
+#    (2024/2025), BOTH branches are written to the output ntuple
+#    ({AnType}_lead_bjet_btagPNetB always, {AnType}_lead_bjet_
+#    btagUParTAK4B for nano_version >= 14 only, and equivalently for
+#    sublead_). The bug was entirely on this side: every region below
+#    read lead_bjet_PNetB / sublead_bjet_PNetB unconditionally, which
+#    for 2024/2025 is simply the wrong branch -- the UParT-scored
+#    branch (lead_bjet_PNetUParTAK4B / sublead_bjet_PNetUParTAK4B in
+#    this ntuple's own naming, matching hhbbgg_analyzer_with_
+#    systematics.py's cms_events field names exactly) was sitting right
+#    there, unused, since HiggsDNA production onward.
 #
-#    The actual bug was entirely on this side: every region below read
-#    lead_bjet_PNetB / sublead_bjet_PNetB unconditionally, which for
-#    2024/2025 is simply the wrong branch -- the UParT-scored branch
-#    (renamed here to lead_bjet_UParTAK4B / sublead_bjet_UParTAK4B by
-#    our postprocessing, matching the lead_bjet_PNetB naming pattern)
-#    was sitting right there, unused.
+#    era_code (int8, 0-5 per the table above) is stamped onto every
+#    event by hhbbgg_analyzer_with_systematics.py's
+#    era_code_from_year_era() -- see that file's own matching ERA_CODES
+#    table; keep the two in sync if either changes. This file only ever
+#    consumes the already-resolved integer via cms_events.era_code, and
+#    never re-derives year/era from a filename itself.
 #
-#    Fixed by adding _btag_score(cms_events, leg), which selects the
-#    PNet branch for 2022/2023 and the UParT branch for 2024/2025 per
-#    event, used together with _btag_medium_wp() (item 4) in every
-#    region that cuts on b-tagging: srbbgg, srbbggMET, crantibbgg,
-#    crbbantigg, crantibbantigg, sideband.
+#    Fixed by adding _btag_medium_wp() and _btag_score(cms_events, leg),
+#    used together in every region that cuts on b-tagging: srbbgg,
+#    srbbgg_EBEB, srbbgg_mixed, srbbgg_EEEE, srbbggMET, crantibbgg,
+#    crbbantigg, crantibbantigg, sideband. preselection, selection,
+#    idmva_presel, idmva_sideband have no b-tagging cut and are
+#    unaffected.
 #
-#    TODO: `cms_events.year` below is a placeholder for whatever field
-#    actually carries the per-event year/era string in this ntuple --
-#    confirm and adjust before running.
-#    TODO: confirm `lead_bjet_UParTAK4B` / `sublead_bjet_UParTAK4B` are
-#    the exact column names produced by our postprocessing/merge step
-#    for the `{AnType}_lead_bjet_btagUParTAK4B` HiggsDNA branch -- adjust
-#    _btag_score() below if the naming convention differs.
+# 6. srbbgg_EBEB / srbbgg_mixed / srbbgg_EEEE (both-barrel / one-barrel-
+#    one-endcap / both-endcap photon splits) -- required by
+#    hhbbgg_analyzer_with_systematics.py's own imports and keys_to_copy
+#    list (confirmed directly: an ImportError for get_mask_srbbgg_EBEB
+#    on a real run showed the analyzer already expects these). Restored
+#    here now using the working, era-aware _btag_score()/
+#    _btag_medium_wp() helpers above, rather than the old hardcoded
+#    PNetB cut an earlier draft of this split used before those helpers
+#    existed.
 # --------------------------------------------------------------------------
 
 import awkward as ak
 import numpy as np
 
-# Medium WP by year (tools/WPs_btagging_HHbbgg.json). 2022/2023 use PNet;
-# 2024/2025 use UParT -- see _btag_score() for the matching discriminant.
-BTAG_MEDIUM_WP = {
-    "2022preEE": 0.2450,
-    "2022postEE": 0.2605,
-    "2023preBPix": 0.1917,
-    "2023postBPix": 0.1919,
-    "2024": 0.1272,
-    "2025": 0.1272,
-}
+# Medium WP by era_code (tools/WPs_btagging_HHbbgg.json). Index i here
+# corresponds exactly to era_code == i, matching
+# hhbbgg_analyzer_with_systematics.py's ERA_CODES table. 2022/2023 (codes
+# 0-3) use PNet; 2024/2025 (codes 4-5) use UParT -- see UPART_ERA_CODES
+# and _btag_score() below for the matching discriminant.
+BTAG_MEDIUM_WP = np.array([
+    0.2450,  # 0: 2022preEE   (PNet)
+    0.2605,  # 1: 2022postEE  (PNet)
+    0.1917,  # 2: 2023preBPix (PNet)
+    0.1919,  # 3: 2023postBPix (PNet)
+    0.1272,  # 4: 2024        (UParT)
+    0.1272,  # 5: 2025        (UParT)
+])
 
-# Years whose stored b-tag discriminant is UParT rather than PNet
-# (HiggsDNA nano_version >= 14).
-UPART_YEARS = {"2024", "2025"}
+# era_code values whose stored b-tag discriminant is UParT rather than
+# PNet (HiggsDNA nano_version >= 14).
+UPART_ERA_CODES = {4, 5}
+
+
+def _validate_era_code(era_code_np):
+    """Fail loudly on an era_code value outside the known 0-5 range,
+    rather than let a silent indexing bug produce a wrong WP/discriminant
+    for some events -- same fail-loud philosophy as
+    era_code_from_year_era() in hhbbgg_analyzer_with_systematics.py."""
+    bad = (era_code_np < 0) | (era_code_np >= len(BTAG_MEDIUM_WP))
+    if np.any(bad):
+        bad_values = sorted(set(era_code_np[bad].tolist()))
+        raise ValueError(
+            f"_btag_medium_wp/_btag_score: found era_code value(s) outside "
+            f"the known 0-{len(BTAG_MEDIUM_WP) - 1} range: {bad_values}. "
+            f"Check era_code_from_year_era()'s ERA_CODES table in "
+            f"hhbbgg_analyzer_with_systematics.py for what's actually "
+            f"being stamped onto events."
+        )
 
 
 def _btag_medium_wp(cms_events):
-    """
-    Per-event Medium b-tagging WP threshold, looked up by year.
-
-    TODO: `cms_events.year` is a placeholder -- replace with whatever
-    field actually holds the per-event year/era string (or map an
-    integer era code to the BTAG_MEDIUM_WP keys) in this ntuple.
-    """
-    years = ak.to_numpy(cms_events.year)
-    wp = np.array([BTAG_MEDIUM_WP[y] for y in years])
-    return wp
+    """Per-event Medium b-tagging WP threshold, looked up by era_code."""
+    era_code_np = ak.to_numpy(cms_events.era_code)
+    _validate_era_code(era_code_np)
+    return BTAG_MEDIUM_WP[era_code_np]
 
 
 def _btag_score(cms_events, leg):
-    """
-    Per-event b-tag discriminant for 'lead' or 'sublead', matching the
-    tagger actually used for that event's year:
-      - 2022/2023 -> {leg}_bjet_PNetB       (PNet)
-      - 2024/2025 -> {leg}_bjet_UParTAK4B   (UParT)
+    """Per-event b-tag discriminant for 'lead' or 'sublead', matching the
+    tagger actually used for that event's era:
+      - era_code 0-3 (2022/2023) -> {leg}_bjet_PNetB          (PNet)
+      - era_code 4-5 (2024/2025) -> {leg}_bjet_PNetUParTAK4B  (UParT)
 
-    TODO: confirm cms_events.year field name (see _btag_medium_wp) and
-    confirm the UParT branch's post-merge column name matches
-    f"{leg}_bjet_UParTAK4B" below.
+    Field names match hhbbgg_analyzer_with_systematics.py's cms_events
+    zip exactly (that file's own naming, not renamed here).
     """
-    years = ak.to_numpy(cms_events.year)
+    era_code_np = ak.to_numpy(cms_events.era_code)
+    _validate_era_code(era_code_np)
     pnet = getattr(cms_events, f"{leg}_bjet_PNetB")
-    upart = getattr(cms_events, f"{leg}_bjet_UParTAK4B")
-    use_upart = np.isin(years, list(UPART_YEARS))
+    upart = getattr(cms_events, f"{leg}_bjet_PNetUParTAK4B")
+    use_upart = np.isin(era_code_np, list(UPART_ERA_CODES))
     return ak.where(use_upart, upart, pnet)
 
 
@@ -147,7 +162,7 @@ def get_mask_selection(cms_events):
 
 #-----------------
 # Check https://btv-wiki.docs.cern.ch/ScaleFactors/Run3Summer22/ for the tagger point score
-# Medium WP and discriminant are both year-dependent -- see
+# Medium WP and discriminant are both era-dependent -- see
 # BTAG_MEDIUM_WP / _btag_medium_wp() / _btag_score() above.
 
 
@@ -179,6 +194,55 @@ def get_mask_srbbgg(cms_events):    # Pass medium Btag and pass tight photonID
     #    )
     )
     return mask_srbbgg
+
+
+def get_mask_srbbgg_EBEB(cms_events):    # both photons barrel
+    wp = _btag_medium_wp(cms_events)
+    lead_btag = _btag_score(cms_events, "lead")
+    sublead_btag = _btag_score(cms_events, "sublead")
+    mask_srbbgg_EBEB = (
+        (cms_events.dibjet_mass > 0) & (cms_events.diphoton_mass > 0)
+        & (cms_events.lead_pho_mvaID_WP80 == 1)
+        & (cms_events.sublead_pho_mvaID_WP80 == 1)
+        & (lead_btag > wp)
+        & (sublead_btag > wp)
+        & (cms_events.lead_isScEtaEB == 1)
+        & (cms_events.sublead_isScEtaEB == 1)
+    )
+    return mask_srbbgg_EBEB
+
+
+def get_mask_srbbgg_mixed(cms_events):   # exactly one photon in EE
+    wp = _btag_medium_wp(cms_events)
+    lead_btag = _btag_score(cms_events, "lead")
+    sublead_btag = _btag_score(cms_events, "sublead")
+    both_barrel = (cms_events.lead_isScEtaEB == 1) & (cms_events.sublead_isScEtaEB == 1)
+    both_endcap = (cms_events.lead_isScEtaEE == 1) & (cms_events.sublead_isScEtaEE == 1)
+    mask_srbbgg_mixed = (
+        (cms_events.dibjet_mass > 0) & (cms_events.diphoton_mass > 0)
+        & (cms_events.lead_pho_mvaID_WP80 == 1)
+        & (cms_events.sublead_pho_mvaID_WP80 == 1)
+        & (lead_btag > wp)
+        & (sublead_btag > wp)
+        & ~both_barrel & ~both_endcap
+    )
+    return mask_srbbgg_mixed
+
+
+def get_mask_srbbgg_EEEE(cms_events):    # both photons endcap
+    wp = _btag_medium_wp(cms_events)
+    lead_btag = _btag_score(cms_events, "lead")
+    sublead_btag = _btag_score(cms_events, "sublead")
+    mask_srbbgg_EEEE = (
+        (cms_events.dibjet_mass > 0) & (cms_events.diphoton_mass > 0)
+        & (cms_events.lead_pho_mvaID_WP80 == 1)
+        & (cms_events.sublead_pho_mvaID_WP80 == 1)
+        & (lead_btag > wp)
+        & (sublead_btag > wp)
+        & (cms_events.lead_isScEtaEE == 1)
+        & (cms_events.sublead_isScEtaEE == 1)
+    )
+    return mask_srbbgg_EEEE
 
 
 def get_mask_srbbggMET(cms_events):
@@ -241,7 +305,7 @@ def get_mask_crbbantigg(cms_events):    # pass medium Btag, pass loose photonID,
         & (cms_events.lead_pho_mvaID_WP90 == 1)
         & (cms_events.sublead_pho_mvaID_WP90 == 1)
         # Restored per the earlier fix pass (see module docstring item 3);
-        # threshold + discriminant are now both year-dependent per items 4/5.
+        # threshold + discriminant are now both era-dependent per items 4/5.
         & (lead_btag > wp)
         & (sublead_btag > wp)
         & (cms_events.lead_isScEtaEB == 1)

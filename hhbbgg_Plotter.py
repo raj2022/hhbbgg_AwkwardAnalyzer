@@ -1475,7 +1475,7 @@ def stack1d_histograms(up, output_dir, systematic="nominal", blind=True):
 
         # --- signals (only in SRs)
         signal_hists = []
-        if region in ("srbbgg","srbbggMET", "preselection", "selection"):
+        if region in ("srbbgg","srbbgg_EBEB","srbbgg_mixed","srbbgg_EEEE","srbbggMET", "preselection", "selection"):
             for base in signal_bases:
                 hsum = None
                 for d in groups.get(base, []):

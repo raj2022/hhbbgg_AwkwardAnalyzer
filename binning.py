@@ -131,6 +131,9 @@ binning["preselection"] = {
 
 binning["selection"] = copy.deepcopy(binning["preselection"])
 binning["srbbgg"] = copy.deepcopy(binning["preselection"])
+binning["srbbgg_EBEB"] = copy.deepcopy(binning["preselection"])
+binning["srbbgg_mixed"] = copy.deepcopy(binning["preselection"])
+binning["srbbgg_EEEE"] = copy.deepcopy(binning["preselection"])
 binning["srbbggMET"] = copy.deepcopy(binning["preselection"])
 met_variables = {
                 #  "puppiMET_pt": [20, 100, 200],
