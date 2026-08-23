@@ -4,6 +4,13 @@ This document records the full command sequence for the X→YH→bbγγ resonant
 search analysis, from pDNN training through event categorization.
 
 ---
+## 0. Activate the env
+as of 08/23/2026, we changed the env to `micromamba` as it faster and also removed cache from the afs:
+```bash
+micromamba activate hhbbgg-awk
+```
+
+---
 
 ## 1. Train the Parameterized DNN
 
@@ -895,7 +902,7 @@ history. Summary of what was needed, in case any of it recurs:
   dropped connection doesn't lose progress:
   ```bash
   tmux new -s analyzer_resume
-  # inside tmux: conda activate hhbbgg-awk, cd to the analyzer dir, run the command
+  # inside tmux: micromamba activate hhbbgg-awk, cd to the analyzer dir, run the command
   # Ctrl+b then d to detach; tmux attach -t analyzer_resume to reconnect
   ```
 
