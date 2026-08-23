@@ -34,6 +34,70 @@ whichever has higher standalone AUC), and mass-sculpting validation (weighted
 KS test comparing the background `diphoton_mass` shape at each pDNN score cut
 against no cut).
 
+### 1.1 Extended mass-sculpting validation: m_bb and 2D (m_gg, m_bb)
+
+**Reviewer comment (this session): check pDNN mass sculpting in `m_bb` and
+the 2D `(m_gg, m_bb)` plane, not just `m_gg`.** The built-in check above
+(`run_mass_sculpting()` in both `pDNN_v2.py`/`pDNN_v_WC.py`) only ever
+checks the diphoton-mass proxy -- confirmed directly by reading the source,
+`MASS_SCULPT_CANDIDATES` has no `m_bb`/dijet-mass entry at all, and no 2D
+check exists anywhere in either script.
+
+**No retraining needed for either addition below** -- `Res_dijet_mass` (the
+`m_bb` proxy) is already a member of `FEATURES_CORE` in both training
+scripts, so it is already present in the saved `df_te` test split without
+any change to the training pipeline itself.
+
+**New, standalone script**: `check_mass_sculpting_mjj_2d.py`, run from the
+same directory as whichever training script (`pDNN_v2.py` or
+`pDNN_v_WC.py`) was actually used, and imports from that same module by
+name -- **confirm the import line matches the training script actually in
+use in that directory** before running (`pDNN_Without_Correlation/`'s copy
+imports from `pDNN_v_WC`; the correlation-pruned copy would need
+`pDNN_v2` instead). Loads the already-saved model/scaler (never refits
+either -- `scale_features()`'s refit-and-overwrite behavior is
+deliberately never called), reproduces the same TEST split deterministically
+(same seed, same `GroupShuffleSplit` calls as the original training run),
+and fails loudly (not silently) if the recomputed feature list doesn't
+match what was saved to `features.json`, rather than risk evaluating on a
+mismatched split.
+
+```bash
+python check_mass_sculpting_mjj_2d.py
+```
+
+Produces, alongside the existing `MassSculpting/` outputs:
+- `mass_sculpting_mjj_shapes` -- the `m_bb` analog of the existing `m_gg`
+  background-shape-vs-score-cut overlay, same weighted KS test method
+- `mass_sculpting_2d_shapes` -- genuine 2D `(m_gg, m_bb)` background
+  histograms, side by side across score cuts, for direct visual inspection
+- `mass_sculpting_2d_correlation_vs_cut` -- the background-only
+  `m_gg`-`m_bb` Pearson correlation at each score cut, a quantitative check
+  for induced 2D correlation that neither 1D marginal would catch alone
+
+**Status: built and tested against a synthetic model with a deliberately
+injected sculpting effect (confirmed the KS test and correlation check both
+detect a real, known effect, not just that the script runs without
+crashing) -- not yet run against real production data.** Treat results from
+a real run as the first genuine check, not yet cross-validated against a
+second mass point or a second background composition.
+
+**Axis-range fix, applied to the existing `m_gg` check too.** The default,
+data-driven x-axis range (`np.nanpercentile(m_bkg, [1, 99])`) was pulling
+the plotted lower bound down to ~50 GeV, well below the analysis's actual
+SR mass window (95+ GeV) -- purely because the background sample isn't
+pre-filtered to that window, not because that range is physically
+meaningful to show. Fixed via a new optional `x_min` parameter on
+`plot_mass_after_score()` (kept optional, not a hardcoded default, since
+the same function is reused for `m_bb`, which has a genuinely different,
+wider real range where a fixed 95 GeV bound would be wrong); `95.0` is
+passed specifically at the `m_gg` call site in `run_mass_sculpting()`.
+Applied identically to both `pDNN_v2.py` and `pDNN_v_WC.py` (confirmed
+their `plot_mass_after_score()`/`run_mass_sculpting()` functions are
+character-for-character identical, despite the different filenames) and
+to the new script's own 2D plot's `m_gg` axis (`mgg_x_min=95.0`, `m_bb`
+axis left on its own genuine data-driven range).
+
 ---
 
 ## 2. Train the ttH Killer
