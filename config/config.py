@@ -64,6 +64,8 @@ class RunConfig:
                 era_list = ["preBPix", "postBPix"]
             elif self.year == "2024":
                 era_list = ["All"]
+            elif self.year == "2025":
+                era_list = ["All"]
             else:
                 raise ValueError(f"No era map for year={self.year}")
         else:
