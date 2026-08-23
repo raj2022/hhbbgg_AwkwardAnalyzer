@@ -4241,18 +4241,23 @@ def weighted_ks_2samp(
 
 def plot_mass_after_score(
     mass_values: np.ndarray, scores: np.ndarray, weights: np.ndarray, labels: np.ndarray,
-    mass_col_name: str, cfg: Config = CFG,
+    mass_col_name: str, cfg: Config = CFG, x_min: Optional[float] = None,
 ) -> None:
     """Overlay the background mass spectrum before/after successive score cuts.
 
     A well-behaved discriminant should not sculpt a peak/edge into the
     smoothly-falling background mass spectrum. This is the primary check
     against a resonant bump being manufactured by the classifier.
+
+    x_min: optional fixed lower x-axis bound, overriding the default
+    data-driven 1st-percentile lower bound.
     """
     out_dir = os.path.join(cfg.PLOT_DIR, "MassSculpting")
     bkg = labels == 0
     m_bkg, s_bkg, w_bkg = mass_values[bkg], scores[bkg], (weights[bkg] if weights is not None else None)
     lo, hi = np.nanpercentile(m_bkg, [1, 99])
+    if x_min is not None:
+        lo = x_min
     bins = np.linspace(lo, hi, 40)
 
     plt.figure()
@@ -4291,7 +4296,7 @@ def run_mass_sculpting(
 
     out_dir = os.path.join(cfg.PLOT_DIR, "MassSculpting")
     mass_values = df_te[mass_col].to_numpy(dtype=float)
-    plot_mass_after_score(mass_values, test_probs, w_te, y_te, mass_col, cfg)
+    plot_mass_after_score(mass_values, test_probs, w_te, y_te, mass_col, cfg, x_min=95.0)
 
     sig_mask, bkg_mask = (y_te == 1), (y_te == 0)
     m_bkg_all = mass_values[bkg_mask]
