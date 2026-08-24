@@ -1,6 +1,6 @@
 # File Storage locations
 
-
+<!-- 
 ## File storage
 * Backgrounds and data: `/eos/cms/store/group/phys_b2g/HHbbgg/HiggsDNA_parquet/v4/Run3_2024`
 * Signal: `/eos/user/b/bsahu/HiggsDNA_v4PrelimProd/2024/merged/`
@@ -58,6 +58,27 @@ https://docs.google.com/spreadsheets/d/1vQEHbnte3SOfTylWWmmdbExSwm70tappKtwpo3NT
 - 2025: `/eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2022/sim`
 
 ## data:
+- 2022: `/eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2022/data`
+- 2023: `/eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2023/data`
+- 2024: `/eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2024/data`
+- 2025: `/eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2022/data` -->
+## v7 sample processing
+### Signal Sample
+- 2022postEE: `/eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2022/sim/postEE/merged`
+- 2022preEE:   `/eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2022/sim/preEE/merged`
+- 2023postBPix: `/eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2023/sim/postBPix/merged`
+- 2023preBPix:  `/eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2023/sim/preBPix/merged`
+- 2024:
+- 2025:
+
+
+###  Backgrounds:
+- 2022: `/eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2022/sim`
+- 2023: `/eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2023/sim`
+- 2024: `/eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2024/sim`
+- 2025: `/eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2022/sim`
+
+### data:
 - 2022: `/eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2022/data`
 - 2023: `/eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2023/data`
 - 2024: `/eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2024/data`
