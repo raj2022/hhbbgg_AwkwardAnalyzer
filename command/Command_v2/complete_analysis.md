@@ -745,6 +745,77 @@ PER INPUT FILE rather than one combined file -- both for consistency with
 the analyzer's own per-sample split, and to avoid reintroducing the same
 2GB write-cascade risk (§4.0) in the categorized copies themselves.
 
+### 5.1 Signal MC event counts per category, per mass point (whole-grid cross-check)
+
+Location: `event_categorization/summarize_signal_mc_counts.py`
+
+Independent, read-only cross-check of what `build_pdnn_categories.py`
+(above) actually put where -- reads the SAME `event_categories.json`
+boundaries and the analyzer's own signal MC tree output, re-derives each
+event's category via the identical `score_to_category()` convention used
+throughout the fitting pipeline, and reports raw (MC statistics) and
+weighted (physics yield) counts per category, flagging any category
+below a configurable low-MC-statistics threshold (default 10 raw
+events). Pure simulation, no data read at all -- no blinding concern.
+
+**Extended this session for whole-grid use**: `--mass-x` now accepts
+multiple values, or can be omitted entirely to auto-discover every mX
+present in `--analyzer-root-base` -- the exact same auto-discovery
+pattern `--mass-y` already used per mX. Confirmed via direct testing
+(synthetic filenames, no ROOT dependency needed for the discovery logic
+itself): mX values sort numerically, not alphabetically (`450 < 600 <
+1000`, not the alphabetical `1000 < 450 < 600` a naive string sort would
+give), and non-signal files (`GluGluHtoGG`, the merged background+data
+file) are correctly never mistaken for a signal mass point.
+
+```bash
+# Whole grid, fully auto-discovered
+python event_categorization/summarize_signal_mc_counts.py \
+  --categories-json slides_fitting/CMSSW_14_1_0_pre4/src/outputs/categories_alpha/event_categories.json \
+  --analyzer-root-base outputfiles/merged/DD_2024 \
+  --out-csv outputfiles/yields/signal_mc_counts_full_grid.csv
+```
+
+**Confirmed working on the real grid**: auto-discovered 16 mX values
+(`300, 320, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900,
+950, 1000`), correctly sorted numerically. `mX=240` is correctly absent
+-- consistent with, not contradicting, the confirmed zero-file
+production gap already tracked in `Fitting_Commands_Systematics.md` for
+that mass point; its absence here is expected, not a bug in this script.
+
+Single-mass-point usage (original, unchanged) and an explicit-subset
+usage are both still supported:
+```bash
+# One mass point only (original usage)
+python event_categorization/summarize_signal_mc_counts.py \
+  --categories-json .../event_categories.json \
+  --analyzer-root-base outputfiles/merged/DD_2024 \
+  --mass-x 600 \
+  --out-csv summary_mX600.csv
+
+# Explicit subset of mX values, mY still auto-discovered per point
+python event_categorization/summarize_signal_mc_counts.py \
+  --categories-json .../event_categories.json \
+  --analyzer-root-base outputfiles/merged/DD_2024 \
+  --mass-x 600 1000 \
+  --out-csv summary_600_1000.csv
+```
+
+**Output CSV columns** (one row per mass-point/category pair):
+`mass_x, mass_y, mass_tag, category, n_categories_total, raw_mc_events,
+weighted_yield` -- `mass_x`/`mass_y` added as their own columns this
+session (previously only encoded inside `mass_tag`) specifically so a
+full-grid CSV can be filtered/pivoted by mass point directly, without
+string-parsing `mass_tag`.
+
+**Status: extended and unit-tested (discovery logic + full end-to-end
+binning against synthetic ROOT trees, both verified against hand-computed
+expected values), confirmed running successfully against the real,
+full 16-mX production grid.** The `[SUMMARY]` low-MC-statistics flag
+listing from that real run has not yet been reviewed here -- worth
+pulling the tail of that output (total mass points processed, full
+flagged-category list) before treating the grid as clean.
+
 ---
 
 ## 6. Fixes from the regions.py / binning.py / VH audit (this session)
@@ -947,6 +1018,11 @@ inference_PDnn_updated.py  --->  inference_ttH_killer.py
                                           re-run whenever underlying tree
                                           data changes, see §6.6)
                        |
+                       +---> summarize_signal_mc_counts.py  (independent,
+                       |      read-only signal-MC raw/weighted count
+                       |      cross-check per category per mass point --
+                       |      whole-grid capable (see §5.1); optional,
+                       |      not required for the pipeline to proceed)
                        v
         Fitting_Commands_Systematics.md   (datacard assembly WITH real rate +
         (separate document, finalfit_hhbbgg   shape systematics -- verified
