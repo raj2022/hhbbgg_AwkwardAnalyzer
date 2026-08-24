@@ -2994,7 +2994,7 @@ class Config:
     # (HiggsDNA-style production), NOT the old flat one-file-per-point
     # convention this previously pointed at.
     SIG_TPL: str = (
-        "/eos/cms/store/group/phys_b2g/HHbbgg/bsahu/higgsdna_v7/2022postEE/merged/"
+        "/eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2022/sim/postEE/merged/"
         "NMSSM_X{m}_Y{y}/nominal/NOTAG_merged.parquet"
     )
 
@@ -3016,7 +3016,7 @@ class Config:
     #                                                 distinct file from the raw
     #                                                 GGJets_MGG-80 entry above,
     #                                                 despite the similar name.
-    BACKGROUND_BASE_DIR: str = "/afs/cern.ch/user/s/sraj/Analysis/output_parquet/Run3_2022/sim/postEE"
+    BACKGROUND_BASE_DIR: str = "/eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2022/sim/postEE"
     BACKGROUND_FILENAMES: Tuple[str, ...] = (
         "GGJets_MGG-80/NOTAG_merged.parquet",
         "DDQCCDGJets/DDQCDGJets_Rescaled.parquet",
