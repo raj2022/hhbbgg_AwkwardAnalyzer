@@ -806,6 +806,138 @@ print('still present:', '<era>:NMSSM_X<mX>_Y<mY>' in s['submitted'])
 "
 ```
 
+### 6j. Opposite problem: state file *under*-counting real progress after running from multiple
+terminals/nodes concurrently -- full recovery process
+
+**Symptom:** samples that are genuinely complete (real output on EOS) or actively running on
+Condor show up as "not yet submitted" -- a subsequent run would try to resubmit them.
+
+**Root cause (confirmed, now fixed -- see 10g):** the submission script used to load
+`nmssm_submission_state.json` **once** into memory at startup and hold that copy for the
+entire run. Running the same script from two different lxplus nodes at the same time (easy to
+do without realizing it -- the round-robin means separate terminals/logins routinely land on
+different physical nodes) means each process's in-memory copy goes stale relative to what the
+*other* process is writing. Whichever process's final save happens last overwrites the whole
+file with its own stale snapshot -- silently erasing anything the other process added.
+**Confirmed hitting this for real**: state claimed only `53` `2024` samples submitted; real
+count (recovered via the process below) was `203` -- `150` genuinely-real samples had gone
+invisible to state tracking (`68` already fully complete on EOS, `85` still actively running
+on Condor).
+
+**Two-stage recovery, in order:**
+
+**Stage 1 -- reconcile against real EOS output** (catches samples that finished completely):
+```bash
+python3 -c "
+import json
+from pathlib import Path
+
+with open('nmssm_submission_state.json') as f:
+    s = json.load(f)
+
+outbase = '/eos/cms/store/group/phys_b2g/HHbbgg/<user>/HiggsDNA_v7_dask/<year>/sim/'
+added = 0
+for sample_dir in Path(outbase).iterdir():
+    if not sample_dir.is_dir():
+        continue
+    keyword = sample_dir.name
+    n_files = len(list(sample_dir.rglob('*Events_0*')))
+    state_key = f'<year_or_era>:{keyword}'
+    if n_files > 0 and state_key not in s['submitted']:
+        s['submitted'].append(state_key)
+        added += 1
+        print(f'Added missing entry: {state_key} ({n_files} files)')
+
+print(f'Total added: {added}')
+with open('nmssm_submission_state.json', 'w') as f:
+    json.dump(s, f, indent=2)
+"
+```
+⚠️ **Threshold caveat, confirmed real**: this checks only "at least 1 file exists" -- catches
+genuinely-complete samples, but ALSO catches samples only *partway* through processing.
+Confirmed real examples from this exact recovery: entries with only `1`, `16`, and `17` files
+(vs. the typical `300`-`500+` for a genuinely complete sample) got incorrectly marked
+`submitted` by this stage alone. **Always eyeball the printed file counts** -- anything
+suspiciously low needs manual removal afterward (see "cleanup" below), or it gets permanently
+skipped by future runs despite not actually being done.
+
+**Stage 2 -- reconcile against real in-flight Condor jobs** (catches samples still running,
+which have zero output yet and so are invisible to Stage 1):
+```bash
+# First, confirm bare condor_q (no -submitter) is safely scoped to just you on
+# this schedd -- only needed once:
+condor_q | awk '{print $1}' | sort -u
+# every row should show only your username, plus table-formatting rows (OWNER, Total, --)
+
+python3 -c "
+import json, subprocess
+
+result = subprocess.run('condor_q -af Cmd', shell=True, capture_output=True, text=True)
+lines = [l.strip() for l in result.stdout.splitlines() if l.strip()]
+
+keywords = set()
+for line in lines:
+    if line.startswith('AN-') and line.endswith('.sh'):
+        keyword = line[len('AN-'):-len('.sh')]
+        keywords.add(keyword)
+
+print(f'Found {len(keywords)} distinct in-flight sample keywords on Condor')
+
+with open('nmssm_submission_state.json') as f:
+    s = json.load(f)
+
+added = 0
+for keyword in sorted(keywords):
+    state_key = f'<year_or_era>:{keyword}'
+    if state_key not in s['submitted']:
+        s['submitted'].append(state_key)
+        added += 1
+        print(f'Added in-flight entry: {state_key}')
+
+print(f'Total added: {added}')
+with open('nmssm_submission_state.json', 'w') as f:
+    json.dump(s, f, indent=2)
+"
+```
+⚠️ **This blindly prefixes every found keyword with one hardcoded year/era** -- only safe when
+everything currently in your Condor queue genuinely belongs to that one year/era (sanity-check
+`condor_q -af Cmd | sort -u | wc -l` against the expected sample count first). If multiple
+eras/years are truly in flight simultaneously, this needs to attribute jobs to the correct
+year/era individually, not assume one blanket prefix.
+
+⚠️ **`condor_q -submitter <user>` unexpectedly returned nothing at all** on one node tonight,
+despite real jobs existing and bare `condor_q` (no flag) showing them correctly scoped to just
+this user already. Not fully root-caused -- if you hit the same empty-result symptom, fall
+back to bare `condor_q` after the one-time scoping confirmation above.
+
+⚠️ **`condor_q -af JobBatchName` returns nothing useful** -- confirmed the default-displayed
+`BATCH_NAME` column (`ID: 9236033`) is just the auto-generated cluster ID, not a real name,
+since no batch name is ever explicitly set at submission. Use `-af Cmd` instead and extract
+the keyword from the `.sh` filename pattern (`AN-<keyword>.sh`), as shown above.
+
+**Cleanup -- remove any suspiciously-low-file-count entries Stage 1 added:**
+```bash
+python3 -c "
+import json
+with open('nmssm_submission_state.json') as f:
+    s = json.load(f)
+suspicious = ['<year_or_era>:NMSSM_X###_Y###']  # fill in from Stage 1's own printed output
+before = len(s['submitted'])
+s['submitted'] = [k for k in s['submitted'] if k not in suspicious]
+print(f'Removed {before - len(s[\"submitted\"])} suspicious entries')
+with open('nmssm_submission_state.json', 'w') as f:
+    json.dump(s, f, indent=2)
+"
+```
+
+**Verify the recovery actually worked:**
+```bash
+python3 submission/tools_HHbbgg/produce_nmssm_2024_2025.py --year <year> --dry-run
+```
+"Resuming" count should now match reality. Confirmed in practice: went from a false `53` to a
+correct `203`, cross-checked against the real remaining-samples count (`70` = `273 - 203`,
+matched exactly what `--dry-run` independently reported).
+
 ---
 
 ## 7. Additional sanity checks
@@ -1015,6 +1147,182 @@ upstream, rather than treating this workaround as permanent.
 
 ---
 
+## 10. NMSSM production for 2024/2025 -- separate script, several real differences from 2022/2023
+
+⚠️ **Same upstream JER caveat as Section 9, but stronger and unconditional for these two
+years** -- `jet_systematics_json.py` (~line 166) explicitly warns *"Current 2024 and 2025 JER
+are preliminary, 2023PostBPix is used! These ntuples should not be used for a final physics
+result!"* This applies regardless of anything below being technically correct -- production
+runs and produces real output, but that output carries this caveat unconditionally. Confirm
+this is acceptable (pipeline validation: fine; a final result: not) before relying on it.
+
+### 10a. Why a separate script, not an extension of the 2022/2023 one
+
+Several confirmed, real differences didn't fit the 2022/2023 script's assumptions cleanly
+enough to bolt on with a flag:
+
+- **Dataset naming is different.** Hyphenated
+  `NMSSM-XtoYH-Yto2B-Hto2G_Par-MX-<mX>-MY-<mY>_TuneCP5_13p6TeV_madgraph-pythia8`, not the
+  underscored `NMSSM_XtoYHto2B2G_MX-<mX>_MY-<mY>` used for 2022/2023. Confirmed directly via
+  `dasgoclient` -- the underscored convention returns nothing for 2024/2025 at all, which
+  initially (wrongly) looked like the dataset simply didn't exist yet.
+- **`--year` is not era-qualified** for these two years -- plain `"2024"`/`"2025"`, confirmed
+  from `produce_one_mc.py`'s own `--year` argparse `choices` list (no `2024preXYZ`-style
+  split the way 2022/2023 have `preEE`/`postEE`).
+- **NanoAOD version is v15**, not v12 (`--nano 15`).
+- **2024 and 2025 share the exact same physical dataset** -- confirmed, not just inferred:
+  no separate 2025 MC production exists. Both years are the same underlying events, split by
+  event ID (even → 2024, odd → 2025) via an **automatic**, year-triggered mechanism inside
+  `update_json_config()` -- confirmed present via direct `grep` on the real deployed
+  `produce_one_mc.py`. **Not** a CLI flag -- `--split-mc` does **not** exist as an argument on
+  the deployed script (confirmed the hard way: passing it produces
+  `error: unrecognized arguments: --split-mc` from `produce_one_mc.py`'s own argparse). An
+  earlier draft of the new script incorrectly tried to pass this flag, based on a stale local
+  copy of the code that had it as an explicit CLI option -- corrected once the real deployed
+  file's argparse usage line proved it wrong.
+
+### 10b. Real confirmed campaign string
+
+```
+RunIII2024Summer24NanoAODv15-150X_mcRun3_2024_realistic_v2-v2
+```
+Confirmed via `dasgoclient` for `MX-1000/MY-125` specifically (both `NANOAODSIM` and
+`MINIAODSIM` tiers exist together under this campaign), and matches the naming convention
+already used for other processes (ggHH, VBF, ttH, backgrounds) in this repo's own
+`produce_all_mc.py` -- good internal consistency, not a one-off.
+
+### 10c. Confirmed grid -- all 273 candidate points resolved
+
+Starting point: two confirmed mass points (`MX-1000/MY-125` via direct `dasgoclient`,
+`MX-750`'s 15 `mY` points via a real file listing at the MiniAOD tier). Full phase-space
+envelope (matching 2022/2023's grid structure) added as commented-out candidates, then
+validated block by block via `--dry-run` -- **273/273 resolved cleanly** for both `2024` and
+`2025` independently (each run separately, both returning the same count against the same
+underlying dataset, exactly as expected given 10a's shared-dataset confirmation).
+
+### 10d. Status (2026-08-23)
+
+Full 273-sample grid submitted for both `2024` and `2025`. One test sample
+(`NMSSM_X240_Y50`, 2024) confirmed reaching real Condor submission cleanly (24 jobs, cluster
+`9236032`) before the full grid was launched -- same incremental-validation discipline as
+2022/2023. Not yet confirmed complete via `--check`; not yet confirmed that individual jobs
+run cleanly through actual coffea processing the way `X350_Y100` was for the JRV2/JRV3
+workaround (2023's crash only showed up once jobs actually ran, not at submission time --
+worth remembering here too before assuming 273/273 `--dry-run` + one clean submission means
+the whole grid is guaranteed problem-free).
+
+### 10e. Commands
+
+```bash
+# Validate before submitting
+python3 submission/tools_HHbbgg/produce_nmssm_2024_2025.py --year 2024 --dry-run
+python3 submission/tools_HHbbgg/produce_nmssm_2024_2025.py --year 2025 --dry-run
+
+# Submit (inside tmux, given the scale -- see Section 3f)
+python3 submission/tools_HHbbgg/produce_nmssm_2024_2025.py --year 2024
+python3 submission/tools_HHbbgg/produce_nmssm_2024_2025.py --year 2025
+
+# Check status -- same STATE_FILE as the 2022/2023 script, state_key prefixes
+# ("2024:...", "2025:...") keep everything cleanly separated
+python3 submission/tools_HHbbgg/produce_nmssm_2024_2025.py --year 2024 --check
+```
+Shares `nmssm_submission_state.json` with the 2022/2023 script -- no separate state file,
+`--check` works the same way across both scripts.
+
+### 10f. Real bug hit on first actual submission -- same class as Section 9, but two hardcoded
+version strings wrong, not one
+
+First 160-job batch: 0 completed, 6 held, after ~50 minutes. Held job `.err` showed no
+Traceback (just a harmless deprecation warning) -- `.out` had the real error:
+```
+ERROR [ jerc_jet ] No JEC correction:
+  Summer24Prompt24_V3_MC_L1L2L3Res_AK4PFPuppiPNetRegressionPlusNeutrino
+  - Year: 2024 - Era: MC - Level: L1L2L3Res
+```
+Traced exactly the same way as Section 9: `jec_version["2024"]["MC"]` hardcodes
+`"Summer24Prompt24_V3_MC"`. Loaded the real file (`2024_Summer24/jet_jerc_PNet.json.gz`)
+directly and listed all 375 correction names -- every one is **`V5`**, not `V3`, not even `V4`.
+
+**Second, separate bug found while checking the same file**: `jer_version["2024"]` hardcodes
+`"Summer24Prompt24_JRV1_MC"`, but every real JER entry in the file is **`JRV2`**. Hadn't
+crashed yet only because the JEC error killed the job before ever reaching the JER lookup --
+confirmed real and would have failed identically once JEC was fixed.
+
+**Real fix (2 lines, not yet applied upstream):**
+```python
+jec_version["2024"]["MC"] = "Summer24Prompt24_V5_MC"    # was V3
+jer_version["2024"] = "Summer24Prompt24_JRV2_MC"          # was JRV1
+```
+2025's equivalent entries not yet independently checked against a real file the same way.
+
+**Local workaround** (broadened from Section 9d's pattern -- this time covers all 8
+regression-aware systematic names, confirmed via `factories.py`: `jerc_jet_pnet(Nu)(_syst)`,
+`jerc_jet_upart(Nu)(_syst)`), applied in `produce_one_mc.py`'s `update_json_config()`:
+```python
+if "2024" in year or "2025" in year:
+    regression_to_plain = {
+        "jerc_jet_pnet": "jerc_jet", "jerc_jet_pnetNu": "jerc_jet",
+        "jerc_jet_upart": "jerc_jet", "jerc_jet_upartNu": "jerc_jet",
+        "jerc_jet_pnet_syst": "jerc_jet_syst", "jerc_jet_pnetNu_syst": "jerc_jet_syst",
+        "jerc_jet_upart_syst": "jerc_jet_syst", "jerc_jet_upartNu_syst": "jerc_jet_syst",
+    }
+    for coll_name in ("corrections", "systematics"):
+        coll = config.get(coll_name, {}).get(keyword, [])
+        for old_name, new_name in regression_to_plain.items():
+            if old_name in coll:
+                coll[coll.index(old_name)] = new_name
+```
+Filed as an addendum to the existing 2023 GitLab issue (same bug class, same file, easier for
+whoever picks it up to see both together) rather than a fresh issue.
+
+### 10g. Separate, unrelated bug found the same night: concurrent runs silently losing state
+
+Discovered while running `produce_nmssm_2024_2025.py` from multiple lxplus nodes at once
+(easy to do without intending to -- the round-robin lands separate terminal sessions on
+different physical nodes automatically). The script held its state-file snapshot in memory
+for the whole run; the last process to save overwrote the file with its own stale copy,
+silently erasing another process's real progress. **Full recovery process (reconciling
+against real EOS output + real in-flight Condor jobs) is documented in Section 6j** -- worth
+reading in full if this happens again, since it took two separate reconciliation passes plus
+manual cleanup of a few false positives to fully recover.
+
+**Real fix, applied** (not just a workaround) -- `produce_nmssm_2024_2025.py`'s state handling
+was rewritten so every check and every write re-reads fresh from disk at that exact moment,
+rather than trusting a long-lived in-memory copy:
+```python
+def load_state():
+    if os.path.exists(STATE_FILE):
+        with open(STATE_FILE) as f:
+            return json.load(f)
+    return {"submitted": [], "failed": []}
+
+def is_already_submitted(state_key):
+    return state_key in load_state()["submitted"]
+
+def mark_submitted(state_key):
+    current = load_state()
+    if state_key not in current["submitted"]:
+        current["submitted"].append(state_key)
+    if state_key in current["failed"]:
+        current["failed"].remove(state_key)
+    with open(STATE_FILE, "w") as f:
+        json.dump(current, f, indent=2)
+```
+Shrinks the race window from "the whole batch duration" (hours) down to milliseconds around
+a single read-modify-write. Not a true lock -- EOS/AFS file locking is unreliable across
+different client nodes anyway, which is exactly the situation that caused this bug in the
+first place, so a lock wouldn't have reliably helped even if added. A small residual race
+still exists (two processes could each see "not submitted" in the same instant and both
+submit), but that only produces a harmless duplicate submission -- matching output filenames
+just get overwritten -- never the silent data *loss* this fix actually targets.
+
+⚠️ **`produce_xtoyh_signal_mc_2024_robust.py` (2022/2023) has the identical
+stale-in-memory-state pattern and has NOT been patched the same way** -- it simply hasn't been
+run concurrently across nodes yet the way the 2024/2025 script was. Worth applying the same
+fix there before it gets hit by the same bug.
+
+---
+
 ## Pre-flight checklist
 
 - [ ] Write access confirmed on `/eos/cms/store/group/phys_b2g/HHbbgg/sraj/`
@@ -1063,9 +1371,17 @@ upstream, rather than treating this workaround as permanent.
 - [ ] Before trusting a stale-looking `[?]`/no-output result: check for a stale
       `state["submitted"]` entry (6i) or, for 2023 specifically, the JRV2/JRV3 JER bug
       (Section 9) before assuming it's a new upstream gap
+- [ ] If a submission count looks suspiciously LOW (e.g. after running from multiple
+      terminals/nodes concurrently): reconcile against real EOS output + real in-flight
+      Condor jobs before trusting it or resubmitting — Section 6j. Confirmed real: lost
+      150 genuinely-real samples this way in one night.
 - [ ] A process launched from a previous login may be on a **different lxplus node** than your
       current session — `pgrep` only sees the local node; check other nodes via SSH before
       concluding nothing is running — Section 6g
+- [ ] For 2024/2025: use `produce_nmssm_2024_2025.py`, NOT the 2022/2023 script — different
+      dataset naming convention, `--nano 15`, `--year` not era-qualified — Section 10. The
+      unconditional "not for final physics" JER warning applies regardless of anything else
+      being correct.
 - [ ] Run submission scripts from `higgs_dna/`, not from inside `tools_HHbbgg/`
 
 ---
@@ -1145,59 +1461,171 @@ error if `particleNet_shape` is requested for `2016preVFP` / `2016postVFP` / `20
 are produced with this template, that job will fail on this correction and need
 `deepJet_bTagShapeSF` (or `ParT_bTagShapeSF`) substituted in for those years instead.
 
+## DAS command reference -- every dasgoclient pattern used in this production
+
+Compiled from actual use throughout this production, not a generic reference -- each command
+below is exactly what was run, with the specific question it answers.
+
+### 1. Does a dataset exist at all?
+```bash
+dasgoclient -query="dataset=/NMSSM_XtoYHto2B2G_MX-<mX>_MY-<mY>_TuneCP5_13p6TeV_madgraph-pythia8/<CAMPAIGN>/NANOAODSIM"
+```
+Returns the dataset name if it exists, empty if not. This is what `--dry-run` uses internally
+for every sample in the grid. **Does not tell you if the dataset is usable** -- an `INVALID`
+dataset still returns its name here. Existence at this level is necessary but not sufficient.
+
+### 2. How many files does it have? (the check that first surfaces `INVALID` datasets)
+```bash
+dasgoclient -query="file dataset=/NMSSM_XtoYHto2B2G_MX-<mX>_MY-<mY>_TuneCP5_13p6TeV_madgraph-pythia8/<CAMPAIGN>/NANOAODSIM" | wc -l
+```
+Returns a file count. **Silently excludes invalid datasets** -- an `INVALID` dataset returns
+`0` here with no indication why, indistinguishable at this level from "never produced." This
+is the query `fetch_datasets_handle.py` relies on internally, which is why an `INVALID`
+dataset produces a clean `RuntimeError` abort rather than a silent failure (see Section 6e).
+
+### 3. The definitive check -- is it actually usable, and why not if it isn't?
+```bash
+dasgoclient -query="dataset dataset=/NMSSM_XtoYHto2B2G_MX-<mX>_MY-<mY>_TuneCP5_13p6TeV_madgraph-pythia8/<CAMPAIGN>/NANOAODSIM" -json | python3 -m json.tool | grep -i "access\|status"
+```
+Run this **first**, before anything else, on any sample showing zero files. Prints
+`"dataset_access_type": "INVALID"` or `"VALID"` directly -- the single fastest way to tell a
+genuine gap from a deliberate exclusion (see "Known upstream NMSSM production gaps" below).
+Saves the entire CLI-vs-web-UI detour that was needed the first time this was diagnosed.
+
+### 4. Real event count, not just file count
+```bash
+dasgoclient -query="dataset dataset=/NMSSM_XtoYHto2B2G_MX-<mX>_MY-<mY>_TuneCP5_13p6TeV_madgraph-pythia8/<CAMPAIGN>/NANOAODSIM" -json | python3 -m json.tool | grep -i "nevents"
+```
+Use this before treating a low file count as a real deficit -- confirmed directly that file
+count and event count don't always track together (`mX=1000, mY=150`: 2 files but 78,000
+events, matching neighbors with 15/22 files almost exactly). One query, no HiggsDNA run
+needed, settles the question that would otherwise require a full production attempt.
+
+### 5. Wildcard search when the exact campaign tag is unknown or might have changed
+```bash
+dasgoclient -query="dataset=/NMSSM_XtoYHto2B2G_MX-<mX>_MY-<mY>_TuneCP5_13p6TeV_madgraph-pythia8/*/NANOAODSIM"
+```
+Used this to resolve the historical `X500_Y125`/`X800_Y50` version-mismatch note (`v2-v2` vs
+`v2-v4`) -- returns every campaign this dataset has ever been produced under, whatever the
+real current tag is, rather than guessing.
+
+### 6. Discovering an unfamiliar naming convention (used for 2024/2025)
+```bash
+dasgoclient -query="dataset=/NMSSM-XtoYH-Yto2B-Hto2G_Par-MX-<mX>-MY-<mY>_TuneCP5_13p6TeV_madgraph-pythia8/*/NANOAODSIM"
+dasgoclient -query="dataset=/NMSSM-XtoYH-Yto2B-Hto2G_Par-MX-<mX>-MY-<mY>_TuneCP5_13p6TeV_madgraph-pythia8/*/*AODSIM"
+```
+2024/2025 uses a genuinely different, hyphenated dataset naming convention from 2022/2023
+(confirmed directly, not assumed) -- the second query (`*AODSIM` instead of `NANOAODSIM`
+specifically) also catches MiniAOD-only datasets, useful for checking which processing tiers
+actually exist before assuming NanoAOD is available.
+
+### Diagnostic order, given everything learned tonight
+
+For any sample showing zero files or otherwise looking wrong:
+1. Command 3 (`access_type`) **first** -- settles `INVALID` vs. genuinely-need-to-investigate
+   immediately, before spending time on anything else.
+2. If `VALID` but file count still looks low relative to neighbors: Command 4 (`nevents`) --
+   settles real deficit vs. chunking artifact.
+3. Only if both come back clean (`VALID`, comparable event count) and the pipeline still can't
+   fetch it: worth checking the DAS web UI directly and/or `--dbs-instance` alternatives, since
+   at that point something genuinely unusual is going on worth escalating.
+
+---
+
 ## Known upstream NMSSM production gaps (not pipeline bugs)
 
-Three confirmed gaps in central NMSSM production, all independently verified, all distinct
-from anything in this analysis's own pipeline -- listed here so they aren't rediscovered
-from scratch later. All three surfaced in a single production session across *different* mX
-values (1000, 1000, 240) -- three independent points in one evening is enough to treat this
-as a broader gap in the 2022postEE campaign, not isolated bad luck on any one dataset.
+### Root cause, found and confirmed for every zero-file case hit so far: `dataset_access_type: INVALID`
 
-**1. `mX=1000, mY=150` -- file count far below neighbors.**
-Confirmed via `dasgoclient -query="file dataset=..."` and cross-checked against the originally
-resolved xrootd JSON (both agree exactly): **2 files**, vs. 15 (`mY=125`) and 22 (`mY=170`).
-Same shape of deficit as the original `mX=600, mY=150` finding that motivated the "Signal
-Yield Anomaly" investigation in the AN/status-update deck -- seeing the same `mY=150` value
-affected at a second, independent `mX` point is stronger evidence this is tied to `mY=150`
-production specifically, not one bad `mX=600` dataset.
-**Open, not yet confirmed as a real event deficit** -- file count alone doesn't prove fewer
-events (the 2 files could be larger). Needs an event-count comparison (same method as the
-original `mX=600` root-cause slide: preselection yield via HiggsDNA, not just file count)
-before treating this as a second confirmed instance of the same issue.
+Every "zero files" gap encountered across this entire production (five confirmed cases, listed
+below) traces to exactly the same mechanism: **the dataset was deliberately invalidated in
+DBS by central production**, not a genuine absence of data, a DBS bug, or a `dasgoclient`
+flakiness issue -- despite it initially looking like all three of those in turn while this was
+being diagnosed.
 
-**2. `mX=1000, mY=700` -- zero files, confirmed twice.**
-`dasgoclient -query="file dataset=..."` returns 0, independently confirmed via the DAS web UI
-directly. This is a different failure mode from #1 above -- not "fewer files than expected,"
-but the dataset genuinely has no files registered in DBS at all, despite the dataset *name*
-itself resolving at the pre-flight `dataset=` query level (see Section 6e for how this
-produces a silent pipeline failure with no job ever reaching Condor -- now fixed, see 6e's
-patch). Not fixable by retry, different `--dbs-instance`, or any pipeline-side change -- this
-needs reporting to whoever owns central NMSSM production. **Removed from `NMSSM_Samples` in
-the production script** (see 3d) so the robust script's retry logic doesn't keep chasing it.
+**The definitive, one-command check** for any future "zero files" sample:
+```bash
+dasgoclient -query="dataset dataset=<full dataset path>" -json | python3 -m json.tool | grep -i "access_type"
+```
+- `"dataset_access_type": "INVALID"` -> deliberately excluded by central production. Not
+  fixable by retry, different `--dbs-instance`, waiting, or any pipeline-side change. Exclude
+  from `NMSSM_Samples` and move on -- this is the expected, correct outcome, not a bug.
+- `"dataset_access_type": "VALID"` combined with genuinely zero files -> that *would* be a real
+  anomaly worth escalating; not what's been found in any case so far.
 
-**3. `mX=240, mY=100` -- zero files, same signature as #2.**
-Same diagnostic path as `mY=700` above: `.txt` intermediate file present, `.json` (from
-`fetch_datasets_handle.py`) never produced, confirmed via direct `dasgoclient -query="file
-dataset=..."` -> 0. Caught cleanly this time by the `produce_one_mc.py` fix from Section 6e --
-landed in `state["failed"]` for automatic retry rather than silently vanishing with no job
-directory, as `mY=700` originally did before the fix was applied.
+**Why this took several wrong turns to actually find**, worth understanding so it's faster
+next time: `dasgoclient -query="file dataset=..."` and the `filesummaries` service both
+silently exclude invalid datasets by default, returning a bare `0` with no indication *why* --
+indistinguishable at first glance from "never produced," "still processing," or "transient DBS
+issue." The DAS **web UI's raw file listing**, however, can still show the underlying files
+that exist in storage even for an invalidated dataset (confirmed directly: 6 real files with
+real sizes shown for a dataset whose CLI/summary query said zero) -- which is what made this
+initially look like a CLI-vs-web-UI inconsistency or a stuck DBS republish, before checking
+`dataset_access_type` directly settled it. The invalidation flag is the actual, complete
+explanation; the file listing discrepancy is just a side effect of it.
 
-**4. `mX=450, mY=125` -- zero files, confirmed via direct DAS query.**
-Same confirmation method as #3: `dasgoclient -query="file dataset=..."` -> 0. Landed in
-`state["failed"]` correctly, not silently lost.
+### Confirmed `INVALID` datasets (11, as of 2026-08-24)
 
-Both #3 and #4 not yet cross-checked against other eras (preEE/preBPix/postBPix) or
-neighboring mY points the way `mY=150`/`mY=700` were -- worth doing before assuming either is
-isolated. Should be commented out of `NMSSM_Samples` (or left in `state["failed"]` and simply
-not resubmitted) once confirmed not retriable.
+| mX | mY | Era | Confirmed via |
+|---|---|---|---|
+| 1000 | 700 | 2022postEE | `dataset_access_type: INVALID` |
+| 240 | 100 | 2022postEE | `dataset_access_type: INVALID` |
+| 450 | 125 | 2022postEE | `dataset_access_type: INVALID` |
+| 800 | 500 | 2023preBPix | `dataset_access_type: INVALID` |
+| 950 | 300 | 2023preBPix | `dataset_access_type: INVALID` |
+| 700 | 550 | 2022preEE | `dataset_access_type: INVALID` |
+| 750 | 150 | 2022preEE | `dataset_access_type: INVALID` |
+| 350 | 200 | 2023postBPix | `dataset_access_type: INVALID` |
+| 700 | 500 | 2023postBPix | `dataset_access_type: INVALID` |
+| 800 | 50 | 2024 | `dataset_access_type: INVALID` -- first confirmed 2024 case, same root cause, different naming convention (`NMSSM-XtoYH-Yto2B-Hto2G_Par-MX-800-MY-50...`) |
+| 500 | 125 | 2024 | `dataset_access_type: INVALID` -- caught despite passing `--dry-run`'s surface-level `[OK]` (dataset *name* resolves in DAS even though it's invalid and has 0 files) -- worth remembering `--dry-run`'s `[OK]` only confirms the dataset name exists, not that it's valid/populated; spot-checking access_type on samples that look fine is still worthwhile |
 
-not retriable.
+All eleven: excluded from `NMSSM_Samples` (see 3d/10), so the robust script's retry logic
+doesn't keep chasing them. Do not resubmit -- an `INVALID` flag is not expected to change.
 
-**Suggested consolidated report to whoever owns central NMSSM production** (rather than three
-separate one-off messages): three independently confirmed zero/near-zero-file datasets across
-different mX values (1000, 1000, 240) in the `Run3Summer22EENanoAODv12-130X_mcRun3_2022_realistic_postEE_v6-v2`
-campaign, found in a single evening's production run -- worth checking for a known incomplete
-production batch rather than treating each as an isolated missing file.
+**Spread across all four eras** -- 2022postEE (3), 2022preEE (2), 2023preBPix (2),
+2023postBPix (2). Nine points across all four eras, no obvious pattern in mX or mY values
+shared between them -- consistent with routine, scattered invalidation during central
+production/reprocessing rather than a systematic gap tied to any particular mass region.
+
+### RESOLVED: `mX=1000, mY=150` -- file-count "deficit" was a chunking artifact, not a real gap
+
+Originally flagged as suspicious: only **2 files** vs. 15 (`mY=125`) and 22 (`mY=170`) --
+superficially the same shape as the original `mX=600, mY=150` "Signal Yield Anomaly" finding.
+
+**Checked and fully resolved, 2026-08-24:**
+- `dataset_access_type`: **VALID** for all three (`mY=125`, `mY=150`, `mY=170`) -- ruled out
+  the invalidation explanation (Section above) for this case.
+- Real event counts (`nevents` from DBS `filesummaries`, not file count):
+
+| mY | Files | Events |
+|---|---|---|
+| 125 | 15 | 77,310 |
+| 150 | 2 | 78,000 |
+| 170 | 22 | 75,000 |
+
+All three within ~4% of each other. `mY=150`'s low file count was purely a **chunking
+artifact** -- its MC happened to be packed into 2 large files (~39,000 events each) rather than
+many smaller ones, not a genuine event-level deficit. **No real production gap here.**
+
+**Scope of this resolution, worth being precise about:** this specifically refutes the
+file-count-based concern for `mX=1000, mY=150`. It does **not** retroactively invalidate the
+*original* `mX=600, mY=150` finding from the AN/status-update deck -- that one was based on
+actual measured preselection yields from real HiggsDNA output (a direct measurement), a
+meaningfully stronger claim than DAS file count. This case is a useful, concrete illustration
+of exactly why file count alone is an unreliable proxy for event count, and worth remembering
+that lesson before flagging a similar-looking pattern as suspicious in the future -- check
+`nevents` directly (one `dasgoclient` query, no HiggsDNA run needed) before assuming a low
+file count means a real deficit.
+
+### Consolidated report, if/when reporting to whoever owns central NMSSM production
+
+Given the root cause is now understood (deliberate invalidation, not a gap), a report is lower
+priority than originally thought -- these datasets were excluded on purpose by whoever manages
+central production, presumably for a real reason (bad conditions, superseded reprocessing,
+etc.). Worth a brief informational note rather than a bug report: nine NMSSM signal mass
+points across all four eras (2022preEE, 2022postEE, 2023preBPix, 2023postBPix) are currently
+`INVALID` in DBS -- confirming this is expected/known (rather than an oversight) would close
+this out completely.
 
 ---
 
