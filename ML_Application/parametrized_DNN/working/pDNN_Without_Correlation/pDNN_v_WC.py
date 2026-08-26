@@ -3219,6 +3219,88 @@ RAW_COLUMNS_OF_INTEREST: List[str] = [
              # to avoid colliding with the "mass" column used for the signal grid point.
 ]
 
+# # =============================================================================
+# # 4. FEATURE DEFINITIONS
+# # =============================================================================
+# #
+# # Res_dijet_mass, Res_dijet_mass_DNNreg, and Res_M_X were REMOVED from
+# # FEATURES_CORE (2026-08-25) as a deliberate mass-sculpting-risk
+# # mitigation, not a statistical-redundancy decision:
+# #   - Res_dijet_mass / Res_dijet_mass_DNNreg are direct estimates of
+# #     m_bb, one of the two observables the final 2D (m_gg, m_bb) fit is
+# #     built on.
+# #   - Res_M_X = m_bbgg - (m_gg - 125) - (m_bb - m_Y) is algebraically
+# #     linear in BOTH m_gg and m_bb with coefficient -1 on each (verified
+# #     directly: M_X = m_Y - m_bb + m_bbgg - m_gg + 125) -- for
+# #     background specifically (no real resonance tying m_bbgg to a
+# #     shared, resolution-driven m_gg/m_bb fluctuation the way it does
+# #     for signal), this term directly encodes the actual m_gg and m_bb
+# #     values of that event, entangling BOTH final-fit observables at
+# #     once. This is a real "reduced mass" technique (used in CMS/ATLAS
+# #     diHiggs-style searches) with a genuine, established physics
+# #     motivation for signal -- the removal here is a conservative
+# #     choice given this analysis's specific 2D-fit structure, not a
+# #     judgment that the technique itself is wrong.
+# # This is independent of, and not a substitute for, the training
+# # pipeline's own statistical correlation-pruning step (threshold 0.95,
+# # applied downstream after reading) -- see check_feature_correlations.py
+# # for a standalone, pre-training check of that separate question across
+# # the remaining features.
+# FEATURES_CORE: List[str] = [
+#     "lead_eta", "lead_phi", "sublead_eta", "sublead_phi",
+#     "Res_dijet_eta", "Res_dijet_phi",
+#     "Res_HHbbggCandidate_eta", "Res_HHbbggCandidate_phi", "Res_HHbbggCandidate_pt",
+#     "Res_DeltaR_jg_min",
+#     "Res_CosThetaStar_gg", "Res_CosThetaStar_jj", "Res_CosThetaStar_CS",
+#     "lead_mvaID",
+#     "n_leptons", "n_jets", "puppiMET_pt", "puppiMET_phi", "Njets2p5",
+#     "Res_DeltaPhi_j1MET", "Res_DeltaPhi_j2MET",
+#     "Res_chi_t0", "Res_chi_t1",
+#     "Res_dijet_pt",
+#     "Res_pholead_PtOverM", "Res_phosublead_PtOverM",
+#     "Res_FirstJet_PtOverM", "Res_SecondJet_PtOverM",
+#     "sigma_m_over_m",
+#     "lead_r9", "sublead_r9",
+#     "Res_lead_bjet_btagPNetB", "Res_sublead_bjet_btagPNetB",
+#     # engineered (added by add_engineered_features)
+#     "ptjj_over_mHH", "ptHH_over_mHH",
+# ]
+
+# # Engineered features are computed AFTER reading the parquet file (by
+# # add_engineered_features) -- they cannot exist as raw columns, so they
+# # are explicitly excluded when deriving the read-list below.
+# _ENGINEERED_FEATURES: set = {"ptjj_over_mHH", "ptHH_over_mHH"}
+
+# # Extra raw columns needed for fallbacks or as inputs to engineered/derived
+# # features, but that are NOT themselves direct training features in
+# # FEATURES_CORE: per-jet-per-photon DeltaR components (inputs to the
+# # Res_DeltaR_jg_min computation), photon-ID variant columns (fallbacks for
+# # the plain lead_mvaID/sublead_mvaID names), and a couple of raw masses
+# # used elsewhere in this module.
+# _RAW_COLUMNS_EXTRA: List[str] = [
+#     "eta", "phi",
+#     "Res_lead_bjet_eta", "Res_lead_bjet_phi",
+#     "Res_sublead_bjet_eta", "Res_sublead_bjet_phi",
+#     "Res_DeltaR_j1g1", "Res_DeltaR_j1g2",
+#     "Res_DeltaR_j2g1", "Res_DeltaR_j2g2",
+#     "lead_mvaID_run3", "sublead_mvaID_run3",
+#     "lead_mvaID_nano", "sublead_mvaID_nano",
+#     "Res_HHbbggCandidate_mass",
+#     "mass",  # raw diphoton invariant mass -> renamed to "diphoton_mass" in _prepare_raw
+#              # to avoid colliding with the "mass" column used for the signal grid point.
+# ]
+
+# # Derived automatically as the union of FEATURES_CORE (minus engineered
+# # features, which can't exist pre-read) and the extra raw/fallback
+# # columns above, rather than maintained as a second, separately hand-
+# # edited list -- confirmed live this session that letting these two
+# # lists drift apart silently drops real training features (10 were
+# # lost this way before being caught). Any future addition to
+# # FEATURES_CORE is automatically requested at read time, with no
+# # separate list to remember to update.
+# RAW_COLUMNS_OF_INTEREST: List[str] = sorted(
+#     (set(FEATURES_CORE) - _ENGINEERED_FEATURES) | set(_RAW_COLUMNS_EXTRA)
+# )
 
 # =============================================================================
 # 5. UTILITY FUNCTIONS
