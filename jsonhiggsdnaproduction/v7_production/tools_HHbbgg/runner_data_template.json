@@ -1,0 +1,15 @@
+{
+"samplejson": "samples_data_template.json",
+"workflow": "HHbbgg",
+"metaconditions": "Era2022_v1",
+"taggers": [],
+"year": {
+    "Run2023Cv1": ["2023preBPix"]
+},
+"corrections": {
+    "Run2023Cv1": ["Scale", "jec_pnetNu_RunC", "jec_AK8_RunC"]
+},
+"systematics": {
+    "Run2023Cv1": []
+}
+}

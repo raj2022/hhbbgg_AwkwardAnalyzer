@@ -1,0 +1,16 @@
+{
+"samplejson": "samples_mc_template.json",
+"workflow": "HHbbgg",
+"metaconditions": "Era2022_v1",
+"taggers": [],
+"split_mc": true,
+"year": {
+    "GluGluToHH": ["2023preBPix"]
+},
+"corrections": {
+    "GluGluToHH": ["jerc_jet_pnetNu_syst", "jerc_fatjet_syst", "Pileup", "Smearing", "ElectronVetoSF", "LoosePhoIDSF", "PreselSF", "TriggerSF", "bTagMultiFixedWP_UParTAK4LMTXTXXT"]
+},
+"systematics": {
+    "GluGluToHH": ["Pileup", "ScaleEB_Zmmg", "ScaleEE_Zmmg", "ScaleEB_Zee", "ScaleEE_Zee", "Smearing", "ElectronVetoSF", "LoosePhoIDSF", "PreselSF", "TriggerSF", "bTagMultiFixedWP_UParTAK4LMTXTXXT", "LHEScale", "LHEPdf"]
+}
+}
