@@ -185,6 +185,54 @@ def era_code_from_year_era(year, era):
     return ERA_CODES[key]
 
 
+# Maps (year, era) to the era-suffix string actually used in year-specific
+# UNCORRELATED b-tag SF weight branch names -- confirmed directly against
+# real production schema (a full branch list from an actual 2022postEE
+# file): the real columns are weight_btagSFbc_2022postEEUp/Down, NOT
+# weight_btagSFbc_2022Up/Down as this file's own lookup previously
+# assumed. This was a genuine, live bug (confirmed via the
+# "[WARN] ... missing year-specific uncorrelated b-tag SF column(s)"
+# print firing on every single 2022/2023 file, since the constructed
+# column name never matched anything real) -- not just a naming
+# preference. 2024/2025 have no sub-era in the branch name at all (the
+# year alone is the correct suffix there), matching what this file's
+# code already assumed correctly for those two years specifically.
+#
+# This mapping ALSO directly resolves the separate correlated/
+# uncorrelated design question: bTagSF_bc_correlated/bTagSF_light_correlated
+# (in WEIGHT_SYSTEMATICS above) already use a single FIXED nuisance name
+# regardless of year/era, so combineCards.py naturally treats them as one
+# shared, correlated systematic across every era -- exactly as intended.
+# The uncorrelated pair, by using THIS per-era suffix in its own nuisance
+# name (bTagSF_bc_<era_suffix>), gets a genuinely distinct name per
+# sub-era -- so Combine treats 2022preEE's and 2022postEE's uncorrelated
+# components as two independent nuisances, never silently merged under
+# one shared name. No further, separate "implement correlated vs
+# uncorrelated" work is needed beyond this naming fix -- the STRUCTURE
+# was already correct; only the uncorrelated branch's constructed name
+# was wrong.
+WEIGHT_COLUMN_ERA_SUFFIX = {
+    ("2022", "PreEE"): "2022preEE",
+    ("2022", "PostEE"): "2022postEE",
+    ("2023", "preBPix"): "2023preBPix",
+    ("2023", "postBPix"): "2023postBPix",
+}
+
+
+def weight_column_era_suffix(year, era):
+    year = str(year)
+    if year in ("2024", "2025"):
+        return year
+    key = (year, str(era))
+    if key not in WEIGHT_COLUMN_ERA_SUFFIX:
+        raise ValueError(
+            f"weight_column_era_suffix: no mapping for (year={year!r}, era={era!r}). "
+            f"Known combinations: {sorted(WEIGHT_COLUMN_ERA_SUFFIX.keys())} plus "
+            f"'2024'/'2025' (year-only, no sub-era)."
+        )
+    return WEIGHT_COLUMN_ERA_SUFFIX[key]
+
+
 # ---------------- Nested-folder / systematic-variation handling ----------------
 # Same convention as inference_PDnn.py's classify_systematic(), duplicated here
 # (rather than imported) so this script has no hard dependency on the pDNN
@@ -480,8 +528,14 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
         "Res_sublead_bjet_btagPNetB",
         "Res_lead_bjet_PNetRegPtRawRes",     # Adding particle net regressed varaible
         "Res_sublead_bjet_PNetRegPtRawRes",   # Adding particle net regressed varaible
-        "Res_lead_bjet_btagUParTAK4B",      # Adding particle net regressed varaible for 2024 and 2025
-        "Res_sublead_bjet_btagUParTAK4B",   # Adding particle net regressed varaible for 2024 and 2025
+        # NOTE: Res_lead_bjet_btagUParTAK4B / Res_sublead_bjet_btagUParTAK4B
+        # (the UParT b-tag discriminant, 2024/2025 only) are DELIBERATELY
+        # NOT listed here unconditionally -- confirmed as a real, live
+        # crash: these columns genuinely do not exist in 2022/2023 parquet
+        # schemas, and requesting/consuming them unconditionally raised
+        # awkward.errors.FieldNotFoundError the first time this ran against
+        # real 2022 data. Checked per-file below instead, via schema_names,
+        # the same pattern already used for ttH_killer_score just below.
         "lead_isScEtaEB",
         "sublead_isScEtaEB",
         "lead_isScEtaEE",
@@ -534,6 +588,17 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
 
     parquet_file = pq.ParquetFile(inputfile)
 
+    # Folder-based (object-level) systematic label for this file, e.g.
+    # "jec_syst_Total_up", or "nominal" for both the nominal folder and any
+    # flat file with no systematic-folder structure at all. Moved up from
+    # later in this function specifically so it's available here, to gate
+    # the weight-systematic missing-column warnings below (see those sites
+    # for why: those columns/variants are only ever used for nominal-folder
+    # files in the first place, per systematic_passes further down, so
+    # warning about their absence on every non-nominal file was noisy and
+    # misleading, not indicative of an actual problem).
+    folder_systematic = classify_systematic(Path(inputfile)) or "nominal"
+
     # ttH_killer_score is read from inference_ttH_killer.py's output, which
     # runs after pDNN scoring but may not have touched every file yet during
     # the transition -- checked per-file rather than assumed, so a file
@@ -545,6 +610,27 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
         print(f"[WARN] {inputfile}: no ttH_killer_score column found "
               f"(has inference_ttH_killer.py been run on this file yet?); "
               f"filling with NaN.")
+
+    # UParT b-tag discriminant: confirmed 2024/2025-only in real production
+    # schemas -- 2022/2023 files genuinely do not have these columns at
+    # all (a real, live crash confirmed this: FieldNotFoundError when
+    # accessed unconditionally against 2022 data). Checked per-file,
+    # exactly like ttH_killer_score above, rather than assumed from year.
+    # Both lead+sublead required together -- if only one were present,
+    # that would itself indicate a genuine schema problem worth seeing
+    # rather than silently proceeding with a mismatched pair.
+    _upart_cols = ("Res_lead_bjet_btagUParTAK4B", "Res_sublead_bjet_btagUParTAK4B")
+    has_upart = all(c in parquet_file.schema.names for c in _upart_cols)
+    if has_upart:
+        required_columns.extend(_upart_cols)
+    elif any(c in parquet_file.schema.names for c in _upart_cols):
+        print(f"[WARN] {inputfile}: only ONE of {_upart_cols} is present -- "
+              f"treating UParT as unavailable for this file (filling both "
+              f"with NaN) rather than proceeding with a mismatched pair.")
+    else:
+        print(f"[INFO] {inputfile}: no UParT b-tag columns found (expected for "
+              f"pre-2024 production) -- filling lead/sublead_bjet_PNetUParTAK4B "
+              f"with NaN.")
 
     # Weight-systematic columns: only request the ones actually present in
     # this file's schema (older productions may not carry the full set).
@@ -561,14 +647,14 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
                 down_col if down_col in schema_names else None,
             )
     missing_weight_systs = set(WEIGHT_SYSTEMATICS) - set(available_weight_systs)
-    if missing_weight_systs:
+    if missing_weight_systs and folder_systematic == "nominal":
         print(f"[WARN] {inputfile}: missing weight-systematic column(s) for "
               f"{sorted(missing_weight_systs)}; those variants will be skipped for this file.")
-
-    # Folder-based (object-level) systematic label for this file, e.g.
-    # "jec_syst_Total_up", or "nominal" for both the nominal folder and any
-    # flat file with no systematic-folder structure at all.
-    folder_systematic = classify_systematic(Path(inputfile)) or "nominal"
+    # (No warning for non-nominal folders: weight-systematic variants are
+    # only ever USED for nominal-folder files -- see systematic_passes
+    # further down -- so their absence in e.g. a ScaleEB_Zee_down file is
+    # expected and not itself informative about whether the underlying
+    # upstream data actually has these columns.)
 
     sample_name_norm = resolve_sample_name(inputfile)
 
@@ -588,10 +674,11 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
     use_year = det_year or str(cli_year)
     use_era  = det_era  or str(cli_era) 
 
+    _era_suffix = weight_column_era_suffix(use_year, use_era)
     for _flavor in ("bc", "light"):
-        _syst_name = f"bTagSF_{_flavor}_{use_year}"
-        _up_col = f"weight_btagSF{_flavor}_{use_year}Up"
-        _down_col = f"weight_btagSF{_flavor}_{use_year}Down"
+        _syst_name = f"bTagSF_{_flavor}_{_era_suffix}"
+        _up_col = f"weight_btagSF{_flavor}_{_era_suffix}Up"
+        _down_col = f"weight_btagSF{_flavor}_{_era_suffix}Down"
         _cols_present = [c for c in (_up_col, _down_col) if c in schema_names]
         for _c in _cols_present:
             if _c not in required_columns:
@@ -602,9 +689,13 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
                 _down_col if _down_col in schema_names else None,
             )
         else:
-            print(f"[WARN] {inputfile}: missing year-specific uncorrelated b-tag SF "
-                  f"column(s) for {_syst_name} (looked for {_up_col}/{_down_col}); "
-                  f"that variant will be skipped for this file.")
+            if folder_systematic == "nominal":
+                print(f"[WARN] {inputfile}: missing year-specific uncorrelated b-tag SF "
+                      f"column(s) for {_syst_name} (looked for {_up_col}/{_down_col}); "
+                      f"that variant will be skipped for this file.")
+            # (No warning for non-nominal folders -- same reasoning as the
+            # general weight-systematics warning above: these variants are
+            # only ever used for nominal-folder files.)
 
     if xsec_lumi_cache is None:
         xsec_lumi_cache = {}
@@ -685,8 +776,14 @@ def process_parquet_file(inputfile, cli_year, cli_era, xsec_lumi_cache=None, tre
                 "sublead_bjet_PNetB": tree_["Res_sublead_bjet_btagPNetB"],
                 "lead_bjet_PNetRegPtRawRes": tree_["Res_lead_bjet_PNetRegPtRawRes"],    # Adding particle net regressed varaible 
                 "sublead_bjet_PNetRegPtRawRes":tree_["Res_sublead_bjet_PNetRegPtRawRes"], # Adding particle net regressed varaible
-                "lead_bjet_PNetUParTAK4B": tree_["Res_lead_bjet_btagUParTAK4B"],    # Adding particle net  varaible for 2024 and 2025
-                "sublead_bjet_PNetUParTAK4B":tree_["Res_sublead_bjet_btagUParTAK4B"], # Adding particle net  varaible for 2024 and 2025
+                "lead_bjet_PNetUParTAK4B": (
+                    tree_["Res_lead_bjet_btagUParTAK4B"] if has_upart
+                    else ak.Array(np.full(len(tree_), np.nan, dtype="float32"))
+                ),    # Adding particle net  varaible for 2024 and 2025
+                "sublead_bjet_PNetUParTAK4B": (
+                    tree_["Res_sublead_bjet_btagUParTAK4B"] if has_upart
+                    else ak.Array(np.full(len(tree_), np.nan, dtype="float32"))
+                ), # Adding particle net  varaible for 2024 and 2025
                 "lead_isScEtaEB": tree_["lead_isScEtaEB"],
                 "sublead_isScEtaEB": tree_["sublead_isScEtaEB"],
                 "lead_isScEtaEE": tree_["lead_isScEtaEE"],
@@ -1282,11 +1379,11 @@ def main():
     print("======================================")
     print(f"[OK] Histograms → {hist_file_path}")
     print(f"[OK] Trees       → {out_dir} (one file per sample+systematic: "
-          f"hhbbgg_analyzer-v2-trees__<sample>__<systematic>.root)")
+          f"hhbbgg_analyzer-v7-trees__<sample>__<systematic>.root)")
     print(f"[NOTE] Histogram output now uses a unique per-run filename (was previously a "
           f"single fixed name that a targeted re-run would silently overwrite, destroying "
           f"any prior run's accumulated histograms). Merge all "
-          f"hhbbgg_analyzer-v2-histograms__*.root files with hadd once every sample has "
+          f"hhbbgg_analyzer-v7-histograms__*.root files with hadd once every sample has "
           f"been processed, the same way as the per-sample tree files.")
     print("======================================")
     
