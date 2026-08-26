@@ -1321,6 +1321,45 @@ stale-in-memory-state pattern and has NOT been patched the same way** -- it simp
 run concurrently across nodes yet the way the 2024/2025 script was. Worth applying the same
 fix there before it gets hit by the same bug.
 
+### 10h. Confirmed, recurring gap: `condor_submit` failures slip past `produce_one_mc.py`'s
+exit-code check undetected
+
+**Symptom, seen twice** for `2024:NMSSM_X400_Y170` (once) and `2024:NMSSM_X650_Y350` (once,
+same night): script prints `[OK] ... submitted.` and records the sample as `submitted` in
+state, but the job directory contains only `.sh`/`.sub` files -- no `.err`/`.out` at all,
+meaning `condor_submit` never actually created any real Condor jobs. Terminal output at the
+time showed `ERROR: Failed to create proc` printed between `Submitting job(s)..` and the
+script's own success line.
+
+**Why the existing return-code checks (1b/1c in the changelog) don't catch this**: those check
+whether the outer `subprocess.run(command, shell=True, check=True)` call for the *whole*
+`produce_one_mc.py` invocation returned non-zero. Apparently `produce_one_mc.py` itself still
+exits 0 even when the `condor_submit` step inside it partially or fully fails -- the failure
+is happening at a layer underneath what the existing checks actually verify.
+
+**Confirmed real, not a one-off**: happened twice in one session, both times recoverable only
+by manually noticing the job directory had no `.err`/`.out` files, removing the falsely-marked
+`state["submitted"]` entry, and resubmitting:
+```bash
+python3 -c "
+import json
+with open('nmssm_submission_state.json') as f:
+    s = json.load(f)
+before = len(s['submitted'])
+s['submitted'] = [k for k in s['submitted'] if k not in ('<state_key_1>', '<state_key_2>')]
+print(f'Removed: {before - len(s[\"submitted\"])}')
+with open('nmssm_submission_state.json', 'w') as f:
+    json.dump(s, f, indent=2)
+"
+```
+
+**Real fix, not yet implemented**: `run_analysis()` (inside `produce_one_mc.py`) needs to
+verify the actual number of Condor jobs created after `condor_submit` returns -- e.g. parsing
+`condor_submit`'s own stdout for the "N job(s) submitted to cluster M" confirmation line, or
+querying `condor_q` immediately after and checking the cluster genuinely has the expected job
+count -- rather than trusting the process's exit code alone, which this confirms is
+insufficient on its own.
+
 ---
 
 ## Pre-flight checklist
