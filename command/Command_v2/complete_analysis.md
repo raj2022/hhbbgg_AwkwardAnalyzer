@@ -242,6 +242,11 @@ separate directory. Both branches must be present before step 5, since
 the categorization script's ttH-killer pre-split (`--tth-cut`) reads
 `ttH_killer_score` directly from the tree.
 
+We have created the file `pDNN_ttH_inference_chain.sh`, can submit all file for DNN and ttH at once 
+from `/afs/cern.ch/user/s/sraj/Analysis/hhbbgg_AwkwardAnalyzer`
+```bash
+bash pDNN_ttH_inference_chain.sh 
+```
 ---
 
 ## 4. Run the Analyzer
@@ -277,6 +282,48 @@ python hhbbgg_analyzer_with_systematics.py \
 `preEE/postEE/preBPix/postBPix` `scored/` directories and
 `--config-years 2022,2023`.)
 
+**Example to run for 2022 PostEE, preEE:**
+```bash
+# --- 2022 preEE ---
+python -u hhbbgg_analyzer_with_systematics.py \
+  --config-years 2022 --era preEE \
+  -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2022/sim/preEE/merged/scored/ \
+  -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2022/data/scored/ \
+  -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2022/sim/scored/ \
+  --tag DD_2022preEE \
+  --all-systematics
+
+# --- 2022 postEE ---
+python -u hhbbgg_analyzer_with_systematics.py \
+  --config-years 2022 --era postEE \
+  -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2022/sim/postEE/merged/scored/ \
+  -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2022/data/scored/ \
+  -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2022/sim/scored/ \
+  --tag DD_2022postEE \
+  --all-systematics
+  ``` 
+
+for 2023:
+# --- 2023 preBPix ---
+```bash
+python -u hhbbgg_analyzer_with_systematics.py \
+  --config-years 2023 --era preBPix \
+  -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2023/sim/preBPix/merged/scored/ \
+  -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2023/data/scored/ \
+  -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2023/sim/scored/ \
+  --tag DD_2023preBPix \
+  --all-systematics
+
+# --- 2022 postEE ---
+```bash
+python -u hhbbgg_analyzer_with_systematics.py \
+  --config-years 2023 --era postBPix \
+  -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2023/sim/postBPix/merged/scored/ \
+  -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2023/data/scored/ \
+  -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2023/sim/scored/ \
+  --tag DD_2023postBPix \
+  --all-systematics
+  ``` 
 > **Filename/flag note.** This document uses `hhbbgg_analyzer_lxplus_par.py`
 > with `--config-years` (plural), matching the script's actual `argparse`
 > definition and everything fixed/tested in this conversation. A
@@ -448,7 +495,10 @@ Inspect Data/MC plots from the merged output using `hhbbgg_Plotter.py`:
 python hhbbgg_Plotter.py \
   --root outputfiles/merged/DD_2024/hhbbgg_analyzer-v2-histograms.root
 ```
-
+e.g. this is for only with preEE
+```bash
+(hhbbgg-awk) [sraj@lxplus950 hhbbgg_AwkwardAnalyzer]$ python hhbbgg_Plotter.py --root outputfiles/merged/DD_2022preEE/hhbbgg_analyzer-v2-histograms__20260826_200635.root 
+```
 **A specific systematic** (e.g. to inspect a weight-based variation's
 shape, or a folder-based one if `--all-systematics` was used upstream):
 ```bash
@@ -457,6 +507,115 @@ python hhbbgg_Plotter.py \
   --systematic PileupUp
 ```
 
+
+# Doc update: §4.1 Validate Data/MC Agreement -- multi-file and auto-discovery support
+
+**Insert after the existing `--root`/`--systematic` examples, before "Other
+flags."** This supersedes the earlier §4.3.1 recommendation to pre-`hadd`
+histogram files together before plotting -- that recipe is still valid if
+you need a genuine single combined file for some other downstream purpose,
+but for `hhbbgg_Plotter.py` specifically, it's no longer necessary: the
+plotter can now read and combine multiple files directly.
+
+### Plotting multiple years/eras together, without pre-merging
+
+`hhbbgg_Plotter.py`'s `--root` argument is now repeatable, and combines
+whatever files you pass at PLOT TIME -- summing matching Data/MC bases
+across all of them, with no intermediate merged file ever written to
+disk:
+
+```bash
+python hhbbgg_Plotter.py \
+  --root DD_2022_combined/hhbbgg_analyzer-v2-histograms.root \
+  --root DD_2023_combined/hhbbgg_analyzer-v2-histograms.root
+```
+
+Confirmed working correctly even when different years use completely
+different real-data directory naming (`DataC_NOTAG_merged` for 2022 vs
+`DataCv1EG0_NOTAG_merged` for 2023, per §4.3) -- summing is driven by
+the resolved base name ("Data"), not the raw directory name, so no
+special-casing per year is needed.
+
+### Auto-discovery by year: `--years` / `--base-dir`
+
+For the common case of "just plot these years together," `--years`
+resolves each year to its histogram file automatically, so you don't
+need to remember or type out the exact file path each time:
+
+```bash
+# Only 2023
+python hhbbgg_Plotter.py --years 2023 --base-dir outputfiles
+
+# 2022 + 2023
+python hhbbgg_Plotter.py --years 2022,2023 --base-dir outputfiles
+
+# 2022 + 2023 + 2024
+python hhbbgg_Plotter.py --years 2022,2023,2024 --base-dir outputfiles
+
+# Only 2024
+python hhbbgg_Plotter.py --years 2024 --base-dir outputfiles
+```
+
+For each requested year, `--years` looks for (in order):
+1. `<base-dir>/DD_<year>_combined/hhbbgg_analyzer-v2-histograms.root`
+2. `<base-dir>/DD_<year>/hhbbgg_analyzer-v2-histograms.root`
+3. If neither exists yet, the most RECENT (by actual modification time,
+   not filename) `hhbbgg_analyzer-v2-histograms__*.root` under either
+   directory.
+
+**Discovery is loud, not silent** -- it always prints exactly which
+file was picked for each year and which rule matched (`exact` vs.
+`latest-timestamped`), e.g.:
+```
+[INFO] --years given: resolving ['2022', '2023'] under base dir 'outputfiles'...
+[INFO]   2022 -> outputfiles/DD_2022_combined/hhbbgg_analyzer-v2-histograms.root  (matched via: exact)
+[INFO]   2023 -> outputfiles/DD_2023_combined/hhbbgg_analyzer-v2-histograms.root  (matched via: exact)
+```
+Always check this line before trusting the resulting plots -- a wrong
+`--base-dir`, or an unexpected directory-naming convention for a given
+year, would show up here immediately rather than silently plotting the
+wrong (or no) data.
+
+### Pointing at one specific file still works exactly as before
+
+`--years` is purely additive -- it doesn't change or replace the plain
+`--root` usage:
+```bash
+# A single, specific file -- unaffected by any of the above
+python hhbbgg_Plotter.py --root outputfiles/DD_2024/hhbbgg_analyzer-v2-histograms.root
+```
+
+### Mixing explicit files with auto-discovery
+
+`--root` and `--years` can be combined in the same call -- useful for
+adding one extra or non-standard file alongside auto-discovered years:
+```bash
+python hhbbgg_Plotter.py \
+  --root outputfiles/some_special_one_off_file.root \
+  --years 2024 --base-dir outputfiles
+```
+
+### Status
+
+Auto-discovery logic (`resolve_year_to_root_file()`) confirmed via
+direct testing against a realistic mixed directory structure (some
+years with an explicit, already-`hadd`'d filename; a year with only
+timestamped files still present) -- correctly picks the exact-named
+file when present, and correctly picks the genuinely newest
+timestamped file by modification time (not alphabetical/filename
+order) when it isn't. The multi-file summing logic
+(`gather_across_sources()`) is confirmed via direct testing with real
+synthetic multi-year fixtures: MC weighted yields sum exactly across
+files, and Data sums correctly across files even when each year uses a
+different real-data naming convention. The full plotting pipeline
+(matplotlib figure generation, real `variables.py`/`normalisation.py`
+integration) has not been run end-to-end outside the real analysis
+environment -- confirm a real run reproduces the same plots as before
+for the single-file case before relying on the multi-file case for
+anything final.
+
+
+---
 > **Note (§4.0):** `--root` above assumes the merged, single-file
 > histogram output (`hadd`'d from `hhbbgg_analyzer-v2-histograms__*.root`
 > per §4.0) -- `hhbbgg_Plotter.py` itself was not changed and still
@@ -498,7 +657,274 @@ intentionally not bundled into the above):
   auto-discover `NMSSM_*` bases from the file's own top-level directories
   instead of requiring manual upkeep per mass point.
 
+### 4.2 Multi-year (2022/2023) analyzer fixes -- found when actually running the eras this session, not caught by the 2024-only testing that preceded it
+
+**Read before running `--config-years 2022` or `2023` for the first time.** All
+three of these were confirmed live, on real 2022postEE production data, not
+found by inspection -- the §4 "2022-2023 example, same flags" note as written
+before this pass would reproduce the crash below exactly.
+
+**1. Hard crash: `Res_lead_bjet_btagUParTAK4B` doesn't exist for 2022/2023.**
+```
+awkward.errors.FieldNotFoundError: no field 'Res_lead_bjet_btagUParTAK4B'
+in record with 71 fields
+```
+The UParT b-tag discriminant columns (`Res_lead_bjet_btagUParTAK4B`,
+`Res_sublead_bjet_btagUParTAK4B`) are genuinely 2024/2025-only in the real
+production schema -- confirmed directly, not assumed. The analyzer's own code
+comment already said *"for 2024 and 2025"*, but the columns were still
+listed in `required_columns` unconditionally, with no year/schema gate at
+all. **Fixed**: checked per-file against the parquet schema (`has_upart`),
+exactly mirroring the pattern the script already used for
+`ttH_killer_score` -- falls back to `NaN` for both branches when absent,
+uses the real values unchanged when present (2024/2025).
+
+**2. Year-specific uncorrelated b-tag SF weight columns were never actually
+found for 2022/2023 -- a naming bug, not a genuine missing-upstream-data
+gap.** The analyzer was constructing column names like
+`weight_btagSFbc_2022Up`, but the real production schema (confirmed
+directly from a full branch list off a real 2022postEE file) uses
+`weight_btagSFbc_2022postEEUp` -- the sub-era is baked into the branch
+name, not just the year. Every 2022/2023 file was silently printing
+`[WARN] ... missing year-specific uncorrelated b-tag SF column(s)`, even
+though the columns were sitting right there under a slightly different
+name. **Fixed**: new `weight_column_era_suffix(year, era)` mapping,
+producing `2022preEE`/`2022postEE`/`2023preBPix`/`2023postBPix` for
+2022/2023 (2024/2025 unaffected -- those still use the year alone, which
+was already correct). Confirmed the corrected construction matches the
+real schema exactly.
+
+**This same fix also resolves the correlated-vs-uncorrelated systematic
+question directly, with no further work needed.** `bTagSF_bc_correlated`/
+`bTagSF_light_correlated` (in `WEIGHT_SYSTEMATICS`) already use one FIXED
+nuisance name regardless of year/era -- so `combineCards.py` naturally
+treats them as one shared, correlated uncertainty across every era, exactly
+as intended. The uncorrelated pair only needed its constructed name to
+actually vary per sub-era (which it now does, via the fix above) for
+Combine to correctly treat `2022preEE`'s and `2022postEE`'s uncorrelated
+components as genuinely independent nuisances rather than accidentally
+sharing a name. The STRUCTURE was already right; only the uncorrelated
+branch's name construction was wrong.
+
+**3. Weight-systematic missing-column warnings were firing on every
+non-nominal (folder-based systematic) file, not just nominal ones --
+noisy, not incorrect.** `Pileup`/`TriggerSF`/`PreselSF`/`ElectronVetoSF`/
+`bTagSF_*` are only ever actually USED for nominal-folder files (see §4's
+own description of `systematic_passes` -- object-level variation folders
+reuse the nominal weight). The missing-column check itself, though, ran
+unconditionally for every file, so a file like
+`NMSSM_X1000_Y100/ScaleEB_Zee_down/NOTAG_merged.parquet` would print
+`[WARN] missing weight-systematic column(s) for [...]` even though those
+columns were never expected to exist there in the first place, and their
+absence has zero effect on that file's actual processing. **Fixed**: both
+the general and the per-flavor b-tag warning now only print when
+`folder_systematic == "nominal"` -- a genuine missing-column gap on an
+actual nominal file still prints exactly as before; the noise on every
+other systematic-variation file is gone.
+
+**Updated `hhbbgg_analyzer_with_systematics.py` reflecting all three fixes,
+verified via unit tests against the real column names and log output from
+this session, available on request.**
+
+
+
 ---
+# Doc updates: multi-era combination (2022, 2023) -- insert into Complete Analysis Pipeline: Commands Reference
+
+## Update 1 -- add to §4.1's "Fixed since the last pass through this document" list
+
+- **`dir_to_base()`'s Data-directory detection missed the real per-era
+  naming convention entirely.** The original regex, `(^|_)Data(_|$)`,
+  requires an underscore or end-of-string immediately after "Data" --
+  but this production's real convention is `DataE`/`DataF`/`DataG`
+  (2022) and `DataCv1EG0`/`DataDv2EG1`-style (2023) -- an era/version
+  letter glued on directly, no separator. Confirmed as a complete,
+  not partial, failure: every single Data directory in a real
+  2022preEE histogram file was silently classified as `base=None` and
+  dropped by `group_by_base_from_keys()`, meaning `data_hist` stayed
+  `None` for every one of 806 region/variable jobs and **zero plots
+  were ever written**, with no error at all. Fixed: `n.lower().
+  startswith("data")` -- a simple, case-insensitive prefix check,
+  confirmed correct against every real Data naming variant seen across
+  both years with no false-positive risk against any real MC/signal
+  base name in this analysis (none start with "data").
+
+## Update 2 -- add a warning to §4.0's `hadd`-based merge guidance
+
+**`hadd` has a confirmed, reproducible failure mode on real tree data
+from this pipeline -- do not treat it as unconditionally safe for tree
+merging anymore.** While merging 2022 preEE+postEE tree output,
+`hadd` entered what looks like an unbounded internal `TObjArray`-
+resizing loop merging `GGJets_MGG-80_Rescaled`'s tree files:
+```
+Error in <TObjArray::At>: index 117 out of bounds (size: 117)
+... (dozens of times) ...
+Error in <TObjArray::At>: index 234 out of bounds (size: 234)
+... (dozens more) ...
+```
+`117 -> 234` is an exact doubling -- consistent with some internal
+ROOT structure growing without the merge ever completing. The process
+never terminated on its own and had to be killed manually; the target
+output file was left at 0 bytes. This was reproduced **identically
+writing to local `/tmp`**, ruling out EOS/network flakiness (the cause
+of a separate, earlier corruption incident in this pipeline's bias-test
+work) as the explanation. Both source files were independently
+confirmed healthy and readable, with byte-identical branch names and
+counts (101, confirmed via both `uproot` and ROOT's own `rootls`) --
+ruling out a schema mismatch too. **The exact root cause inside `hadd`'s
+C++ implementation was never identified.**
+
+**Fix: a new tool, `uproot_hadd_replacement.py` (standalone) /
+`combine_trees_across_eras.py` (the full multi-file, era-aware
+combination tool, see §4.3 below) -- reads both trees' full contents
+via `uproot` and writes the concatenated result via `uproot`'s own
+tree writer, entirely bypassing `hadd`'s C++ merge code.** This is the
+exact same `uproot`-native read/write pattern this pipeline's own
+analyzer already uses successfully (`write_tree_chunked()` in
+`hhbbgg_analyzer_with_systematics.py`) -- not a new, unproven approach.
+Confirmed working on the exact real file pair that broke `hadd`: every
+region matched exactly (`srbbgg`: `5651+15810=21461`, confirmed
+correct; every other region -- `preselection`, `crantibbgg`, etc. --
+also confirmed exact). **For merging TREE output specifically, use this
+tool instead of `hadd` going forward.** `hadd` remains fine for
+HISTOGRAM output (the `DDQCDGJets_Rescaled` tree file, by contrast,
+merged via `hadd` with a confirmed-correct entry count with no issue at
+all -- this is not a blanket "never use `hadd`" finding, just a
+confirmed real failure on at least one real file, with no known way to
+predict in advance which files might trigger it).
+
+## Update 3 -- new section, insert after §4.2
+
+### 4.3 Multi-era combination (2022, 2023): histograms and trees
+
+Once both sub-eras of a year are fully processed (§4.2), combining them
+requires two SEPARATE combination steps -- histograms (for
+`hhbbgg_Plotter.py` validation) and trees (for categorization, §5) --
+because `build_pdnn_categories.py` reads exclusively from tree output,
+never histograms. Combining histograms does nothing to help
+categorization; they must each be combined independently.
+
+**Both combination steps share the same underlying risk, confirmed
+directly, not assumed: background and data for 2022 (and 2023) are
+processed from a FLAT, non-era-split directory, meaning the exact same
+physical Data files get reprocessed independently under both era
+labels.** Confirmed via direct comparison of the two eras' output:
+
+- **2022**: both `preEE` and `postEE` show the identical five
+  directories -- `DataC_NOTAG_merged`, `DataD_NOTAG_merged`,
+  `DataE_NOTAG_merged`, `DataF_NOTAG_merged`, `DataG_NOTAG_merged`.
+- **2023**: both `preBPix` and `postBPix` show the identical twelve
+  directories -- `DataCv1EG0_NOTAG_merged` through
+  `DataDv2EG1_NOTAG_merged`.
+
+**Background and signal MC do NOT have this problem** -- each
+sub-era's MC is a genuinely distinct sample, correctly lumi-scaled per
+event (`weight x xsec x getLumi(year, era)`), and confirmed to sum
+correctly to the true full-year value (e.g. 2022 `preEE` + `postEE`
+lumi: `7.9804 + 26.6717 = 34.6521 fb^-1`, matching the analysis's own
+documented full-2022 luminosity). Only DATA needs special handling.
+
+#### 4.3.1 Combining histograms
+
+Since histogram output nests all samples inside one file
+(`sample/systematic/region/variable`), the duplicate-Data problem must
+be fixed by DELETING the duplicate directories from a copy of one
+era's file, before `hadd`-ing that copy against the other era's
+untouched original:
+
+```bash
+# 1. Copy one era's file (never operate on the original)
+cp DD_2022postEE/hhbbgg_analyzer-v2-histograms__<timestamp>.root \
+   hhbbgg_analyzer-v2-histograms__2022postEE_nodata.root
+
+# 2. Dry-run first -- confirm it finds exactly the known duplicate names
+python delete_duplicate_data.py \
+  --file hhbbgg_analyzer-v2-histograms__2022postEE_nodata.root \
+  --exclude-prefix Data --dry-run
+
+# 3. Delete for real
+python delete_duplicate_data.py \
+  --file hhbbgg_analyzer-v2-histograms__2022postEE_nodata.root \
+  --exclude-prefix Data
+
+# 4. hadd the untouched era against the deduplicated copy
+hadd DD_2022_combined/hhbbgg_analyzer-v2-histograms.root \
+  DD_2022preEE/hhbbgg_analyzer-v2-histograms__<timestamp>.root \
+  hhbbgg_analyzer-v2-histograms__2022postEE_nodata.root
+```
+
+`delete_duplicate_data.py` uses `TDirectory::Delete("name;*")` directly
+-- touches only the handful of objects being removed, not the
+~148,000 total keys a real histogram file can contain, so it finishes
+in seconds regardless of file size. Confirmed working end-to-end on
+real 2022 and 2023 files -- deletion verified via re-opening the file
+afterward and confirming the target names are genuinely gone, not just
+assumed. Note: classic ROOT-format deletion marks keys removed without
+reclaiming the underlying bytes -- the file's on-disk size will not
+shrink. This is a storage cost only, not a correctness issue (`hadd`
+navigates via the key table, not raw bytes).
+
+**Verify after `hadd`**: confirm the combined file shows exactly the
+expected number of `Data*` directories (5 for 2022, 12 for 2023),
+matching the untouched era's own count -- not double, not zero.
+
+#### 4.3.2 Combining trees
+
+Tree output is split one file per `(sample, systematic)`, with **no
+year or era in the filename at all** -- the same filename
+(`hhbbgg_analyzer-v2-trees__<sample>__<systematic>.root`) is produced
+independently by each era's analyzer run. This means the correct
+handling is different, and actually simpler, than the histogram case:
+
+- **Background/signal**: the same filename in both eras' directories
+  represents genuinely different events -- concatenate via merge (see
+  §4.0 Update 2 above for why this uses `uproot`, not `hadd`).
+- **Data**: since each sample already lives in its own separate file
+  (no in-file surgery needed), the fix is simply to take Data tree
+  files from ONE designated era only, and skip the other era's copies
+  entirely -- omission, not deletion.
+
+**Tool: `combine_trees_across_eras.py`**, handling both cases in one
+pass:
+```bash
+python combine_trees_across_eras.py \
+  --era-a DD_2022preEE --era-b DD_2022postEE \
+  --outdir DD_2022_combined_trees \
+  --data-source-era a --dry-run   # always dry-run first
+```
+Drop `--dry-run` once the plan looks correct. Prints, for every
+concatenated sample: `era-A entries + era-B entries` vs. the actual
+written combined count, flagging `MATCH`/`MISMATCH` directly -- not a
+separate manual check.
+
+**Real finding from this process, worth checking for on any future
+year's combination too**: comparing which sample+systematic files
+exist in only ONE era (not both) surfaced `7` signal mass points for
+2022 that were completely absent (every systematic AND nominal) from
+one sub-era. Cross-referencing against direct `dasgoclient
+dataset_access_type` checks split these into two genuinely different
+categories:
+- **5 confirmed PERMANENT upstream gaps** (dataset itself `INVALID` in
+  DAS, nothing to recover): `X1000_Y700` (2022postEE), `X450_Y125`
+  (2022postEE), `X700_Y550` (2022preEE), `X750_Y150` (2022preEE),
+  `X850_Y250` (2022preEE, confirmed via this exact process).
+- **2 confirmed RECOVERABLE gaps** -- the dataset itself is `VALID`
+  with real files in DAS (`X350_Y200`: 12 files in `2022preEE`;
+  `X700_Y95`: 11 files in `2022postEE`), yet absent from this
+  pipeline's own processed tree output. This points to a gap in *our*
+  processing (never submitted, or silently failed) rather than a
+  physics/production limitation -- resubmission for both is the
+  correct fix, not documenting them as permanent. **A name resolving
+  in DAS is not the same as the dataset being valid and populated --
+  worth checking `dataset_access_type` directly, not just whether a
+  query returns a name, for any future gap investigation.**
+
+**Also confirmed on 2023**: the same duplicate-Data pattern, and the
+same `hadd` failure (see §4.0 Update 2) on at least one real file
+(`GGJets_MGG-80_Rescaled`) -- resolved the same way, via
+`uproot_hadd_replacement.py`.
+---
+
 
 ## 5. Event Categorization
 
