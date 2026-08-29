@@ -998,6 +998,28 @@ python scripts/postprocessing/prepare_output_file.py \
     --output /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask/2022/sim/postEE/ \
     --merge --syst --varDict submission/tools_HHbbgg/variations_mc.json
 ```
+
+⚠️ **CONFIRMED, do not do this: `--input` pointed at a single sample directory instead of the
+full era directory.** Tried as a shortcut to merge just one newly-added sample without
+re-merging the whole era -- produces a garbled cartesian product of every variation folder
+paired against every other variation folder (`.../NMSSM_X350_Y200/ScaleEB_Zee_up/jer_syst_up`,
+`.../ScaleEB_Zee_up/ScaleEB_Zee_down`, etc.), almost all resulting in `FileNotFoundError`, with
+a handful of coincidental "successes" that produce **wrong**, not just missing, output.
+
+**Root cause**: `merge_parquet.py` (called internally by `prepare_output_file.py`) assumes a
+fixed two-level directory depth beneath `--input` -- sample name, then variation name (true at
+the era level: `<era>/<sample>/<variation>/`). Pointing `--input` directly at one sample
+directory removes the outer (sample-name) level, so the script misinterprets each
+variation-name folder as if it were a sample name, then looks one level deeper inside it for a
+second variation -- producing the nonsensical cross-product seen above.
+
+**If this happens**: don't trust anything written under the target `merged/` directory from
+that run -- delete it and rerun with the full era-level `--input` before trusting the output:
+```bash
+rm -rf /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/<year>/<era>/merged
+```
+**No per-sample merge shortcut exists** with this tool as currently structured -- always
+re-merge the full era, even to add just one newly-completed sample.
 `--input`/`--output` can be the same directory -- merged output lands in a `merged/`
 subdirectory nested inside it, not mixed with the raw per-job chunks. Repeat once per
 `<year>/sim/<era>/` directory for the other three eras once each is confirmed complete via
@@ -1602,7 +1624,7 @@ initially look like a CLI-vs-web-UI inconsistency or a stuck DBS republish, befo
 `dataset_access_type` directly settled it. The invalidation flag is the actual, complete
 explanation; the file listing discrepancy is just a side effect of it.
 
-### Confirmed `INVALID` datasets (11, as of 2026-08-24)
+### Confirmed `INVALID` datasets (12, as of 2026-08-25)
 
 | mX | mY | Era | Confirmed via |
 |---|---|---|---|
@@ -1617,9 +1639,19 @@ explanation; the file listing discrepancy is just a side effect of it.
 | 700 | 500 | 2023postBPix | `dataset_access_type: INVALID` |
 | 800 | 50 | 2024 | `dataset_access_type: INVALID` -- first confirmed 2024 case, same root cause, different naming convention (`NMSSM-XtoYH-Yto2B-Hto2G_Par-MX-800-MY-50...`) |
 | 500 | 125 | 2024 | `dataset_access_type: INVALID` -- caught despite passing `--dry-run`'s surface-level `[OK]` (dataset *name* resolves in DAS even though it's invalid and has 0 files) -- worth remembering `--dry-run`'s `[OK]` only confirms the dataset name exists, not that it's valid/populated; spot-checking access_type on samples that look fine is still worthwhile |
+| 850 | 250 | 2022preEE | `dataset_access_type: INVALID` |
 
-All eleven: excluded from `NMSSM_Samples` (see 3d/10), so the robust script's retry logic
+All twelve: excluded from `NMSSM_Samples` (see 3d/10), so the robust script's retry logic
 doesn't keep chasing them. Do not resubmit -- an `INVALID` flag is not expected to change.
+
+**Two false alarms, checked and cleared (2026-08-25)** -- worth recording so they aren't
+re-flagged and re-investigated later: `2022preEE:NMSSM_X350_Y200` (12 files) and
+`2022postEE:NMSSM_X700_Y95` (11 files) both looked low at first glance, but neighbor
+comparison showed they're consistent with normal point-to-point variation, not a deficit --
+`X350_Y170` (a neighbor of the first) has only 4 files, and `X700_Y90`/`Y100` (neighbors of
+the second) have 12/20 -- both `VALID`, not `INVALID`. Always check at least one neighbor
+before concluding a lowish file count is a real gap, the same lesson as the still-open
+`X1000_Y150` question below.
 
 **Spread across all four eras** -- 2022postEE (3), 2022preEE (2), 2023preBPix (2),
 2023postBPix (2). Nine points across all four eras, no obvious pattern in mX or mY values
