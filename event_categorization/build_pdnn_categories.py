@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-categorize_events.py
+build_pdnn_categories.py
 
 Data-driven (sideband-based) event categorization for the X -> YH -> bb-gg-gamma
 resonant search, using the trained pDNN score and the alpha(score) sideband
@@ -88,6 +88,40 @@ USAGE
       --tth-killer-cut 0.682 \\
       --outdir outputs/categories_2024 \\
       --write-categorized --systematic nominal
+
+--------------------------------------------------------------------------
+FIXED (this pass): --write-categorized crash on per-(sample, systematic)
+files whose one contained systematic isn't the one requested.
+--------------------------------------------------------------------------
+CONFIRMED, real, reproducible bug: for a file like
+hhbbgg_analyzer-v2-trees__GluGluHtoGG__ScaleEB_Zee_down.root (this
+pipeline's one-systematic-per-file convention -- the file genuinely
+contains ONLY "ScaleEB_Zee_down", no "nominal" at all), the
+--write-categorized loop's systematic-detection logic fell through to
+treating the sample directory as flat/legacy (no systematic layer),
+since "nominal" wasn't found as an immediate child via naive
+`[k.split(";")[0] for k in in_dir_obj.keys()]`. That naive check is
+fooled by a real, confirmed uproot behavior: a directory's .keys()
+returns every NESTED descendant as a slash-joined path, not just true
+immediate children -- e.g. GluGluHtoGG.keys() returns both
+"ScaleEB_Zee_down;1" (the subdirectory itself, correctly caught by the
+existing hasattr() guard) AND "ScaleEB_Zee_down/srbbgg;1" (which DOES
+resolve to a genuine tree, so hasattr() passes it through). That
+slash-joined key then got passed directly as a tree NAME into
+mktree("ScaleEB_Zee_down/srbbgg", ...) in the generic "copy any other
+tree as-is" fallback -- corrupting uproot's internal free-space
+bookkeeping and crashing the entire run partway through with:
+    RuntimeError: segment of data to release overlaps one already
+    marked as free: releasing [2378, 2721) but [2684, 2721) is free
+-- losing every not-yet-processed sample's categorized output.
+
+Fixed via a new immediate_children() helper (generalizing the same
+filtering collect_dirs() already does for top-level sample directories
+down to this sample-subdirectory level too), plus a new explicit
+"mismatched systematic, not flat -- skip this file" branch, verified
+directly against a real synthetic file reproducing the exact confirmed
+structure. See immediate_children()'s and the write-categorized loop's
+own comments below for full detail.
 """
 
 import argparse, json, os, re, math
@@ -114,7 +148,25 @@ TREE_NAME  = "srbbgg"             # tree inside each directory -- confirmed
 
 BR_SCORE      = "pDNN_score"
 BR_MGG        = "diphoton_mass"
-BR_WGT        = "weight_selection"
+# FIXED, confirmed real inconsistency: was "weight_selection", a
+# leftover from before TREE_NAME (above) was corrected to "srbbgg" --
+# the same class of incomplete fix TREE_NAME's own comment already
+# warns happened once before. Confirmed directly from the analyzer's
+# own weight-assignment code (hhbbgg_analyzer_with_systematics.py)
+# that this was NOT producing a wrong number: every region's own
+# "weight_"+r column is assigned from the SAME underlying array before
+# region-filtering happens (`for r in [..., "srbbgg", ...]:
+# ak.with_field(..., syst_w, "weight_"+r)`), so "weight_selection" and
+# "weight_srbbgg" are currently byte-identical inside the srbbgg tree.
+# This is a coincidence of the current analyzer structure, not a
+# guarantee -- if the analyzer's weight computation is ever changed to
+# apply anything genuinely region-specific, this mismatch would
+# silently read the wrong (but still-present, no missing-field
+# warning) value with no visible error at all. Fixed by matching
+# TREE_NAME, exactly as it should have been updated the first time. No
+# change in existing event_categories.json output is expected from
+# this fix alone.
+BR_WGT        = "weight_srbbgg"
 BR_ISDATA     = "isdata"
 BR_TTH_KILLER = "ttH_killer_score"
 
@@ -142,6 +194,49 @@ def mass_tag_from_dir(name: str) -> str:
     if m: return f"mX{m.group(1)}_mY{m.group(2)}"
     m2 = re.search(r"m(\d+)", n)
     return f"m{m2.group(1)}" if m2 else "combined"
+
+def immediate_children(directory):
+    """Return only TRUE, immediate child names of a directory-like uproot
+    object -- NOT every nested key .keys() returns.
+
+    CONFIRMED, real, reproducible bug this fixes: a directory's .keys()
+    returns every nested descendant as a slash-joined path, not just its
+    genuine immediate children -- e.g. for a real file containing ONLY
+    the "ScaleEB_Zee_down" systematic (no "nominal" at all, matching
+    this pipeline's one-systematic-per-file naming convention,
+    hhbbgg_analyzer-v2-trees__<sample>__<systematic>.root),
+    GluGluHtoGG.keys() returns BOTH "ScaleEB_Zee_down;1" (the
+    subdirectory itself) AND every one of its region trees as
+    slash-joined paths ("ScaleEB_Zee_down/srbbgg;1", etc.), flattened
+    into one list rather than true immediate children only. Confirmed
+    directly against a real production file.
+
+    This is the SAME underlying uproot behavior collect_dirs() already
+    works around for TOP-LEVEL sample directories -- generalized here so
+    the identical fix also applies one level down, at the
+    sample-subdirectory level, where it was previously missing.
+
+    Without this fix, --write-categorized's systematic-detection logic
+    would fall through to treating a mismatched-systematic file as
+    flat/legacy, then iterate its slash-joined keys directly -- passing
+    a string like "ScaleEB_Zee_down/srbbgg" straight into mktree() as if
+    it were a plain tree name. This corrupted uproot's internal
+    free-space bookkeeping and crashed the entire run partway through
+    with:
+        RuntimeError: segment of data to release overlaps one already
+        marked as free: releasing [2378, 2721) but [2684, 2721) is free
+    -- losing every not-yet-processed sample's categorized output, the
+    same category of failure the hasattr() guard a few lines below was
+    already built to prevent for the DIRECTORY-vs-TREE case, just not
+    for this SLASH-JOINED-KEY case.
+    """
+    candidates = set()
+    for k in directory.keys():
+        base = k.split(";")[0]
+        top = base.split("/")[0]
+        if top:
+            candidates.add(top)
+    return sorted(candidates)
 
 def collect_dirs(fin):
     """Return only TRUE top-level sample directory names.
@@ -628,17 +723,56 @@ def main():
                     # for now; writing cat/region-tagged copies of every
                     # systematic is blocked on the still-open
                     # frozen-vs-per-systematic-boundaries decision.
-                    child_names = [k.split(";")[0] for k in in_dir_obj.keys()]
+                    #
+                    # FIXED (this pass): child_names is now computed via
+                    # immediate_children() instead of naive
+                    # [k.split(";")[0] for k in in_dir_obj.keys()] -- the naive
+                    # version was fooled by slash-joined nested keys (see
+                    # immediate_children()'s docstring), which caused a real,
+                    # confirmed crash for any per-(sample, systematic) file
+                    # whose one systematic isn't the one requested (e.g.
+                    # GluGluHtoGG__ScaleEB_Zee_down.root under --systematic
+                    # nominal). Also added a third, explicit branch below for
+                    # exactly that mismatched-systematic case -- skip cleanly
+                    # instead of falling through to the flat/legacy branch.
+                    child_names = immediate_children(in_dir_obj)
+
                     if args.systematic in child_names:
                         syst_in_dir = in_dir_obj[args.systematic]
                         try:
                             out_dir = sample_out_dir.mkdir(args.systematic)
                         except Exception:
                             out_dir = sample_out_dir[args.systematic]
-                    else:
-                        # Flat/legacy structure with no systematic subdirectory.
+                    elif TREE_NAME in child_names:
+                        # Genuinely flat/legacy: region trees sit directly
+                        # under the sample, no systematic subdirectory layer
+                        # at all -- confirmed this case still exists (older-
+                        # convention files) and must keep working unchanged.
                         syst_in_dir = in_dir_obj
                         out_dir = sample_out_dir
+                    else:
+                        # FIXED, confirmed real case: this sample directory
+                        # HAS subdirectory structure, but it's neither the
+                        # requested systematic nor a flat/legacy layout --
+                        # this pipeline's one-systematic-per-file convention
+                        # means a file like
+                        # hhbbgg_analyzer-v2-trees__GluGluHtoGG__ScaleEB_Zee_down.root
+                        # genuinely contains ONLY that one systematic, which
+                        # may not be the one requested via --systematic.
+                        # Previously this fell through to the flat/legacy
+                        # branch above, which then iterated slash-joined
+                        # nested keys as if they were plain tree names -- see
+                        # immediate_children()'s docstring for the crash this
+                        # caused. Skip this file/sample entirely for this run
+                        # instead -- there is nothing here that matches what
+                        # was requested.
+                        print(f"[INFO] '{dbase}': available "
+                              f"subdirector{'y is' if len(child_names) == 1 else 'ies are'} "
+                              f"{child_names}, not the requested systematic "
+                              f"'{args.systematic}' -- skipping this file/sample "
+                              f"for this run (not an error -- this file simply "
+                              f"doesn't contain that systematic's data).")
+                        continue
 
                     n_copied_samples += 1
 
@@ -661,8 +795,14 @@ def main():
                         # never got its categorized output written at all.
                         # Skip loudly instead of crashing, so one
                         # unexpected key can't take down the whole run.
+                        #
+                        # FIXED (this pass): the printed path used to
+                        # hardcode {args.systematic} regardless of which
+                        # branch actually ran above (misleading once the
+                        # flat/legacy branch was taken) -- now prints the
+                        # real key path directly instead.
                         if not hasattr(tree, "arrays"):
-                            print(f"[WARN] '{dbase}/{args.systematic}/{tkey}' is not a tree "
+                            print(f"[WARN] '{dbase}/{tkey}' is not a tree "
                                   f"(got {type(tree).__name__}) -- skipping this key, not "
                                   f"copying it into the categorized output.")
                             continue
