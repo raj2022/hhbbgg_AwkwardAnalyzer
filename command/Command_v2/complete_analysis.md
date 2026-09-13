@@ -595,6 +595,25 @@ python hhbbgg_Plotter.py \
   --years 2024 --base-dir outputfiles
 ```
 
+
+To plot all years together:
+```bash
+python hhbbgg_Plotter.py \
+  --root /eos/cms/store/group/phys_b2g/HHbbgg/sraj/Hhbbgg_AwkwardAnalyzer/outputfiles/DD_2022_combined/hhbbgg_analyzer-v2-histograms.root \
+  --root /eos/cms/store/group/phys_b2g/HHbbgg/sraj/Hhbbgg_AwkwardAnalyzer/outputfiles/DD_2023_combined/hhbbgg_analyzer-v2-histograms.root \
+  --root /eos/home-s/sraj/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/outputfiles/merged/DD_2024/hhbbgg_analyzer-v2-histograms__20260826_231505.root
+```
+
+
+To plot from 2022-25, 
+```bash
+python hhbbgg_Plotter.py \
+  --root /eos/cms/store/group/phys_b2g/HHbbgg/sraj/Hhbbgg_AwkwardAnalyzer/outputfiles/DD_2022_combined/hhbbgg_analyzer-v2-histograms.root \
+  --root /eos/cms/store/group/phys_b2g/HHbbgg/sraj/Hhbbgg_AwkwardAnalyzer/outputfiles/DD_2023_combined/hhbbgg_analyzer-v2-histograms.root \
+  --root /eos/home-s/sraj/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/outputfiles/merged/DD_2024/hhbbgg_analyzer-v2-histograms__20260826_231505.root \
+  --root /eos/home-s/sraj/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/outputfiles/merged/DD_2025/hhbbgg_analyzer-v2-histograms.root
+  ```
+
 ### Status
 
 Auto-discovery logic (`resolve_year_to_root_file()`) confirmed via
@@ -614,7 +633,69 @@ environment -- confirm a real run reproduces the same plots as before
 for the single-file case before relying on the multi-file case for
 anything final.
 
+# Doc updates: lumi_label() fix, and 2023 confirmed dataset gaps
 
+## Update A -- add to §4.1's "Fixed since the last pass through this document" list
+
+- **`lumi_label()` was a hardcoded, manually-commented single value with
+  a real, confirmed failure mode -- not just a maintenance
+  inconvenience.** A bare `return` statement makes every line after it
+  in that function unreachable, WHETHER OR NOT it's commented out. If
+  someone ever uncommented a different candidate value (e.g. switching
+  from the `"34.65"` 2022-only line to the `"27.76"` 2023-only line)
+  without also commenting out the original, the function would keep
+  silently returning the OLD value with no error at all -- a wrong
+  luminosity label on an otherwise-correct plot. **Fixed**: replaced
+  entirely with `compute_combined_lumi(years)`, which sums the real
+  `getLumi(year, era)` value across every sub-era of every requested
+  year (the same `(year, era)` pairs already confirmed correct
+  elsewhere in this pipeline -- e.g. 2022 `PreEE`+`PostEE` =
+  `34.6521 fb^-1`, matching the documented full-2022 value exactly).
+  - When `--years` is used, the exact requested years are used directly
+    -- no guessing.
+  - When only `--root` file paths are given, `extract_years_from_path()`
+    best-effort detects the year from the path itself (e.g.
+    `DD_2022_combined/...` -> `2022`), printing a `[WARN]` if a given
+    file's year can't be determined rather than silently mis-computing.
+  - **New `--lumi <value>` flag** overrides auto-detection entirely --
+    use this if a `--root` path has no recognizable year in it, or to
+    force a specific value for any other reason.
+  - If no years can be determined at all and `--lumi` wasn't given, the
+    script now fails loudly with a clear message, instead of silently
+    falling back to whatever the old hardcoded default happened to be.
+
+## Update B -- add to §4.3.2's "Real finding from this process" section, as a second, parallel entry for 2023
+
+**Confirmed via the same `dasgoclient dataset_access_type` methodology
+used for 2022** (see the 2022 entry immediately above this one in the
+doc): four additional permanent upstream production gaps, this time for
+2023's `preBPix`/`postBPix` split --
+
+| Mass Point | Era | Confirmed via |
+|---|---|---|
+| `X800_Y500` | `2023preBPix` | `dataset_access_type: INVALID` |
+| `X950_Y300` | `2023preBPix` | `dataset_access_type: INVALID` |
+| `X350_Y200` | `2023postBPix` | `dataset_access_type: INVALID` |
+| `X700_Y500` | `2023postBPix` | `dataset_access_type: INVALID` |
+
+All four are **permanent** gaps (the dataset itself is invalid in DAS,
+same category as 2022's `X1000_Y700`/`X450_Y125`/`X700_Y550`/
+`X750_Y150`/`X850_Y250`) -- nothing to resubmit, document and move on.
+Unlike 2022, no recoverable-but-unprocessed gaps (the `X350_Y200`/
+`X700_Y95`-style case, where DAS shows `VALID` with real files despite
+being absent from this pipeline's own tree output) have been found for
+2023 as of this pass -- confirm this holds once the `combine_trees_
+across_eras.py --dry-run` for `2023preBPix`/`2023postBPix` is actually
+run and its `[WARN] Present ONLY in ...` list is cross-checked against
+this table, the same way the 2022 list was cross-checked against its
+own confirmed-invalid table.
+
+**Note for whoever reads this later**: if the 2023 dry-run's single-
+era-only list contains anything beyond these four names, that is a NEW
+finding requiring the same `dataset_access_type` check as above before
+assuming either permanent-gap or recoverable-gap status -- do not
+assume a new name automatically belongs to either category without
+checking.
 ---
 > **Note (§4.0):** `--root` above assumes the merged, single-file
 > histogram output (`hadd`'d from `hhbbgg_analyzer-v2-histograms__*.root`
@@ -1242,6 +1323,66 @@ listing from that real run has not yet been reviewed here -- worth
 pulling the tail of that output (total mass points processed, full
 flagged-category list) before treating the grid as clean.
 
+---
+Examples to run for multiple year:
+for 2022:
+```bash
+python event_categorization/build_pdnn_categories.py \
+  --root /eos/cms/store/group/phys_b2g/HHbbgg/sraj/Hhbbgg_AwkwardAnalyzer/outputfiles/DD_2022_combined_trees/ \
+  --sr-sigma 2.0 --cr-sidebands 4 10 \
+  --nmin 50 --min-gain 0.05 --max-bins 5 \
+  --alpha-bins 60 \
+  --tth-killer-cut 0.682 --per-mass \
+  --outdir slides_fitting/CMSSW_14_1_0_pre4/src/outputs/categories_2022 \
+  --write-categorized --systematic nominal
+  ```
+
+the confirmed completeness check that validated this specific run, since it's a good template to reuse for 2023/2024 too:
+```bash
+ls slides_fitting/CMSSW_14_1_0_pre4/src/outputs/categories_2022/*__categorized.root | wc -l
+# → 3847, confirmed exactly matching the tree-merge's own reported totals:
+#   3709 merged + 133 single-era-only + 5 data files = 3847
+```
+
+for 2023:
+```bash
+python event_categorization/build_pdnn_categories.py \
+  --root /eos/cms/store/group/phys_b2g/HHbbgg/sraj/Hhbbgg_AwkwardAnalyzer/outputfiles/DD_2023_combined_trees \
+  --sr-sigma 2.0 --cr-sidebands 4 10 \
+  --nmin 50 --min-gain 0.05 --max-bins 5 \
+  --alpha-bins 60 \
+  --tth-killer-cut 0.682 --per-mass \
+  --outdir slides_fitting/CMSSW_14_1_0_pre4/src/outputs/categories_2023 \
+  --write-categorized --systematic nominal
+```
+for 2024:
+```bash
+python event_categorization/build_pdnn_categories.py \
+  --root /eos/home-s/sraj/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/outputfiles/merged/DD_2024 \
+  --sr-sigma 2.0 --cr-sidebands 4 10 \
+  --nmin 50 --min-gain 0.05 --max-bins 5 \
+  --alpha-bins 60 \
+  --tth-killer-cut 0.682 --per-mass \
+  --outdir slides_fitting/CMSSW_14_1_0_pre4/src/outputs/categories_2024 \
+  --write-categorized --systematic nominal
+```
+
+To check the values:
+```bash
+(hhbbgg-awk) [sraj@lxplus921 hhbbgg_AwkwardAnalyzer]$ 
+(hhbbgg-awk) [sraj@lxplus921 hhbbgg_AwkwardAnalyzer]$ # 2023
+ls slides_fitting/CMSSW_14_1_0_pre4/src/outputs/categories_2023/*__categorized.root | wc -l
+ls /eos/cms/store/group/phys_b2g/HHbbgg/sraj/Hhbbgg_AwkwardAnalyzer/outputfiles/DD_2023_combined_trees/hhbbgg_analyzer-v2-trees__*.root | wc -l
+
+# 2024
+ls slides_fitting/CMSSW_14_1_0_pre4/src/outputs/categories_2024/*__categorized.root | wc -l
+ls /eos/home-s/sraj/Work_/CUA_20--/Analysis/hhbbgg_AwkwardAnalyzer/outputfiles/merged/DD_2024/hhbbgg_analyzer-v2-trees__*.root | wc -l
+3834
+3834
+3894
+3894
+(hhbbgg-awk) [sraj@lxplus921 hhbbgg_AwkwardAnalyzer]$ 
+```
 ---
 
 ## 6. Fixes from the regions.py / binning.py / VH audit (this session)
