@@ -60,14 +60,27 @@ fi
 # crash this script -- confirm the completed scoring covers every
 # systematic folder actually present before relying on this running
 # cleanly all the way through.
-python -u hhbbgg_analyzer_with_systematics.py \
-  --config-years 2024 --era All \
-  -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2024/merged/scored/ \
-  -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2024/data/scored/ \
-  -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2024/sim/scored/ \
-  --tag DD_2024 \
-  --all-systematics 
-  # --skip-trees
+#
+# FIXED: every block below (including this commented 2024 one) was
+# missing the trailing "\" after --all-systematics, so --skip-trees was
+# being parsed as a SEPARATE shell command rather than part of this one.
+# In the block that was actually active (2022 preEE, below), this meant
+# the analyzer ran WITHOUT --skip-trees -- which triggered the
+# skip-if-tree-output-already-exists resumability path in main() for
+# every (sample, systematic) group (since trees from an earlier run
+# already existed and were readable), so process_parquet_file() never
+# ran for any file, HIST_CACHE stayed empty the whole run, and the
+# histogram ROOT file was written out empty (695 bytes, zero
+# histograms) with no error. All four blocks below now have the
+# missing backslash added.
+# python -u hhbbgg_analyzer_with_systematics.py \
+#   --config-years 2024 --era All \
+#   -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2024/merged/scored/ \
+#   -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2024/data/scored/ \
+#   -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2024/sim/scored/ \
+#   --tag DD_2024 \
+#   --all-systematics \
+#   --skip-trees
 
 # --- 2022 preEE ---
 # python -u hhbbgg_analyzer_with_systematics.py \
@@ -76,7 +89,8 @@ python -u hhbbgg_analyzer_with_systematics.py \
 #   -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2022/data/scored/ \
 #   -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2022/sim/preEE/scored \
 #   --tag DD_2022preEE \
-#   --all-systematics
+#   --all-systematics \
+#   --skip-trees
 
 # --- 2022 postEE ---
 # python -u hhbbgg_analyzer_with_systematics.py \
@@ -85,29 +99,28 @@ python -u hhbbgg_analyzer_with_systematics.py \
 #   -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2022/data/scored/ \
 #   -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2022/sim/postEE/scored/ \
 #   --tag DD_2022postEE \
-#   --all-systematics
-  # ``` 
+#   --all-systematics \
+#   --skip-trees
 
 # for 2023:
 # --- 2023 preBPix ---
-# ```bash
 # python -u hhbbgg_analyzer_with_systematics.py \
 #   --config-years 2023 --era preBPix \
 #   -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2023/sim/preBPix/merged/scored/ \
 #   -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2023/data/scored/ \
 #   -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2023/sim/preBPix/scored/ \
 #   --tag DD_2023preBPix \
-#   --all-systematics
+#   --all-systematics \
+#   --skip-trees
 
-# # --- 2023 postBPix ---
-# ```bash
-# python -u hhbbgg_analyzer_with_systematics.py \
-#   --config-years 2023 --era postBPix \
-#   -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2023/sim/postBPix/merged/scored/ \
-#   -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2023/data/scored/ \
-#   -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2023/sim/postBPix/scored/ \
-#   --tag DD_2023postBPix \
-#   --all-systematics
-#   ``` 
+# --- 2023 postBPix ---
+python -u hhbbgg_analyzer_with_systematics.py \
+  --config-years 2023 --era postBPix \
+  -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2023/sim/postBPix/merged/scored/ \
+  -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2023/data/scored/ \
+  -i /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2023/sim/postBPix/scored/ \
+  --tag DD_2023postBPix \
+  --all-systematics \
+  --skip-trees
 
 echo "[run_analyzer.sh] Done: $(date)"

@@ -1,0 +1,82 @@
+# =============================================================================
+# run_inference_pairs.sub  (v3 -- all 16 pairs, corrected resource requests)
+#
+# Full set of independent (pDNN scoring -> ttH-killer) pairs. Supersedes
+# v2 in two ways, both learned from the first real Condor run of this chain:
+#
+#   1. Added the two 2025 background/data pairs (bkg_2025_sim, data_2025)
+#      that were missing from BOTH the original run_full_inference_chain.sh
+#      (28 steps) and v1/v2 of this file. 2025 SIGNAL was always covered;
+#      2025 background (sim) and data were not. 16 pairs total now
+#      (6 signal + 10 background/data).
+#
+#   2. request_memory raised from 8GB to 20GB, and request_cpus from 2 to 3.
+#      A background/data pair measured ~14.3GB actual usage against the
+#      old 8GB request and was held by Condor's cgroup memory limit
+#      ("Job has gone over cgroup memory limit... Consider resubmitting
+#      with a higher request_memory"). 20GB leaves real headroom rather
+#      than being tuned tight to one observed value.
+#
+# IMPORTANT -- read before submitting this file for 2025:
+# The Run3_2025/sim/ and Run3_2025/data/ directories may still contain a
+# STALE scored/ folder from before the pDNN was retrained (the retrain
+# that excluded Res_dijet_mass, Res_dijet_mass_DNNreg, and Res_M_X from
+# FEATURES_CORE -- see pDNN_v2.py). inference_PDnn_updated.py SKIPS any
+# file it finds already present in scored/, so if that stale folder is
+# still there, this run will silently leave the OLD-feature-list scores
+# in place for 2025 background/data instead of producing fresh ones, with
+# no error printed. Move it out of the way first if it exists:
+#
+#   mv /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2025/sim/scored \
+#      /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2025/sim/scored_STALE_preretrain_backup
+#   mv /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2025/data/scored \
+#      /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2025/data/scored_STALE_preretrain_backup
+#
+# This same caution applies in principle to any of the other 14 pairs if
+# they are ever rerun after a future pDNN/ttH-killer retrain -- check for
+# a pre-existing scored/ folder predating the retrain before resubmitting.
+#
+# See README.md "Known issues" for the CUDA/Volta (sm_70) compatibility
+# fix that was also needed before any of this would run correctly on
+# Tesla V100/V100S GPUs.
+#
+# Usage:
+#   condor_submit run_inference_pairs.sub
+#   condor_q -nobatch
+#   grep "\[DONE\] Scored" logs/*.out      # validate real (non-zero) row counts
+# =============================================================================
+
+universe                = vanilla
+executable              = run_inference_pair.sh
+arguments               = $(label) $(pdnn_input) $(scored_dir)
+
+output                  = logs/$(label).out
+error                   = logs/$(label).err
+log                     = logs/$(label).log
+
+request_gpus            = 1
+request_cpus            = 3
+request_memory          = 20000
++JobFlavour             = "nextweek"
+
+should_transfer_files   = NO
+getenv                  = False
+
+queue label,pdnn_input,scored_dir from (
+    sig_2022_preEE, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2022/sim/preEE/merged/, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2022/sim/preEE/merged/scored/
+    sig_2022_postEE, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2022/sim/postEE/merged/, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2022/sim/postEE/merged/scored/
+    sig_2023_preBPix, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2023/sim/preBPix/merged/, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2023/sim/preBPix/merged/scored/
+    sig_2023_postBPix, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2023/sim/postBPix/merged/, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2023/sim/postBPix/merged/scored/
+    sig_2024, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2024/, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2024/scored/
+    sig_2025, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2025/, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2025/scored/
+    bkg_2022_preEE_sim, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2022/sim/preEE/, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2022/sim/preEE/scored/
+    bkg_2022_postEE_sim, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2022/sim/postEE/, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2022/sim/postEE/scored/
+    bkg_2023_postBPix_sim, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2023/sim/postBPix/, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2023/sim/postBPix/scored/
+    bkg_2023_preBPix_sim, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2023/sim/preBPix/, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2023/sim/preBPix/scored/
+    data_2023, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2023/data/, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2023/data/scored/
+    data_2022, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2022/data/, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2022/data/scored/
+    bkg_2024_sim, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2024/sim/, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2024/sim/scored/
+    data_2024, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2024/data/, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2024/data/scored/
+    bkg_2025_sim, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2025/sim/, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2025/sim/scored/
+    data_2025, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2025/data/, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2025/data/scored/
+)

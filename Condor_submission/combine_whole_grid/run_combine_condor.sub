@@ -1,0 +1,40 @@
+# run_combine_condor.sub
+#
+# Submits one Condor job per line in combine_condor_args.txt (each line:
+# "<mass_tag> <years_comma_separated>"), running the full grid's combine
+# step in parallel across worker nodes -- decoupled from any login-node
+# session, so it survives connection drops entirely.
+#
+# Generate combine_condor_args.txt first:
+#   bash generate_combine_condor_args.sh
+#
+# Submit with:
+#   condor_submit run_combine_condor.sub
+#
+# Monitor with:
+#   condor_q
+#
+# Each job's own stdout/stderr/log lands in condor_logs/, named by
+# mass_tag + years so results are easy to find per point afterward.
+
+universe                = vanilla
+executable              = combine_condor_wrapper.sh
+
+MassTag                 = $(mass_tag)
+YearsCsv                = $(years)
+
+arguments               = $(MassTag) $(YearsCsv)
+
+output                  = condor_logs/$(MassTag)_$(YearsCsv).out
+error                   = condor_logs/$(MassTag)_$(YearsCsv).err
+log                     = condor_logs/$(MassTag)_$(YearsCsv).log
+
+should_transfer_files   = NO
+getenv                  = False
+
+request_cpus            = 1
+request_memory          = 2000M
+
++JobFlavour             = "workday"
+
+queue mass_tag,years from combine_condor_args.txt
