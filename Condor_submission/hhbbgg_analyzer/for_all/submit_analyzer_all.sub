@@ -1,0 +1,84 @@
+# =============================================================================
+# submit_analyzer_all.sub
+#
+# Runs hhbbgg_analyzer_with_systematics.py for all years/eras as 6
+# independent, parallel Condor jobs, instead of one serial run at a time.
+#
+# Output goes to a shared EOS location via --outdir (baked into
+# run_analyzer_pair.sh), NOT the default AFS-relative "outputfiles":
+#   /eos/cms/store/group/phys_b2g/HHbbgg/sraj/Hhbbgg_AwkwardAnalyzer/run_All/
+#
+# Coverage (signal + background + data, all years/eras):
+#   2022 PreEE     -- signal + background only (no data: see note below)
+#   2022 PostEE    -- signal + background + ALL 2022 data
+#   2023 preBPix   -- signal + background only (no data: see note below)
+#   2023 postBPix  -- signal + background + ALL 2023 data
+#   2024           -- signal + background + data (single era, "All")
+#   2025           -- signal + background + data (single era, "All")
+#
+# KNOWN LIMITATION -- 2022/2023 data era assignment:
+# Run3_2022/data/scored/ and Run3_2023/data/scored/ are FLAT folders
+# containing all run periods (e.g. 2022: C, D, E, F, G) with no physical
+# preEE/postEE split on disk. hhbbgg_analyzer_with_systematics.py's
+# detect_year_era_from_name() only recognizes "preee"/"postee" literally
+# in a path -- it does NOT know which run period is actually preEE vs
+# postEE -- so every data file's era falls back to whatever --era is
+# passed on the command line. Since era_code feeds real physics logic
+# downstream (e.g. regions.py's per-era b-tag working points), there is
+# no way to correctly split this data by era with the analyzer as it
+# currently stands. Rather than run data under BOTH era tags (which
+# would double-count every data event, mislabeling roughly half of it
+# each time), data is included ONCE per year, tagged with the LATER era
+# (PostEE / postBPix) as a single, consistent (if imperfect) choice. This
+# means data from the earlier run periods (e.g. 2022 C/D) is treated with
+# PostEE's b-tag working point rather than its own -- a known, flagged
+# approximation, not a bug introduced by this parallelization. A proper
+# fix would add a real run-period-to-era lookup table to
+# detect_year_era_from_name() (needs exact CMS Run3 run-number boundaries
+# to do correctly) -- treat this as an open follow-up item, not resolved
+# here.
+#
+# Path note: 2024/2025 signal paths use .../scored/merged/ (confirmed
+# directly against the actual directory layout on disk) -- this differs
+# from both the pDNN wrapper's own scored/ output path convention seen
+# elsewhere in this project and from what was originally written in an
+# earlier draft of this file; use exactly what's below.
+#
+# Usage:
+#   mkdir -p logs
+#   chmod +x run_analyzer_pair.sh
+#   condor_submit submit_analyzer_all.sub
+#   condor_q -nobatch
+#   tail -f logs/<label>.out
+# =============================================================================
+
+universe                = vanilla
+executable              = run_analyzer_pair.sh
+arguments               = $(label) $(era) $(years) $(signal_dir) $(bkg_dir) $(data_dir)
+
+output                  = logs/$(label).out
+error                   = logs/$(label).err
+log                     = logs/$(label).log
+
+# CPU-only -- no GPU needed for the analyzer.
+# request_cpus=6 carried over from the single-year run this was based on;
+# NOT yet confirmed the analyzer is actually multi-threaded enough to use
+# them all -- check after this run via
+#   condor_history <clusterid> -af RemoteUserCpu RemoteWallClockTime
+# If RemoteUserCpu comes back close to 1x RemoteWallClockTime rather than
+# ~6x, only one core was ever really used.
+request_cpus            = 6
+request_memory          = 16GB
++JobFlavour              = "nextweek"
+
+should_transfer_files   = NO
+getenv                  = False
+
+queue label,era,years,signal_dir,bkg_dir,data_dir from (
+    DD_2022preEE, PreEE, 2022, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2022/sim/preEE/merged/scored/, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2022/sim/preEE/scored/, NONE
+    DD_2022postEE, PostEE, 2022, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2022/sim/postEE/merged/scored/, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2022/sim/postEE/scored/, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2022/data/scored/
+    DD_2023preBPix, preBPix, 2023, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2023/sim/preBPix/merged/scored/, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2023/sim/preBPix/scored/, NONE
+    DD_2023postBPix, postBPix, 2023, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2023/sim/postBPix/merged/scored/, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2023/sim/postBPix/scored/, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2023/data/scored/
+    DD_2024, All, 2024, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2024/scored/merged/, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2024/sim/scored/, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2024/data/scored/
+    DD_2025, All, 2025, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/HiggsDNA_v7_dask_merged/2025/scored/merged/, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2025/sim/scored/, /eos/cms/store/group/phys_b2g/HHbbgg/sraj/output_parquet/Run3_2025/data/scored/
+)
