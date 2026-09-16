@@ -1,360 +1,341 @@
-#!/usr/bin/env python
-# =============================================================================
-# check_mass_sculpting_mjj_2d.py
-#
-# Reviewer comment: "Check the pDNN mass sculpting in Mjj and 2D (mgg, mjj)".
-#
-# pDNN_v_WC.py's existing run_mass_sculpting() (see its Sec. 14) already checks
-# sculpting in a diphoton-mass proxy (MASS_SCULPT_CANDIDATES), but never
-# checks m_bb, and never checks the 2D (m_gg, m_bb) plane at all -- exactly
-# the two things this comment is asking about.
-#
-# NO RETRAINING NEEDED. This script deliberately does NOT call
-# train_model() or scale_features() (the latter REFITS and OVERWRITES the
-# saved scaler on disk -- must not be called again here). It reuses the
-# existing, already-tested data loading/splitting functions from pDNN_v_WC.py
-# to deterministically reproduce the same TEST split (same seed, same
-# GroupShuffleSplit calls), loads the ALREADY-SAVED model weights and
-# scaler from disk, and only ever calls .transform()/model.eval() -- never
-# .fit() on anything.
-#
-# ASSUMPTION, stated explicitly: this reproduces the same test split as the
-# original training run only if the underlying signal/background parquet
-# files on disk are unchanged since that run. If they've since been
-# reprocessed (e.g. a fixed production, a corrected selection), this will
-# still produce a valid, group-disjoint split, just not necessarily
-# identical to the original training run's -- worth being aware of, not
-# necessarily a problem.
-#
-# Res_dijet_mass (the m_bb proxy) is already a member of FEATURES_CORE in
-# pDNN_v_WC.py, so it is already present in df_te without any change to that
-# script -- confirmed directly by reading pDNN_v_WC.py before writing this.
-#
-# Run with:
-#     python check_mass_sculpting_mjj_2d.py
-# =============================================================================
+#!/usr/bin/env python3
+"""
+Consolidated mass sculpting validation, built on top of pDNN_v_WC.py.
+Merges what were previously two separate scripts (extended_mass_sculpting.py
+and plot_mass_sculpting_extended.py) into one, so every helper (test-split
+rebuild, model/scaler loading, weighted-percentile binning) exists in
+exactly one place -- avoiding the kind of two-copies-drift-apart bug this
+same codebase already hit once (RAW_COLUMNS_OF_INTEREST vs FEATURES_CORE).
 
-from __future__ import annotations
+Produces:
+  1. 1D weighted KS test: diphoton_mass (background, no-cut vs each score cut).
+  2. 1D weighted KS test: Res_dijet_mass (same).
+  3. 2D binned, weighted chi2 comparison: (diphoton_mass, Res_dijet_mass).
+  4. Dijet mass shape overlay plot (same style as the existing diphoton one).
+  5. 2D pull-map plot for a representative score cut.
+
+History of fixes folded in here (kept for provenance, not repeated per-run):
+  - Correct (sample-from-observed-distribution) imputation, via pDNN_v_WC.py's
+    own df_to_arrays -- not the older script's mean-imputation.
+  - StandardScaler now loaded and applied before scoring -- omitting this
+    previously produced float16-overflow NaN scores for ~3.76% of test
+    events, silently breaking the trivial cut>=0.0 closure test.
+  - 2D binning range now uses the weighted 1st-99th percentile of the
+    pooled sample, not raw min/max -- raw min/max let a single rare,
+    low-weight, high-mass background event stretch the axis (and the
+    chi2 binning itself) out into mostly-empty space.
+
+Run in the same environment/directory as pDNN_v_WC.py, after it has been
+run at least once (so outputs/models/best_pdnn.pt, scaler.pkl exist):
+    python3 check_mass_sculpting_mjj_2d.py
+"""
 
 import json
 import os
 import pickle
-from typing import Dict, List, Optional, Tuple
-
-import numpy as np
-import pandas as pd
-import torch
 
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+import numpy as np
+import torch
 
-# Reuses pDNN_v_WC.py's own, already-tested logic directly -- no duplicated
-# reimplementation of data loading, splitting, or the model architecture.
 from pDNN_v_WC import (
-    CFG,
-    Config,
-    ParameterizedDNN,
-    apply_cms_plot_style,
-    load_signal,
-    load_background,
-    assign_background_parameters,
-    prepare_dataframe,
-    resolve_feature_list,
-    prune_correlated_features,
-    split_dataset,
-    df_to_arrays,
-    predict,
+    CFG, DEVICE, ParameterizedDNN, load_signal, load_background,
+    assign_background_parameters, prepare_dataframe, resolve_feature_list,
+    prune_correlated_features, split_dataset, df_to_arrays, safe_eval_probs,
     weighted_ks_2samp,
-    group_key,
-    CMS_BLUE,
-    CMS_RED,
-    CMS_GREEN,
-    CMS_DIVERGING_CMAP,
 )
 
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+SCORE_CUTS = CFG.SCORE_CUTS  # (0.0, 0.3, 0.5, 0.7, 0.9)
+DIPHOTON_COL_CANDIDATES = ["diphoton_mass", "mass_gg", "CMS_hgg_mass", "mgg", "Res_HHbbggCandidate_mass"]
+DIJET_COL_CANDIDATES = ["Res_dijet_mass", "dijet_mass", "Res_dijet_mass_DNNreg"]
+PULLMAP_CUT = 0.9  # which cut to visualize spatially
+PETROFF_COLORS = ["#3f90da", "#ffa90e", "#bd1f01", "#832db6", "#94a4a2"]
+MIN_DIJET_MASS = 95.0
+# Physics floor, not a plotting choice: below ~90 GeV the background m_jj
+# spectrum is not smoothly-falling (Z -> bb contamination near the Z
+# mass), which is the same reasoning behind the analysis's m_Y >= 90 GeV
+# grid boundary established earlier in this session. The dijet mass axis
+# should respect this floor rather than following wherever a percentile
+# happens to land.
 
-# m_bb proxy candidates, same fallback-list convention as pDNN_v_WC.py's own
-# MASS_SCULPT_CANDIDATES for m_gg -- Res_dijet_mass is the primary,
-# already-trained-on feature; the others are defensive fallbacks only.
-MJJ_SCULPT_CANDIDATES: Tuple[str, ...] = (
-    "Res_dijet_mass", "dibjet_mass", "mass_bb", "mjj",
-)
+# Output paths -- reuse pDNN_v_WC.py's own CFG.PLOT_DIR/CFG.LOG_DIR
+# convention (outputs/plots, outputs/logs) rather than writing into the
+# current working directory, and match the existing "MassSculpting"
+# subfolder convention already used by that script's own mass-sculpting
+# plots (see plot_mass_after_score's out_dir).
+PLOT_OUT_DIR = os.path.join(CFG.PLOT_DIR, "MassSculpting")
+LOG_OUT_DIR = CFG.LOG_DIR
+os.makedirs(PLOT_OUT_DIR, exist_ok=True)
+os.makedirs(LOG_OUT_DIR, exist_ok=True)
 
 
-def _find_mjj_column(df: pd.DataFrame) -> Optional[str]:
-    for c in MJJ_SCULPT_CANDIDATES:
+# =============================================================================
+# Shared helpers
+# =============================================================================
+def find_column(df, candidates):
+    for c in candidates:
         if c in df.columns:
             return c
     return None
 
 
-def reload_trained_model_and_data(cfg: Config = CFG):
-    """Reproduce df_te/test_probs from the ALREADY-TRAINED model, with no
-    retraining and no scaler refit. Mirrors pDNN_v_WC.py's main() exactly up
-    through prediction, but loads (never fits) the scaler and model.
-    """
-    if not (os.path.exists(cfg.MODEL_PATH) and os.path.exists(cfg.SCALER_PATH)
-             and os.path.exists(cfg.FEATURES_PATH)):
-        raise FileNotFoundError(
-            f"Expected a completed training run's saved artifacts at "
-            f"{cfg.MODEL_PATH}, {cfg.SCALER_PATH}, {cfg.FEATURES_PATH} -- "
-            f"none found. Run pDNN_v_WC.py's training first; this script only "
-            f"evaluates an already-trained model, it does not train one."
-        )
+def weighted_percentile(values, weights, percentiles):
+    """Weighted percentile -- avoids a single rare, low-weight outlier
+    event stretching an axis/binning range out into mostly-empty space."""
+    sorter = np.argsort(values)
+    v_sorted = values[sorter]
+    w_sorted = weights[sorter]
+    cum_w = np.cumsum(w_sorted) - 0.5 * w_sorted
+    cum_w /= np.sum(w_sorted)
+    return np.interp(np.asarray(percentiles) / 100.0, cum_w, v_sorted)
 
-    # ---- Reproduce the same data split pDNN_v_WC.py's training run used ----
-    signal_df = load_signal(cfg)
-    background_df = load_background(cfg)
-    background_df = assign_background_parameters(signal_df, background_df, seed=cfg.SEED)
+
+def rebuild_test_split():
+    """Reproduce pDNN_v_WC.py's exact data pipeline up through the TEST
+    split, using the same CFG (same SEED -> same GroupShuffleSplit
+    results), without retraining."""
+    signal_df = load_signal(CFG)
+    background_df = load_background(CFG)
+    background_df = assign_background_parameters(signal_df, background_df, seed=CFG.SEED)
     df_all = prepare_dataframe(signal_df, background_df)
-    feature_list = resolve_feature_list(df_all, cfg)
-    if cfg.ENABLE_CORR_PRUNING:
-        feature_list, _ = prune_correlated_features(df_all, feature_list, df_all["label"].values, cfg)
-    _df_tr, _df_va, df_te = split_dataset(df_all, cfg)
+    feature_list = resolve_feature_list(df_all, CFG)
+    if CFG.ENABLE_CORR_PRUNING:
+        feature_list, _ = prune_correlated_features(df_all, feature_list, df_all["label"].values, CFG)
+    df_tr, df_va, df_te = split_dataset(df_all, CFG)
+    return df_te, feature_list
 
-    # ---- Load the SAVED feature list, and confirm it matches what was
-    # just recomputed -- if it doesn't, the reproduced split/features are
-    # NOT trustworthy as "the same as training", and this should fail
-    # loudly rather than silently evaluate the model on a mismatched
-    # feature ordering. ----
-    with open(cfg.FEATURES_PATH) as f:
-        saved_feature_list = json.load(f)["features"]
-    if list(feature_list) != list(saved_feature_list):
-        raise RuntimeError(
-            "Recomputed feature_list does not match the SAVED feature list "
-            f"from training ({cfg.FEATURES_PATH}). This means the underlying "
-            "data or config has changed since that training run -- the "
-            "reproduced split/features here cannot be trusted to match the "
-            "original TEST set. Recomputed: " + str(feature_list) +
-            "  Saved: " + str(saved_feature_list)
-        )
 
-    # ---- Load (never fit) the saved scaler ----
-    with open(cfg.SCALER_PATH, "rb") as f:
-        scaler = pickle.load(f)
-
-    x_te_raw, y_te, w_te = df_to_arrays(df_te, feature_list)
-    x_te = scaler.transform(x_te_raw)  # transform only -- scaler already fit during training
-
-    # ---- Load the saved model weights into a fresh model of the same
-    # architecture (architecture itself comes from CFG, unchanged since
-    # training) ----
-    model = ParameterizedDNN(x_te.shape[1], cfg.HIDDEN_LAYERS, cfg.DROPOUT, cfg.USE_BATCHNORM)
-    state = torch.load(cfg.MODEL_PATH, map_location=DEVICE, weights_only=True)
+def load_trained_model(n_features):
+    model = ParameterizedDNN(n_features, CFG.HIDDEN_LAYERS, CFG.DROPOUT, CFG.USE_BATCHNORM)
+    state = torch.load(CFG.MODEL_PATH, map_location=DEVICE, weights_only=True)
     model.load_state_dict(state)
     model = model.to(DEVICE)
-
-    test_probs = predict(model, x_te, DEVICE)
-
-    return df_te, test_probs, y_te, w_te, feature_list
+    model.eval()
+    return model
 
 
-def _savefig(fig_dir: str, filename: str) -> None:
-    os.makedirs(fig_dir, exist_ok=True)
-    plt.savefig(os.path.join(fig_dir, f"{filename}.png"), dpi=600)
-    plt.savefig(os.path.join(fig_dir, f"{filename}.pdf"))
-    print(f"[Saved] {os.path.join(fig_dir, filename)}.{{png,pdf}}")
-    plt.close()
+def weighted_2d_chi2(x_a, y_a, w_a, x_b, y_b, w_b, y_min=None, max_bins_per_axis=10):
+    """Binned, weighted chi-square-style comparison of two 2D shapes
+    (each independently shape-normalized to unit total weight first).
+
+    Bin count is adaptive, not fixed: a fixed grid (e.g. always 10x10)
+    cannot be right simultaneously for the no-cut sample (n_eff ~ 10^4)
+    and the tightest score cut (n_eff ~ 200) -- confirmed directly from a
+    real pull-map render at a fixed 10x10 grid, which showed an
+    unphysical scattered/salt-and-pepper pattern at the tightest cut
+    (statistical noise from ~2 effective entries per bin on average),
+    rather than the smooth, physically coherent pattern seen at looser
+    cuts. Bins per axis are instead set from the effective sample size of
+    the SMALLER (more constraining) of the two samples, aiming for
+    roughly 10 effective entries per bin.
+
+    y_min, if given, is a hard physics floor on the y-axis range (not
+    derived from the data) -- see MIN_DIJET_MASS above.
+
+    Returns (chi2_stat, ndof, per_bin_max_abs_pull, bin_edges, pulls, bins_used).
+    """
+    n_eff_a = float(w_a.sum() ** 2 / np.sum(w_a ** 2)) if np.sum(w_a ** 2) > 0 else 0.0
+    n_eff_b = float(w_b.sum() ** 2 / np.sum(w_b ** 2)) if np.sum(w_b ** 2) > 0 else 0.0
+    n_eff_limiting = min(n_eff_a, n_eff_b)
+    bins = max(2, min(max_bins_per_axis, int(np.sqrt(n_eff_limiting / 10.0))))
+
+    x_pool = np.concatenate([x_a, x_b])
+    y_pool = np.concatenate([y_a, y_b])
+    w_pool = np.concatenate([w_a, w_b])
+    x_range = tuple(weighted_percentile(x_pool, w_pool, [1, 99]))
+    y_range = tuple(weighted_percentile(y_pool, w_pool, [1, 99]))
+    if y_min is not None:
+        y_range = (max(y_range[0], y_min), y_range[1])
+
+    h_a, xedges, yedges = np.histogram2d(x_a, y_a, bins=bins, range=[x_range, y_range], weights=w_a)
+    h_b, _, _ = np.histogram2d(x_b, y_b, bins=[xedges, yedges], weights=w_b)
+    h_a_w2, _, _ = np.histogram2d(x_a, y_a, bins=[xedges, yedges], weights=w_a ** 2)
+    h_b_w2, _, _ = np.histogram2d(x_b, y_b, bins=[xedges, yedges], weights=w_b ** 2)
+
+    norm_a, norm_b = h_a.sum(), h_b.sum()
+    if norm_a <= 0 or norm_b <= 0:
+        return float("nan"), 0, float("nan"), (xedges, yedges), None, bins
+
+    p_a, p_b = h_a / norm_a, h_b / norm_b
+    sigma_a = np.sqrt(h_a_w2) / norm_a
+    sigma_b = np.sqrt(h_b_w2) / norm_b
+    sigma2 = sigma_a ** 2 + sigma_b ** 2
+
+    mask = sigma2 > 0
+    chi2 = np.sum(((p_a[mask] - p_b[mask]) ** 2) / sigma2[mask])
+    ndof = int(mask.sum())
+    pulls = np.zeros_like(p_a)
+    pulls[mask] = (p_b[mask] - p_a[mask]) / np.sqrt(sigma2[mask])
+    max_pull = float(np.max(np.abs(pulls[mask]))) if ndof > 0 else float("nan")
+    return float(chi2), ndof, max_pull, (xedges, yedges), pulls, bins
 
 
-def plot_mjj_after_score(
-    mjj_values: np.ndarray, scores: np.ndarray, weights: np.ndarray, labels: np.ndarray,
-    mjj_col_name: str, cfg: Config = CFG,
-) -> None:
-    """Background m_bb shape overlay across score cuts -- exact same method
-    as pDNN_v_WC.py's plot_mass_after_score(), just applied to m_bb instead
-    of m_gg."""
-    out_dir = os.path.join(cfg.PLOT_DIR, "MassSculpting")
-    bkg = labels == 0
-    m_bkg, s_bkg, w_bkg = mjj_values[bkg], scores[bkg], (weights[bkg] if weights is not None else None)
-    lo, hi = np.nanpercentile(m_bkg, [1, 99])
+# =============================================================================
+# Plotting
+# =============================================================================
+def plot_dijet_shapes(df_te, test_probs, bkg_mask, w_te, dijet_col):
+    m_bkg = df_te[dijet_col].to_numpy()[bkg_mask]
+    w_bkg_all = w_te[bkg_mask]
+    lo, hi = weighted_percentile(m_bkg, w_bkg_all, [1, 99])
+    lo = max(lo, MIN_DIJET_MASS)
     bins = np.linspace(lo, hi, 40)
 
-    plt.figure()
-    for cut in cfg.SCORE_CUTS:
-        sel = s_bkg >= cut
+    fig, ax = plt.subplots(figsize=(7.5, 5.5))
+    for i, cut in enumerate(SCORE_CUTS):
+        sel = bkg_mask & (test_probs >= cut)
         if sel.sum() < 5:
             continue
-        w_sel = w_bkg[sel] if w_bkg is not None else None
-        plt.hist(m_bkg[sel], bins=bins, weights=w_sel, density=True, histtype="step", lw=1.8,
-                  label=f"score >= {cut:.1f} (N={int(sel.sum())})")
-    plt.xlabel(mjj_col_name); plt.ylabel("Density (shape-normalized)")
-    plt.title("Background $m_{bb}$ sculpting vs. pDNN score cut")
-    plt.legend(fontsize=8); plt.tight_layout()
-    _savefig(out_dir, "mass_sculpting_mjj_shapes")
+        m_cut = df_te[dijet_col].to_numpy()[sel]
+        w_cut = w_te[sel]
+        ax.hist(m_cut, bins=bins, weights=w_cut, density=True, histtype="step",
+                lw=1.8, color=PETROFF_COLORS[i % len(PETROFF_COLORS)],
+                label=f"score \u2265 {cut:.1f} (N={int(sel.sum())})")
+    ax.set_xlabel(rf"$m_{{jj}}$ ({dijet_col}) [GeV]", fontsize=12)
+    ax.set_ylabel("Density (shape-normalized)", fontsize=12)
+    ax.legend(fontsize=10, frameon=True, edgecolor="black", fancybox=False)
+    ax.tick_params(direction="in", top=True, right=True, which="both", labelsize=10)
+    ax.text(0.02, 1.02, "CMS", transform=ax.transAxes,
+            fontsize=15, fontweight="bold", va="bottom", ha="left")
+    ax.text(0.13, 1.02, "Work in progress", transform=ax.transAxes,
+            fontsize=12, fontstyle="italic", va="bottom", ha="left")
+    fig.tight_layout()
+    out_path = os.path.join(PLOT_OUT_DIR, "dijet_mass_sculpting_shapes")
+    fig.savefig(f"{out_path}.png", dpi=300, facecolor="white", bbox_inches="tight")
+    fig.savefig(f"{out_path}.pdf", facecolor="white", bbox_inches="tight")
+    plt.close(fig)
+    print(f"Wrote {out_path}.{{png,pdf}}")
 
 
-def plot_2d_sculpting(
-    mgg_values: np.ndarray, mjj_values: np.ndarray, scores: np.ndarray,
-    weights: np.ndarray, labels: np.ndarray, cfg: Config = CFG,
-    mgg_x_min: Optional[float] = None,
-) -> Dict[str, float]:
-    """Genuine 2D (m_gg, m_bb) sculpting check on background only.
+def plot_2d_pullmap(diphoton_col, dijet_col, cut, edges, pulls):
+    xedges, yedges = edges
+    fig, ax = plt.subplots(figsize=(7.5, 6.0))
+    vmax = np.max(np.abs(pulls))
+    im = ax.imshow(pulls.T, origin="lower", aspect="auto", cmap="RdBu_r",
+                   vmin=-vmax, vmax=vmax,
+                   extent=[xedges[0], xedges[-1], yedges[0], yedges[-1]])
+    cbar = plt.colorbar(im, ax=ax)
+    cbar.set_label("Pull: (cut $-$ no-cut) / $\\sigma$", fontsize=11)
+    ax.set_xlabel(rf"$m_{{\gamma\gamma}}$ ({diphoton_col}) [GeV]", fontsize=12)
+    ax.set_ylabel(rf"$m_{{jj}}$ ({dijet_col}) [GeV]", fontsize=12)
+    ax.tick_params(direction="out", labelsize=10)
+    ax.text(0.02, 1.02, "CMS", transform=ax.transAxes,
+            fontsize=15, fontweight="bold", va="bottom", ha="left")
+    ax.text(0.13, 1.02, "Work in progress", transform=ax.transAxes,
+            fontsize=12, fontstyle="italic", va="bottom", ha="left")
+    ax.text(0.98, 1.02, f"score \u2265 {cut:.1f} vs. no-cut", transform=ax.transAxes,
+            fontsize=11, va="bottom", ha="right")
+    fig.tight_layout()
+    fname = os.path.join(PLOT_OUT_DIR, f"joint_2d_pullmap_cut{cut:.1f}")
+    fig.savefig(f"{fname}.png", dpi=300, facecolor="white", bbox_inches="tight")
+    fig.savefig(f"{fname}.pdf", facecolor="white", bbox_inches="tight")
+    plt.close(fig)
+    print(f"Wrote {fname}.{{png,pdf}}")
 
-    Two complementary views:
-      (a) 2D histograms of the background (m_gg, m_bb) plane, side by side
-          across a few score cuts -- direct visual check for any localized
-          bump/edge developing jointly in both variables (something either
-          1D marginal check could individually miss).
-      (b) The Pearson correlation between m_gg and m_bb WITHIN background
-          events, computed separately at each score cut. A well-behaved
-          discriminant should not induce a strong correlation between the
-          two mass variables that wasn't present before the cut -- this
-          catches a joint-sculpting effect quantitatively, not just
-          visually.
 
-    mgg_x_min: optional fixed lower bound for the m_gg axis specifically,
-    overriding the default data-driven 1st-percentile lower bound -- same
-    reasoning and same fix as pDNN_v_WC.py's plot_mass_after_score(): the
-    background sample isn't pre-filtered to the analysis's actual SR mass
-    window, so the automatic bound pulls the range down to ~50 GeV. Only
-    ever applied to the m_gg axis, not m_bb, which has a genuinely
-    different, wider real range of its own.
-    """
-    out_dir = os.path.join(cfg.PLOT_DIR, "MassSculpting")
-    bkg = labels == 0
-    mgg_bkg, mjj_bkg, s_bkg = mgg_values[bkg], mjj_values[bkg], scores[bkg]
-    w_bkg = weights[bkg] if weights is not None else None
+# =============================================================================
+# Main
+# =============================================================================
+def main():
+    print("Rebuilding the exact TEST split used by pDNN_v_WC.py (same SEED, no retraining)...")
+    df_te, feature_list = rebuild_test_split()
+    x_te_raw, y_te, w_te = df_to_arrays(df_te, feature_list)
 
-    mgg_lo, mgg_hi = np.nanpercentile(mgg_bkg, [1, 99])
-    if mgg_x_min is not None:
-        mgg_lo = mgg_x_min
-    mjj_lo, mjj_hi = np.nanpercentile(mjj_bkg, [1, 99])
+    print("Loading the saved StandardScaler...")
+    with open(CFG.SCALER_PATH, "rb") as f:
+        scaler = pickle.load(f)
+    x_te = scaler.transform(x_te_raw).astype("float32")
 
-    display_cuts = [c for c in cfg.SCORE_CUTS if (s_bkg >= c).sum() >= 20]
-    n_panels = len(display_cuts)
-    if n_panels == 0:
-        print("[WARN] plot_2d_sculpting: no score cut retains >=20 background "
-              "events; skipping 2D histogram panels.")
+    print("Loading the already-trained model checkpoint...")
+    model = load_trained_model(x_te.shape[1])
+    x_te_t = torch.tensor(x_te, dtype=torch.float32).to(DEVICE)
+    test_probs = safe_eval_probs(model, x_te_t, DEVICE)
+    print("N NaN scores:", np.isnan(test_probs).sum())
+    print("N Inf scores:", np.isinf(test_probs).sum())
+    print("N out-of-range scores (not in [0,1]):", ((test_probs < 0) | (test_probs > 1)).sum())
+
+    diphoton_col = find_column(df_te, DIPHOTON_COL_CANDIDATES)
+    dijet_col = find_column(df_te, DIJET_COL_CANDIDATES)
+    print(f"Diphoton mass column: {diphoton_col}")
+    print(f"Dijet mass column: {dijet_col}")
+
+    bkg_mask = (y_te == 0)
+    results = {"diphoton_1d": {}, "dijet_1d": {}, "joint_2d": {}}
+
+    # ---- 1D diphoton ----
+    if diphoton_col:
+        m_bkg_all = df_te[diphoton_col].to_numpy()[bkg_mask]
+        w_bkg_all = w_te[bkg_mask]
+        print(f"\n=== 1D KS: {diphoton_col} (background, no-cut vs each score cut) ===")
+        for cut in SCORE_CUTS:
+            sel = bkg_mask & (test_probs >= cut)
+            m_cut = df_te[diphoton_col].to_numpy()[sel]
+            w_cut = w_te[sel]
+            if len(m_cut) > 5:
+                stat, pval, n_eff_all, n_eff_cut = weighted_ks_2samp(m_bkg_all, w_bkg_all, m_cut, w_cut)
+                results["diphoton_1d"][f"cut_{cut:.1f}"] = {
+                    "ks_stat": stat, "p_value": pval,
+                    "n_eff_no_cut": n_eff_all, "n_eff_this_cut": n_eff_cut,
+                }
+                print(f"  cut>={cut:.1f}: KS={stat:.4f}  p={pval:.4g}  "
+                      f"(n_eff no-cut={n_eff_all:.0f}, this-cut={n_eff_cut:.0f})")
     else:
-        fig, axes = plt.subplots(1, n_panels, figsize=(4.6 * n_panels, 4.2), squeeze=False)
-        axes = axes[0]
-        for ax, cut in zip(axes, display_cuts):
-            sel = s_bkg >= cut
-            w_sel = w_bkg[sel] if w_bkg is not None else None
-            h = ax.hist2d(
-                mgg_bkg[sel], mjj_bkg[sel], bins=30,
-                range=[[mgg_lo, mgg_hi], [mjj_lo, mjj_hi]],
-                weights=w_sel, cmap=CMS_DIVERGING_CMAP, density=True,
-            )
-            ax.set_xlabel(r"$m_{\gamma\gamma}$")
-            ax.set_ylabel(r"$m_{bb}$")
-            ax.set_title(f"score >= {cut:.1f} (N={int(sel.sum())})")
-            plt.colorbar(h[3], ax=ax)
-        plt.tight_layout()
-        _savefig(out_dir, "mass_sculpting_2d_shapes")
+        print("[WARN] No diphoton mass column found; skipping 1D diphoton check.")
 
-    # Quantitative: background-only mgg-vs-mjj correlation at each score cut
-    corr_by_cut: Dict[str, float] = {}
-    print("[2D sculpting] Background m_gg vs m_bb Pearson correlation by score cut:")
-    for cut in cfg.SCORE_CUTS:
-        sel = s_bkg >= cut
-        if sel.sum() < 20:
-            print(f"  score >= {cut:.1f}: skipped (N={int(sel.sum())} < 20)")
-            continue
-        # weighted Pearson correlation
-        w_sel = w_bkg[sel] if w_bkg is not None else np.ones(int(sel.sum()))
-        a, b = mgg_bkg[sel], mjj_bkg[sel]
-        wa = np.average(a, weights=w_sel)
-        wb = np.average(b, weights=w_sel)
-        cov = np.average((a - wa) * (b - wb), weights=w_sel)
-        var_a = np.average((a - wa) ** 2, weights=w_sel)
-        var_b = np.average((b - wb) ** 2, weights=w_sel)
-        r = float(cov / np.sqrt(var_a * var_b)) if var_a > 0 and var_b > 0 else float("nan")
-        corr_by_cut[f"cut_{cut:.1f}"] = r
-        print(f"  score >= {cut:.1f}: r = {r:+.4f}  (N={int(sel.sum())})")
+    # ---- 1D dijet ----
+    if dijet_col:
+        m_bkg_all = df_te[dijet_col].to_numpy()[bkg_mask]
+        w_bkg_all = w_te[bkg_mask]
+        print(f"\n=== 1D KS: {dijet_col} (background, no-cut vs each score cut) ===")
+        for cut in SCORE_CUTS:
+            sel = bkg_mask & (test_probs >= cut)
+            m_cut = df_te[dijet_col].to_numpy()[sel]
+            w_cut = w_te[sel]
+            if len(m_cut) > 5:
+                stat, pval, n_eff_all, n_eff_cut = weighted_ks_2samp(m_bkg_all, w_bkg_all, m_cut, w_cut)
+                results["dijet_1d"][f"cut_{cut:.1f}"] = {
+                    "ks_stat": stat, "p_value": pval,
+                    "n_eff_no_cut": n_eff_all, "n_eff_this_cut": n_eff_cut,
+                }
+                print(f"  cut>={cut:.1f}: KS={stat:.4f}  p={pval:.4g}  "
+                      f"(n_eff no-cut={n_eff_all:.0f}, this-cut={n_eff_cut:.0f})")
+        plot_dijet_shapes(df_te, test_probs, bkg_mask, w_te, dijet_col)
+    else:
+        print("[WARN] No dijet mass column found; skipping 1D dijet check and its plot.")
 
-    plt.figure()
-    cuts_plotted = [float(k.replace("cut_", "")) for k in corr_by_cut]
-    vals_plotted = list(corr_by_cut.values())
-    plt.plot(cuts_plotted, vals_plotted, marker="o", color=CMS_GREEN)
-    plt.axhline(0.0, color="gray", linestyle="--", lw=1)
-    plt.xlabel("Score cut"); plt.ylabel(r"Background $m_{\gamma\gamma}$-$m_{bb}$ correlation")
-    plt.title("Induced 2D correlation vs. score cut (background only)")
-    plt.tight_layout()
-    _savefig(out_dir, "mass_sculpting_2d_correlation_vs_cut")
+    # ---- 2D joint ----
+    if diphoton_col and dijet_col:
+        x_all = df_te[diphoton_col].to_numpy()[bkg_mask]
+        y_all = df_te[dijet_col].to_numpy()[bkg_mask]
+        w_all = w_te[bkg_mask]
+        print(f"\n=== 2D binned chi2: ({diphoton_col}, {dijet_col}) (background, no-cut vs each score cut) ===")
+        for cut in SCORE_CUTS:
+            sel = bkg_mask & (test_probs >= cut)
+            x_cut = df_te[diphoton_col].to_numpy()[sel]
+            y_cut = df_te[dijet_col].to_numpy()[sel]
+            w_cut = w_te[sel]
+            if len(x_cut) > 20:
+                chi2, ndof, max_pull, edges, pulls, bins_used = weighted_2d_chi2(
+                    x_all, y_all, w_all, x_cut, y_cut, w_cut, y_min=MIN_DIJET_MASS
+                )
+                results["joint_2d"][f"cut_{cut:.1f}"] = {
+                    "chi2": chi2, "ndof": ndof,
+                    "chi2_per_ndof": chi2 / ndof if ndof else float("nan"),
+                    "max_abs_pull": max_pull, "bins_per_axis": bins_used,
+                }
+                print(f"  cut>={cut:.1f}: chi2={chi2:.2f}  ndof={ndof}  "
+                      f"chi2/ndof={chi2/ndof if ndof else float('nan'):.3f}  "
+                      f"max|pull|={max_pull:.2f}  bins/axis={bins_used}")
+                if abs(cut - PULLMAP_CUT) < 1e-9 and pulls is not None:
+                    plot_2d_pullmap(diphoton_col, dijet_col, cut, edges, pulls)
+    else:
+        print("[WARN] Missing diphoton or dijet column; skipping 2D check and its plot.")
 
-    return corr_by_cut
-
-
-def run_mjj_and_2d_sculpting(
-    df_te: pd.DataFrame, test_probs: np.ndarray, y_te: np.ndarray, w_te: np.ndarray, cfg: Config = CFG,
-) -> Dict[str, object]:
-    """Full m_bb + 2D (m_gg, m_bb) sculpting validation on the TEST split."""
-    from pDNN_v_WC import _find_mass_sculpt_column  # m_gg column finder, reused directly
-
-    mgg_col = _find_mass_sculpt_column(df_te, cfg)
-    mjj_col = _find_mjj_column(df_te)
-
-    if mjj_col is None:
-        print(f"[WARN] No m_bb-proxy column found among {MJJ_SCULPT_CANDIDATES}; "
-              f"skipping m_bb and 2D sculpting checks entirely.")
-        return {"status": "skipped", "reason": "no mjj column available"}
-    if mgg_col is None:
-        print(f"[WARN] No m_gg-proxy column found among pDNN_v_WC.CFG.MASS_SCULPT_CANDIDATES; "
-              f"skipping 2D sculpting check (m_bb-only 1D check will still run).")
-
-    mjj_values = df_te[mjj_col].to_numpy(dtype=float)
-
-    # ---- 1D m_bb sculpting, same method as pDNN_v_WC.py's existing m_gg check ----
-    plot_mjj_after_score(mjj_values, test_probs, w_te, y_te, mjj_col, cfg)
-
-    bkg_mask = y_te == 0
-    m_bkg_all = mjj_values[bkg_mask]
-    w_bkg_all = w_te[bkg_mask]
-    ks_results_mjj = {}
-    for cut in cfg.SCORE_CUTS:
-        sel_bkg = bkg_mask & (test_probs >= cut)
-        m_cut, w_cut = mjj_values[sel_bkg], w_te[sel_bkg]
-        if len(m_cut) > 5 and len(m_bkg_all) > 5:
-            stat, pval, n_eff_all, n_eff_cut = weighted_ks_2samp(m_bkg_all, w_bkg_all, m_cut, w_cut)
-            ks_results_mjj[f"cut_{cut:.1f}"] = {
-                "ks_stat": stat, "p_value": pval,
-                "n_eff_no_cut": n_eff_all, "n_eff_this_cut": n_eff_cut,
-            }
-    print("[Physics validation] Weighted KS tests (background m_bb shape, no-cut vs cut):")
-    for k, v in ks_results_mjj.items():
-        print(f"  {k}: KS={v['ks_stat']:.4f}  p={v['p_value']:.4g}  "
-              f"(n_eff no-cut={v['n_eff_no_cut']:.0f}, n_eff this-cut={v['n_eff_this_cut']:.0f})")
-
-    # ---- 2D (m_gg, m_bb) sculpting ----
-    corr_2d = {}
-    if mgg_col is not None:
-        mgg_values = df_te[mgg_col].to_numpy(dtype=float)
-        corr_2d = plot_2d_sculpting(mgg_values, mjj_values, test_probs, w_te, y_te, cfg, mgg_x_min=95.0)
-
-    return {
-        "status": "ok",
-        "mgg_column_used": mgg_col,
-        "mjj_column_used": mjj_col,
-        "ks_tests_mjj": ks_results_mjj,
-        "background_2d_correlation_by_cut": corr_2d,
-    }
-
-
-def main() -> None:
-    cfg = CFG
-    apply_cms_plot_style()
-
-    print(f"[INFO] Using device: {DEVICE}")
-    print("[INFO] Loading already-trained model and reproducing the TEST split "
-          "(no training, no scaler refit) ...")
-    df_te, test_probs, y_te, w_te, feature_list = reload_trained_model_and_data(cfg)
-    print(f"[INFO] TEST split reproduced: N={len(df_te)}, matches saved feature "
-          f"list exactly ({len(feature_list)} features).")
-
-    results = run_mjj_and_2d_sculpting(df_te, test_probs, y_te, w_te, cfg)
-
-    out_path = os.path.join(cfg.LOG_DIR, "mass_sculpting_mjj_2d.json")
-    os.makedirs(cfg.LOG_DIR, exist_ok=True)
-    with open(out_path, "w") as f:
-        json.dump(results, f, indent=2, default=str)
-    print(f"[INFO] Saved results to {out_path}")
-
-    print("\n[DONE] m_bb + 2D sculpting validation complete.")
-    print(f"       Plots: {os.path.join(cfg.PLOT_DIR, 'MassSculpting')}")
+    json_path = os.path.join(LOG_OUT_DIR, "mass_sculpting_validation_results.json")
+    with open(json_path, "w") as f:
+        json.dump(results, f, indent=2)
+    print(f"\nWrote {json_path}")
 
 
 if __name__ == "__main__":

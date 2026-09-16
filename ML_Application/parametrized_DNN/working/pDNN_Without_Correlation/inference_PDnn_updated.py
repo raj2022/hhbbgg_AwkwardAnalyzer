@@ -374,7 +374,7 @@
 Score all Parquet files in a folder with a Parameterized DNN.
 
 Usage:
-  python score_folder.py -i /path/to/folder --recursive
+  python inference_PDnn_updated.py -i /path/to/folder --recursive
 Optional:
   --artifacts /path/to/artifacts   (default: current directory)
   --output /path/to/output         (default: "<input>/scored")
@@ -753,8 +753,8 @@ def main():
                      help="Only score signal files with X >= this value (default: 300). "
                           "Files with no detectable X/Y in their path (background/data) "
                           "are always kept regardless of this setting.")
-    ap.add_argument("--min-y", type=int, default=90,
-                     help="Only score signal files with Y >= this value (default: 90). "
+    ap.add_argument("--min-y", type=int, default=70,
+                     help="Only score signal files with Y >= this value (default: 70). "
                           "Files with no detectable X/Y in their path (background/data) "
                           "are always kept regardless of this setting.")
     args = ap.parse_args()

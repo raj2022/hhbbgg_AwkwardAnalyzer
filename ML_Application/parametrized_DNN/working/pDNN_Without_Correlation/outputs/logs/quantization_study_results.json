@@ -1,0 +1,27 @@
+{
+  "n_total_events": 2484186,
+  "diff_summary": {
+    "max_abs_diff": 0.000244140625,
+    "mean_abs_diff": 4.459597039385699e-05,
+    "n_above_1e-6": 1395799,
+    "n_above_1e-4": 483244,
+    "n_above_1e-3": 0,
+    "n_above_1e-2": 0
+  },
+  "category_crossings": {
+    "cut_0.0": 0,
+    "cut_0.3": 0,
+    "cut_0.5": 39,
+    "cut_0.7": 62,
+    "cut_0.9": 185
+  },
+  "saturation_to_1": {
+    "buggy": 1152308,
+    "fixed": 716898
+  },
+  "tail_quantization": {
+    "n_events_above_0.99": 1362805,
+    "n_unique_buggy": 21,
+    "n_unique_fixed": 1396
+  }
+}
