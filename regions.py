@@ -176,8 +176,8 @@ def get_mask_srbbgg(cms_events):    # Pass medium Btag and pass tight photonID
         & (cms_events.sublead_pho_mvaID_WP80 == 1)
         & (lead_btag > wp)
         & (sublead_btag > wp)
-        & (cms_events.lead_isScEtaEB == 1)
-        & (cms_events.sublead_isScEtaEB == 1)
+        # & (cms_events.lead_isScEtaEB == 1)
+        # & (cms_events.sublead_isScEtaEB == 1)
     #    & (
     #        (
     #            (cms_events.signal == 0)

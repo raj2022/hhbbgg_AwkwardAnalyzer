@@ -238,13 +238,13 @@ XSEC_PATTERNS = [
     ("tthtogg",         0.5687 * BR_HToGG),   # https://docs.google.com/spreadsheets/d/1vQEHbnte3SOfTylWWmmdbExSwm70tappKtwpo3NTgco/edit?gid=1154630745#gid=1154630745
     ("vbfhtogg",        4.359 * BR_HToGG),  # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS%3DVBFHtoGG_M-125_TuneCP5_13p6TeV_amcatnlo-pythia8
     ("vhtogg",          2.556 * BR_HToGG),  # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS%3DVHtoGG_M-125_TuneCP5_13p6TeV_amcatnloFXFX-madspin-pythia8%20
-    ("ttgg",            0.02391 * BR_HToGG), # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS%3DttGG
-    ("ttg100to200",     0.4114 * BR_HToGG), # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS%3DTTG-1Jets_PTG-100to200_TuneCP5_13p6TeV
+    ("ttgg",            0.02391 ), # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS%3DttGG
+    ("ttg100to200",     0.4114), # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS%3DTTG-1Jets_PTG-100to200_TuneCP5_13p6TeV
                                              # FIXED: was "ttg-100to200" -- the dash never survives
                                              # _norm_name_for_match()'s stripping on the match-target
                                              # side, so this could never match anything; confirmed via
                                              # direct test before fixing.
-    ("ttg200",          0.1284 * BR_HToGG), # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS%3DTTG-1Jets_PTG-200_TuneCP5_13p6TeV
+    ("ttg200",          0.1284), # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?columns=67108863&currentPage=0&pageSize=10&searchQuery=DAS%3DTTG-1Jets_PTG-200_TuneCP5_13p6TeV
                                              # FIXED: was "ttg-200", same dash issue as above.
     ("bbhtogg",         0.4385	* BR_HToGG), # https://xsecdb-xsdb-official.app.cern.ch/xsdb/?searchQuery=DAS=BBHto2G_M-125_TuneCP5_13p6TeV_powheg-pythia8
 
@@ -299,20 +299,38 @@ LUMI_2022 = {
     "G": 3.0828,
 }
 LUMI_2023 = {
-    "C": 17.794,   # preBPix
-    "D": 9.451,    # postBPix
+    "C": 17.96,   # preBPix   #https://cms-service-dqmdc.web.cern.ch/CAF/certification/Collisions23/ 
+    "D": 9.68,    # postBPix
 }
 
 # ---------------------------------------------------------------------
-# For 2024
+# For 2024 https://cms-service-dqmdc.web.cern.ch/CAF/certification/Collisions24/Cert_Collisions2024_378981_386951_Golden.json 
 LUMI_2024 = {
-    "C": 7.24,
-    "D": 7.96,
-    "E": 11.32,
-    "F": 27.76,
-    "G": 37.77,
-    "H": 5.44,
-    "I": 11.47,
+    "C": 7.2614,
+    "D": 7.9761,
+    "E": 11.4232,
+    "F": 28.0378,
+    "G": 38.0691,
+    "H": 5.4897,
+    "I": 11.5582,
+}
+
+# ---------------------------------------------------------------------
+# For 2025. Computed against normtag "onlineresult" (normtag_PHYSICS.json
+# had no data for this run range when checked -- worth rechecking once it
+# does, since PHYSICS supersedes onlineresult and may revise slightly).
+# Era boundaries taken from PromptReco datasets (no MINI-equivalent
+# NanoAOD exists yet for 2025, unlike 2024's MINIv6NANOv15) -- confirmed
+# via dasgoclient. Runs 391668-398860 (2025-05-05 through 2025-11-04),
+# from Cert_Collisions2025_391658_398903_Golden.json. Per-era sum
+# confirmed to exactly match the flat full-range brilcalc total.
+LUMI_2025 = {
+    "B": 0.2590,
+    "C": 21.8675,
+    "D": 26.3615,
+    "E": 14.0013,
+    "F": 26.4993,
+    "G": 22.2018,
 }
 
 
@@ -348,10 +366,17 @@ def getLumi(year=None, era=None) -> float:
             if e_upper in LUMI_2024:
                 return LUMI_2024[e_upper]
         return sum(LUMI_2024.values())
+
+    if y == "2025":
+        if e is not None:
+            e_upper = e.upper()
+            if e_upper in LUMI_2025:
+                return LUMI_2025[e_upper]
+        return sum(LUMI_2025.values())
     # Fallback if unknown
     return 1.0
 
 
 
 
-## Addition of 2025??
+## Addition of 2025: added on 2026-09-03.
