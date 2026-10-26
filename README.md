@@ -1,4 +1,4 @@
-# hhbbgg AwkwardAnalyzer
+<!-- # hhbbgg AwkwardAnalyzer
 
 Analysis framework for the X→YH→bbγγ resonant search, using
 [awkward-array](https://awkward-array.org/)-based processing of
@@ -173,4 +173,157 @@ listed here for completeness, not as a recommendation to use as-is:
   `hhbbgg_analyzer_lxplus_par.py -i ~/public/samples/VBFHToGG.parquet` —
   predates the `-i`/`--recursive`/`--config-years` interface described
   above; the single-file invocation style may no longer match the current
-  argument parser
+  argument parser -->
+
+
+
+
+
+
+
+
+  # hhbbgg_AwkwardAnalyzer
+
+Awkward-array analysis framework for the CMS Run 3 search for a resonance X decaying to YH, with H → γγ and Y → bb (X → YH → bbγγ; B2G-25-010).
+
+The framework takes skimmed, NanoAOD-derived samples (produced with HiggsDNA) through neural-network scoring, event selection, histogramming, Data/MC validation and score-based event categorization.
+
+> **Status.** Active development on the `2026_working` branch. A datacard and fit stage is not part of this repository.
+
+---
+
+## Contents
+
+1. [Overview](#overview)
+2. [Installation](#installation)
+3. [Workflow](#workflow)
+4. [Repository layout](#repository-layout)
+5. [Outputs](#outputs)
+6. [Known limitations](#known-limitations)
+7. [Contact](#contact)
+
+---
+
+## Overview
+
+| Stage | Purpose | Entry point |
+|---|---|---|
+| 1. Training | Train the parameterised DNN (pDNN) and the ttH-killer classifier | `pDNN_v2.py`, `tth_killer_v2.py` |
+| 2. Scoring | Evaluate both networks on signal, background and data samples | `inference_PDnn_updated.py`, `inference_ttH_killer.py` |
+| 3. Analysis | Apply the selection and write trees and histograms, with a systematics dimension | `hhbbgg_analyzer_lxplus_par.py` |
+| 4. Validation | Data/MC comparison of the analysis variables | `hhbbgg_Plotter.py` |
+| 5. Categorization | Define score-based categories per (mX, mY) mass point | `event_categorization/build_pdnn_categories.py` |
+
+The authoritative, step-by-step command sequence is maintained in `Analysis_Commands.md`. This README describes the structure of the workflow and does not replace that file.
+
+---
+
+## Installation
+
+```bash
+git clone https://github.com/raj2022/hhbbgg_AwkwardAnalyzer.git
+cd hhbbgg_AwkwardAnalyzer
+git checkout 2026_working
+```
+
+Create the environment from the file provided in the repository:
+
+```bash
+micromamba env create -f <environment-file>.yml
+micromamba activate hhbbgg-awk
+python3 -c "import awkward, uproot, hist, torch; print('environment OK')"
+```
+
+<!-- TO FIX BEFORE PUBLISHING: the current README refers to both `requirement.yaml`
+     and `environment.yml`. Keep one file, delete the other, and put its real name above. -->
+
+On lxplus use `micromamba`, not `conda`: `conda activate` can leave no environment active without any error message.
+
+---
+
+## Workflow
+
+Run `python3 <script> --help` for the full option list of any script. Option names have differed between script versions (for example `--year`, `--config-year`, `--config-years`).
+
+### 1. Train the networks
+
+```bash
+python3 pDNN_v2.py        <options>
+python3 tth_killer_v2.py  <options>
+```
+
+### 2. Score the samples
+
+```bash
+python3 inference_PDnn_updated.py  <options>
+python3 inference_ttH_killer.py    <options>
+```
+
+By default only the `nominal` systematic variation is scored. The lower bound of the mY range used in scoring is set with `--min-y`; make sure it matches the mass range you intend to analyse.
+
+### 3. Run the analyzer
+
+```bash
+python3 hhbbgg_analyzer_lxplus_par.py  <options>
+```
+
+Trees and histograms are written under `outputfiles/merged/<tag>/`. The era-split periods (2022 pre/postEE, 2023 pre/postBPix) are processed separately and must be combined afterwards; 2024 and 2025 are not split by era.
+
+### 4. Validate Data/MC agreement
+
+```bash
+python3 hhbbgg_Plotter.py  <options>
+```
+
+### 5. Categorize events
+
+```bash
+python3 event_categorization/build_pdnn_categories.py  <options>
+```
+
+The script processes every mass point present in the tree directory given by `--root`. It has no mY range option of its own; that range is fixed at the scoring step.
+
+---
+
+## Repository layout
+
+```text
+hhbbgg_AwkwardAnalyzer/
+├── pDNN_v2.py                       # pDNN training
+├── tth_killer_v2.py                 # ttH-killer training
+├── inference_PDnn_updated.py        # pDNN scoring
+├── inference_ttH_killer.py          # ttH-killer scoring
+├── hhbbgg_analyzer_lxplus_par.py    # selection, trees and histograms
+├── hhbbgg_Plotter.py                # Data/MC validation plots
+├── event_categorization/
+│   └── build_pdnn_categories.py     # score-based categorization
+├── Analysis_Commands.md             # authoritative command reference
+└── outputfiles/                     # analyzer output (not tracked)
+```
+
+<!-- Add any further directories (configs, utilities, condor submission files) here. -->
+
+---
+
+## Outputs
+
+| Product | Location | Format |
+|---|---|---|
+| Event trees | `outputfiles/merged/<tag>/` | ROOT, keyed `<sample>/<systematic>/<tree>` |
+| Histograms | `outputfiles/merged/<tag>/` | ROOT |
+| Categories | `event_categorization` output directory | `event_categories.json` (mass tags under `"boundaries"`) |
+
+---
+
+## Known limitations
+
+- **Output freshness.** Outputs previously listed for 2022, 2023 and 2024 predate recent analyzer fixes. Regenerate them before use.
+- **Legacy scripts.** `hhbbgg_Analyzer.py`, `hhbbgg_Analyzer_parquet.py` and `make_templates.py` are retained for reference only and have not been validated with the current workflow.
+- **Fit stage.** No datacard or fit code is included.
+
+---
+
+## Contact
+
+Maintainer: Shivam Raj (CMS, B2G HH→bbγγ group).
+Issues and questions: open a GitHub issue on this repository.
